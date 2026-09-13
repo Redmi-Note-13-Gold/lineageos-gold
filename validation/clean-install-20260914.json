@@ -1,0 +1,88 @@
+{
+  "date": "2026-09-14",
+  "device": "gold",
+  "starting_system": "LineageOS 23.2-20260911 with OS3.0.9.0.VNQCNXM",
+  "starting_slot": "a",
+  "bootloader_unlocked": true,
+  "battery_percent_before": 63,
+  "snapshot_update_state_before": "none",
+  "boot_firmware_backup_partitions": 32,
+  "recovery": "LineageOS 23.2-20260913",
+  "kernel": "6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k",
+  "recovery_boot_observed": true,
+  "adb_shell_observed": true,
+  "display_initialization": "1080x2400 at 60 Hz; user operated factory reset and ADB sideload menus",
+  "flashed_slot": "a",
+  "flashed_partitions": [
+    "lk",
+    "boot",
+    "dtbo",
+    "vendor_boot",
+    "vbmeta"
+  ],
+  "flashed_images_readback_match": true,
+  "other_slot_boot_firmware_unchanged": true,
+  "data_formatted": true,
+  "sideload_tested": true,
+  "first_boot_tested": true,
+  "post_install_recovery_tested": false,
+  "release_accepted": false,
+  "note": "Recovery final log confirms status 0 and successful payload, filesystem verification and postinstall. Android first boot and setup complete on B. Installed B-slot LK, boot, DTBO, vendor_boot and vbmeta match the final OTA. Post-install Recovery boot and full hardware acceptance remain pending.",
+  "sideload_attempts": [
+    {
+      "attempt": 1,
+      "host_adb_exit_code": 0,
+      "recovery_status": 7,
+      "recovery_result": "Installation aborted",
+      "failure": "system_b already exists after target group cleanup; legacy active-slot partitions were in default group, with historical COW entries",
+      "system_boot_attempted": false
+    },
+    {
+      "attempt": 2,
+      "preparation": "fastboot wipe-super with matching super_empty.img",
+      "result": "success",
+      "host_adb_exit_code": 0,
+      "host_total_transfer": "1.98x",
+      "host_duration_seconds": 636.15607,
+      "recovery_log_verification_pending": false,
+      "user_rebooted": true,
+      "recovery_status": 0,
+      "filesystem_verifier": "kSuccess",
+      "postinstall": "kSuccess"
+    }
+  ],
+  "super_layout_reset": true,
+  "super_empty": {
+    "size": 5496,
+    "sha256": "a1292477aab16a07e323dbf40846ffb88d2a41ebc55abc87470bf4838e0e4881",
+    "super_size": 9126805504,
+    "logical_partitions": 18,
+    "groups": [
+      "mediatek_dynamic_partitions_a",
+      "mediatek_dynamic_partitions_b"
+    ]
+  },
+  "other_slot_boot_firmware_unchanged_scope": "Verified immediately after initial A-slot Recovery flash, before super reset and OTA installation; not a statement about current B-slot contents",
+  "first_boot_completed": true,
+  "first_boot_slot": "b",
+  "observed_lineage_version": "23.2-20260913-UNOFFICIAL-gold",
+  "observed_vendor_version": "OS3.0.10.0.VNQCNXM",
+  "selinux": "Enforcing",
+  "setup_completed": true,
+  "installed_b_boot_chain_readback_match": true,
+  "initial_runtime_log_review": {
+    "java_or_native_crash_seen": false,
+    "anr_seen": false,
+    "tombstone_files": 0,
+    "surfaceflinger_pending_frame_errors_first_capture": 398,
+    "hwcomposer_buffer_recorder_errors_first_capture": 1340,
+    "power_hal_launch_acquire_release_seen": true,
+    "power_hal_permission_error_seen_in_capture": false,
+    "hotspot_state": "TetheredState, lastError=0",
+    "hotspot_driver_auth_tx_timeouts_seen": true,
+    "mddp_invalid_state_events_seen": true,
+    "hardware_offload_accepted": false,
+    "hardware_offload_stats_at_capture": "rx=0 tx=0; no connected clients",
+    "scope": "Finite retained log buffers plus crash/ANR files and DropBox index; not a complete historical log or long-term test"
+  }
+}
