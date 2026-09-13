@@ -24,10 +24,10 @@
   "other_slot_boot_firmware_unchanged": true,
   "data_formatted": true,
   "sideload_tested": true,
-  "first_boot_tested": false,
+  "first_boot_tested": true,
   "post_install_recovery_tested": false,
   "release_accepted": false,
-  "note": "Second sideload host exit code is 0 and the user reported installation complete, then rebooted. Final Recovery success log and normal Android boot remain unverified; USB ADB was not yet visible after reboot.",
+  "note": "Recovery final log confirms status 0 and successful payload, filesystem verification and postinstall. Android first boot and setup complete on B. Installed B-slot LK, boot, DTBO, vendor_boot and vbmeta match the final OTA. Post-install Recovery boot and full hardware acceptance remain pending.",
   "sideload_attempts": [
     {
       "attempt": 1,
@@ -40,12 +40,15 @@
     {
       "attempt": 2,
       "preparation": "fastboot wipe-super with matching super_empty.img",
-      "result": "user_reported_installation_complete",
+      "result": "success",
       "host_adb_exit_code": 0,
       "host_total_transfer": "1.98x",
       "host_duration_seconds": 636.15607,
-      "recovery_log_verification_pending": true,
-      "user_rebooted": true
+      "recovery_log_verification_pending": false,
+      "user_rebooted": true,
+      "recovery_status": 0,
+      "filesystem_verifier": "kSuccess",
+      "postinstall": "kSuccess"
     }
   ],
   "super_layout_reset": true,
@@ -59,5 +62,27 @@
       "mediatek_dynamic_partitions_b"
     ]
   },
-  "other_slot_boot_firmware_unchanged_scope": "Verified immediately after initial A-slot Recovery flash, before super reset and OTA installation; not a statement about current B-slot contents"
+  "other_slot_boot_firmware_unchanged_scope": "Verified immediately after initial A-slot Recovery flash, before super reset and OTA installation; not a statement about current B-slot contents",
+  "first_boot_completed": true,
+  "first_boot_slot": "b",
+  "observed_lineage_version": "23.2-20260913-UNOFFICIAL-gold",
+  "observed_vendor_version": "OS3.0.10.0.VNQCNXM",
+  "selinux": "Enforcing",
+  "setup_completed": true,
+  "installed_b_boot_chain_readback_match": true,
+  "initial_runtime_log_review": {
+    "java_or_native_crash_seen": false,
+    "anr_seen": false,
+    "tombstone_files": 0,
+    "surfaceflinger_pending_frame_errors_first_capture": 398,
+    "hwcomposer_buffer_recorder_errors_first_capture": 1340,
+    "power_hal_launch_acquire_release_seen": true,
+    "power_hal_permission_error_seen_in_capture": false,
+    "hotspot_state": "TetheredState, lastError=0",
+    "hotspot_driver_auth_tx_timeouts_seen": true,
+    "mddp_invalid_state_events_seen": true,
+    "hardware_offload_accepted": false,
+    "hardware_offload_stats_at_capture": "rx=0 tx=0; no connected clients",
+    "scope": "Finite retained log buffers plus crash/ANR files and DropBox index; not a complete historical log or long-term test"
+  }
 }

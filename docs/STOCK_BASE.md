@@ -1,6 +1,6 @@
 # 官方底包整合
 
-`main` 固定使用 Redmi Note 13 5G `gold` 国行官方 **OS3.0.10.0.VNQCNXM**（Android 15）作为下层固件基线，LineageOS 上层仍为 **23.2 / Android 16**。版本与完整归档校验值见 [gold-cn.json](../firmware/gold-cn.json)。本轮只构建和检查，未刷手机。
+`main` 固定使用 Redmi Note 13 5G `gold` 国行官方 **OS3.0.10.0.VNQCNXM**（Android 15）作为下层固件基线，LineageOS 上层仍为 **23.2 / Android 16**。版本与完整归档校验值见 [gold-cn.json](../firmware/gold-cn.json)。初始阶段只构建和检查；后续 R1 完整 OTA 已安装并首次启动，详见 [FULL_BUILD.md](FULL_BUILD.md)。
 
 旧 OS3.0.9 组合、调试输入与自编译 MDDP 研究保留在 [experimental 分支](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental)。`main` 不使用该候选模块。
 
@@ -50,7 +50,7 @@ sudo python3 /path/to/lineageos-gold/tools/build-stock-base.py \
 
 ## 配套 Lineage Recovery
 
-上述基础组装保持官方 vendor_boot。用于终端用户 sideload 的完整包，还需完成 [Lineage Recovery 整合](RECOVERY.md)，成对替换 vendor_boot 与 vbmeta 后重新生成并验证完整 OTA。该步骤目前只有离线检查，实机安装尚未验收。
+上述基础组装保持官方 vendor_boot。用于终端用户 sideload 的完整包，还需完成 [Lineage Recovery 整合](RECOVERY.md)，成对替换 vendor_boot 与 vbmeta 后重新生成并验证完整 OTA。后续 R1 已完成实机 sideload 与首次启动，安装后再次进入 Recovery 和完整硬件验收仍待完成。
 
 ## 编译与兼容性检查
 

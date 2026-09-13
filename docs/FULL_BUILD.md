@@ -1,10 +1,10 @@
 # 新底包完整 OTA 构建与安装测试
 
-日期：2026-09-13。已生成 LineageOS 23.2 + 官方 OS3.0.10.0.VNQCNXM 的完整 A/B OTA 候选包，**尚未完成全新安装或实机验收，不作为已验证发行版提供**。
+日期：2026-09-13。已生成 LineageOS 23.2 + 官方 OS3.0.10.0.VNQCNXM 的完整 A/B OTA 候选包，**全新清除、sideload 和首次启动已通过，完整硬件验收未完成，不作为已验证发行版提供**。
 
 ## 当前测试候选：Recovery R1
 
-`lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip` 已纳入配套 Lineage Recovery，是接下来全新安装测试的候选。大小 **1,741,273,388 字节**，SHA-256：
+`lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip` 已纳入配套 Lineage Recovery，是本轮已完成安装和首次启动的测试包。大小 **1,741,273,388 字节**，SHA-256：
 
 ```text
 cf04a5d81fb6b897165978f0b0982fd67ec0128585fdc234d8f5cef4b3a20a74
@@ -22,7 +22,7 @@ Lineage Recovery 已启动，报告 23.2-20260913 和官方 6.6.89 内核，显�
 
 data 和 metadata 已由 Recovery 菜单清除成功。首次 sideload 的主机退出码为 0，但 Recovery 明确返回 **status 7 / Installation aborted**，因此不能把 ADB 传输成功当成安装成功。
 
-失败发生在动态分区创建阶段：旧手工刷入的 A 槽分区位于 `default` 组，且存在历史 COW 项；更新器清除目标槽分组后，仍遇到重名 `system_b`。已保存原 super 元数据，用最终构建对应的 `super_empty.img` 执行标准 `fastboot wipe-super`，重建干净分组后开始第二次 sideload。第二次 sideload 主机正常退出（0），用时约 10 分 36 秒，传输统计 1.98x；用户报告手机显示安装完成并已重启。**最终 Recovery 成功日志尚待补取，首次 Android 启动与硬件功能尚未验收。** 这是从旧 Lineage 环境开始的测试，不是从完整 HyperOS 原厂状态完成的验证。[实机记录](../validation/clean-install-20260914.json)。
+失败发生在动态分区创建阶段：旧手工刷入的 A 槽分区位于 `default` 组，且存在历史 COW 项；更新器清除目标槽分组后，仍遇到重名 `system_b`。已保存原 super 元数据，用最终构建对应的 `super_empty.img` 执行标准 `fastboot wipe-super`，重建干净分组后开始第二次 sideload。第二次 sideload 主机正常退出（0），用时约 10 分 36 秒，传输统计 1.98x；最终 Recovery 日志确认 **status 0**，DownloadAction、FilesystemVerifierAction 和 PostinstallRunnerAction 均为 `kSuccess`。随后 B 槽 Android 首次启动和初始化完成，版本为 23.2-20260913、底包 OS3.0.10、内核 6.6.89，SELinux Enforcing；B 槽五个启动链镜像回读匹配最终 OTA。**安装后再次进入 Recovery 和完整硬件功能仍未验收。** 这是从旧 Lineage 环境开始的测试，不是从完整 HyperOS 原厂状态完成的验证。[实机记录](../validation/clean-install-20260914.json)。
 
 ### 干净动态分区布局
 
@@ -42,7 +42,7 @@ build_super_image /path/to/final-target-files/META/misc_info.txt super_empty.img
 fastboot wipe-super super_empty.img
 ```
 
-本次已成功执行。仍须回到配套 Recovery，通过 sideload 安装完整 OTA；不能启动空的旧系统。完整的终端用户安装步骤会在流程验证结束后定稿。
+本次已成功执行。仍须回到配套 Recovery，通过 sideload 安装完整 OTA；不能启动空的旧系统。当前测试版步骤见 [INSTALL_TEST.md](INSTALL_TEST.md)，尚未覆盖全部起始固件和升级路径。
 
 ## 本轮构建
 
@@ -69,7 +69,8 @@ fastboot wipe-super super_empty.img
 | FEC | 9 个逻辑分区独立重编码比对通过 |
 | VINTF、property contexts、运行时策略编译 | 通过 |
 | 严格 SELinux neverallow | **既有 27 项失败仍在** |
-| 全新安装、启动、硬件功能 | **未验收** |
+| 全新清除、sideload、首次启动 | 通过；旧手工布局需先重建 super，见实机记录 |
+| 安装后再次进入 Recovery、完整硬件功能 | **未验收** |
 
 机器可读结果见 [full-build-20260913.json](../validation/full-build-20260913.json)。离线成功不代表 OTA 可以在 Recovery 中实际安装。
 
@@ -77,6 +78,10 @@ fastboot wipe-super super_empty.img
 
 按“刷入配套 Lineage Recovery → 格式化 data → adb sideload 完整包 → 首次启动 → 再次进入 Recovery”测试，随后核对基础硬件和已有修复。
 
-原始 OTA 使用官方 vendor_boot；普通源码单独生成的 Recovery 又使用另一套内核输入。R1 已纳入配套 Lineage Recovery 并完成整包离线检查，见 [RECOVERY.md](RECOVERY.md)；安装后仍能进入该 Recovery 的实机验证尚未完成。未解决前不提供可照抄的刷机命令，也不把开发期间分区直刷成功当作用户安装验收。
+原始 OTA 使用官方 vendor_boot；普通源码单独生成的 Recovery 又使用另一套内核输入。R1 已纳入配套 Lineage Recovery 并完成整包离线检查，见 [RECOVERY.md](RECOVERY.md)；安装后仍能进入该 Recovery 的实机验证尚未完成。供测试者使用的安装步骤和本轮边界见 [INSTALL_TEST.md](INSTALL_TEST.md)；不将其标作稳定版安装验收。
 
 格式化 data 会清除应用、账号和内部存储文件。实际测试的清除、安装、首次启动及功能结果将分项记录；不发布设备序列号、SIM 标识或原始个人日志。
+
+## 首次运行日志
+
+未见 Java/native crash、tombstone 或 ANR。首轮留存 logcat 中有 398 条 SurfaceFlinger pending-frame 报错和 1340 条 HWC buffer-recorder 报错；图形问题仍存在，不能仅凭这些日志认定根因。热点处于 TetheredState，但驱动存在认证发送完成超时和 MDDP 状态错误；捕获时无已连接客户端、offload 统计为 0，不据此宣称转发故障或硬件加速验收成功。Power HAL 可见 LAUNCH 请求与释放，当前片段未见对应权限错误。日志为有限观察窗口，不代表长期稳定性。

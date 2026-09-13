@@ -1,6 +1,6 @@
 # 官方 6.6 基线的 Lineage Recovery
 
-日期：2026-09-13。**以下是经过离线检查的候选构建方法，随后已观察到 Recovery 启动和 ADB shell 可用；data 格式化已由日志确认，第二次 sideload 用户报告安装完成；最终安装日志、首次 Android 启动与安装后再次进入 Recovery 仍待验证，进度见 [FULL_BUILD.md](FULL_BUILD.md)。当前不提供已验收的终端用户刷机命令。**
+日期：2026-09-13。**以下是经过离线检查的候选构建方法，随后已观察到 Recovery 启动和 ADB shell 可用；data 格式化、第二次 sideload（最终日志 status 0）、首次 Android 启动均已确认；安装后再次进入 Recovery 仍待验证，进度见 [FULL_BUILD.md](FULL_BUILD.md)。测试者步骤见 [INSTALL_TEST.md](INSTALL_TEST.md)，尚不是稳定版完整验收。**
 
 ## 为什么需要单独整合
 
@@ -37,4 +37,4 @@ python3 tools/build-recovery.py \
 
 候选构建及上述离线检查已通过，结果见 [recovery-candidate-20260913.json](../validation/recovery-candidate-20260913.json)。带该 Recovery 的完整 OTA 已重新打包并通过签名、分区解包、AVB/FEC 及兼容性检查，文件名和新哈希见 [FULL_BUILD.md](FULL_BUILD.md)；旧完整包的哈希不代表 R1 候选。
 
-实机已确认 Recovery 启动、ADB shell 和 data 格式化。第二次 sideload 主机正常退出且用户报告安装完成；最终安装日志、首次 Android 开机、再次进入 Recovery 和基础功能继续分项验证。格式化会清除应用、账号和内部存储文件，需先备份。现有 27 项严格 SELinux neverallow 缺口不会因替换 Recovery 自动消失。
+实机已确认 Recovery 启动、ADB shell 和 data 格式化。第二次 sideload 最终日志确认 status 0，首次 Android 开机已完成，安装后的 B 槽五个启动链镜像回读匹配。再次进入 Recovery 和完整基础功能继续分项验证。格式化会清除应用、账号和内部存储文件，需先备份。现有 27 项严格 SELinux neverallow 缺口不会因替换 Recovery 自动消失。

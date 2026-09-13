@@ -1,6 +1,13 @@
 # 功能与验收状态
 
-状态整理于 2026-09-13。**手机仍是旧 OS3.0.9 底包组合；`main` 的 OS3.0.10 整合尚未刷机，以下实机记录不自动适用于新底包。** 新组合已完成完整 OTA 的离线构建与解包校验；全新安装和 Recovery 测试待完成，见 [FULL_BUILD.md](FULL_BUILD.md)。
+状态更新于 2026-09-14。**手机已从完整 R1 OTA 安装并启动 LineageOS 23.2-20260913 / OS3.0.10，运行于 B 槽、SELinux Enforcing。** Recovery 最终日志 status 0，B 槽启动链回读匹配。安装后再次进入 Recovery、完整硬件与长期稳定性仍待验收；下方旧基线功能记录不自动视为新基线通过。见 [FULL_BUILD.md](FULL_BUILD.md) 和 [测试版安装说明](INSTALL_TEST.md)。
+
+## 新底包首次运行
+
+- 初始化完成，首轮未见 crash、tombstone 或 ANR。
+- 图形帧积压复现，伴随 HWC buffer-recorder 报错；仍未解决。
+- 热点驱动有认证发送完成超时和 MDDP 状态错误；硬件加速未验收。
+- Power HAL 可见 LAUNCH 请求及释放，观察片段未见对应权限错误；性能、温控尚未验收。
 
 ## 旧底包上已部署的修复与配置
 
