@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-14",
+  "device": "gold",
+  "starting_system": "LineageOS 23.2-20260911 with OS3.0.9.0.VNQCNXM",
+  "starting_slot": "a",
+  "bootloader_unlocked": true,
+  "battery_percent_before": 63,
+  "snapshot_update_state_before": "none",
+  "boot_firmware_backup_partitions": 32,
+  "recovery": "LineageOS 23.2-20260913",
+  "kernel": "6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k",
+  "recovery_boot_observed": true,
+  "adb_shell_observed": true,
+  "display_initialization": "1080x2400 at 60 Hz; visual/menu acceptance pending",
+  "flashed_slot": "a",
+  "flashed_partitions": [
+    "lk",
+    "boot",
+    "dtbo",
+    "vendor_boot",
+    "vbmeta"
+  ],
+  "flashed_images_readback_match": true,
+  "other_slot_boot_firmware_unchanged": true,
+  "data_formatted": false,
+  "sideload_tested": false,
+  "first_boot_tested": false,
+  "post_install_recovery_tested": false,
+  "release_accepted": false,
+  "note": "Recovery USB initially reported unauthorized; reconnecting the ADB transport restored recovery shell. Normal boot after installation has not been tested."
+}

@@ -14,6 +14,14 @@ cf04a5d81fb6b897165978f0b0982fd67ec0128585fdc234d8f5cef4b3a20a74
 
 [机器可读验证记录](../validation/full-build-recovery-r1-20260913.json)。**手机尚未清除数据、尚未 sideload、尚未做首次启动或安装后 Recovery 测试；不能把该候选称为已验收发行版。**
 
+## 2026-09-14 实机进度
+
+已在解锁的 gold 上从旧 LineageOS 23.2 / OS3.0.9 组合开始测试。先备份并核对两槽共 32 个启动/固件分区，再向 A 槽写入 R1 配套 LK、boot、DTBO、vendor_boot、vbmeta。五个写入分区回读一致，B 槽 16 个原启动/固件分区保持不变。
+
+Lineage Recovery 已启动，报告 23.2-20260913 和官方 6.6.89 内核，显示初始化为 1080×2400/60Hz，ADB shell 可用。USB 曾短暂显示未授权，重连 ADB transport 后恢复；没有据此宣称该 USB 现象已经修复。
+
+**当前等待在 Recovery 菜单完成格式化及进入 Apply from ADB；尚未清除数据、尚未 sideload、未做安装后启动验收。** 这是从旧 Lineage 环境开始的测试，不是从完整 HyperOS 原厂状态完成的验证。[实机记录](../validation/clean-install-20260914.json)。
+
 ## 本轮构建
 
 现有 Linux 编译树执行 `m -j8 bacon` 成功，用时 8 分 29 秒，复用了编译缓存；这是完整产品目标与完整 OTA，不能称为清空缓存重编或空目录恢复验证。system、system_ext、product 和 ODM 来自本轮构建，之后完成 hybrid 适配并结合匹配的官方下层镜像。
