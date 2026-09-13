@@ -1,0 +1,18 @@
+// Validated proprietary IMS payload; keep its bundled dependency classes; sign with the product platform key.
+android_app_import {
+    name: "ImsService",
+    apk: "ImsService.apk",
+    privileged: true,
+    system_ext_specific: true,
+    certificate: "platform",
+    enforce_uses_libs: false,
+    dex_preopt: { enabled: false },
+    required: ["gold-ims-privapp-permissions"],
+}
+prebuilt_etc {
+    name: "gold-ims-privapp-permissions",
+    src: "privapp-permissions-com.mediatek.ims.xml",
+    filename: "privapp-permissions-com.mediatek.ims.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}

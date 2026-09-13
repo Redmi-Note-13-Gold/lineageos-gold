@@ -1,0 +1,428 @@
+diff --git a/Tethering/src/com/android/networkstack/tethering/BpfCoordinator.java b/Tethering/src/com/android/networkstack/tethering/BpfCoordinator.java
+index 1a3328a..09c6ce5 100644
+--- a/Tethering/src/com/android/networkstack/tethering/BpfCoordinator.java
++++ b/Tethering/src/com/android/networkstack/tethering/BpfCoordinator.java
+@@ -2037,8 +2037,7 @@ public class BpfCoordinator {
+         return null;
+     }
+ 
+-    // TODO: parse CTA_PROTOINFO of conntrack event in ConntrackMonitor. For TCP, only add rules
+-    // while TCP status is established.
++    // TCP status flags survive teardown; only the protocol state permits offload.
+     @VisibleForTesting
+     class BpfConntrackEventConsumer implements ConntrackEventConsumer {
+         // The upstream4 and downstream4 rules are built as the following tables. Only raw ip
+@@ -2143,6 +2142,13 @@ public class BpfCoordinator {
+         public void accept(ConntrackEvent e) {
+             if (!allowOffload(e)) return;
+ 
++            final boolean isDelete = e.msgType == (NetlinkConstants.NFNL_SUBSYS_CTNETLINK << 8
++                    | NetlinkConstants.IPCTNL_MSG_CT_DELETE);
++            // Updates without IPCT_PROTOINFO omit the TCP state. They cannot authorize a new
++            // offload rule or invalidate an existing one. Destroy events still remove both rules.
++            if (!isDelete && e.tupleOrig.protoNum == OsConstants.IPPROTO_TCP
++                    && e.tcpState == ConntrackMessage.TCP_CONNTRACK_UNKNOWN) return;
++
+             final ClientInfo tetherClient = getClientInfo(e.tupleOrig.srcIp);
+             if (tetherClient == null) return;
+ 
+@@ -2153,8 +2159,12 @@ public class BpfCoordinator {
+             final Tether4Key downstream4Key = makeTetherDownstream4Key(e, tetherClient,
+                     upstreamIndex);
+ 
+-            if (e.msgType == (NetlinkConstants.NFNL_SUBSYS_CTNETLINK << 8
+-                    | NetlinkConstants.IPCTNL_MSG_CT_DELETE)) {
++            // IPS_ASSURED/IPS_SEEN_REPLY remain set during FIN_WAIT, LAST_ACK and CLOSE.
++            // Remove both rules on teardown instead of re-adding them and refreshing a closing
++            // connection with the five-day established timeout. UDP does not carry TCP state.
++            final boolean tcpNotEstablished = e.tupleOrig.protoNum == OsConstants.IPPROTO_TCP
++                    && e.tcpState != ConntrackMessage.TCP_CONNTRACK_ESTABLISHED;
++            if (tcpNotEstablished || isDelete) {
+                 final boolean deletedUpstream = mBpfCoordinatorShim.tetherOffloadRuleRemove(
+                         UPSTREAM, upstream4Key);
+                 final boolean deletedDownstream = mBpfCoordinatorShim.tetherOffloadRuleRemove(
+diff --git a/Tethering/tests/unit/src/com/android/networkstack/tethering/BpfCoordinatorTest.java b/Tethering/tests/unit/src/com/android/networkstack/tethering/BpfCoordinatorTest.java
+index 6c2967e..0710288 100644
+--- a/Tethering/tests/unit/src/com/android/networkstack/tethering/BpfCoordinatorTest.java
++++ b/Tethering/tests/unit/src/com/android/networkstack/tethering/BpfCoordinatorTest.java
+@@ -397,6 +397,7 @@ public class BpfCoordinatorTest {
+         public static class Builder {
+             private short mMsgType = IPCTNL_MSG_CT_NEW;
+             private short mProto = (short) IPPROTO_TCP;
++            private int mTcpState = ConntrackMessage.TCP_CONNTRACK_ESTABLISHED;
+             private Inet4Address mPrivateAddr = PRIVATE_ADDR;
+             private Inet4Address mPublicAddr = PUBLIC_ADDR;
+             private Inet4Address mRemoteAddr = REMOTE_ADDR;
+@@ -420,6 +421,11 @@ public class BpfCoordinatorTest {
+                 return this;
+             }
+ 
++            public Builder setTcpState(int tcpState) {
++                mTcpState = tcpState;
++                return this;
++            }
++
+             public Builder setPrivateAddress(Inet4Address privateAddr) {
+                 mPrivateAddr = privateAddr;
+                 return this;
+@@ -441,7 +447,7 @@ public class BpfCoordinatorTest {
+                         new Tuple(new TupleIpv4(mRemoteAddr, mPublicAddr),
+                                 new TupleProto((byte) mProto, mRemotePort, mPublicPort)),
+                         status,
+-                        timeoutSec);
++                        timeoutSec, mTcpState);
+             }
+         }
+     }
+@@ -1988,6 +1994,51 @@ public class BpfCoordinatorTest {
+                 eq(new S32(UPSTREAM_IFINDEX)));
+     }
+ 
++    @Test
++    @IgnoreUpTo(Build.VERSION_CODES.R)
++    public void testTcpUpdateWithoutStateDoesNotChangeOffload() throws Exception {
++        final BpfCoordinator coordinator = makeBpfCoordinator();
++        initBpfCoordinatorForRule4(coordinator);
++        final Tether4Key up = new TestUpstream4Key.Builder().build();
++        final Tether4Key down = new TestDownstream4Key.Builder().build();
++        mConsumer.accept(new TestConntrackEvent.Builder().setTcpState(-1).build());
++        assertNull(mBpfUpstream4Map.getValue(up));
++        assertNull(mBpfDownstream4Map.getValue(down));
++        mConsumer.accept(new TestConntrackEvent.Builder().build());
++        mConsumer.accept(new TestConntrackEvent.Builder().setTcpState(-1).build());
++        assertNotNull(mBpfUpstream4Map.getValue(up));
++        assertNotNull(mBpfDownstream4Map.getValue(down));
++        mConsumer.accept(new TestConntrackEvent.Builder().setMsgType(IPCTNL_MSG_CT_DELETE)
++                .setTcpState(-1).build());
++        assertNull(mBpfUpstream4Map.getValue(up));
++        assertNull(mBpfDownstream4Map.getValue(down));
++    }
++
++    @Test
++    @IgnoreUpTo(Build.VERSION_CODES.R)
++    public void testTcpTeardownRemovesOffloadBeforeDestroy() throws Exception {
++        final BpfCoordinator coordinator = makeBpfCoordinator();
++        initBpfCoordinatorForRule4(coordinator);
++        // FIN_WAIT, CLOSE_WAIT, LAST_ACK, TIME_WAIT, CLOSE, SYN_SENT, SYN_RECV.
++        for (int state : new int[] {4, 5, 6, 7, 8, 1, 2}) {
++            mConsumer.accept(new TestConntrackEvent.Builder().build());
++            assertNotNull(mBpfUpstream4Map.getValue(new TestUpstream4Key.Builder().build()));
++            assertNotNull(mBpfDownstream4Map.getValue(new TestDownstream4Key.Builder().build()));
++            mConsumer.accept(new TestConntrackEvent.Builder().setTcpState(state).build());
++            assertNull(mBpfUpstream4Map.getValue(new TestUpstream4Key.Builder().build()));
++            assertNull(mBpfDownstream4Map.getValue(new TestDownstream4Key.Builder().build()));
++            // Repeated updates retaining IPS_ASSURED must not recreate the closing flow.
++            mConsumer.accept(new TestConntrackEvent.Builder().setTcpState(state).build());
++            assertNull(mBpfUpstream4Map.getValue(new TestUpstream4Key.Builder().build()));
++            assertNull(mBpfDownstream4Map.getValue(new TestDownstream4Key.Builder().build()));
++        }
++        // Missing TCP state must not suppress UDP offload.
++        mConsumer.accept(new TestConntrackEvent.Builder().setProto(IPPROTO_UDP)
++                .setTcpState(-1).build());
++        assertNotNull(mBpfUpstream4Map.getValue(
++                new TestUpstream4Key.Builder().setProto(IPPROTO_UDP).build()));
++    }
++
+     @Test
+     @IgnoreUpTo(Build.VERSION_CODES.R)
+     public void testAddDevMapRule4() throws Exception {
+@@ -2467,7 +2518,7 @@ public class BpfCoordinatorTest {
+                 new Tuple(new TupleIpv4(REMOTE_ADDR, PUBLIC_ADDR),
+                         new TupleProto((byte) IPPROTO_TCP, REMOTE_PORT, publicPort)),
+                 ESTABLISHED_MASK,
+-                100 /* nonzero, CT_NEW */);
++                100 /* nonzero, CT_NEW */, ConntrackMessage.TCP_CONNTRACK_ESTABLISHED);
+     }
+ 
+     private static byte[] prefixToIp64(IpPrefix prefix) {
+diff --git a/staticlibs/device/com/android/net/module/util/ip/ConntrackMonitor.java b/staticlibs/device/com/android/net/module/util/ip/ConntrackMonitor.java
+index 420a544..f04728a 100644
+--- a/staticlibs/device/com/android/net/module/util/ip/ConntrackMonitor.java
++++ b/staticlibs/device/com/android/net/module/util/ip/ConntrackMonitor.java
+@@ -80,6 +80,8 @@ public class ConntrackMonitor extends NetlinkMonitor {
+          * Conntrack timeout.
+          */
+         public final int timeoutSec;
++        /** TCP protocol state from CTA_PROTOINFO_TCP_STATE. */
++        public final int tcpState;
+ 
+         public ConntrackEvent(ConntrackMessage msg) {
+             this.msgType = msg.getHeader().nlmsg_type;
+@@ -87,16 +89,25 @@ public class ConntrackMonitor extends NetlinkMonitor {
+             this.tupleReply = msg.tupleReply;
+             this.status = msg.status;
+             this.timeoutSec = msg.timeoutSec;
++            this.tcpState = msg.tcpState;
+         }
+ 
+         @VisibleForTesting
+         public ConntrackEvent(short msgType, ConntrackMessage.Tuple tupleOrig,
+                 ConntrackMessage.Tuple tupleReply, int status, int timeoutSec) {
++            this(msgType, tupleOrig, tupleReply, status, timeoutSec,
++                    ConntrackMessage.TCP_CONNTRACK_UNKNOWN);
++        }
++
++        @VisibleForTesting
++        public ConntrackEvent(short msgType, ConntrackMessage.Tuple tupleOrig,
++                ConntrackMessage.Tuple tupleReply, int status, int timeoutSec, int tcpState) {
+             this.msgType = msgType;
+             this.tupleOrig = tupleOrig;
+             this.tupleReply = tupleReply;
+             this.status = status;
+             this.timeoutSec = timeoutSec;
++            this.tcpState = tcpState;
+         }
+ 
+         @Override
+@@ -108,12 +119,13 @@ public class ConntrackMonitor extends NetlinkMonitor {
+                     && Objects.equals(this.tupleOrig, that.tupleOrig)
+                     && Objects.equals(this.tupleReply, that.tupleReply)
+                     && this.status == that.status
+-                    && this.timeoutSec == that.timeoutSec;
++                    && this.timeoutSec == that.timeoutSec
++                    && this.tcpState == that.tcpState;
+         }
+ 
+         @Override
+         public int hashCode() {
+-            return Objects.hash(msgType, tupleOrig, tupleReply, status, timeoutSec);
++            return Objects.hash(msgType, tupleOrig, tupleReply, status, timeoutSec, tcpState);
+         }
+ 
+         @Override
+@@ -137,6 +149,7 @@ public class ConntrackMonitor extends NetlinkMonitor {
+          * @param msg the conntrack message to check.
+          * @return true if an established NAT message, false if not.
+          */
++        // These status bits survive TCP teardown. Consumers must check tcpState before offload.
+         public static boolean isEstablishedNatSession(@NonNull ConntrackMessage msg) {
+             if (msg.getMessageType() != NetlinkConstants.IPCTNL_MSG_CT_NEW) return false;
+             if (msg.tupleOrig == null) return false;
+diff --git a/staticlibs/device/com/android/net/module/util/netlink/ConntrackMessage.java b/staticlibs/device/com/android/net/module/util/netlink/ConntrackMessage.java
+index dfed3ef..0d936f2 100644
+--- a/staticlibs/device/com/android/net/module/util/netlink/ConntrackMessage.java
++++ b/staticlibs/device/com/android/net/module/util/netlink/ConntrackMessage.java
+@@ -55,6 +55,15 @@ public class ConntrackMessage extends NetlinkMessage {
+     public static final short CTA_STATUS      = 3;
+     public static final short CTA_TIMEOUT     = 7;
+ 
++    // Nested CTA_PROTOINFO / CTA_PROTOINFO_TCP attributes (nfnetlink_conntrack.h).
++    public static final short CTA_PROTOINFO = 4;
++    public static final short CTA_PROTOINFO_TCP = 1;
++    public static final short CTA_PROTOINFO_TCP_STATE = 1;
++
++    // enum tcp_conntrack (nf_conntrack_tcp.h). Missing/malformed state must not enable offload.
++    public static final int TCP_CONNTRACK_UNKNOWN = -1;
++    public static final int TCP_CONNTRACK_ESTABLISHED = 3;
++
+     // enum ctattr_tuple
+     public static final short CTA_TUPLE_IP    = 1;
+     public static final short CTA_TUPLE_PROTO = 2;
+@@ -267,6 +276,9 @@ public class ConntrackMessage extends NetlinkMessage {
+             tupleReply = parseTuple(nlAttr.getValueAsByteBuffer());
+         }
+ 
++        byteBuffer.position(baseOffset);
++        final int tcpState = parseTcpState(byteBuffer);
++
+         // Advance to the end of the message.
+         byteBuffer.position(baseOffset);
+         final int kMinConsumed = StructNlMsgHdr.STRUCT_SIZE + StructNfGenMsg.STRUCT_SIZE;
+@@ -277,7 +289,24 @@ public class ConntrackMessage extends NetlinkMessage {
+         }
+         byteBuffer.position(baseOffset + kAdditionalSpace);
+ 
+-        return new ConntrackMessage(header, nfGenMsg, tupleOrig, tupleReply, status, timeoutSec);
++        return new ConntrackMessage(header, nfGenMsg, tupleOrig, tupleReply, status,
++                timeoutSec, tcpState);
++    }
++
++    private static int parseTcpState(@NonNull ByteBuffer buffer) {
++        final StructNlAttr protoInfo = findNextAttrOfType(makeNestedType(CTA_PROTOINFO), buffer);
++        if (protoInfo == null) return TCP_CONNTRACK_UNKNOWN;
++        final ByteBuffer protoBuffer = protoInfo.getValueAsByteBuffer();
++        if (protoBuffer == null) return TCP_CONNTRACK_UNKNOWN;
++        final StructNlAttr tcp = findNextAttrOfType(makeNestedType(CTA_PROTOINFO_TCP), protoBuffer);
++        if (tcp == null) return TCP_CONNTRACK_UNKNOWN;
++        final ByteBuffer tcpBuffer = tcp.getValueAsByteBuffer();
++        if (tcpBuffer == null) return TCP_CONNTRACK_UNKNOWN;
++        final StructNlAttr state = findNextAttrOfType(CTA_PROTOINFO_TCP_STATE, tcpBuffer);
++        if (state == null || state.nla_value == null || state.nla_value.length != 1) {
++            return TCP_CONNTRACK_UNKNOWN;
++        }
++        return Byte.toUnsignedInt(state.getValueAsByte((byte) 0));
+     }
+ 
+     /**
+@@ -437,6 +466,8 @@ public class ConntrackMessage extends NetlinkMessage {
+      * timeout is 0 (absent).
+      */
+     public final int timeoutSec;
++    /** TCP protocol state, or TCP_CONNTRACK_UNKNOWN when absent or malformed. */
++    public final int tcpState;
+ 
+     private ConntrackMessage() {
+         super(new StructNlMsgHdr());
+@@ -448,16 +479,19 @@ public class ConntrackMessage extends NetlinkMessage {
+         tupleReply = null;
+         status = 0;
+         timeoutSec = 0;
++        tcpState = TCP_CONNTRACK_UNKNOWN;
+     }
+ 
+     private ConntrackMessage(@NonNull StructNlMsgHdr header, @NonNull StructNfGenMsg nfGenMsg,
+-            @Nullable Tuple tupleOrig, @Nullable Tuple tupleReply, int status, int timeoutSec) {
++            @Nullable Tuple tupleOrig, @Nullable Tuple tupleReply, int status, int timeoutSec,
++            int tcpState) {
+         super(header);
+         this.nfGenMsg = nfGenMsg;
+         this.tupleOrig = tupleOrig;
+         this.tupleReply = tupleReply;
+         this.status = status;
+         this.timeoutSec = timeoutSec;
++        this.tcpState = tcpState;
+     }
+ 
+     /**
+diff --git a/staticlibs/tests/unit/src/com/android/net/module/util/ip/ConntrackMonitorTest.java b/staticlibs/tests/unit/src/com/android/net/module/util/ip/ConntrackMonitorTest.java
+index 90476a7..b77665d 100644
+--- a/staticlibs/tests/unit/src/com/android/net/module/util/ip/ConntrackMonitorTest.java
++++ b/staticlibs/tests/unit/src/com/android/net/module/util/ip/ConntrackMonitorTest.java
+@@ -19,6 +19,7 @@ package com.android.net.module.util.ip;
+ import static android.system.OsConstants.AF_UNIX;
+ import static android.system.OsConstants.IPPROTO_TCP;
+ import static android.system.OsConstants.SOCK_DGRAM;
++import static android.system.OsConstants.SOCK_NONBLOCK;
+ 
+ import static com.android.net.module.util.netlink.ConntrackMessage.Tuple;
+ import static com.android.net.module.util.netlink.ConntrackMessage.TupleIpv4;
+@@ -30,6 +31,7 @@ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertNotEquals;
+ import static org.junit.Assert.fail;
+ import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.Mockito.clearInvocations;
+ import static org.mockito.Mockito.timeout;
+ import static org.mockito.Mockito.verify;
+ 
+@@ -46,7 +48,9 @@ import androidx.test.runner.AndroidJUnit4;
+ 
+ import com.android.net.module.util.SharedLog;
+ import com.android.net.module.util.ip.ConntrackMonitor.ConntrackEvent;
++import com.android.net.module.util.netlink.ConntrackMessage;
+ import com.android.net.module.util.netlink.NetlinkConstants;
++import com.android.net.module.util.netlink.StructNlAttr;
+ import com.android.net.module.util.netlink.NetlinkUtils;
+ 
+ import libcore.util.HexEncoding;
+@@ -55,12 +59,16 @@ import org.junit.After;
+ import org.junit.Before;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.mockito.ArgumentCaptor;
+ import org.mockito.Mock;
+ import org.mockito.MockitoAnnotations;
+ 
+ import java.io.FileDescriptor;
+ import java.io.InterruptedIOException;
+ import java.net.Inet4Address;
++import java.nio.ByteBuffer;
++import java.nio.ByteOrder;
++import java.util.Arrays;
+ 
+ /**
+  * Tests for ConntrackMonitor.
+@@ -90,7 +98,9 @@ public class ConntrackMonitorTest {
+             mReadFd = new FileDescriptor();
+             mWriteFd = new FileDescriptor();
+             try {
+-                Os.socketpair(AF_UNIX, SOCK_DGRAM, 0, mWriteFd, mReadFd);
++                // Match the production nonblocking socket: a blocking read would prevent
++                // subsequent sends posted to the same handler from running.
++                Os.socketpair(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0, mWriteFd, mReadFd);
+             } catch (ErrnoException e) {
+                 fail("Could not create socket pair: " + e);
+             }
+@@ -216,6 +226,33 @@ public class ConntrackMonitorTest {
+                 timeoutSec);
+     }
+ 
++    @Test
++    public void testTcpTeardownStateReachesConsumer() throws Exception {
++        // The same ASSURED NAT status bits appear on established and closing updates.
++        for (int state : new int[] {3, 4, 5, 6, 7, 8}) {
++            final StructNlAttr protoInfo = new StructNlAttr(ConntrackMessage.CTA_PROTOINFO,
++                    new StructNlAttr(ConntrackMessage.CTA_PROTOINFO_TCP,
++                            new StructNlAttr(ConntrackMessage.CTA_PROTOINFO_TCP_STATE,
++                                    (byte) state)));
++            final byte[] bytes = Arrays.copyOf(CT_V4NEW_TCP_BYTES,
++                    CT_V4NEW_TCP_BYTES.length + protoInfo.getAlignedLength());
++            final ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.nativeOrder());
++            buffer.putInt(0, bytes.length);
++            buffer.position(CT_V4NEW_TCP_BYTES.length);
++            protoInfo.pack(buffer);
++            final ConntrackEvent base = makeTestConntrackEvent(IPCTNL_MSG_CT_NEW, 0x19e, 120);
++            final ConntrackEvent expected = new ConntrackEvent(base.msgType, base.tupleOrig,
++                    base.tupleReply, base.status, base.timeoutSec, state);
++            mConntrackMonitor.sendMessage(bytes);
++            final ArgumentCaptor<ConntrackEvent> captor =
++                    ArgumentCaptor.forClass(ConntrackEvent.class);
++            verify(mConsumer, timeout(TIMEOUT_MS)).accept(captor.capture());
++            assertEquals("TCP state propagated by monitor", state, captor.getValue().tcpState);
++            assertEquals(expected, captor.getValue());
++            clearInvocations(mConsumer);
++        }
++    }
++
+     @Test
+     public void testConntrackEventNew() throws Exception {
+         final ConntrackEvent expectedEvent = makeTestConntrackEvent(IPCTNL_MSG_CT_NEW,
+diff --git a/staticlibs/tests/unit/src/com/android/net/module/util/netlink/ConntrackMessageTest.java b/staticlibs/tests/unit/src/com/android/net/module/util/netlink/ConntrackMessageTest.java
+index f02b4cb..e9c38d4 100644
+--- a/staticlibs/tests/unit/src/com/android/net/module/util/netlink/ConntrackMessageTest.java
++++ b/staticlibs/tests/unit/src/com/android/net/module/util/netlink/ConntrackMessageTest.java
+@@ -133,6 +133,45 @@ public class ConntrackMessageTest {
+                 180);
+     }
+ 
++    private ConntrackMessage parseWithProtoInfo(StructNlAttr protoInfo) {
++        final byte[] bytes = Arrays.copyOf(CT_V4UPDATE_TCP_BYTES,
++                CT_V4UPDATE_TCP_BYTES.length + protoInfo.getAlignedLength());
++        final ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.nativeOrder());
++        buffer.putInt(0, bytes.length);
++        buffer.position(CT_V4UPDATE_TCP_BYTES.length);
++        protoInfo.pack(buffer);
++        buffer.position(0);
++        return ConntrackMessage.parse(StructNlMsgHdr.parse(buffer), buffer);
++    }
++
++    @Test
++    public void testParseTcpProtocolState() {
++        assumeTrue(USING_LE);
++        for (int state : new int[] {1, 2, 3, 4, 5, 6, 7, 8}) {
++            final ConntrackMessage msg = parseWithProtoInfo(new StructNlAttr(
++                    ConntrackMessage.CTA_PROTOINFO, new StructNlAttr(
++                            ConntrackMessage.CTA_PROTOINFO_TCP, new StructNlAttr(
++                                    ConntrackMessage.CTA_PROTOINFO_TCP_STATE, (byte) state))));
++            assertNotNull(msg);
++            assertEquals(state, msg.tcpState);
++        }
++    }
++
++    @Test
++    public void testParseTcpProtocolStateMalformed() {
++        assumeTrue(USING_LE);
++        final ConntrackMessage msg = parseWithProtoInfo(new StructNlAttr(
++                ConntrackMessage.CTA_PROTOINFO, new StructNlAttr(
++                        ConntrackMessage.CTA_PROTOINFO_TCP, new StructNlAttr(
++                                ConntrackMessage.CTA_PROTOINFO_TCP_STATE, 3))));
++        assertNotNull(msg);
++        assertEquals(ConntrackMessage.TCP_CONNTRACK_UNKNOWN, msg.tcpState);
++        final ByteBuffer buffer = ByteBuffer.wrap(CT_V4UPDATE_TCP_BYTES)
++                .order(ByteOrder.nativeOrder());
++        assertEquals(ConntrackMessage.TCP_CONNTRACK_UNKNOWN,
++                ConntrackMessage.parse(StructNlMsgHdr.parse(buffer), buffer).tcpState);
++    }
++
+     @Test
+     public void testConntrackMakeIPv4TcpTimeoutUpdate() throws Exception {
+         assumeTrue(USING_LE);

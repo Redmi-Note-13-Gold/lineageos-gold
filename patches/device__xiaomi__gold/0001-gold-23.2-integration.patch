@@ -1,0 +1,438 @@
+diff --git a/Android.bp b/Android.bp
+index d402d17..2805bde 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -5,10 +5,3 @@
+ 
+ soong_namespace {
+ }
+-
+-install_symlink {
+-    name: "vendor_mdota_symlink",
+-    vendor: true,
+-    installed_location: "etc/mdota",
+-    symlink_target: "/mnt/vendor/mdota",
+-}
+diff --git a/BoardConfig.mk b/BoardConfig.mk
+index 412e028..dc01e28 100644
+--- a/BoardConfig.mk
++++ b/BoardConfig.mk
+@@ -42,11 +42,12 @@ AB_OTA_PARTITIONS += \
+ BOARD_RAMDISK_USE_LZ4 := true
+ BOARD_USES_GENERIC_KERNEL_IMAGE := true
+ BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
++BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT := true
+ 
+ BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
+ BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 67108864
+ 
+-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.selinux=permissive
++BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
+ 
+ BOARD_KERNEL_BASE := 0x40078000
+ BOARD_KERNEL_OFFSET := 0x00008000
+@@ -144,6 +145,7 @@ ENABLE_VENDOR_RIL_SERVICE := true
+ 
+ # SEPolicy
+ include device/mediatek/sepolicy_vndr/SEPolicy.mk
++BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+ 
+ # SPL
+ BOOT_SECURITY_PATCH := 2025-01-01
+diff --git a/README.md b/README.md
+index f77bf1c..89845ff 100644
+--- a/README.md
++++ b/README.md
+@@ -6,3 +6,17 @@
+ # SPDX-License-Identifier: Apache-2.0
+ #
+ ```
++
++## OS3 Stock/Lineage Hybrid Boot Validation
++
++The OS3.0.9.0.VNQCNXM vendor image must not be combined with unmodified
++Lineage system_ext property contexts. Both partitions declare
++`persist.vendor.pco5.radio.ctrl` and `vendor.camera.aux.packagelist` as prefixes.
++Android's property trie rejects both duplicates, including the camera entry
++whose SELinux label is identical. `PropertyInit()` then aborts before ADB starts.
++Permissive SELinux and another data format do not resolve this failure.
++
++Use [the hybrid validation and repair tool](tools/HYBRID_BOOT.md) when packaging
++the hybrid. It keeps the stock vendor rules and removes only the two audited
++system_ext duplicates in a staging copy. It does not alter the shared MTK or
++Lineage policy, the source-only device build, or an existing ROM package.
+diff --git a/device.mk b/device.mk
+index 08dc931..87e4436 100644
+--- a/device.mk
++++ b/device.mk
+@@ -139,7 +139,7 @@ PRODUCT_COPY_FILES += \
+ 
+ # Graphics
+ PRODUCT_PACKAGES += \
+-    android.hardware.memtrack-service.mediatek-mali \
++    android.hardware.memtrack-service.mediatek \
+     android.hardware.graphics.composer@2.1-service
+ 
+ PRODUCT_COPY_FILES += \
+@@ -161,6 +161,7 @@ PRODUCT_PACKAGES += \
+     init.mt6833.rc \
+     init.project.rc \
+     init.recovery.mt6833.rc \
++    init.zygote64_32.rc \
+     ueventd.mtk.rc
+ 
+ # Keymint
+@@ -201,6 +202,8 @@ PRODUCT_PACKAGES += \
+ 
+ # Overlays
+ PRODUCT_PACKAGES += \
++    GoldAlphaFrameworkOverlay \
++    GoldAlphaSettingsOverlay \
+     FrameworkResOverlayGold \
+     TetheringConfigOverlay \
+     SettingsResOverlayGold \
+@@ -227,7 +230,7 @@ PRODUCT_COPY_FILES += \
+ 
+ # Radio
+ PRODUCT_PACKAGES += \
+-    vendor_mdota_symlink
++    mdota_symlink
+ 
+ PRODUCT_COPY_FILES += \
+     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
+@@ -258,7 +261,6 @@ PRODUCT_SOONG_NAMESPACES += \
+     hardware/google/pixel \
+     hardware/google/interfaces \
+     hardware/mediatek \
+-    hardware/mediatek/libaedv \
+     hardware/mediatek/libmtkperf_client \
+     hardware/xiaomi
+ 
+@@ -273,6 +275,8 @@ PRODUCT_COPY_FILES += \
+     $(DEVICE_PATH)/configs/thermal_info_config.json:$(TARGET_COPY_OUT_VENDOR)/etc/thermal_info_config.json
+ 
+ # USB
++$(call soong_config_set_bool,mediatek_gadget,use_custom_usb_gadget_rc,true)
++
+ PRODUCT_PACKAGES += \
+     android.hardware.usb-service.mediatek \
+     android.hardware.usb.gadget-service.mediatek
+@@ -306,3 +310,18 @@ PRODUCT_COPY_FILES += \
+ 
+ # Inherit the proprietary files
+ $(call inherit-product, vendor/xiaomi/gold/gold-vendor.mk)
++
++# Gold 23.0 validated eUICC integration and shared 20dp status bar insets.
++PRODUCT_PACKAGES += \
++    OpenEUICC \
++    GoldStatusBarOverlay
++
++PRODUCT_COPY_FILES += \
++    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/android.hardware.telephony.euicc.xml
++
++# Validated MediaTek IMS v5 and VoLTE integration from the 23.0 gold tree.
++PRODUCT_PACKAGES += \
++    ImsService \
++    GoldImsTelephonyOverlay \
++    GoldImsFrameworkOverlay \
++    GoldImsCarrierOverlay
+diff --git a/extract-files.py b/extract-files.py
+index 7a59919..e3660d9 100755
+--- a/extract-files.py
++++ b/extract-files.py
+@@ -17,7 +17,6 @@ from extract_utils.main import (
+ namespace_imports = [
+     'device/xiaomi/gold',
+     'hardware/mediatek',
+-    'hardware/mediatek/libaedv',
+     'hardware/mediatek/libmtkperf_client',
+     'hardware/xiaomi',
+ ]
+diff --git a/overlay/GoldAlphaFrameworkOverlay/Android.bp b/overlay/GoldAlphaFrameworkOverlay/Android.bp
+new file mode 100644
+index 0000000..c2179e6
+--- /dev/null
++++ b/overlay/GoldAlphaFrameworkOverlay/Android.bp
+@@ -0,0 +1,5 @@
++runtime_resource_overlay {
++    name: "GoldAlphaFrameworkOverlay",
++    product_specific: true,
++    certificate: "platform",
++}
+diff --git a/overlay/GoldAlphaFrameworkOverlay/AndroidManifest.xml b/overlay/GoldAlphaFrameworkOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..14095bd
+--- /dev/null
++++ b/overlay/GoldAlphaFrameworkOverlay/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="org.lineageos.gold.alpha.framework" android:versionCode="1" android:versionName="1">
++    <uses-sdk android:minSdkVersion="36" android:targetSdkVersion="36" />
++    <application android:hasCode="false" />
++    <overlay android:targetPackage="android" android:isStatic="true" android:priority="999" />
++</manifest>
+diff --git a/overlay/GoldAlphaFrameworkOverlay/res/values/config.xml b/overlay/GoldAlphaFrameworkOverlay/res/values/config.xml
+new file mode 100644
+index 0000000..02d9d43
+--- /dev/null
++++ b/overlay/GoldAlphaFrameworkOverlay/res/values/config.xml
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <!-- Physical-pixel geometry from the gold stock DevicesAndroidOverlay. -->
++    <string name="config_mainBuiltInDisplayCutout" translatable="false">M 0,0 H -28 V 111 H 28 V 0 H 0 Z</string>
++    <string name="config_mainBuiltInDisplayCutoutRectApproximation" translatable="false">M 0,0 H -28 V 111 H 28 V 0 H 0 Z</string>
++    <dimen name="status_bar_height_default">111px</dimen>
++    <dimen name="status_bar_height_portrait">111px</dimen>
++    <dimen name="rounded_corner_radius">70px</dimen>
++    <dimen name="rounded_corner_radius_top">70px</dimen>
++    <dimen name="rounded_corner_radius_bottom">70px</dimen>
++    <!-- Match the gold source policy; thermal and battery-saver votes still apply. -->
++    <integer name="config_defaultRefreshRate">0</integer>
++    <integer name="config_defaultPeakRefreshRate">120</integer>
++    <string-array name="config_ntpServers" translatable="false">
++        <item>ntp://ntp.aliyun.com</item>
++    </string-array>
++</resources>
+diff --git a/overlay/GoldAlphaSettingsOverlay/Android.bp b/overlay/GoldAlphaSettingsOverlay/Android.bp
+new file mode 100644
+index 0000000..e948c2d
+--- /dev/null
++++ b/overlay/GoldAlphaSettingsOverlay/Android.bp
+@@ -0,0 +1,5 @@
++runtime_resource_overlay {
++    name: "GoldAlphaSettingsOverlay",
++    product_specific: true,
++    certificate: "platform",
++}
+diff --git a/overlay/GoldAlphaSettingsOverlay/AndroidManifest.xml b/overlay/GoldAlphaSettingsOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..08aa50e
+--- /dev/null
++++ b/overlay/GoldAlphaSettingsOverlay/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="org.lineageos.gold.alpha.settings" android:versionCode="1" android:versionName="1">
++    <uses-sdk android:minSdkVersion="36" android:targetSdkVersion="36" />
++    <application android:hasCode="false" />
++    <overlay android:targetPackage="com.android.settings" android:isStatic="true" android:priority="999" />
++</manifest>
+diff --git a/overlay/GoldAlphaSettingsOverlay/res/values/config.xml b/overlay/GoldAlphaSettingsOverlay/res/values/config.xml
+new file mode 100644
+index 0000000..fc00c16
+--- /dev/null
++++ b/overlay/GoldAlphaSettingsOverlay/res/values/config.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <!-- Use the existing LineageOS mode lists instead of a duplicate two-state switch. -->
++    <bool name="config_show_smooth_display">false</bool>
++    <bool name="config_show_peak_refresh_rate_switch">true</bool>
++    <bool name="config_show_min_refresh_rate_switch">true</bool>
++</resources>
+diff --git a/overlay/GoldImsCarrierOverlay/Android.bp b/overlay/GoldImsCarrierOverlay/Android.bp
+new file mode 100644
+index 0000000..81111bf
+--- /dev/null
++++ b/overlay/GoldImsCarrierOverlay/Android.bp
+@@ -0,0 +1,7 @@
++runtime_resource_overlay {
++    name: "GoldImsCarrierOverlay",
++    system_ext_specific: true,
++    certificate: "platform",
++    sdk_version: "current",
++    aaptflags: ["--keep-raw-values"],
++}
+diff --git a/overlay/GoldImsCarrierOverlay/AndroidManifest.xml b/overlay/GoldImsCarrierOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..3c9f9f2
+--- /dev/null
++++ b/overlay/GoldImsCarrierOverlay/AndroidManifest.xml
+@@ -0,0 +1 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mediatek.ims.overlay.carrier" android:versionCode="1" android:versionName="1.0"><uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35"/><overlay android:isStatic="true" android:targetPackage="com.android.carrierconfig" android:priority="98"/><application android:hasCode="false"/></manifest>
+\ No newline at end of file
+diff --git a/overlay/GoldImsCarrierOverlay/res/xml/vendor.xml b/overlay/GoldImsCarrierOverlay/res/xml/vendor.xml
+new file mode 100644
+index 0000000..10651ee
+--- /dev/null
++++ b/overlay/GoldImsCarrierOverlay/res/xml/vendor.xml
+@@ -0,0 +1 @@
++<carrier_config_list><carrier_config mcc="460" mnc="01"><boolean name="carrier_volte_available_bool" value="true"/></carrier_config></carrier_config_list>
+\ No newline at end of file
+diff --git a/overlay/GoldImsFrameworkOverlay/Android.bp b/overlay/GoldImsFrameworkOverlay/Android.bp
+new file mode 100644
+index 0000000..d476a38
+--- /dev/null
++++ b/overlay/GoldImsFrameworkOverlay/Android.bp
+@@ -0,0 +1,6 @@
++runtime_resource_overlay {
++    name: "GoldImsFrameworkOverlay",
++    system_ext_specific: true,
++    certificate: "platform",
++    sdk_version: "current",
++}
+diff --git a/overlay/GoldImsFrameworkOverlay/AndroidManifest.xml b/overlay/GoldImsFrameworkOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..1fe23b5
+--- /dev/null
++++ b/overlay/GoldImsFrameworkOverlay/AndroidManifest.xml
+@@ -0,0 +1 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mediatek.ims.overlay.framework" android:versionCode="1" android:versionName="1.0"><uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35"/><overlay android:isStatic="true" android:targetPackage="android" android:priority="98"/><application android:hasCode="false"/></manifest>
+\ No newline at end of file
+diff --git a/overlay/GoldImsFrameworkOverlay/res/values/config.xml b/overlay/GoldImsFrameworkOverlay/res/values/config.xml
+new file mode 100644
+index 0000000..7b538a6
+--- /dev/null
++++ b/overlay/GoldImsFrameworkOverlay/res/values/config.xml
+@@ -0,0 +1 @@
++<resources><bool name="config_device_volte_available">true</bool></resources>
+\ No newline at end of file
+diff --git a/overlay/GoldImsTelephonyOverlay/Android.bp b/overlay/GoldImsTelephonyOverlay/Android.bp
+new file mode 100644
+index 0000000..c6d3913
+--- /dev/null
++++ b/overlay/GoldImsTelephonyOverlay/Android.bp
+@@ -0,0 +1,6 @@
++runtime_resource_overlay {
++    name: "GoldImsTelephonyOverlay",
++    system_ext_specific: true,
++    certificate: "platform",
++    sdk_version: "current",
++}
+diff --git a/overlay/GoldImsTelephonyOverlay/AndroidManifest.xml b/overlay/GoldImsTelephonyOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..3a60b32
+--- /dev/null
++++ b/overlay/GoldImsTelephonyOverlay/AndroidManifest.xml
+@@ -0,0 +1 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mediatek.ims.overlay.telephony" android:versionCode="1" android:versionName="1.0"><uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35"/><overlay android:isStatic="true" android:targetPackage="com.android.phone" android:priority="97"/><application android:hasCode="false"/></manifest>
+\ No newline at end of file
+diff --git a/overlay/GoldImsTelephonyOverlay/res/values/config.xml b/overlay/GoldImsTelephonyOverlay/res/values/config.xml
+new file mode 100644
+index 0000000..71aff03
+--- /dev/null
++++ b/overlay/GoldImsTelephonyOverlay/res/values/config.xml
+@@ -0,0 +1 @@
++<resources><string name="config_ims_mmtel_package" translatable="false">com.mediatek.ims</string></resources>
+\ No newline at end of file
+diff --git a/overlay/GoldStatusBarOverlay/Android.bp b/overlay/GoldStatusBarOverlay/Android.bp
+new file mode 100644
+index 0000000..6a23cf8
+--- /dev/null
++++ b/overlay/GoldStatusBarOverlay/Android.bp
+@@ -0,0 +1,6 @@
++runtime_resource_overlay {
++    name: "GoldStatusBarOverlay",
++    system_ext_specific: true,
++    certificate: "platform",
++    sdk_version: "current",
++}
+diff --git a/overlay/GoldStatusBarOverlay/AndroidManifest.xml b/overlay/GoldStatusBarOverlay/AndroidManifest.xml
+new file mode 100644
+index 0000000..7ef788c
+--- /dev/null
++++ b/overlay/GoldStatusBarOverlay/AndroidManifest.xml
+@@ -0,0 +1 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.lineageos.gold.statusbar" android:versionCode="2" android:versionName="2"><uses-sdk android:minSdkVersion="36" android:targetSdkVersion="36"/><application android:hasCode="false"/><overlay android:targetPackage="com.android.systemui" android:isStatic="true" android:priority="999"/></manifest>
+diff --git a/overlay/GoldStatusBarOverlay/res/values/dimens.xml b/overlay/GoldStatusBarOverlay/res/values/dimens.xml
+new file mode 100644
+index 0000000..983e94e
+--- /dev/null
++++ b/overlay/GoldStatusBarOverlay/res/values/dimens.xml
+@@ -0,0 +1,8 @@
++<resources>
++    <dimen name="rounded_corner_content_padding">20dp</dimen>
++    <!-- Shade headers use the shared insets directly; avoid adding these a second time. -->
++    <dimen name="status_bar_padding_start">0dp</dimen>
++    <dimen name="status_bar_padding_end">0dp</dimen>
++    <dimen name="status_bar_clock_starting_padding">0dp</dimen>
++    <dimen name="status_bar_icons_padding_end">0dp</dimen>
++</resources>
+diff --git a/proprietary-files.txt b/proprietary-files.txt
+index 9487c25..3e16fad 100644
+--- a/proprietary-files.txt
++++ b/proprietary-files.txt
+@@ -1920,7 +1920,6 @@ vendor/etc/thermald-devices.conf
+ 
+ # WiFi
+ vendor/bin/wlan_assistant
+-vendor/etc/init/wlan_assistant.rc
+ vendor/lib64/libwifi-hal.so:vendor/lib64/libwifi-hal-mtk.so;FIX_SONAME
+ vendor/firmware/soc2_2_ram_wifi_1a_1_hdr.bin
+ vendor/firmware/soc2_2_ram_wifi_1_1_hdr.bin
+diff --git a/sepolicy/vendor/file_contexts b/sepolicy/vendor/file_contexts
+new file mode 100644
+index 0000000..db866b3
+--- /dev/null
++++ b/sepolicy/vendor/file_contexts
+@@ -0,0 +1,3 @@
++# MiTEE services used by the gold vendor blobs.  Without explicit executable
++# labels, init refuses to start these services even when SELinux is permissive.
++/(vendor|system/vendor)/bin/hw/android\.hardware\.security\.keymint@1\.0-service\.mitee u:object_r:hal_keymint_default_exec:s0
+diff --git a/sepolicy/vendor/genfs_contexts b/sepolicy/vendor/genfs_contexts
+new file mode 100644
+index 0000000..6084e2a
+--- /dev/null
++++ b/sepolicy/vendor/genfs_contexts
+@@ -0,0 +1,2 @@
++# Use the canonical sysfs path, not the /sys/class symlink.
++genfscon sysfs /devices/virtual/thermal/thermal_message/boost u:object_r:vendor_sysfs_thermal_boost:s0
+diff --git a/sepolicy/vendor/hal_keymint_default.te b/sepolicy/vendor/hal_keymint_default.te
+new file mode 100644
+index 0000000..9a160f2
+--- /dev/null
++++ b/sepolicy/vendor/hal_keymint_default.te
+@@ -0,0 +1,4 @@
++# MiTEE KeyMint mirrors the stock policy by logging initialization failures to
++# the kernel log.  Access to the TEE client node itself is inherited through
++# the platform hal_keymint_server -> tee_device rule.
++allow hal_keymint_default kmsg_device:chr_file w_file_perms;
+diff --git a/sepolicy/vendor/mtk_hal_power.te b/sepolicy/vendor/mtk_hal_power.te
+new file mode 100644
+index 0000000..42dcc46
+--- /dev/null
++++ b/sepolicy/vendor/mtk_hal_power.te
+@@ -0,0 +1,2 @@
++# libpowerhal set_value opens the Xiaomi boost node O_WRONLY.
++allow mtk_hal_power vendor_sysfs_thermal_boost:file { open write };
+diff --git a/sepolicy/vendor/sysfs.te b/sepolicy/vendor/sysfs.te
+new file mode 100644
+index 0000000..3c25633
+--- /dev/null
++++ b/sepolicy/vendor/sysfs.te
+@@ -0,0 +1,2 @@
++# Xiaomi thermal boost is a separate write target from thermal controls.
++type vendor_sysfs_thermal_boost, fs_type, sysfs_type;
+diff --git a/sepolicy/vendor/thermal_boost_compat.te b/sepolicy/vendor/thermal_boost_compat.te
+new file mode 100644
+index 0000000..7fc21d6
+--- /dev/null
++++ b/sepolicy/vendor/thermal_boost_compat.te
+@@ -0,0 +1,13 @@
++# Preserve existing sysfs_therm access to the one relabeled boost file.
++# These grants do not add access beyond the old label for these domains.
++allow factory vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
++allow hal_thermal_default vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
++allow init-thermal-logging-sh vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
++allow init-thermal-symlinks-sh vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
++allow merged_hal_service vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
++allow osi vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
++allow recovery vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
++allow thermal_core vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
++allow thermal_manager vendor_sysfs_thermal_boost:file { append lock map open write };
++allow untrusted_app_25 vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
++allow untrusted_app_all vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+diff --git a/vendor.prop b/vendor.prop
+index c912a6b..0c894d6 100644
+--- a/vendor.prop
++++ b/vendor.prop
+@@ -178,7 +178,6 @@ ro.vendor.mtk_world_phone_policy=0
+ ro.vendor.mtk_rild_read_imsi=1
+ persist.vendor.mtk_sim_switch_policy=2
+ ro.vendor.sim_me_lock_mode=3
+-persist.vendor.radio.mtk_dsbp_support=2
+ ro.vendor.mtk_external_sim_support=1
+ ro.vendor.mtk_external_sim_only_slots=0
+ ro.vendor.mtk_nn_baseline_support=1

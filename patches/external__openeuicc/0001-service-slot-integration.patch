@@ -1,0 +1,30 @@
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index ea7562e..ce7b5dc 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -27,11 +27,7 @@
+         <activity
+             android:name=".ui.PrivilegedMainActivity"
+             android:exported="true">
+-            <intent-filter>
+-                <action android:name="android.intent.action.MAIN" />
+-
+-                <category android:name="android.intent.category.LAUNCHER" />
+-            </intent-filter>
++            <!-- Profile management is exposed through the system SIM settings. -->
+         </activity>
+ 
+         <service
+diff --git a/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt b/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
+index 43b4b54..884e019 100644
+--- a/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
++++ b/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt
+@@ -40,7 +40,7 @@ class OpenEuiccService : EuiccService(), OpenEuiccContextMarker {
+         } else {
+             // Otherwise, we can report at least one removable eUICC to the system without confusing
+             // it too much.
+-            telephonyManager.uiccCardsInfoCompat.firstOrNull { it.isEuicc }?.physicalSlotIndex == physicalSlotId
++            telephonyManager.uiccCardsInfoCompat.firstOrNull { it.isEuicc }?.physicalSlotIndex != physicalSlotId
+         }
+ 
+     private data class EuiccChannelManagerContext(

@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-13",
+  "firmware": "OS3.0.10.0.VNQCNXM",
+  "recovery": {
+    "lineage_vendor_boot_sha256": "8d4b79fa0605c4b8bbaf800314902e677c176be723134c6b07e1ffc3911f6feb",
+    "lineage_recovery_fragment_sha256": "8f38f6bdfc7e9804d8633a3df2f88d59865ed582a1a67908e2b49073396e11bd",
+    "stock_platform_and_init_boot_preserved": true,
+    "stock_dtb_preserved": true,
+    "device_tested": false
+  },
+  "avb_chain_verified": true,
+  "changed_partitions": [
+    "vendor_boot",
+    "vbmeta"
+  ],
+  "images": {
+    "boot.img": {
+      "size": 67108864,
+      "sha256": "dc0b3a5f647aa80277c8bfd395c8695399fd27607c13c3f99aecb96cf2fcc43f"
+    },
+    "vendor_boot.img": {
+      "size": 67108864,
+      "sha256": "96b4192237f5848cf6567532e6baa84d58be347b7d285bd8277ff86558e6db6e"
+    },
+    "dtbo.img": {
+      "size": 8388608,
+      "sha256": "e39f2d17525c244dd479a7583c2459bc8bb74063fac38b04ab58cf9245da656b"
+    },
+    "vbmeta.img": {
+      "size": 65536,
+      "sha256": "3a099a1137f077522ac5bf4c4ed2f953dc5fb582afcf57e85060bf643a6903ef"
+    }
+  },
+  "data_formatted": false,
+  "sideload_tested": false,
+  "recovery_boot_tested": false,
+  "post_install_recovery_tested": false
+}

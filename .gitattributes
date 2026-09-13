@@ -1,0 +1,5 @@
+# Patch context has required leading spaces; validate added source lines separately.
+*.patch -whitespace
+*.diff -whitespace
+# Module.symvers has an intentionally empty final namespace column.
+*.symvers whitespace=-blank-at-eol

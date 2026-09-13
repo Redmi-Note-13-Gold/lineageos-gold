@@ -1,0 +1,691 @@
+diff --git a/packages/SystemUI/res/layout/system_icons.xml b/packages/SystemUI/res/layout/system_icons.xml
+index 0946d51..620af15 100644
+--- a/packages/SystemUI/res/layout/system_icons.xml
++++ b/packages/SystemUI/res/layout/system_icons.xml
+@@ -14,7 +14,7 @@
+   ~ limitations under the License
+   -->
+ 
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<com.android.systemui.statusbar.phone.SystemIconsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+               xmlns:systemui="http://schemas.android.com/apk/res-auto"
+     android:id="@+id/system_icons"
+     android:layout_width="wrap_content"
+@@ -26,8 +26,7 @@
+     android:gravity="center_vertical">
+ 
+     <com.android.systemui.statusbar.phone.StatusIconContainer android:id="@+id/statusIcons"
+-        android:layout_width="0dp"
+-        android:layout_weight="1"
++        android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:paddingEnd="@dimen/signal_cluster_battery_padding"
+         android:gravity="center_vertical"
+@@ -65,4 +64,4 @@
+             android:visibility="gone"
+         />
+     </com.android.keyguard.AlphaOptimizedLinearLayout>
+-</LinearLayout>
++</com.android.systemui.statusbar.phone.SystemIconsLayout>
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconContainer.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconContainer.java
+index 38c0d28..00ca6b7 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconContainer.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconContainer.java
+@@ -29,7 +29,6 @@ import android.graphics.Color;
+ import android.graphics.Paint;
+ import android.graphics.Paint.Style;
+ import android.util.AttributeSet;
+-import android.util.Log;
+ import android.view.View;
+ 
+ import com.android.keyguard.AlphaOptimizedLinearLayout;
+@@ -51,14 +50,10 @@ import java.util.List;
+  */
+ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+ 
+-    private static final String TAG = "StatusIconContainer";
+-    private static final boolean DEBUG = false;
+     private static final boolean DEBUG_OVERFLOW = false;
+     // Max 8 status icons including battery
+     private static final int MAX_ICONS = 7;
+-    private static final int MAX_DOTS = 1;
+ 
+-    private int mDotPadding;
+     private int mIconSpacing;
+     private int mStaticDotDiameter;
+     private int mUnderflowWidth;
+@@ -69,8 +64,7 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+     private int mIconDotFrameWidth;
+     private boolean mQsExpansionTransitioning;
+     private boolean mShouldRestrictIcons = true;
+-    // Used to count which states want to be visible during layout
+-    private ArrayList<StatusIconState> mLayoutStates = new ArrayList<>();
++    private int[] mMeasuredIconWidths = new int[0];
+     // So we can count and measure properly
+     private ArrayList<View> mMeasureViews = new ArrayList<>();
+     // Any ignored icon will never be added as a child
+@@ -99,7 +93,10 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+     }
+ 
+     public void setShouldRestrictIcons(boolean should) {
+-        mShouldRestrictIcons = should;
++        if (mShouldRestrictIcons != should) {
++            mShouldRestrictIcons = should;
++            requestLayout();
++        }
+     }
+ 
+     public boolean isRestrictingIcons() {
+@@ -109,29 +106,31 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+     private void reloadDimens() {
+         // This is the same value that StatusBarIconView uses
+         mIconDotFrameWidth = getResources().getDimensionPixelSize(
+-                com.android.internal.R.dimen.status_bar_icon_size_sp);
+-        mDotPadding = getResources().getDimensionPixelSize(R.dimen.overflow_icon_dot_padding);
++                R.dimen.status_bar_icon_size_sp);
+         mIconSpacing = getResources().getDimensionPixelSize(R.dimen.status_bar_system_icon_spacing);
+         int radius = getResources().getDimensionPixelSize(R.dimen.overflow_dot_radius);
+         mStaticDotDiameter = 2 * radius;
+-        mUnderflowWidth = mIconDotFrameWidth + (MAX_DOTS - 1) * (mStaticDotDiameter + mDotPadding);
++        mUnderflowWidth = mIconDotFrameWidth;
+     }
+ 
+     @Override
+     protected void onLayout(boolean changed, int l, int t, int r, int b) {
++        resetViewStates();
++        calculateIconTranslations();
+         float midY = getHeight() / 2.0f;
+ 
+         // Layout all child views so that we can move them around later
+         for (int i = 0; i < getChildCount(); i++) {
+             View child = getChildAt(i);
+-            int width = child.getMeasuredWidth();
++            // A wide signal view in DOT state must use a dot-sized frame. In RTL its
++            // internal START-aligned dot otherwise ends up outside the reserved slot.
++            int width = getViewStateFromChild(child).visibleState == STATE_DOT
++                    ? mIconDotFrameWidth : child.getMeasuredWidth();
+             int height = child.getMeasuredHeight();
+             int top = (int) (midY - height / 2.0f);
+             child.layout(0, top, width, top + height);
+         }
+ 
+-        resetViewStates();
+-        calculateIconTranslations();
+         applyIconStates();
+     }
+ 
+@@ -168,36 +167,31 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+             }
+         }
+ 
+-        int visibleCount = mMeasureViews.size();
+-        int maxVisible = visibleCount <= MAX_ICONS ? MAX_ICONS : MAX_ICONS - 1;
+-        int totalWidth = mPaddingLeft + mPaddingRight;
+-        boolean trackWidth = true;
+-
+-        // Measure all children so that they report the correct width
+-        int childWidthSpec = MeasureSpec.makeMeasureSpec(specWidth, MeasureSpec.UNSPECIFIED);
+-        mNeedsUnderflow = mShouldRestrictIcons && visibleCount > MAX_ICONS;
++        final int visibleCount = mMeasureViews.size();
++        mMeasuredIconWidths = new int[visibleCount];
++        // Measure the full icon even if the previous layout displayed it as a dot.
++        final int childWidthSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+         for (int i = 0; i < visibleCount; i++) {
+-            // Walking backwards
+-            View child = mMeasureViews.get(visibleCount - i - 1);
++            View child = mMeasureViews.get(i);
+             measureChild(child, childWidthSpec, heightMeasureSpec);
+-            int spacing = i == visibleCount - 1 ? 0 : mIconSpacing;
+-            if (mShouldRestrictIcons) {
+-                if (i < maxVisible && trackWidth) {
+-                    totalWidth += getViewTotalMeasuredWidth(child) + spacing;
+-                } else if (trackWidth) {
+-                    // We've hit the icon limit; add space for dots
+-                    totalWidth += mUnderflowWidth;
+-                    trackWidth = false;
+-                }
+-            } else {
+-                totalWidth += getViewTotalMeasuredWidth(child) + spacing;
+-            }
++            // A View's measured width already includes its own padding.
++            mMeasuredIconWidths[i] = child.getMeasuredWidth();
+         }
++        final int padding = getPaddingStart() + getPaddingEnd();
++        final int available = widthMode == MeasureSpec.UNSPECIFIED
++                ? Integer.MAX_VALUE : Math.max(0, specWidth - padding);
++        StatusIconPacking.Result packing = packIcons(available);
+         setMeasuredDimension(
+-                getMeasuredWidth(widthMode, specWidth, totalWidth),
++                resolveSize(packing.width + padding, widthMeasureSpec),
+                 getMeasuredHeight(heightMeasureSpec, mMeasureViews));
+     }
+ 
++    private StatusIconPacking.Result packIcons(int available) {
++        return StatusIconPacking.calculate(mMeasuredIconWidths,
++                mShouldRestrictIcons ? MAX_ICONS : Integer.MAX_VALUE,
++                available, mIconSpacing, mUnderflowWidth, mStaticDotDiameter);
++    }
++
+     private int getMeasuredHeight(int heightMeasureSpec, List<View> measuredChildren) {
+         if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+             return MeasureSpec.getSize(heightMeasureSpec);
+@@ -206,22 +200,8 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+             for (View child : measuredChildren) {
+                 highest = Math.max(child.getMeasuredHeight(), highest);
+             }
+-            return highest + getPaddingTop() + getPaddingBottom();
+-        }
+-    }
+-
+-    private int getMeasuredWidth(int widthMode, int specWidth, int totalWidth) {
+-        if (widthMode == MeasureSpec.EXACTLY) {
+-            if (!mNeedsUnderflow && totalWidth > specWidth) {
+-                mNeedsUnderflow = true;
+-            }
+-            return specWidth;
+-        } else {
+-            if (widthMode == MeasureSpec.AT_MOST && totalWidth > specWidth) {
+-                mNeedsUnderflow = true;
+-                totalWidth = specWidth;
+-            }
+-            return totalWidth;
++            return resolveSize(highest + getPaddingTop() + getPaddingBottom(),
++                    heightMeasureSpec);
+         }
+     }
+ 
+@@ -321,86 +301,41 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+      * Layout is happening from end -> start
+      */
+     private void calculateIconTranslations() {
+-        mLayoutStates.clear();
+-        float width = getWidth();
+-        float translationX = width - getPaddingEnd();
+-        float contentStart = getPaddingStart();
+-        int childCount = getChildCount();
+-        // Underflow === don't show content until that index
+-        if (DEBUG) Log.d(TAG, "calculateIconTranslations: start=" + translationX
+-                + " width=" + width + " underflow=" + mNeedsUnderflow);
+-
+-        // Collect all of the states which want to be visible
+-        for (int i = childCount - 1; i >= 0; i--) {
+-            View child = getChildAt(i);
+-            StatusIconDisplayable iconView = (StatusIconDisplayable) child;
+-            StatusIconState childState = getViewStateFromChild(child);
+-
+-            if (!iconView.isIconVisible() || iconView.isIconBlocked()
+-                    || mIgnoredSlots.contains(iconView.getSlot())) {
+-                childState.visibleState = STATE_HIDDEN;
+-                if (DEBUG) Log.d(TAG, "skipping child (" + iconView.getSlot() + ") not visible");
+-                continue;
+-            }
+-
+-            // Move translationX to the spot within StatusIconContainer's layout to add the view
+-            // without cutting off the child view.
+-            translationX -= getViewTotalWidth(child);
+-            childState.visibleState = STATE_ICON;
+-            childState.setXTranslation(translationX);
+-            mLayoutStates.add(0, childState);
++        final int width = getWidth();
++        final int childCount = getChildCount();
++        StatusIconPacking.Result packing = packIcons(
++                Math.max(0, width - getPaddingStart() - getPaddingEnd()));
++        mNeedsUnderflow = packing.overflowWidth > 0;
++        for (int i = 0; i < childCount; i++) {
++            getViewStateFromChild(getChildAt(i)).visibleState = STATE_HIDDEN;
++        }
+ 
+-            // Shift translationX over by mIconSpacing for the next view.
++        int translationX = width - getPaddingEnd();
++        final int firstIcon = mMeasureViews.size() - packing.iconCount;
++        for (int i = mMeasureViews.size() - 1; i >= firstIcon; i--) {
++            View child = mMeasureViews.get(i);
++            translationX -= mMeasuredIconWidths[i];
++            StatusIconState state = getViewStateFromChild(child);
++            state.visibleState = STATE_ICON;
++            state.setXTranslation(translationX);
+             translationX -= mIconSpacing;
+         }
+-
+-        // Show either 1-MAX_ICONS icons, or (MAX_ICONS - 1) icons + overflow
+-        int totalVisible = mLayoutStates.size();
+-        int maxVisible = totalVisible <= MAX_ICONS ? MAX_ICONS : MAX_ICONS - 1;
+-
+-        // Init mUnderflowStart value with the offset to let the dot be placed next to battery icon.
+-        // This is to prevent if the underflow happens at rightest(totalVisible - 1) child then
+-        // break the for loop with mUnderflowStart staying 0(initial value), causing the dot be
+-        // placed at the leftest side.
+-        mUnderflowStart = (int) Math.max(contentStart, width - getPaddingEnd() - mUnderflowWidth);
+-        int visible = 0;
+-        int firstUnderflowIndex = -1;
+-        for (int i = totalVisible - 1; i >= 0; i--) {
+-            StatusIconState state = mLayoutStates.get(i);
+-            // Allow room for underflow if we found we need it in onMeasure
+-            if ((mNeedsUnderflow && (state.getXTranslation() < (contentStart + mUnderflowWidth)))
+-                    || (mShouldRestrictIcons && (visible >= maxVisible))) {
+-                firstUnderflowIndex = i;
+-                break;
+-            }
+-            mUnderflowStart = (int) Math.max(
+-                    contentStart, state.getXTranslation() - mUnderflowWidth - mIconSpacing);
+-            visible++;
++        mUnderflowStart = translationX - packing.overflowWidth;
++        if (mNeedsUnderflow) {
++            StatusIconState dot = getViewStateFromChild(mMeasureViews.get(firstIcon - 1));
++            dot.visibleState = STATE_DOT;
++            // In very narrow slots keep the actual dot centered inside the available width.
++            dot.setXTranslation(mUnderflowStart
++                    + (packing.overflowWidth - mIconDotFrameWidth) / 2.0f);
+         }
+ 
+-        if (firstUnderflowIndex != -1) {
+-            int totalDots = 0;
+-            int dotWidth = mStaticDotDiameter + mDotPadding;
+-            int dotOffset = mUnderflowStart + mUnderflowWidth - mIconDotFrameWidth;
+-            for (int i = firstUnderflowIndex; i >= 0; i--) {
+-                StatusIconState state = mLayoutStates.get(i);
+-                if (totalDots < MAX_DOTS) {
+-                    state.setXTranslation(dotOffset);
+-                    state.visibleState = STATE_DOT;
+-                    dotOffset -= dotWidth;
+-                    totalDots++;
+-                } else {
+-                    state.visibleState = STATE_HIDDEN;
+-                }
+-            }
+-        }
+-
+-        // Stole this from NotificationIconContainer. Not optimal but keeps the layout logic clean
+         if (isLayoutRtl()) {
+             for (int i = 0; i < childCount; i++) {
+                 View child = getChildAt(i);
+                 StatusIconState state = getViewStateFromChild(child);
+-                state.setXTranslation(width - state.getXTranslation() - child.getWidth());
++                int childWidth = state.visibleState == STATE_DOT
++                        ? mIconDotFrameWidth : child.getMeasuredWidth();
++                state.setXTranslation(width - state.getXTranslation() - childWidth);
+             }
+         }
+     }
+@@ -434,14 +369,6 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
+         return (StatusIconState) child.getTag(R.id.status_bar_view_state_tag);
+     }
+ 
+-    private static int getViewTotalMeasuredWidth(View child) {
+-        return child.getMeasuredWidth() + child.getPaddingStart() + child.getPaddingEnd();
+-    }
+-
+-    private static int getViewTotalWidth(View child) {
+-        return child.getWidth() + child.getPaddingStart() + child.getPaddingEnd();
+-    }
+-
+     public static class StatusIconState extends ViewState {
+ 
+         public StatusIconState() {
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconPacking.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconPacking.java
+new file mode 100644
+index 0000000..44686ae
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconPacking.java
+@@ -0,0 +1,66 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.statusbar.phone;
++
++/** Chooses the same end-most icons for measurement and layout. All widths are in pixels. */
++final class StatusIconPacking {
++    private StatusIconPacking() {}
++
++    static final class Result {
++        final int iconCount;
++        final int overflowWidth;
++        final int width;
++
++        Result(int iconCount, int overflowWidth, int width) {
++            this.iconCount = iconCount;
++            this.overflowWidth = overflowWidth;
++            this.width = width;
++        }
++    }
++
++    static Result calculate(int[] widths, int maxIcons, int available, int spacing,
++            int dotFrameWidth, int dotDiameter) {
++        long naturalWidth = 0;
++        for (int width : widths) {
++            naturalWidth += width;
++        }
++        naturalWidth += (long) Math.max(0, widths.length - 1) * spacing;
++        if (widths.length <= maxIcons && naturalWidth <= available) {
++            return new Result(widths.length, 0, (int) naturalWidth);
++        }
++
++        // Keep an overflow indicator whenever its actual circle fits, even if there is
++        // insufficient room for a full icon frame. Below that size no icon can be drawn safely.
++        final int overflowWidth = available >= dotDiameter
++                ? Math.min(dotFrameWidth, available) : 0;
++        if (overflowWidth == 0) {
++            return new Result(0, 0, 0);
++        }
++        final int maxVisible = Math.min(widths.length - 1, maxIcons - 1);
++        int packedWidth = overflowWidth;
++        int visible = 0;
++        for (int i = widths.length - 1; i >= 0 && visible < maxVisible; i--) {
++            final long nextWidth = (long) packedWidth + spacing + widths[i];
++            if (nextWidth > available) {
++                break;
++            }
++            packedWidth = (int) nextWidth;
++            visible++;
++        }
++        return new Result(visible, overflowWidth, packedWidth);
++    }
++}
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/SystemIconsLayout.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/SystemIconsLayout.java
+new file mode 100644
+index 0000000..5a42b61
+--- /dev/null
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/SystemIconsLayout.java
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.statusbar.phone;
++
++import android.content.Context;
++import android.util.AttributeSet;
++import android.view.View;
++
++import com.android.keyguard.AlphaOptimizedLinearLayout;
++
++/** A wrap-content system icon row that reserves the battery and clock before measuring icons. */
++public class SystemIconsLayout extends AlphaOptimizedLinearLayout {
++    private int mFixedWidth;
++
++    public SystemIconsLayout(Context context, AttributeSet attrs) {
++        super(context, attrs);
++    }
++
++    @Override
++    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
++        mFixedWidth = 0;
++        // Also handles the Compose battery inserted into this row at runtime. Icons are the
++        // only flexible child; battery/clock widths must be known before granting their budget.
++        // Identify by type: DemoStatusIcons replaces the normal container without copying its id.
++        for (int i = getChildCount() - 1; i >= 0; i--) {
++            View child = getChildAt(i);
++            if (child.getVisibility() == GONE || child instanceof StatusIconContainer) {
++                continue;
++            }
++            super.measureChildWithMargins(child, widthMeasureSpec, mFixedWidth,
++                    heightMeasureSpec, 0);
++            LayoutParams lp = (LayoutParams) child.getLayoutParams();
++            mFixedWidth += child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
++        }
++        // No weighted children: the icon container receives AT_MOST and can return its packed
++        // width. LinearLayout then lays out that width plus the fixed children, with normal RTL,
++        // margins and vertical gravity. No ancestor needs to inspect or remeasure overflow.
++        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
++    }
++
++    @Override
++    protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed,
++            int parentHeightMeasureSpec, int heightUsed) {
++        if (child instanceof StatusIconContainer) {
++            widthUsed = mFixedWidth;
++        }
++        super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed,
++                parentHeightMeasureSpec, heightUsed);
++    }
++}
+diff --git a/packages/SystemUI/tests/src/com/android/systemui/statusbar/phone/StatusIconContainerTest.java b/packages/SystemUI/tests/src/com/android/systemui/statusbar/phone/StatusIconContainerTest.java
+new file mode 100644
+index 0000000..77b4565
+--- /dev/null
++++ b/packages/SystemUI/tests/src/com/android/systemui/statusbar/phone/StatusIconContainerTest.java
+@@ -0,0 +1,219 @@
++/*
++ * Copyright (C) 2026 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.android.systemui.statusbar.phone;
++
++import static android.view.View.MeasureSpec.AT_MOST;
++import static android.view.View.MeasureSpec.EXACTLY;
++import static android.view.View.MeasureSpec.makeMeasureSpec;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_DOT;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_HIDDEN;
++import static com.android.systemui.statusbar.StatusBarIconView.STATE_ICON;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
++import android.graphics.Rect;
++import android.testing.AndroidTestingRunner;
++import android.testing.TestableLooper;
++import android.view.View;
++import android.widget.LinearLayout;
++
++import androidx.test.filters.SmallTest;
++
++import com.android.systemui.SysuiTestCase;
++import com.android.systemui.res.R;
++import com.android.systemui.statusbar.StatusIconDisplayable;
++
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++
++import java.util.ArrayList;
++
++@RunWith(AndroidTestingRunner.class)
++@TestableLooper.RunWithLooper
++@SmallTest
++public class StatusIconContainerTest extends SysuiTestCase {
++    private StatusIconContainer mIcons;
++    private int mFrame;
++    private int mSpacing;
++
++    @Before
++    public void setUp() {
++        mIcons = new StatusIconContainer(mContext);
++        mIcons.setId(R.id.statusIcons);
++        mFrame = mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_icon_size_sp);
++        mSpacing = mContext.getResources().getDimensionPixelSize(
++                R.dimen.status_bar_system_icon_spacing);
++    }
++
++    @Test
++    public void packedWidth_excludesHiddenIconsAndUnusedBudget() {
++        FakeIcon first = addIcon(4 * mFrame);
++        FakeIcon dot = addIcon(3 * mFrame);
++        FakeIcon last = addIcon(mFrame);
++        mIcons.setPaddingRelative(3, 0, 5, 0);
++        int packed = 2 * mFrame + mSpacing + 8;
++        measureAndLayout(mIcons, packed + mFrame / 2, AT_MOST);
++        assertEquals(packed, mIcons.getMeasuredWidth());
++        assertEquals(STATE_HIDDEN, state(first).visibleState);
++        assertEquals(STATE_DOT, state(dot).visibleState);
++        assertEquals(STATE_ICON, state(last).visibleState);
++        assertEquals(3f, state(dot).getXTranslation(), 0f);
++    }
++
++    @Test
++    public void ownChildPadding_isNotCountedTwice() {
++        FakeIcon child = addIcon(2 * mFrame);
++        child.setPaddingRelative(3, 0, 7, 0);
++        measureAndLayout(mIcons, 10 * mFrame, AT_MOST);
++        assertEquals(2 * mFrame, mIcons.getMeasuredWidth());
++    }
++
++    @Test
++    public void wideDot_rtlUsesDotFrameAndRestoresFullIcon() {
++        mIcons.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
++        FakeIcon wide = addIcon(4 * mFrame);
++        addIcon(mFrame);
++        int packed = 2 * mFrame + mSpacing;
++        measureAndLayout(mIcons, packed, AT_MOST);
++        assertEquals(STATE_DOT, state(wide).visibleState);
++        assertEquals(mFrame, wide.getWidth());
++        assertEquals((float) (mFrame + mSpacing), state(wide).getXTranslation(), 0f);
++        measureAndLayout(mIcons, 10 * mFrame, AT_MOST);
++        assertEquals(STATE_ICON, state(wide).visibleState);
++        assertEquals(4 * mFrame, wide.getWidth());
++    }
++
++    @Test
++    public void exactWidth_respectsContractAndAlignsAtEnd() {
++        FakeIcon dot = addIcon(4 * mFrame);
++        addIcon(mFrame);
++        int packed = 2 * mFrame + mSpacing;
++        int exact = packed + mFrame / 2;
++        measureAndLayout(mIcons, exact, EXACTLY);
++        assertEquals(exact, mIcons.getMeasuredWidth());
++        assertEquals((float) (exact - packed), state(dot).getXTranslation(), 0f);
++    }
++
++    @Test
++    public void restrictionAndIgnoredSlots_remeasureWithoutStaleOverflow() {
++        for (int i = 0; i < 8; i++) addIcon(mFrame);
++        measureAndLayout(mIcons, 20 * mFrame, AT_MOST);
++        assertEquals(STATE_HIDDEN, state(mIcons.getChildAt(0)).visibleState);
++        assertEquals(STATE_DOT, state(mIcons.getChildAt(1)).visibleState);
++        mIcons.setShouldRestrictIcons(false);
++        assertTrue(mIcons.isLayoutRequested());
++        measureAndLayout(mIcons, 20 * mFrame, AT_MOST);
++        assertEquals(STATE_ICON, state(mIcons.getChildAt(0)).visibleState);
++        mIcons.addIgnoredSlot("slot0");
++        measureAndLayout(mIcons, 20 * mFrame, AT_MOST);
++        assertEquals(STATE_HIDDEN, state(mIcons.getChildAt(0)).visibleState);
++        assertEquals(7 * mFrame + 6 * mSpacing, mIcons.getMeasuredWidth());
++    }
++
++    @Test
++    public void systemRow_reservesDynamicBatteryAndClockAndWrapsPackedWidth() {
++        SystemIconsLayout row = new SystemIconsLayout(mContext, null);
++        row.setPaddingRelative(2, 0, 4, 0);
++        row.addView(mIcons, new LinearLayout.LayoutParams(-2, -2));
++        FakeIcon dot = addIcon(4 * mFrame);
++        addIcon(mFrame);
++        View battery = new View(mContext);
++        battery.setId(R.id.battery_composable_view);
++        row.addView(battery, new LinearLayout.LayoutParams(2 * mFrame, mFrame));
++        View clock = new View(mContext);
++        row.addView(clock, new LinearLayout.LayoutParams(mFrame, mFrame));
++        int packed = 5 * mFrame + mSpacing + 6;
++        measureAndLayout(row, packed + mFrame / 2, AT_MOST);
++        assertEquals(packed, row.getMeasuredWidth());
++        assertEquals(STATE_DOT, state(dot).visibleState);
++        assertEquals(2 * mFrame, battery.getMeasuredWidth());
++        assertEquals(mIcons.getRight(), battery.getLeft());
++        assertEquals(battery.getRight(), clock.getLeft());
++        assertEquals(row.getWidth() - 4, clock.getRight());
++    }
++
++    @Test
++    public void systemRow_demoContainerWithoutId_keepsBatteryBudget() {
++        SystemIconsLayout row = new SystemIconsLayout(mContext, null);
++        row.addView(mIcons, new LinearLayout.LayoutParams(-2, -2));
++        View battery = new View(mContext) {
++            @Override
++            protected void onMeasure(int widthSpec, int heightSpec) {
++                setMeasuredDimension(resolveSize(2 * mFrame, widthSpec), mFrame);
++            }
++        };
++        row.addView(battery, new LinearLayout.LayoutParams(-2, -2));
++        // Exercise the real replacement path, including its copied LayoutParams and absent id.
++        DemoStatusIcons demo = new DemoStatusIcons(
++                mIcons, null, StatusBarLocation.HOME, mFrame, null, null, null);
++        demo.onDemoModeStarted();
++        assertEquals(View.NO_ID, demo.getId());
++        assertEquals(View.GONE, mIcons.getVisibility());
++        for (int i = 0; i < 4; i++) {
++            demo.addView(new FakeIcon(mFrame, "demo" + i),
++                    new LinearLayout.LayoutParams(-2, -2));
++        }
++        measureAndLayout(row, 5 * mFrame + 3 * mSpacing, AT_MOST);
++        assertEquals(5 * mFrame + 2 * mSpacing, row.getMeasuredWidth());
++        assertEquals(2 * mFrame, battery.getMeasuredWidth());
++        assertEquals(demo.getRight(), battery.getLeft());
++        assertEquals(row.getWidth(), battery.getRight());
++        assertEquals(STATE_HIDDEN, state(demo.getChildAt(0)).visibleState);
++        assertEquals(STATE_DOT, state(demo.getChildAt(1)).visibleState);
++    }
++
++    private FakeIcon addIcon(int width) {
++        FakeIcon icon = new FakeIcon(width, "slot" + mIcons.getChildCount());
++        mIcons.addView(icon, new LinearLayout.LayoutParams(-2, -2));
++        return icon;
++    }
++
++    private static StatusIconContainer.StatusIconState state(View child) {
++        return (StatusIconContainer.StatusIconState) child.getTag(R.id.status_bar_view_state_tag);
++    }
++
++    private static void measureAndLayout(View view, int width, int mode) {
++        view.measure(makeMeasureSpec(width, mode), makeMeasureSpec(200, AT_MOST));
++        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
++    }
++
++    private final class FakeIcon extends View implements StatusIconDisplayable {
++        private final int mWidth;
++        private final String mSlot;
++        private int mState = STATE_ICON;
++
++        FakeIcon(int width, String slot) {
++            super(StatusIconContainerTest.this.mContext);
++            mWidth = width;
++            mSlot = slot;
++        }
++
++        @Override
++        protected void onMeasure(int widthSpec, int heightSpec) {
++            setMeasuredDimension(resolveSize(mWidth, widthSpec), resolveSize(mFrame, heightSpec));
++        }
++
++        @Override public String getSlot() { return mSlot; }
++        @Override public boolean isIconVisible() { return true; }
++        @Override public int getVisibleState() { return mState; }
++        @Override public void setVisibleState(int state, boolean animate) { mState = state; }
++        @Override public void setStaticDrawableColor(int color) {}
++        @Override public void setDecorColor(int color) {}
++        @Override public void onDarkChanged(ArrayList<Rect> areas, float intensity, int tint) {}
++    }
++}

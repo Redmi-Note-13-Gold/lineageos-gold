@@ -1,0 +1,9 @@
+--- a/sepolicy/vendor/file_contexts
++++ b/sepolicy/vendor/file_contexts
+@@ -1,3 +1,6 @@
+ # MiTEE services used by the gold vendor blobs.  Without explicit executable
+ # labels, init refuses to start these services even when SELinux is permissive.
+ /(vendor|system/vendor)/bin/hw/android\.hardware\.security\.keymint@1\.0-service\.mitee u:object_r:hal_keymint_default_exec:s0
++
++# Keep restorecon consistent with the boost genfscon label.
++/sys/devices/virtual/thermal/thermal_message/boost u:object_r:vendor_sysfs_thermal_boost:s0

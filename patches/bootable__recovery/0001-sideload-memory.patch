@@ -1,0 +1,64 @@
+diff --git a/fuse_sideload/fuse_sideload.cpp b/fuse_sideload/fuse_sideload.cpp
+index cb1db18..fabe613 100644
+--- a/fuse_sideload/fuse_sideload.cpp
++++ b/fuse_sideload/fuse_sideload.cpp
+@@ -67,6 +67,10 @@
+ 
+ static constexpr uint64_t PACKAGE_FILE_ID = FUSE_ROOT_ID + 1;
+ static constexpr uint64_t EXIT_FLAG_ID = FUSE_ROOT_ID + 2;
++// Keep sideload's 64 KiB allocations below Scudo's per-size-class region
++// limit. Blocks outside this cache remain protected by their recorded SHA-256
++// and are fetched from the adb host again when read a second time.
++static constexpr uint64_t MAX_BLOCK_CACHE_BYTES = 32ULL * 1024 * 1024;
+ 
+ static constexpr int NO_STATUS = 1;
+ static constexpr int NO_STATUS_EXIT = 2;
+@@ -161,6 +165,13 @@ static void block_cache_enter(struct fuse_data* fd, uint32_t block) {
+   }
+ 
+   fd->block_cache[block] = (uint8_t*)malloc(fd->block_size);
++  if (fd->block_cache[block] == nullptr) {
++    // Stop growing after the allocator's effective limit. On the next insert,
++    // the normal eviction path will free one same-size block before retrying,
++    // instead of repeatedly asking Scudo to grow this size-class region.
++    fd->block_cache_max_size = fd->block_cache_size;
++    return;
++  }
+   memcpy(fd->block_cache[block], fd->block_data, fd->block_size);
+ 
+   fd->block_cache_size++;
+@@ -479,11 +490,18 @@ int run_fuse_sideload(std::unique_ptr<FuseDataProvider>&& provider, const char*
+     if (max_size > fd.file_blocks) {
+       max_size = fd.file_blocks;
+     }
++    uint32_t cache_size_cap = MAX_BLOCK_CACHE_BYTES / fd.block_size;
++    if (max_size > cache_size_cap) {
++      max_size = cache_size_cap;
++    }
+     // The cache must be at least 1% of the file size or two blocks,
+     // whichever is larger.
+     if (max_size >= fd.file_blocks / 100 && max_size >= 2) {
+       fd.block_cache_max_size = max_size;
+       fd.block_cache = (uint8_t**)calloc(fd.file_blocks, sizeof(uint8_t*));
++      fprintf(stderr, "fuse_sideload: block cache limited to %u blocks (%llu bytes)\n",
++              fd.block_cache_max_size,
++              static_cast<unsigned long long>(fd.block_cache_max_size) * fd.block_size);
+     }
+   }
+ 
+diff --git a/otautil/package.cpp b/otautil/package.cpp
+index 242204e..28a1a23 100644
+--- a/otautil/package.cpp
++++ b/otautil/package.cpp
+@@ -136,7 +136,11 @@ std::unique_ptr<Package> Package::CreateFilePackage(
+     return nullptr;
+   }
+ 
++#if defined(__APPLE__)
++  off_t file_size = lseek(fd.get(), 0, SEEK_END);
++#else
+   off64_t file_size = lseek64(fd.get(), 0, SEEK_END);
++#endif
+   if (file_size == -1) {
+     PLOG(ERROR) << "Failed to get the package size";
+     return nullptr;

@@ -1,0 +1,69 @@
+[
+  {
+    "path": "bootable/recovery",
+    "url": "https://github.com/LineageOS/android_bootable_recovery",
+    "revision": "d4ef5569dda1c5066f90efd25455b589ced6073e",
+    "patches": [
+      "patches/bootable__recovery/0001-sideload-memory.patch"
+    ]
+  },
+  {
+    "path": "device/xiaomi/gold",
+    "url": "https://github.com/mt6833-devs/android_device_xiaomi_gold",
+    "revision": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
+    "patches": [
+      "patches/device__xiaomi__gold/0001-gold-23.2-integration.patch",
+      "patches/device__xiaomi__gold/0002-power-boost-restorecon.patch"
+    ]
+  },
+  {
+    "path": "frameworks/base",
+    "url": "https://github.com/LineageOS/android_frameworks_base",
+    "revision": "35ad1f68539dce0857d25154dacb1116100737e9",
+    "patches": [
+      "patches/frameworks__base/0001-status-icon-packing-r2.patch"
+    ]
+  },
+  {
+    "path": "hardware/mediatek",
+    "url": "https://github.com/LineageOS/android_hardware_mediatek",
+    "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
+    "patches": [
+      "patches/hardware__mediatek/0001-aidl-codec2-service.patch"
+    ]
+  },
+  {
+    "path": "packages/apps/DeviceDiagnostics",
+    "url": "https://android.googlesource.com/platform/packages/apps/DeviceDiagnostics",
+    "revision": "6a93abdc96f0e553bac7efd5b41f0e549f4746be",
+    "patches": [
+      "patches/packages__apps__DeviceDiagnostics/0001-battery-information.patch"
+    ]
+  },
+  {
+    "path": "packages/modules/Connectivity",
+    "url": "https://github.com/LineageOS/android_packages_modules_Connectivity",
+    "revision": "c9f3e7795256bd4a3f99d02e604e24fd1552c2b3",
+    "patches": [
+      "patches/packages__modules__Connectivity/0001-tcp-conntrack-recycling.patch"
+    ]
+  },
+  {
+    "path": "external/openeuicc",
+    "url": "https://gitea.angry.im/PeterCxy/OpenEUICC",
+    "revision": "9a537a25163c5159899260fb6191a5da35a692bd",
+    "patches": [
+      "patches/external__openeuicc/0001-service-slot-integration.patch"
+    ],
+    "submodules": {
+      "libs/lpac-jni/src/main/jni/lpac": "d214738fa0bdb23faf5833d3d798963079a00468",
+      "libs/lpac-jni/src/main/jni/cjson/cjson": "c859b25da02955fef659d658b8f324b5cde87be3"
+    }
+  },
+  {
+    "path": "external/openeuicc-deps",
+    "url": "https://gitea.angry.im/PeterCxy/android_prebuilts_openeuicc-deps",
+    "revision": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
+    "patches": []
+  }
+]

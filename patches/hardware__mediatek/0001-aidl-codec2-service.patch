@@ -1,0 +1,551 @@
+diff --git a/aidl/codec2/Android.bp b/aidl/codec2/Android.bp
+new file mode 100644
+index 0000000..8d88924
+--- /dev/null
++++ b/aidl/codec2/Android.bp
+@@ -0,0 +1,73 @@
++//
++// SPDX-FileCopyrightText: The LineageOS Project
++// SPDX-License-Identifier: Apache-2.0
++//
++
++cc_binary {
++    name: "android.hardware.media.c2-mtk-service",
++    vendor: true,
++    relative_install_path: "hw",
++
++    init_rc: ["android.hardware.media.c2-mtk-service.rc"],
++    vintf_fragments: ["manifest_media_c2_mtk.xml"],
++
++    defaults: [
++        "libcodec2-hidl-defaults",
++        "libcodec2-aidl-defaults",
++    ],
++
++    required: [
++        "android.hardware.media.c2-mediatek-seccomp-policy",
++        "android.hardware.media.c2-extended-seccomp-policy",
++        "crash_dump.policy",
++    ],
++
++    srcs: [
++        "vendor.cpp",
++    ],
++
++    shared_libs: [
++        "libavservices_minijail",
++        "libbinder",
++        "libbinder_ndk",
++        "libcodec2_mtk_c2store",
++        "libcodec2_mtk_vdec",
++        "libcodec2_mtk_venc",
++    ] + select(soong_config_variable("android_hardware_mediatek_codec2", "link_v33_libstagefright_foundation"), {
++        true: ["libstagefright_foundation-v33"],
++        default: [],
++    }),
++}
++
++cc_library_shared {
++    name: "libcodec2_mtk_c2store",
++    soc_specific: true,
++}
++
++cc_library_shared {
++    name: "libcodec2_mtk_vdec",
++    soc_specific: true,
++}
++
++cc_library_shared {
++    name: "libcodec2_mtk_venc",
++    soc_specific: true,
++}
++
++prebuilt_etc {
++    name: "android.hardware.media.c2-mediatek-seccomp-policy",
++    vendor: true,
++    sub_dir: "seccomp_policy",
++    srcs: [
++	"seccomp_policy/android.hardware.media.c2-mediatek-seccomp-policy",
++    ],
++}
++
++prebuilt_etc {
++    name: "android.hardware.media.c2-extended-seccomp-policy",
++    vendor: true,
++    sub_dir: "seccomp_policy",
++    srcs: [
++        "seccomp_policy/android.hardware.media.c2-extended-seccomp-policy",
++    ],
++}
+diff --git a/aidl/codec2/MTKC2Store.h b/aidl/codec2/MTKC2Store.h
+new file mode 100644
+index 0000000..b8425b9
+--- /dev/null
++++ b/aidl/codec2/MTKC2Store.h
+@@ -0,0 +1,16 @@
++//
++// SPDX-FileCopyrightText: The LineageOS Project
++// SPDX-License-Identifier: Apache-2.0
++//
++
++#ifndef MTK_C2_STORE_H
++#define MTK_C2_STORE_H
++
++#include <C2Component.h>
++#include <memory>
++
++namespace android {
++std::shared_ptr<C2ComponentStore> GetCodec2MtkComponentStore();
++} // namespace android
++
++#endif // MTK_C2_STORE_H
+diff --git a/aidl/codec2/android.hardware.media.c2-mtk-service.rc b/aidl/codec2/android.hardware.media.c2-mtk-service.rc
+new file mode 100644
+index 0000000..202df3d
+--- /dev/null
++++ b/aidl/codec2/android.hardware.media.c2-mtk-service.rc
+@@ -0,0 +1,6 @@
++service android-hardware-media-c2-hal /vendor/bin/hw/android.hardware.media.c2-mtk-service
++    class hal
++    user mediacodec
++    group camera drmrpc mediadrm media_rw sdcard_rw media system audio inet net_bt net_bt_admin net_bw_acct sdcard_r
++    ioprio rt 4
++    task_profiles ProcessCapacityHigh HighPerformance
+diff --git a/aidl/codec2/manifest_media_c2_mtk.xml b/aidl/codec2/manifest_media_c2_mtk.xml
+new file mode 100644
+index 0000000..5e3d060
+--- /dev/null
++++ b/aidl/codec2/manifest_media_c2_mtk.xml
+@@ -0,0 +1,18 @@
++<manifest version="1.0" type="device">
++  <!-- HIDL fragment -->
++  <hal>
++      <name>android.hardware.media.c2</name>
++      <transport>hwbinder</transport>
++      <version>1.2</version>
++      <interface>
++          <name>IComponentStore</name>
++          <instance>default</instance>
++      </interface>
++  </hal>
++  <!-- AIDL fragment -->
++  <hal format="aidl">
++    <name>android.hardware.media.c2</name>
++    <version>1</version>
++    <fqname>IComponentStore/default</fqname>
++  </hal>
++</manifest>
+diff --git a/aidl/codec2/seccomp_policy/android.hardware.media.c2-extended-seccomp-policy b/aidl/codec2/seccomp_policy/android.hardware.media.c2-extended-seccomp-policy
+new file mode 100644
+index 0000000..e0b3dd9
+--- /dev/null
++++ b/aidl/codec2/seccomp_policy/android.hardware.media.c2-extended-seccomp-policy
+@@ -0,0 +1,44 @@
++connect: 1
++fcntl64: 1
++socket: 1
++writev: 1
++clock_nanosleep: 1
++eventfd2: 1
++sched_getparam: 1
++sched_getscheduler :1
++setsockopt: 1
++bind: 1
++listen: 1
++
++# Add more for 32bits process, from android.hardware.media.c2@1.1-default-arm.policy
++mmap2: arg2 in ~PROT_EXEC || arg2 in ~PROT_WRITE
++ftruncate64: 1
++getuid32: 1
++open: 1
++fstat64: 1
++readlink: 1
++fstatfs64: 1
++_llseek: 1
++fstatat64: 1
++ugetrlimit: 1
++# crash dump policy additions
++sigreturn: 1
++futex: 1
++#mmap2: arg2 in 0x1|0x2
++geteuid32: 1
++getgid32: 1
++getegid32: 1
++getgroups32: 1
++getpriority: 1
++mlock: 1
++munlock: 1
++fchmod: 1
++getuid: 1
++mmap: 1
++getrlimit: 1
++newfstatat: 1
++fstat: 1
++fstatfs: 1
++unlinkat: 1
++sched_setscheduler: 1
++mkdirat: 1
+diff --git a/aidl/codec2/seccomp_policy/android.hardware.media.c2-mediatek-seccomp-policy b/aidl/codec2/seccomp_policy/android.hardware.media.c2-mediatek-seccomp-policy
+new file mode 100644
+index 0000000..3c3b4fb
+--- /dev/null
++++ b/aidl/codec2/seccomp_policy/android.hardware.media.c2-mediatek-seccomp-policy
+@@ -0,0 +1,88 @@
++# Copyright (C) 2019 The Android Open Source Project
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#      http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++futex: 1
++# ioctl calls are filtered via the selinux policy.
++ioctl: 1
++sched_yield: 1
++close: 1
++dup: 1
++ppoll: 1
++mprotect: arg2 in ~PROT_EXEC || arg2 in ~PROT_WRITE
++mmap: arg2 in ~PROT_EXEC || arg2 in ~PROT_WRITE
++getuid: 1
++getrlimit: 1
++fstat: 1
++newfstatat: 1
++fstatfs: 1
++memfd_create: 1
++ftruncate: 1
++
++# mremap: Ensure |flags| are (MREMAP_MAYMOVE | MREMAP_FIXED) TODO: Once minijail
++# parser support for '<' is in this needs to be modified to also prevent
++# |old_address| and |new_address| from touching the exception vector page, which
++# on ARM is statically loaded at 0xffff 0000. See
++# http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0211h/Babfeega.html
++# for more details.
++mremap: arg3 == 3 || arg3 == MREMAP_MAYMOVE
++munmap: 1
++prctl: 1
++writev: 1
++sigaltstack: 1
++clone: 1
++exit: 1
++lseek: 1
++rt_sigprocmask: 1
++openat: 1
++write: 1
++nanosleep: 1
++setpriority: 1
++set_tid_address: 1
++getdents64: 1
++readlinkat: 1
++read: 1
++pread64: 1
++gettimeofday: 1
++faccessat: 1
++exit_group: 1
++restart_syscall: 1
++rt_sigreturn: 1
++getrandom: 1
++madvise: 1
++sched_setaffinity: 1
++sched_getaffinity: 1
++sched_getparam: 1
++sched_getscheduler: 1
++recvfrom: 1
++
++# crash dump policy additions
++clock_gettime: 1
++getpid: 1
++gettid: 1
++pipe2: 1
++recvmsg: 1
++process_vm_readv: 1
++tgkill: 1
++rt_sigaction: 1
++rt_tgsigqueueinfo: 1
++#mprotect: arg2 in 0x1|0x2
++munmap: 1
++#mmap: arg2 in 0x1|0x2
++geteuid: 1
++getgid: 1
++getegid: 1
++getgroups: 1
++unlinkat: 1
++sched_setscheduler: 1
++mkdirat: 1
+diff --git a/aidl/codec2/vendor.cpp b/aidl/codec2/vendor.cpp
+new file mode 100644
+index 0000000..0fd86cb
+--- /dev/null
++++ b/aidl/codec2/vendor.cpp
+@@ -0,0 +1,264 @@
++/*
++ * Copyright 2018 The Android Open Source Project
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++//#define LOG_NDEBUG 0
++#define LOG_TAG "android.hardware.media.c2-service"
++
++#include <android-base/logging.h>
++#include <minijail.h>
++
++#include <util/C2InterfaceHelper.h>
++#include <C2Component.h>
++#include <C2Config.h>
++
++// HIDL
++#include <binder/ProcessState.h>
++#include <codec2/hidl/1.2/ComponentStore.h>
++#include <hidl/HidlTransportSupport.h>
++
++// AIDL
++#include <android/binder_manager.h>
++#include <android/binder_process.h>
++#include <codec2/aidl/ComponentStore.h>
++#include <codec2/aidl/ParamTypes.h>
++
++// MTK C2 Store
++#include "MTKC2Store.h"
++
++// This is the absolute on-device path of the prebuild_etc module
++// "android.hardware.media.c2-mediatek-seccomp_policy" in Android.bp.
++static constexpr char kBaseSeccompPolicyPath[] =
++        "/vendor/etc/seccomp_policy/"
++        "android.hardware.media.c2-mediatek-seccomp-policy";
++
++// Additional seccomp permissions can be added in this file.
++// This file does not exist by default.
++static constexpr char kExtSeccompPolicyPath[] =
++        "/vendor/etc/seccomp_policy/"
++        "android.hardware.media.c2-extended-seccomp-policy";
++
++// We want multiple threads to be running so that a blocking operation
++// on one codec does not block the other codecs.
++// For HIDL: Extra threads may be needed to handle a stacked IPC sequence that
++// contains alternating binder and hwbinder calls. (See b/35283480.)
++static constexpr int kThreadCount = 8;
++
++class StoreImpl : public C2ComponentStore {
++public:
++    StoreImpl()
++        : mReflectorHelper(std::make_shared<C2ReflectorHelper>()),
++          mInterface(mReflectorHelper) {
++    }
++
++    virtual ~StoreImpl() override = default;
++
++    virtual C2String getName() const override {
++        return "default";
++    }
++
++    virtual c2_status_t createComponent(
++            C2String /*name*/,
++            std::shared_ptr<C2Component>* const /*component*/) override {
++        return C2_NOT_FOUND;
++    }
++
++    virtual c2_status_t createInterface(
++            C2String /* name */,
++            std::shared_ptr<C2ComponentInterface>* const /* interface */) override {
++        return C2_NOT_FOUND;
++    }
++
++    virtual std::vector<std::shared_ptr<const C2Component::Traits>>
++            listComponents() override {
++        return {};
++    }
++
++    virtual c2_status_t copyBuffer(
++            std::shared_ptr<C2GraphicBuffer> /* src */,
++            std::shared_ptr<C2GraphicBuffer> /* dst */) override {
++        return C2_OMITTED;
++    }
++
++    virtual c2_status_t query_sm(
++        const std::vector<C2Param*>& stackParams,
++        const std::vector<C2Param::Index>& heapParamIndices,
++        std::vector<std::unique_ptr<C2Param>>* const heapParams) const override {
++        return mInterface.query(stackParams, heapParamIndices, C2_MAY_BLOCK, heapParams);
++    }
++
++    virtual c2_status_t config_sm(
++            const std::vector<C2Param*>& params,
++            std::vector<std::unique_ptr<C2SettingResult>>* const failures) override {
++        return mInterface.config(params, C2_MAY_BLOCK, failures);
++    }
++
++    virtual std::shared_ptr<C2ParamReflector> getParamReflector() const override {
++        return mReflectorHelper;
++    }
++
++    virtual c2_status_t querySupportedParams_nb(
++            std::vector<std::shared_ptr<C2ParamDescriptor>>* const params) const override {
++        return mInterface.querySupportedParams(params);
++    }
++
++    virtual c2_status_t querySupportedValues_sm(
++            std::vector<C2FieldSupportedValuesQuery>& fields) const override {
++        return mInterface.querySupportedValues(fields, C2_MAY_BLOCK);
++    }
++
++private:
++    class Interface : public C2InterfaceHelper {
++    public:
++        Interface(const std::shared_ptr<C2ReflectorHelper> &helper)
++            : C2InterfaceHelper(helper) {
++            setDerivedInstance(this);
++
++            addParameter(
++                DefineParam(mIonUsageInfo, "ion-usage")
++                .withDefault(new C2StoreIonUsageInfo())
++                .withFields({
++                    C2F(mIonUsageInfo, usage).flags(
++                            {C2MemoryUsage::CPU_READ | C2MemoryUsage::CPU_WRITE}),
++                    C2F(mIonUsageInfo, capacity).inRange(0, UINT32_MAX, 1024),
++                    C2F(mIonUsageInfo, heapMask).any(),
++                    C2F(mIonUsageInfo, allocFlags).flags({}),
++                    C2F(mIonUsageInfo, minAlignment).equalTo(0)
++                })
++                .withSetter(SetIonUsage)
++                .build());
++
++            addParameter(
++                DefineParam(mDmaBufUsageInfo, "dmabuf-usage")
++                .withDefault(C2StoreDmaBufUsageInfo::AllocShared(128))
++                .withFields({
++                    C2F(mDmaBufUsageInfo, m.usage).flags({C2MemoryUsage::CPU_READ | C2MemoryUsage::CPU_WRITE}),
++                    C2F(mDmaBufUsageInfo, m.capacity).inRange(0, UINT32_MAX, 1024),
++                    C2F(mDmaBufUsageInfo, m.allocFlags).flags({}),
++                    C2F(mDmaBufUsageInfo, m.heapName).any(),
++                })
++                .withSetter(SetDmaBufUsage)
++                .build());
++        }
++
++        virtual ~Interface() = default;
++
++    private:
++        static C2R SetIonUsage(bool /* mayBlock */, C2P<C2StoreIonUsageInfo> &me) {
++            // Vendor's TODO: put appropriate mapping logic
++            me.set().heapMask = ~0;
++            me.set().allocFlags = 0;
++            me.set().minAlignment = 0;
++            return C2R::Ok();
++        }
++
++        static C2R SetDmaBufUsage(bool /* mayBlock */, C2P<C2StoreDmaBufUsageInfo> &me) {
++            // Vendor's TODO: put appropriate mapping logic
++            strncpy(me.set().m.heapName, "system", me.v.flexCount());
++            me.set().m.allocFlags = 0;
++            return C2R::Ok();
++        }
++
++
++        std::shared_ptr<C2StoreIonUsageInfo> mIonUsageInfo;
++        std::shared_ptr<C2StoreDmaBufUsageInfo> mDmaBufUsageInfo;
++    };
++    std::shared_ptr<C2ReflectorHelper> mReflectorHelper;
++    Interface mInterface;
++};
++
++void runAidlService() {
++    ABinderProcess_setThreadPoolMaxThreadCount(kThreadCount);
++    ABinderProcess_startThreadPool();
++
++    // Create IComponentStore service.
++    using namespace ::aidl::android::hardware::media::c2;
++    std::shared_ptr<IComponentStore> store;
++
++    LOG(DEBUG) << "Instantiating Codec2's IComponentStore service...";
++    store = ::ndk::SharedRefBase::make<utils::ComponentStore>(
++            android::GetCodec2MtkComponentStore());
++
++    if (store == nullptr) {
++        LOG(ERROR) << "Cannot create Codec2's IComponentStore service.";
++    } else {
++        const std::string serviceName =
++            std::string(IComponentStore::descriptor) + "/default";
++        binder_exception_t ex = AServiceManager_addService(
++                store->asBinder().get(), serviceName.c_str());
++        if (ex != EX_NONE) {
++            LOG(ERROR) << "Cannot register Codec2's IComponentStore service"
++                          " with instance name << \""
++                       << serviceName << "\".";
++        } else {
++            LOG(DEBUG) << "Codec2's IComponentStore service registered. "
++                          "Instance name: \"" << serviceName << "\".";
++        }
++    }
++
++    ABinderProcess_joinThreadPool();
++}
++
++void runHidlService() {
++    using namespace ::android;
++
++    // Enable vndbinder to allow vendor-to-vendor binder calls.
++    ProcessState::initWithDriver("/dev/vndbinder");
++
++    ProcessState::self()->startThreadPool();
++    hardware::configureRpcThreadpool(kThreadCount, true /* callerWillJoin */);
++
++    // Create IComponentStore service.
++    {
++        using namespace ::android::hardware::media::c2::V1_2;
++        sp<IComponentStore> store;
++
++        LOG(DEBUG) << "Instantiating Codec2's IComponentStore service...";
++        store = new utils::ComponentStore(
++                android::GetCodec2MtkComponentStore());
++
++        if (store == nullptr) {
++            LOG(ERROR) << "Cannot create Codec2's IComponentStore service.";
++        } else {
++            constexpr char const* serviceName = "default";
++            if (store->registerAsService(serviceName) != OK) {
++                LOG(ERROR) << "Cannot register Codec2's IComponentStore service"
++                              " with instance name << \""
++                           << serviceName << "\".";
++            } else {
++                LOG(DEBUG) << "Codec2's IComponentStore service registered. "
++                              "Instance name: \"" << serviceName << "\".";
++            }
++        }
++    }
++
++    hardware::joinRpcThreadpool();
++}
++
++int main(int /* argc */, char** /* argv */) {
++    const bool aidlEnabled = ::aidl::android::hardware::media::c2::utils::IsSelected();
++    LOG(DEBUG) << "android.hardware.media.c2" << (aidlEnabled ? "-V1" : "@1.2")
++               << "-service starting...";
++
++    // Set up minijail to limit system calls.
++    signal(SIGPIPE, SIG_IGN);
++    android::SetUpMinijail(kBaseSeccompPolicyPath, kExtSeccompPolicyPath);
++    if (aidlEnabled) {
++        runAidlService();
++    } else {
++        runHidlService();
++    }
++    return 0;
++}

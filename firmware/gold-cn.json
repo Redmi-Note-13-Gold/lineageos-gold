@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "device": "gold",
+  "region": "CN",
+  "version": "OS3.0.10.0.VNQCNXM",
+  "android_version": "15",
+  "checked_on": "2026-09-13",
+  "archive": {
+    "filename": "gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz",
+    "url": "https://bigota.d.miui.com/OS3.0.10.0.VNQCNXM/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz",
+    "size": 7818573046,
+    "md5": "a9729c6694cec05479a365f175be2a6b",
+    "sha256": "82e2eecdf09fef867de8f8285dc3f027c9d6c9d5fcde8217301631e9078814a9",
+    "sha256_origin": "Locally computed full-file digest, not an officially signed checksum"
+  },
+  "policy": {
+    "kernel_and_modules": "Matching unmodified stock payloads from this archive",
+    "custom_mddp_enabled": false,
+    "experimental_branch": "experimental",
+    "automatic_device_flashing": false
+  }
+}
