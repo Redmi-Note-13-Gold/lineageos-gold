@@ -32,12 +32,12 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 | `manifests/` | 本次导出基线与来源记录 |
 | `docs/` | 状态、恢复步骤、证据摘要 |
 
-快照整理日期：2026-09-13。仅维护 23.2；不迁入旧版 Darwin 构建绕过、历史 permissive 调试或无关裁剪。没有发布账号凭据、设备原始日志、用户数据、ROM 镜像或厂商 APK。
+快照整理日期：2026-09-13。仅维护 23.2；不迁入旧版 Darwin 构建绕过、历史 permissive 调试或无关裁剪。源码树不纳入账号凭据、设备原始日志、用户数据、ROM 镜像或厂商 APK；配套测试二进制通过单独的 Pre-release 提供，验收范围见该 Release 说明。
 
 提交问题时请描述底包版本、源码基线、补丁顺序、可复现步骤，并先清除日志中的号码、SIM 标识和设备序列号。未经覆盖测试的功能请不要从“编译成功”推断为“可用”。
 
 ## 致谢
 
-感谢 [android-kernels/xiaomi-gold-s-oss](https://github.com/android-kernels/xiaomi-gold-s-oss) 的维护者与原始贡献者公开和保留 gold 设备相关内核源码，为社区研究与适配提供参考。原代码的版权与许可证归原作者及相应项目所有。
+感谢 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold) 的维护者与贡献者。本项目直接继承其 `lineage-23.0` 设备树（HyperOS 1 / 5.10 基线），固定起点为 [`d3d941c29395ce770b95b735b27bd28e6a8c6946`](https://github.com/mt6833-devs/android_device_xiaomi_gold/commit/d3d941c29395ce770b95b735b27bd28e6a8c6946)，并在此基础上继续适配 LineageOS 23.2。保留上游原有版权声明与许可证。
 
-当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；此致谢不表示包内内核由上述仓库编译。
+当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。

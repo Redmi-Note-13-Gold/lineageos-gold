@@ -123,6 +123,6 @@ fastboot reboot recovery
 
 ## 致谢
 
-感谢 [android-kernels/xiaomi-gold-s-oss](https://github.com/android-kernels/xiaomi-gold-s-oss) 的维护者与原始贡献者公开和保留 gold 设备相关内核源码，为社区研究与适配提供参考。原代码的版权与许可证归原作者及相应项目所有。
+感谢 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold) 的维护者与贡献者。本项目直接继承其 `lineage-23.0` 设备树（HyperOS 1 / 5.10 基线），固定起点为 [`d3d941c29395ce770b95b735b27bd28e6a8c6946`](https://github.com/mt6833-devs/android_device_xiaomi_gold/commit/d3d941c29395ce770b95b735b27bd28e6a8c6946)，并在此基础上继续适配 LineageOS 23.2。保留上游原有版权声明与许可证。
 
-当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；此致谢不表示包内内核由上述仓库编译。
+当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。
