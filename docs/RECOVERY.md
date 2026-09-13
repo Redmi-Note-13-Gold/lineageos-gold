@@ -35,6 +35,6 @@ python3 tools/build-recovery.py \
 
 ## 当前结果与下一步
 
-候选构建及上述离线检查已通过，结果见 [recovery-candidate-20260913.json](../validation/recovery-candidate-20260913.json)。带该 Recovery 的完整 OTA 正在重新打包和验证；旧完整包的哈希不代表这个新候选。
+候选构建及上述离线检查已通过，结果见 [recovery-candidate-20260913.json](../validation/recovery-candidate-20260913.json)。带该 Recovery 的完整 OTA 已重新打包并通过签名、分区解包、AVB/FEC 及兼容性检查，文件名和新哈希见 [FULL_BUILD.md](FULL_BUILD.md)；旧完整包的哈希不代表 R1 候选。
 
 实机将单独记录 Recovery 启动、USB/sideload、data 格式化、安装完成、首次开机、再次进入 Recovery 和基础功能。格式化会清除应用、账号和内部存储文件，需先备份。现有 27 项严格 SELinux neverallow 缺口不会因替换 Recovery 自动消失。
