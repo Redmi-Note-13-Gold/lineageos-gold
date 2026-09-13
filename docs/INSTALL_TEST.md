@@ -120,3 +120,9 @@ fastboot reboot recovery
 本版未验证额外 Google 服务包、Root 模块和第三方内核组合，先按原包测试。反馈时说明设备代号、原系统/固件、操作步骤、发生时间、能否复现；公开日志前去掉手机号、SIM 标识、账号、序列号及网络隐私信息。
 
 源码、补丁与后续进度：[Redmi-Note-13-Gold/lineageos-gold](https://github.com/Redmi-Note-13-Gold/lineageos-gold)。本文件是此测试版的状态快照，后续修复不自动适用于已经下载的 ZIP。
+
+## 致谢
+
+感谢 [android-kernels/xiaomi-gold-s-oss](https://github.com/android-kernels/xiaomi-gold-s-oss) 的维护者与原始贡献者公开和保留 gold 设备相关内核源码，为社区研究与适配提供参考。原代码的版权与许可证归原作者及相应项目所有。
+
+当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；此致谢不表示包内内核由上述仓库编译。
