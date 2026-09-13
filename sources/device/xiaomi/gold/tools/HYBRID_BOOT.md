@@ -1,6 +1,6 @@
 # Hybrid property-context validation
 
-OS3.0.9.0.VNQCNXM vendor and LineageOS system_ext both declare the prefixes
+The original OS3.0.9.0.VNQCNXM investigation found that vendor and LineageOS system_ext both declare the prefixes
 `persist.vendor.pco5.radio.ctrl` and `vendor.camera.aux.packagelist`. The merged
 property trie rejects duplicates, even when their labels agree. This aborts
 `PropertyInit()` before ADB starts. A successful CIL compile alone does not test
@@ -50,3 +50,5 @@ Host tests (no phone needed):
 ```sh
 python3 -m unittest discover -s device/xiaomi/gold/tools -p 'test_*.py'
 ```
+
+The maintained `main` firmware baseline is now OS3.0.10.0.VNQCNXM. See the repository `docs/STOCK_BASE.md` for the stock-input and incremental assembly workflow; the historical examples here do not select a firmware version.

@@ -4,7 +4,7 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 
 这是 Redmi Note 13 5G（`gold`）的非官方适配记录。目的：保留可审阅的改动和失败线索，供后续开发者接手。与 Xiaomi、MediaTek、LineageOS 官方无隶属关系。
 
-**当前不是可直接刷入的 ROM，也不是完整可复现的整包构建工程。** 已部署系统结合了 LineageOS 23.2 与 OS3/6.6 的启动及 vendor 组件；普通 `bacon` 尚未串联全部组装步骤。实验模块没有混入默认补丁序列。
+**当前不是可直接刷入的 ROM，也不是完整可复现的整包构建工程。** 已部署系统结合了 LineageOS 23.2 与 OS3/6.6 的启动及 vendor 组件；普通 `bacon` 尚未串联全部组装步骤。`main` 固定采用国行官方 **OS3.0.10.0.VNQCNXM** 底包；旧 OS3.0.9 组合和自编译 MDDP 候选保留在 [`experimental`](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental) 分支。
 
 ## 从这里开始
 
@@ -13,7 +13,8 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 - [集成说明](docs/INTEGRATION.md)：IMS/eSIM、混合启动、Power HAL 和热点后端。
 - [发布前检查](docs/VALIDATION.md)：补丁应用、来源比对与主机测试。
 - [来源与许可](NOTICE.md)：保留上游作者和许可证，不将第三方代码改署名。
-- [MDDP 实验](experiments/mddp/README.md)：默认关闭、未刷入、未证明硬件加速成功。
+- [官方底包整合](docs/STOCK_BASE.md)：输入校验、增量镜像组装和本轮验证边界。
+- [MDDP 实验](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental/experiments/mddp)：未刷入、未证明硬件加速成功。
 
 ## 目录
 
@@ -22,7 +23,8 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 | `patches/` | 按 Android 项目划分的 23.2 补丁和应用清单 |
 | `sources/` | 独立集成工具与 IMS 兼容源码 |
 | `integration/` | 源码树之外的镜像级修复 |
-| `experiments/` | 不进入默认构建的候选研究 |
+| `firmware/` | 官方固件版本、来源和完整文件校验值 |
+| `tools/` | 源码恢复、底包提取、增量组装与离线检查 |
 | `manifests/` | 本次导出基线与来源记录 |
 | `docs/` | 状态、恢复步骤、证据摘要 |
 

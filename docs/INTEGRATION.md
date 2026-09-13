@@ -26,15 +26,15 @@ IMS 并不是给 LineageOS 增加一套通用“打开 VoLTE”的开关。这�
 
 普通源码策略先应用设备补丁，再应用 R3 的 restorecon 精确标签补丁。R3 原来在独立镜像上修复，因此公开序列显式补入该变化。
 
-对 OS3 hybrid vendor，还需要 `integration/power-hal/vendor-file-contexts.patch`：它针对**已包含前一轮窄范围 CIL 权限的 staging vendor**，不能只改标签就假定完整策略已集成。原部署保持 Enforcing；已有 hybrid 策略与普通源码策略的严格检查结果应分开解读。
+`integration/stock/vendor-compat.patch` 从完整官方 vendor 开始，集中包含 boost 的窄范围 CIL 权限、file_contexts 标签、MDDP 节点模式和 kernel FCM 声明。组装工具同时移除过期的原厂预编译策略缓存，并核对输出文件、所有者、权限、SELinux 标签与 capabilities。普通源码 R3 restorecon 补丁仍保留在源码序列中。
 
-`integration/mddp/ueventd.patch` 只修复 `/dev/mddp` 所有者和模式。HAL 能打开设备后，仍受基带 WH 能力及握手限制。实验目录的模块候选不在源码默认序列中，也不替换主树 5.10 预编译模块。
+MDDP 节点权限只解除访问阻塞，不能使基带自动提供 WH 能力。`main` 使用官方匹配模块；自编译模块只在 [experimental 分支](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental/experiments/mddp)保留。
 
 ## 混合启动与打包
 
-可读工具位于 `sources/device/xiaomi/gold/tools/`，恢复到 Android 源码的同一路径后使用。它们分别处理重复 property contexts、zygote 一致性、模块路径及只读启动观察，附带无设备测试。
+主分支使用 `firmware/gold-cn.json` 固定的官方底包，下层内核、模块和固件保持配套。增量组装工具及必要的 vendor/mi_ext 兼容差异见 [官方底包整合](STOCK_BASE.md)。
 
-实际系统还涉及 OS3 启动链、odm、匹配的 6.6 模块分区、mi_ext 对 Messaging 的遮挡处理，以及后续 vendor 策略组装。这些尚未成为可从空目录执行的统一构建入口。不要用普通 `bacon` 的成功替代 hybrid AVB/FEC、分区回读、开机和硬件验收；也不要把本仓库当成 OTA 包。
+`sources/device/xiaomi/gold/tools/` 继续提供 property contexts、zygote、模块路径及只读启动观察工具。现阶段仍需要已经构建好的匹配 LineageOS 上层镜像、IMS 输入及 APEX 校验材料；普通 `bacon` 未统一这些步骤。增量组装通过不等于空目录可恢复整包，更不等于启动、硬件或 OTA 验收。
 
 ## 其他设备差异
 

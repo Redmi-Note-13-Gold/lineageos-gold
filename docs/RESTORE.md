@@ -39,7 +39,11 @@ python3 /path/to/lineageos-gold/tools/apply-patches.py /path/to/android --apply
 - OpenEUICC 的二进制依赖由固定的公开依赖仓库取得；本次已经逐文件匹配，不需要再次手动下载另一套版本。
 - 按 [混合启动说明](INTEGRATION.md#混合启动与打包) 准备相互匹配的 staging 和工具输入；普通 `bacon` 尚未完成这一集成。
 
-## 4. 构建与验收
+## 4. 官方底包与增量组装
+
+`main` 固定使用国行 OS3.0.10.0.VNQCNXM。按 [STOCK_BASE.md](STOCK_BASE.md) 在 Linux 服务器下载、验证和提取底包，再与匹配的 Lineage 上层镜像整合。不要将旧 vendor_boot 调试镜像或实验模块覆盖到这组输入上。旧方案可从 `experimental` 分支恢复。
+
+## 5. 构建与验收
 
 先运行可在主机完成的工具测试：
 

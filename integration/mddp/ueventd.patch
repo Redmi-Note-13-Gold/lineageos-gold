@@ -1,9 +1,0 @@
---- a/vendor/etc/ueventd.rc
-+++ b/vendor/etc/ueventd.rc
-@@ -222,3 +222,6 @@
- 
- #widevine driver node
- /dev/drm_wv               0660   media      system
-+
-+# MDDP hardware tethering offload (HAL runs as system).
-+/dev/mddp                 0640   system     system

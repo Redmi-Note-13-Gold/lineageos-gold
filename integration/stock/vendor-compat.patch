@@ -1,0 +1,59 @@
+--- a/etc/selinux/vendor_file_contexts
++++ b/etc/selinux/vendor_file_contexts
+@@ -1426,7 +1426,7 @@
+ /sys/devices/virtual/huaqin/interface/hw_info/lcm            u:object_r:version_info:s0
+ /sys/devices/virtual/huaqin/interface/hw_info/ctp            u:object_r:version_info:s0
+ /vendor/bin/hw/arm\.mali\.platform-service\.mediatek u:object_r:mtk_hal_mali_platform_default_exec:s0
+-/sys/devices/virtual/thermal/thermal_message/boost                      u:object_r:sysfs_therm:s0
++/sys/devices/virtual/thermal/thermal_message/boost                      u:object_r:vendor_sysfs_thermal_boost:s0
+ /sys/devices/virtual/thermal/thermal_message/sconfig                    u:object_r:sysfs_therm:s0
+ /dev/block/platform/bootdevice/by-name/preloader_raw_a u:object_r:postinstall_block_device:s0
+ /dev/block/platform/bootdevice/by-name/preloader_raw_b u:object_r:postinstall_block_device:s0
+--- a/etc/selinux/vendor_sepolicy.cil
++++ b/etc/selinux/vendor_sepolicy.cil
+@@ -16537,3 +16537,27 @@
+ (typeattribute base_typeattr_226_202404)
+ (typeattributeset base_typeattr_226_202404 (and (domain) (not (dumpstate_202404 init_202404))))
+ 
++
++; Gold OS3 stock vendor + 6.6 kernel: isolate Xiaomi Power HAL boost writes.
++(type vendor_sysfs_thermal_boost)
++(roletype object_r vendor_sysfs_thermal_boost)
++(typeattributeset fs_type (vendor_sysfs_thermal_boost))
++(typeattributeset sysfs_type (vendor_sysfs_thermal_boost))
++(genfscon sysfs "/devices/virtual/thermal/thermal_message/boost" (u object_r vendor_sysfs_thermal_boost ((s0) (s0))))
++; Preserve the old sysfs_therm file permissions on this one relabeled node.
++(allow factory vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow hal_thermal_default vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow merged_hal_service vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow mtk_hal_mbrain vendor_sysfs_thermal_boost (file (ioctl read getattr lock map open watch watch_reads)))
++(allow mtk_hal_camera vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow recovery_202404 vendor_sysfs_thermal_boost (file (ioctl read getattr lock map open watch watch_reads)))
++(allow thermal_core vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow thermal_manager vendor_sysfs_thermal_boost (file (write lock append map open)))
++(allow untrusted_app_25_202404 vendor_sysfs_thermal_boost (file (ioctl read getattr lock map open watch watch_reads)))
++(allow system_app_202404 vendor_sysfs_thermal_boost (file (read write getattr open watch watch_reads)))
++(allow system_server_202404 vendor_sysfs_thermal_boost (file (read)))
++(allow system_server_202404 vendor_sysfs_thermal_boost (file (watch_reads)))
++(allow mi_thermald vendor_sysfs_thermal_boost (file (ioctl read write getattr lock append map open watch watch_reads)))
++(allow mtk_hal_light vendor_sysfs_thermal_boost (file (read getattr open watch)))
++; libpowerhal set_value uses open(O_WRONLY), write, close only.
++(allow mtk_hal_power vendor_sysfs_thermal_boost (file (open write)))
+--- a/etc/ueventd.rc
++++ b/etc/ueventd.rc
+@@ -222,3 +222,6 @@
+ 
+ #widevine driver node
+ /dev/drm_wv               0660   media      system
++
++# MDDP hardware tethering offload (HAL runs as system).
++/dev/mddp                 0640   system     system
+--- a/etc/vintf/manifest.xml
++++ b/etc/vintf/manifest.xml
+@@ -258,5 +258,5 @@
+     <sepolicy>
+         <version>202404</version>
+     </sepolicy>
+-    <kernel target-level="6"/>
++    <kernel target-level="202404"/>
+ </manifest>
