@@ -1,0 +1,132 @@
+--- a/drivers/misc/mediatek/mddp/ctrl/mddp_if.c
++++ b/drivers/misc/mediatek/mddp/ctrl/mddp_if.c
+@@ -119,7 +119,9 @@
+ 	for (idx = 0; idx < MDDP_MOD_CNT; idx++) {
+ 		type = mddp_sm_module_list_s[idx];
+ 		app = mddp_get_app_inst(type);
+-		if (!(app->feature & MDDP_FEATURE_MDDP_WH) || !app->drv_reg)
++		if (!app->drv_reg ||
++		    (!(app->feature & MDDP_FEATURE_MDDP_WH) &&
++		     !mddp_legacy_wh_handshake(app)))
+ 			continue;
+ 		mddp_sm_wait_pre(app);
+ 		mddp_sm_on_event(app, MDDP_EVT_FUNC_ENABLE);
+--- a/drivers/misc/mediatek/mddp/ctrl/mddp_sm.c
++++ b/drivers/misc/mediatek/mddp/ctrl/mddp_sm.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/slab.h>
+ #include <linux/mutex.h>
++#include <linux/moduleparam.h>
+ 
+ #include "mddp_ctrl.h"
+ #include "mddp_debug.h"
+@@ -329,6 +330,26 @@
+ //------------------------------------------------------------------------------
+ // Public functions.
+ //------------------------------------------------------------------------------
++/* Board opt-in only; a four-byte reply is not a WH success response. */
++static bool legacy_wh_handshake;
++module_param(legacy_wh_handshake, bool, 0400);
++MODULE_PARM_DESC(legacy_wh_handshake,
++	"Allow the gold legacy WFPM enable handshake (default off)");
++
++bool mddp_legacy_wh_layout(struct mddp_app_t *app)
++{
++	/* Reset announces memory before the first feature response arrives. */
++	return legacy_wh_handshake && app->type == MDDP_APP_TYPE_WH;
++}
++
++bool mddp_legacy_wh_handshake(struct mddp_app_t *app)
++{
++	u32 feature = READ_ONCE(app->feature);
++
++	return legacy_wh_handshake && app->type == MDDP_APP_TYPE_WH &&
++		(feature & ~MDDP_FEATURE_MDDP_WH) == 0x3;
++}
++
+ int32_t mddp_sm_init(void)
+ {
+ 	struct mddp_app_t              *app;
+--- a/drivers/misc/mediatek/mddp/ctrl/mddp_sm.h
++++ b/drivers/misc/mediatek/mddp/ctrl/mddp_sm.h
+@@ -56,6 +56,8 @@
+  * Structure of state machine entry.
+  */
+ struct mddp_app_t;
++bool mddp_legacy_wh_handshake(struct mddp_app_t *app);
++bool mddp_legacy_wh_layout(struct mddp_app_t *app);
+ typedef void (*mddp_sm_action_t)(struct mddp_app_t *);
+ typedef int32_t (*mddp_md_recv_msg_hdlr_t)(uint32_t msg_id,
+ 		void *buf, uint32_t buf_len);
+--- a/drivers/misc/mediatek/mddp/ctrl/mddpwh_sm.c
++++ b/drivers/misc/mediatek/mddp/ctrl/mddpwh_sm.c
+@@ -62,6 +62,10 @@
+ 	struct wfpm_smem_info_t                *smem_info;
+ 	uint32_t                                smem_num;
+ 
++	/* A new legacy enable attempt must earn its WH bit again. */
++	if (mddp_legacy_wh_handshake(app))
++		app->feature &= ~MDDP_FEATURE_MDDP_WH;
++
+ 	// 1. Send ENABLE to WiFi
+ 	if (app->drv_hdlr.change_state != NULL)
+ 		app->drv_hdlr.change_state(MDDP_STATE_ENABLING, NULL, NULL);
+@@ -71,6 +75,13 @@
+ 		MDDP_S_LOG(MDDP_LL_NOTICE,
+ 		"%s: Failed to get smem info!\n", __func__);
+ 		smem_num = 0;
++	}
++
++	/* The gold legacy contract has exactly the first five entries. */
++	if (mddp_legacy_wh_layout(app)) {
++		if (smem_num < MDDP_MD_SMEM_USER_SYS_STAT_SYNC + 1)
++			return;
++		smem_num = MDDP_MD_SMEM_USER_SYS_STAT_SYNC + 1;
+ 	}
+ 
+ 	md_msg = kzalloc(sizeof(struct mddp_md_msg_t) +
+@@ -97,6 +108,10 @@
+ {
+ 	struct mddp_dev_rsp_enable_t            enable = {0};
+ 
++	/* Only reached from an accepted ENABLE success response. */
++	if (mddp_legacy_wh_handshake(app))
++		app->feature |= MDDP_FEATURE_MDDP_WH;
++
+ 	// 1. Send RSP to WiFi
+ 	if (app->drv_hdlr.change_state != NULL)
+ 		app->drv_hdlr.change_state(app->state, NULL, NULL);
+@@ -271,6 +286,9 @@
+ 
+ static void mddpwh_sm_md_reset(struct mddp_app_t *app)
+ {
++	/* A modem reset invalidates the previous successful enable. */
++	if (mddp_legacy_wh_layout(app))
++		app->feature &= ~MDDP_FEATURE_MDDP_WH;
+ 	schedule_work(&wfpm_reset_work);
+ }
+ 
+@@ -391,6 +409,13 @@
+ 			"%s: smem_info(%llx), smem_num(%u)\n",
+ 			__func__, (unsigned long long)smem_info, smem_num);
+ 
++	/* The gold legacy contract has exactly the first five entries. */
++	if (mddp_legacy_wh_layout(app)) {
++		if (smem_num < MDDP_MD_SMEM_USER_SYS_STAT_SYNC + 1)
++			return;
++		smem_num = MDDP_MD_SMEM_USER_SYS_STAT_SYNC + 1;
++	}
++
+ 	md_msg = kzalloc(sizeof(struct mddp_md_msg_t) +
+ 			sizeof(struct wfpm_enable_md_func_req_t) +
+ 			smem_num * sizeof(struct wfpm_smem_info_t),
+@@ -432,6 +457,8 @@
+ 	switch (msg_id) {
+ 	case IPC_MSG_ID_WFPM_ENABLE_MD_FAST_PATH_RSP:
+ 		enable_rsp = (struct wfpm_enable_md_func_rsp_t *) buf;
++		if (enable_rsp->mode != WFPM_FUNC_MODE_TETHER)
++			return -EINVAL;
+ 		MDDP_S_LOG(MDDP_LL_INFO,
+ 				"%s: set (%u), (%u), MD version(%u), (%u).\n",
+ 				__func__, enable_rsp->mode, enable_rsp->result,
