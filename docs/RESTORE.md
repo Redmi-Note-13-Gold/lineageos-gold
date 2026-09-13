@@ -10,7 +10,7 @@
 
 ```sh
 repo init -u https://github.com/Redmi-Note-13-Gold/lineageos-gold \
-  -b main -m manifests/lineage-23.2-gold.xml
+  -b experimental -m manifests/lineage-23.2-gold.xml
 repo sync -c -j8
 
 git -C external/openeuicc submodule update --init --recursive

@@ -1,4 +1,8 @@
-# LineageOS for Redmi Note 13 5G (gold)
+# Experimental gold adaptations
+
+此分支保留旧 OS3.0.9 组合与未刷入的 MDDP 握手候选。维护入口已转到 [main](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/main)，跟随官方最新中国版底包。这里的历史验收不适用于新底包。
+
+## Preserved development snapshot
 
 Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, and verification boundaries.
 
