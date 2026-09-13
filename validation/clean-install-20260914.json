@@ -22,10 +22,36 @@
   ],
   "flashed_images_readback_match": true,
   "other_slot_boot_firmware_unchanged": true,
-  "data_formatted": false,
-  "sideload_tested": false,
+  "data_formatted": true,
+  "sideload_tested": true,
   "first_boot_tested": false,
   "post_install_recovery_tested": false,
   "release_accepted": false,
-  "note": "Recovery USB initially reported unauthorized; reconnecting the ADB transport restored recovery shell. Normal boot after installation has not been tested."
+  "note": "Recovery USB initially reported unauthorized; reconnecting the ADB transport restored recovery shell. Normal boot after installation has not been tested.",
+  "sideload_attempts": [
+    {
+      "attempt": 1,
+      "host_adb_exit_code": 0,
+      "recovery_status": 7,
+      "recovery_result": "Installation aborted",
+      "failure": "system_b already exists after target group cleanup; legacy active-slot partitions were in default group, with historical COW entries",
+      "system_boot_attempted": false
+    },
+    {
+      "attempt": 2,
+      "preparation": "fastboot wipe-super with matching super_empty.img",
+      "result": "in_progress"
+    }
+  ],
+  "super_layout_reset": true,
+  "super_empty": {
+    "size": 5496,
+    "sha256": "a1292477aab16a07e323dbf40846ffb88d2a41ebc55abc87470bf4838e0e4881",
+    "super_size": 9126805504,
+    "logical_partitions": 18,
+    "groups": [
+      "mediatek_dynamic_partitions_a",
+      "mediatek_dynamic_partitions_b"
+    ]
+  }
 }
