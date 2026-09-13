@@ -8,6 +8,8 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 
 ## 从这里开始
 
+- [R1 测试版下载](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260913-r1)：ROM、启动镜像、README 和校验清单分别作为附件提供。仅将文件名以 `lineage-23.2-20260913-UNOFFICIAL-gold` 开头的 ROM ZIP 用于 sideload；Source code 压缩包不是 ROM。
+
 - [测试版安装说明](docs/INSTALL_TEST.md)：配套文件、操作步骤、已知问题与验收范围。
 
 - [配套 Recovery](docs/RECOVERY.md)：保留官方 6.6 平台输入的候选整合方法与验证边界。
