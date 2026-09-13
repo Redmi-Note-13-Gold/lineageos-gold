@@ -1,0 +1,184 @@
+{
+  "rom_version": "LineageOS 23.2",
+  "firmware": "OS3.0.10.0.VNQCNXM",
+  "complete_source_target": "m -j8 bacon",
+  "clean_cache_build": false,
+  "zip_crc": true,
+  "ota_signature": true,
+  "payload_signature": true,
+  "payload_properties": true,
+  "all_payload_images_match": true,
+  "partition_count": 25,
+  "files": {
+    "lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0.zip": {
+      "size": 1748044291,
+      "sha256": "4bbe36ea5179b3d80c9df5c74a0df09b7671aad848777c1b040f5a8edd7b5f26"
+    },
+    "boot.img": {
+      "size": 67108864,
+      "sha256": "dc0b3a5f647aa80277c8bfd395c8695399fd27607c13c3f99aecb96cf2fcc43f"
+    },
+    "dpm.img": {
+      "size": 151552,
+      "sha256": "00317cbdda9857356fe0f3112369dd56d9afc4376929b4503bc7e55615fc08ec"
+    },
+    "dtbo.img": {
+      "size": 8388608,
+      "sha256": "e39f2d17525c244dd479a7583c2459bc8bb74063fac38b04ab58cf9245da656b"
+    },
+    "gz.img": {
+      "size": 2797568,
+      "sha256": "26e7af39dd0ec3a957c9436224d60f96012179e91278a2ed1d6dcb6bd62fe3e1"
+    },
+    "lk.img": {
+      "size": 1691648,
+      "sha256": "7781d6c3ff46a57d4da6d65a9cb29fa3670d5f93124ed8ba69546900903b2f9a"
+    },
+    "mcupm.img": {
+      "size": 413696,
+      "sha256": "152d0a0d02028e6df3e585d6a2abdc32b725f68a1881c923b2652214df587eb0"
+    },
+    "md1img.img": {
+      "size": 66318336,
+      "sha256": "756de83236dd5adbf697f67339cf8482c43508a4ac255479eb5dee12da81d2be"
+    },
+    "mi_ext.img": {
+      "size": 159744,
+      "sha256": "ba00722e8f2023e1b742ad4ec75256fbf113a93c8fc639818a6562fc43d402b9"
+    },
+    "odm.img": {
+      "size": 720896,
+      "sha256": "da7c8dc5dd9c985a42ad0c20e684ae96fd1f0ecd527a5f8c92a582f59605b83e"
+    },
+    "odm_dlkm.img": {
+      "size": 348160,
+      "sha256": "87cd606189e8ccc99fc5bc374be6525d7db5abc670e9d363fc3b16b7ec902d2e"
+    },
+    "pi_img.img": {
+      "size": 8192,
+      "sha256": "0c585e42a6dcd672e4eb82f21cb32dd9fa928da018bda0dd01833d8796919e7b"
+    },
+    "product.img": {
+      "size": 510750720,
+      "sha256": "157b4e3089bc75ac49cafa156ade3e2a0a11f0a1f8256306c1bf1a0d8da6c6cf"
+    },
+    "scp.img": {
+      "size": 1228800,
+      "sha256": "ca636e7de11de876a2400b6fabd60edcf6a5d1e610b1f02301fd3a0bbd7be959"
+    },
+    "spmfw.img": {
+      "size": 16384,
+      "sha256": "ddabf0495b0289653e2acf57eda462471082b4bfac4d91fb26cc67d031ad277a"
+    },
+    "sspm.img": {
+      "size": 557056,
+      "sha256": "033a1cc110f46067d3dcdc48cd01efa2d10f51a817c90957cdee677a3ff86ccc"
+    },
+    "system.img": {
+      "size": 1049243648,
+      "sha256": "4b56855fd2d058c24ef8a9faeef84647b516a8756b2486e5d0d1cb78f65c4ba5"
+    },
+    "system_dlkm.img": {
+      "size": 7290880,
+      "sha256": "9db9c884170932054a95af2f995caeb62543d56ec12622f1e96e58ae573e8f06"
+    },
+    "system_ext.img": {
+      "size": 461287424,
+      "sha256": "29013aec29cf893a8729fe1bdbd391d75fe0fedf7bf98813edca0ca1f652e831"
+    },
+    "tee.img": {
+      "size": 3317760,
+      "sha256": "9e17baeade48b51fd89bacb074d2c008a9901ba869820053de3fa7730ea133fb"
+    },
+    "vbmeta.img": {
+      "size": 65536,
+      "sha256": "708a4ce1d95873ac1c431f95ad5a9ccec32bc430483477bd09630b445a89a281"
+    },
+    "vbmeta_system.img": {
+      "size": 4096,
+      "sha256": "df13f69f2c898fa52ad350969c9a14c5c1ea05dd2149cad721956a11ae7280ff"
+    },
+    "vbmeta_vendor.img": {
+      "size": 4096,
+      "sha256": "71ab45762310456c05dac8af1747f85ac03ad9c37bfd0f4f84ca0543937328ee"
+    },
+    "vendor.img": {
+      "size": 1371250688,
+      "sha256": "2038dc4e553f1bf972ad4eb7350b3a970133eec634b2da5e883f4d9d16453751"
+    },
+    "vendor_boot.img": {
+      "size": 67108864,
+      "sha256": "af59f5c6c91d3e65196b4434a727576ef7d70b8b28185e3d681270af48324e34"
+    },
+    "vendor_dlkm.img": {
+      "size": 13983744,
+      "sha256": "7f5c62a538e16781aa2b87d284af376fb0d3e38b609cb951d3d37a78f8fcbdb6"
+    }
+  },
+  "logical_fec": {
+    "system": {
+      "roots": 2,
+      "bytes": 8232960,
+      "matches": true
+    },
+    "system_ext": {
+      "roots": 2,
+      "bytes": 3620864,
+      "matches": true
+    },
+    "product": {
+      "roots": 2,
+      "bytes": 4005888,
+      "matches": true
+    },
+    "vendor": {
+      "roots": 2,
+      "bytes": 8683520,
+      "matches": true
+    },
+    "odm": {
+      "roots": 2,
+      "bytes": 8192,
+      "matches": true
+    },
+    "system_dlkm": {
+      "roots": 2,
+      "bytes": 57344,
+      "matches": true
+    },
+    "vendor_dlkm": {
+      "roots": 2,
+      "bytes": 114688,
+      "matches": true
+    },
+    "odm_dlkm": {
+      "roots": 2,
+      "bytes": 8192,
+      "matches": true
+    },
+    "mi_ext": {
+      "roots": 2,
+      "bytes": 8192,
+      "matches": true
+    }
+  },
+  "runtime_checks": {
+    "kernel_sha256": "5926d46ee2d5ee3ddd6f620d0a77ef8593fd120ca4caf97d10d440dbac0f0a3d",
+    "kernel_version": "6.6.89",
+    "kernel_config_sha256": "9b544345144b5e7d050981905a655308700151693ddf9d10f94eee1eadeb19ec",
+    "device_flashed": false,
+    "runtime_policy_compilation": true,
+    "property_contexts_valid": true,
+    "strict_neverallow_pass": false,
+    "strict_neverallow_failures": 27,
+    "vintf_compatible": true,
+    "lineage_messaging_present": true
+  },
+  "device_flashed": false,
+  "hardware_accepted": false,
+  "installation_accepted": false,
+  "date": "2026-09-13",
+  "artifact_status": "private_test_candidate",
+  "clean_install_test": "pending",
+  "recovery_integration": "pending"
+}

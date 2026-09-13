@@ -4,10 +4,11 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 
 这是 Redmi Note 13 5G（`gold`）的非官方适配记录。目的：保留可审阅的改动和失败线索，供后续开发者接手。与 Xiaomi、MediaTek、LineageOS 官方无隶属关系。
 
-**当前不是可直接刷入的 ROM，也不是完整可复现的整包构建工程。** 已部署系统结合了 LineageOS 23.2 与 OS3/6.6 的启动及 vendor 组件；普通 `bacon` 尚未串联全部组装步骤。`main` 固定采用国行官方 **OS3.0.10.0.VNQCNXM** 底包；旧 OS3.0.9 组合和自编译 MDDP 候选保留在 [`experimental`](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental) 分支。
+**已生成新底包完整 OTA 测试候选，但尚未完成全新安装验收，也不是完整可复现的整包构建工程。** 已部署系统结合了 LineageOS 23.2 与 OS3/6.6 的启动及 vendor 组件；普通 `bacon` 尚未串联全部组装步骤。`main` 固定采用国行官方 **OS3.0.10.0.VNQCNXM** 底包；旧 OS3.0.9 组合和自编译 MDDP 候选保留在 [`experimental`](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental) 分支。
 
 ## 从这里开始
 
+- [完整 OTA 构建与安装测试](docs/FULL_BUILD.md)：完整包离线结果、Recovery 缺口与测试进度。
 - [功能与验收状态](docs/STATUS.md)：哪些已部署、哪些只做过离线验证。
 - [源码恢复与应用顺序](docs/RESTORE.md)：精确基线、补丁、独立源码，以及尚缺的输入。
 - [集成说明](docs/INTEGRATION.md)：IMS/eSIM、混合启动、Power HAL 和热点后端。
