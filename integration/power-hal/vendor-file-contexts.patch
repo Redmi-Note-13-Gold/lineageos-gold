@@ -1,0 +1,11 @@
+--- a/etc/selinux/vendor_file_contexts
++++ b/etc/selinux/vendor_file_contexts
+@@ -1426,7 +1426,7 @@
+ /sys/devices/virtual/huaqin/interface/hw_info/lcm            u:object_r:version_info:s0
+ /sys/devices/virtual/huaqin/interface/hw_info/ctp            u:object_r:version_info:s0
+ /vendor/bin/hw/arm\.mali\.platform-service\.mediatek u:object_r:mtk_hal_mali_platform_default_exec:s0
+-/sys/devices/virtual/thermal/thermal_message/boost                      u:object_r:sysfs_therm:s0
++/sys/devices/virtual/thermal/thermal_message/boost                      u:object_r:vendor_sysfs_thermal_boost:s0
+ /sys/devices/virtual/thermal/thermal_message/sconfig                    u:object_r:sysfs_therm:s0
+ /dev/block/platform/bootdevice/by-name/preloader_raw_a u:object_r:postinstall_block_device:s0
+ /dev/block/platform/bootdevice/by-name/preloader_raw_b u:object_r:postinstall_block_device:s0

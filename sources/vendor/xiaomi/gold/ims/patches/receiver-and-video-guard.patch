@@ -1,0 +1,148 @@
+--- a/com/mediatek/ims/GoldReceiverCompat.smali
++++ b/com/mediatek/ims/GoldReceiverCompat.smali
+@@ -0,0 +1,9 @@
++.class public final Lcom/mediatek/ims/GoldReceiverCompat;
++.super Ljava/lang/Object;
++.method public static register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    .locals 1
++    const/4 v0, 0x2
++    invoke-virtual {p0, p1, p2, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;I)Landroid/content/Intent;
++    move-result-object v0
++    return-object v0
++.end method
+--- a/com/mediatek/ims/ImsApp.smali
++++ b/com/mediatek/ims/ImsApp.smali
+@@ -193,7 +193,7 @@
+     .line 101
+     iget-object v3, p0, Lcom/mediatek/ims/ImsApp;->mMultiSimConfigChangedReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {p0, v3, v2}, Lcom/mediatek/ims/ImsApp;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {p0, v3, v2}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 103
+     .end local v0    # "mtkImsService":Lcom/mediatek/ims/MtkImsService;
+--- a/com/mediatek/ims/ImsCallSessionProxy.smali
++++ b/com/mediatek/ims/ImsCallSessionProxy.smali
+@@ -2590,6 +2590,12 @@
+     const-string v2, "1"
+ 
+     invoke-virtual {v1, v2}, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-eqz v1, :cond_3
++
++    invoke-static {}, Lcom/mediatek/ims/internal/ImsVTProviderUtil;->isVideoCallOnByPlatform()Z
+ 
+     move-result v1
+ 
+--- a/com/mediatek/ims/ImsConfigManager.smali
++++ b/com/mediatek/ims/ImsConfigManager.smali
+@@ -192,7 +192,7 @@
+     .line 149
+     iget-object v1, p0, Lcom/mediatek/ims/ImsConfigManager;->mBroadcastReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {p1, v1, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {p1, v1, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 151
+     return-void
+--- a/com/mediatek/ims/ImsService$MyHandler.smali
++++ b/com/mediatek/ims/ImsService$MyHandler.smali
+@@ -3255,7 +3255,7 @@
+ 
+     move-result-object v7
+ 
+-    invoke-virtual {v6, v7, v5}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v6, v7, v5}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 2757
+     .end local v5    # "filter":Landroid/content/IntentFilter;
+--- a/com/mediatek/ims/MtkSuppServExt.smali
++++ b/com/mediatek/ims/MtkSuppServExt.smali
+@@ -1580,7 +1580,7 @@
+ 
+     iget-object v2, p0, Lcom/mediatek/ims/MtkSuppServExt;->mBroadcastReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {v1, v2, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v1, v2, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 472
+     iget-object v1, p0, Lcom/mediatek/ims/MtkSuppServExt;->mContext:Landroid/content/Context;
+--- a/com/mediatek/ims/config/internal/ImsConfigController.smali
++++ b/com/mediatek/ims/config/internal/ImsConfigController.smali
+@@ -514,7 +514,7 @@
+ 
+     iget-object v5, p0, Lcom/mediatek/ims/config/internal/ImsConfigController;->mReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {v4, v5, v3}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v4, v5, v3}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 153
+     iget-object v4, p0, Lcom/mediatek/ims/config/internal/ImsConfigController;->mRilAdapter:Lcom/mediatek/ims/ril/ImsCommandsInterface;
+--- a/com/mediatek/ims/internal/ImsVTProviderUtil.smali
++++ b/com/mediatek/ims/internal/ImsVTProviderUtil.smali
+@@ -1858,7 +1858,7 @@
+ 
+     iget-object v3, p0, Lcom/mediatek/ims/internal/ImsVTProviderUtil;->mFeatureValueReceiver:Lcom/mediatek/ims/internal/ImsVTProviderUtil$FeatureValueReceiver;
+ 
+-    invoke-virtual {v2, v3, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v2, v3, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 859
+     .end local v0    # "filter":Landroid/content/IntentFilter;
+--- a/com/mediatek/ims/rcs/MtkRcsCapabilityExchangeImpl.smali
++++ b/com/mediatek/ims/rcs/MtkRcsCapabilityExchangeImpl.smali
+@@ -384,7 +384,7 @@
+ 
+     invoke-direct {v3, v4}, Landroid/content/IntentFilter;-><init>(Ljava/lang/String;)V
+ 
+-    invoke-virtual {v1, v2, v3}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v1, v2, v3}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     goto :goto_0
+ 
+--- a/com/mediatek/wfo/impl/ImsLocationHandler.smali
++++ b/com/mediatek/wfo/impl/ImsLocationHandler.smali
+@@ -5365,7 +5365,7 @@
+ 
+     iget-object v2, p0, Lcom/mediatek/wfo/impl/ImsLocationHandler;->mReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {v1, v2, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v1, v2, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 1517
+     return-void
+--- a/com/mediatek/wfo/impl/MwiService.smali
++++ b/com/mediatek/wfo/impl/MwiService.smali
+@@ -353,7 +353,7 @@
+     .line 123
+     iget-object v3, p0, Lcom/mediatek/wfo/impl/MwiService;->mMultiSimConfigChangedReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {p1, v3, v2}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {p1, v3, v2}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 125
+     .end local v2    # "multiSimConfigChanged":Landroid/content/IntentFilter;
+--- a/com/mediatek/wfo/impl/WfcHandler.smali
++++ b/com/mediatek/wfo/impl/WfcHandler.smali
+@@ -3307,7 +3307,7 @@
+ 
+     iget-object v2, p0, Lcom/mediatek/wfo/impl/WfcHandler;->mReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {v1, v2, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v1, v2, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 590
+     return-void
+--- a/com/mediatek/wfo/impl/WifiPdnHandler.smali
++++ b/com/mediatek/wfo/impl/WifiPdnHandler.smali
+@@ -3446,7 +3446,7 @@
+ 
+     iget-object v2, p0, Lcom/mediatek/wfo/impl/WifiPdnHandler;->mReceiver:Landroid/content/BroadcastReceiver;
+ 
+-    invoke-virtual {v1, v2, v0}, Landroid/content/Context;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
++    invoke-static {v1, v2, v0}, Lcom/mediatek/ims/GoldReceiverCompat;->register(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
+     .line 772
+     return-void

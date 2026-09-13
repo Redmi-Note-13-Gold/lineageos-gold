@@ -1,0 +1,58 @@
+diff --git a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
+index 4f51691..d2e92fe 100644
+--- a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
++++ b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
+@@ -50,21 +50,23 @@ class BatteryInfoFragment(private val diagnostics: BatteryInfo, private val laun
+ 
+         val locale = getDefaultLocale(activity!!)
+         val formatter = NumberFormatter.withLocale(locale)
++        val hasValidHealth = diagnostics.hasStateOfHealth() && diagnostics.stateOfHealth in 1..100
++        val nowSeconds = System.currentTimeMillis() / 1000
+         findPreference<BatteryHealthPreference>("health")!!.also {
+             it.diagnostics = diagnostics
+             it.setPercent(max(0, diagnostics.stateOfHealth.toLong()), 100)
+-            if (diagnostics.hasStateOfHealth()) {
++            if (hasValidHealth) {
+                 val percentString =
+                     formatter.unit(MeasureUnit.PERCENT).format(diagnostics.stateOfHealth).toString()
+                 it.setBottomSummary(getString(R.string.battery_health_summary_fmt, percentString))
+             } else {
+                 it.setBottomSummary(getString(R.string.battery_health_unavailable))
+-                it.isVisible = launchLevel >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
++                it.isVisible = false
+             }
+         }
+ 
+         findPreference<Preference>("legacy_health")!!.also {
+-            if (diagnostics.hasStateOfHealth()) {
++            if (hasValidHealth) {
+                 it.isVisible = false
+             } else {
+                 it.summary = getString(legacyHealthToStringId(diagnostics.legacyHealth))
+@@ -73,20 +75,22 @@ class BatteryInfoFragment(private val diagnostics: BatteryInfo, private val laun
+         }
+ 
+         findPreference<Preference>("manufacture_date")!!.also {
+-            if (diagnostics.hasManufactureTimestamp()) {
++            if (diagnostics.hasManufactureTimestamp() &&
++                diagnostics.manufactureTimestamp in 1..nowSeconds) {
+                 it.summary = localizeDateTimestamp(locale, diagnostics.manufactureTimestamp)
+             } else {
+                 it.summary = getString(R.string.unknown)
+-                it.isVisible = launchLevel >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
++                it.isVisible = false
+             }
+         }
+ 
+         findPreference<Preference>("first_usage_date")!!.also {
+-            if (diagnostics.hasFirstUsageTimestamp()) {
++            if (diagnostics.hasFirstUsageTimestamp() &&
++                diagnostics.firstUsageTimestamp in 1..nowSeconds) {
+                 it.summary = localizeDateTimestamp(locale, diagnostics.firstUsageTimestamp)
+             } else {
+                 it.summary = getString(R.string.unknown)
+-                it.isVisible = launchLevel >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
++                it.isVisible = false
+             }
+         }
+ 

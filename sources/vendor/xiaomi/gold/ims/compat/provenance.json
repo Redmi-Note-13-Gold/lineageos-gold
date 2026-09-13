@@ -1,0 +1,11 @@
+{
+  "base_apk_sha256": "814314312976a063575927084657f6dc89137afab876b7ef59366ca7242cd64a",
+  "compat_source": "hardware/lineage/compat/frameworks/telephony-common-stub/src/com/android/internal/telephony/metrics/TelephonyMetrics.java",
+  "compat_source_sha256": "c68e1d2342dfa96dd5823ba8eca106efe94fcfac4a96964e978e36c63cedd128",
+  "compat_source_revision": "9e8811a297036c370f7643813a3c733f6e442d86",
+  "added_entry": "classes2.dex",
+  "added_dex_sha256": "ec84708e488bcd3476fa903fd8884d66ecafbd966a4e022c6eec1e6b437c83ee",
+  "new_apk_sha256": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+  "existing_payload_unchanged": true,
+  "purpose": "Provide upstream LineageOS compatibility for removed legacy TelephonyMetrics logging APIs inside the vendor IMS app; no bootclasspath changes and no fabricated IMS registration state."
+}
