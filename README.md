@@ -8,6 +8,7 @@ Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, 
 
 ## 从这里开始
 
+- [配套 Recovery](docs/RECOVERY.md)：保留官方 6.6 平台输入的候选整合方法与验证边界。
 - [完整 OTA 构建与安装测试](docs/FULL_BUILD.md)：完整包离线结果、Recovery 缺口与测试进度。
 - [功能与验收状态](docs/STATUS.md)：哪些已部署、哪些只做过离线验证。
 - [源码恢复与应用顺序](docs/RESTORE.md)：精确基线、补丁、独立源码，以及尚缺的输入。

@@ -48,6 +48,10 @@ sudo python3 /path/to/lineageos-gold/tools/build-stock-base.py \
 
 输出 `assembly.json`、`SHA256SUMS` 和审计结果；固件输入与重建产物分开保留。不执行 adb、fastboot 或 A/B 切换。
 
+## 配套 Lineage Recovery
+
+上述基础组装保持官方 vendor_boot。用于终端用户 sideload 的完整包，还需完成 [Lineage Recovery 整合](RECOVERY.md)，成对替换 vendor_boot 与 vbmeta 后重新生成并验证完整 OTA。该步骤目前只有离线检查，实机安装尚未验收。
+
 ## 编译与兼容性检查
 
 ```sh

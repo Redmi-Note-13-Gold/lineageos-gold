@@ -35,6 +35,6 @@
 
 按“刷入配套 Lineage Recovery → 格式化 data → adb sideload 完整包 → 首次启动 → 再次进入 Recovery”测试，随后核对基础硬件和已有修复。
 
-当前候选 OTA 使用官方 vendor_boot；普通源码单独生成的 Recovery 又使用另一套内核输入。因此，需要先补齐与 OS3.0.10 内核、DTB、模块匹配的 Lineage Recovery，并验证安装后仍能进入该 Recovery。未解决前不提供可照抄的刷机命令，也不把开发期间分区直刷成功当作用户安装验收。
+当前候选 OTA 使用官方 vendor_boot；普通源码单独生成的 Recovery 又使用另一套内核输入。配套 Lineage Recovery 候选已完成构建和离线检查，正在纳入新的完整 OTA，见 [RECOVERY.md](RECOVERY.md)；安装后仍能进入该 Recovery 的实机验证尚未完成。未解决前不提供可照抄的刷机命令，也不把开发期间分区直刷成功当作用户安装验收。
 
 格式化 data 会清除应用、账号和内部存储文件。实际测试的清除、安装、首次启动及功能结果将分项记录；不发布设备序列号、SIM 标识或原始个人日志。
