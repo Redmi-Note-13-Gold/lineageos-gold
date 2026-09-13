@@ -11,7 +11,7 @@
   "kernel": "6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k",
   "recovery_boot_observed": true,
   "adb_shell_observed": true,
-  "display_initialization": "1080x2400 at 60 Hz; visual/menu acceptance pending",
+  "display_initialization": "1080x2400 at 60 Hz; user operated factory reset and ADB sideload menus",
   "flashed_slot": "a",
   "flashed_partitions": [
     "lk",
@@ -27,7 +27,7 @@
   "first_boot_tested": false,
   "post_install_recovery_tested": false,
   "release_accepted": false,
-  "note": "Recovery USB initially reported unauthorized; reconnecting the ADB transport restored recovery shell. Normal boot after installation has not been tested.",
+  "note": "Second sideload host exit code is 0 and the user reported installation complete, then rebooted. Final Recovery success log and normal Android boot remain unverified; USB ADB was not yet visible after reboot.",
   "sideload_attempts": [
     {
       "attempt": 1,
@@ -40,7 +40,12 @@
     {
       "attempt": 2,
       "preparation": "fastboot wipe-super with matching super_empty.img",
-      "result": "in_progress"
+      "result": "user_reported_installation_complete",
+      "host_adb_exit_code": 0,
+      "host_total_transfer": "1.98x",
+      "host_duration_seconds": 636.15607,
+      "recovery_log_verification_pending": true,
+      "user_rebooted": true
     }
   ],
   "super_layout_reset": true,
@@ -53,5 +58,6 @@
       "mediatek_dynamic_partitions_a",
       "mediatek_dynamic_partitions_b"
     ]
-  }
+  },
+  "other_slot_boot_firmware_unchanged_scope": "Verified immediately after initial A-slot Recovery flash, before super reset and OTA installation; not a statement about current B-slot contents"
 }

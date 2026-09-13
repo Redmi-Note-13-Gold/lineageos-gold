@@ -16,13 +16,13 @@ cf04a5d81fb6b897165978f0b0982fd67ec0128585fdc234d8f5cef4b3a20a74
 
 ## 2026-09-14 实机进度
 
-已在解锁的 gold 上从旧 LineageOS 23.2 / OS3.0.9 组合开始测试。先备份并核对两槽共 32 个启动/固件分区，再向 A 槽写入 R1 配套 LK、boot、DTBO、vendor_boot、vbmeta。五个写入分区回读一致，B 槽 16 个原启动/固件分区保持不变。
+已在解锁的 gold 上从旧 LineageOS 23.2 / OS3.0.9 组合开始测试。先备份并核对两槽共 32 个启动/固件分区，再向 A 槽写入 R1 配套 LK、boot、DTBO、vendor_boot、vbmeta。五个写入分区回读一致，在这一步回读时，B 槽 16 个原启动/固件分区保持不变；这是重建 super 和安装 OTA 之前的记录，不代表安装后的 B 槽仍为旧系统。
 
 Lineage Recovery 已启动，报告 23.2-20260913 和官方 6.6.89 内核，显示初始化为 1080×2400/60Hz，ADB shell 可用。USB 曾短暂显示未授权，重连 ADB transport 后恢复；没有据此宣称该 USB 现象已经修复。
 
 data 和 metadata 已由 Recovery 菜单清除成功。首次 sideload 的主机退出码为 0，但 Recovery 明确返回 **status 7 / Installation aborted**，因此不能把 ADB 传输成功当成安装成功。
 
-失败发生在动态分区创建阶段：旧手工刷入的 A 槽分区位于 `default` 组，且存在历史 COW 项；更新器清除目标槽分组后，仍遇到重名 `system_b`。已保存原 super 元数据，用最终构建对应的 `super_empty.img` 执行标准 `fastboot wipe-super`，重建干净分组后开始第二次 sideload。**第二次结果、首次启动与硬件验收仍待完成。** 这是从旧 Lineage 环境开始的测试，不是从完整 HyperOS 原厂状态完成的验证。[实机记录](../validation/clean-install-20260914.json)。
+失败发生在动态分区创建阶段：旧手工刷入的 A 槽分区位于 `default` 组，且存在历史 COW 项；更新器清除目标槽分组后，仍遇到重名 `system_b`。已保存原 super 元数据，用最终构建对应的 `super_empty.img` 执行标准 `fastboot wipe-super`，重建干净分组后开始第二次 sideload。第二次 sideload 主机正常退出（0），用时约 10 分 36 秒，传输统计 1.98x；用户报告手机显示安装完成并已重启。**最终 Recovery 成功日志尚待补取，首次 Android 启动与硬件功能尚未验收。** 这是从旧 Lineage 环境开始的测试，不是从完整 HyperOS 原厂状态完成的验证。[实机记录](../validation/clean-install-20260914.json)。
 
 ### 干净动态分区布局
 
