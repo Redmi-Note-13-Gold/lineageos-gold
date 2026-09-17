@@ -1,0 +1,29 @@
+{
+  "vendor_compat_patch_applies": true,
+  "global_original_cil_preserved": true,
+  "modified_files": {
+    "etc/ueventd.rc": {
+      "before_sha256": "4cb7973b1541d172957485c6ff677d532ddb8817bff2cd6b425e7a60cc729bd9",
+      "after_sha256": "8511c8387aed24a3b68310ec2fbaed5b798f20ea2c60612c69a18cd54d8529db",
+      "changed": true
+    },
+    "etc/vintf/manifest.xml": {
+      "before_sha256": "2ef6e253b561dee6f913ae2880999b1bc2c0b7b2b8bf6588376f43ff92dcb6e5",
+      "after_sha256": "9a1c72a58829674051bb0bef9caa753acc6f007dcdbb9fc8e3df9974ead58b5d",
+      "changed": true
+    },
+    "etc/selinux/vendor_file_contexts": {
+      "before_sha256": "33829df4342f37d53248d5c9bd9e659e555c9796a5ef5e577c93daaba751cffd",
+      "after_sha256": "d0a35a5216da153a4a6ac38874e266b9af5cdf7045f5a8893c587d607b83df5a",
+      "changed": true
+    },
+    "etc/selinux/vendor_sepolicy.cil": {
+      "before_sha256": "a38d69a4f4b088209322d12c068d00b0c30390bffb5e625a0619b78e715b20c6",
+      "after_sha256": "f97d9b5516256a2fdbec8d388dc23324c6feab305fd36f18aec76670e6317201",
+      "changed": true
+    }
+  },
+  "full_policy_compile": false,
+  "strict_neverallow_pass": null,
+  "device_tested": false
+}

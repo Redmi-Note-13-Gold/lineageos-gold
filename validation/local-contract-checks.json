@@ -1,0 +1,13 @@
+{
+  "tools_syntax": true,
+  "pinned_partition_count": 25,
+  "lock_matches_actual_offline_evidence": true,
+  "cn_lock_unchanged": true,
+  "rejections": {
+    "digest_mismatch": true,
+    "duplicate_metadata": true,
+    "unsafe_lock_path": true
+  },
+  "real_archive_extraction": "Parent running actual official ZIP on remote Linux; use remote evidence for completion",
+  "no_local_intel_binary_execution": true
+}

@@ -1,45 +1,44 @@
-# LineageOS for Redmi Note 13 5G (gold)
+# LineageOS 23.2 for Redmi Note 13 5G (`gold`)
 
-Unofficial LineageOS 23.2 device adaptation: source patches, integration notes, and verification boundaries.
+当前开发源码已纳入 Global 标准构建迁移及 2026-09-16 的启动、硬件服务和关机充电修复。最终 `userdebug-charger-final-20260916` 增量镜像已刷入 B 槽，14 项分区回读和正常开机验证通过；充电图案在包含相同永久修复的诊断版上获实机确认。详细边界见 [当前状态](docs/STATUS.md)。本次先推送源码，暂不重建或验证包含全部最新修复的完整安装包，也不发布新的 ROM Release。
 
-这是 Redmi Note 13 5G（`gold`）的非官方适配记录。目的：保留可审阅的改动和失败线索，供后续开发者接手。与 Xiaomi、MediaTek、LineageOS 官方无隶属关系。
+本项目维护 Gold 的设备适配、固定源码基线与构建输入。当前架构采用标准 Android 构建：设备树描述最终分区和启动链，从锁定的国际版 Recovery 提取厂商组件，再生成完整 target-files 与 OTA。
 
-**新底包 R1 已通过全新清除、sideload 和首次启动；图形及热点问题仍在，完整硬件验收未完成，也不是完整可复现的整包构建工程。** 已部署系统结合了 LineageOS 23.2 与 OS3/6.6 的启动及 vendor 组件；普通 `bacon` 尚未串联全部组装步骤。`main` 固定采用国行官方 **OS3.0.10.0.VNQCNXM** 底包；旧 OS3.0.9 组合和自编译 MDDP 候选保留在 [`experimental`](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental) 分支。
+**维护底包：Global OS3.0.5.0.VNQMIXM / Android 15 / kernel 6.6.118。** 固定归档与分区校验值见 [firmware/gold-global.json](firmware/gold-global.json)。预编译内核和闭源组件属于明确的构建输入，不要求从源码重建原厂闭源实现。
 
-## 从这里开始
+## 使用入口
 
-- [R1 测试版下载](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260913-r1)：ROM、启动镜像、README 和校验清单分别作为附件提供。仅将文件名以 `lineage-23.2-20260913-UNOFFICIAL-gold` 开头的 ROM ZIP 用于 sideload；Source code 压缩包不是 ROM。
+- [当前修复与验收状态](docs/STATUS.md)：已部署结果和待验收功能。
+- [构建与验证](docs/BUILD.md)：当前源码构建流程与未完成项。
+- [恢复源码](docs/RESTORE.md)：固定 manifest、平台补丁和本地设备源码。
+- [ROM 更新设计](docs/UPDATES.md)：首次迁移、后续 OTA 与签名策略，尚未启用更新服务。
+- [来源与许可](NOTICE.md)：上游设备树、参考适配及闭源输入的来源。
 
-- [测试版安装说明](docs/INSTALL_TEST.md)：配套文件、操作步骤、已知问题与验收范围。
+## 维护结构
 
-- [配套 Recovery](docs/RECOVERY.md)：保留官方 6.6 平台输入的候选整合方法与验证边界。
-- [完整 OTA 构建与安装测试](docs/FULL_BUILD.md)：完整包离线结果、Recovery 缺口与测试进度。
-- [功能与验收状态](docs/STATUS.md)：哪些已部署、哪些只做过离线验证。
-- [源码恢复与应用顺序](docs/RESTORE.md)：精确基线、补丁、独立源码，以及尚缺的输入。
-- [集成说明](docs/INTEGRATION.md)：IMS/eSIM、混合启动、Power HAL 和热点后端。
-- [发布前检查](docs/VALIDATION.md)：补丁应用、来源比对与主机测试。
-- [来源与许可](NOTICE.md)：保留上游作者和许可证，不将第三方代码改署名。
-- [官方底包整合](docs/STOCK_BASE.md)：输入校验、增量镜像组装和本轮验证边界。
-- [MDDP 实验](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental/experiments/mddp)：未刷入、未证明硬件加速成功。
-
-## 目录
-
-| 路径 | 内容 |
+| 路径 | 职责 |
 |---|---|
-| `patches/` | 按 Android 项目划分的 23.2 补丁和应用清单 |
-| `sources/` | 独立集成工具与 IMS 兼容源码 |
-| `integration/` | 源码树之外的镜像级修复 |
-| `firmware/` | 官方固件版本、来源和完整文件校验值 |
-| `tools/` | 源码恢复、底包提取、增量组装与离线检查 |
-| `manifests/` | 本次导出基线与来源记录 |
-| `docs/` | 状态、恢复步骤、证据摘要 |
+| `device/xiaomi/gold/` | 产品、分区、启动、HAL、overlay、源码 SELinux、厂商提取规则 |
+| `vendor/xiaomi/gold/` | 本项目 IMS 集成；其余厂商构建文件与闭源组件由提取生成 |
+| `vendor/xiaomi/gold/proprietary/kernel/` | 提取生成的固定内核、DTB、DTBO 和内核模块输入；不纳入源码仓库 |
+| `manifests/`、`patches/` | 固定 Android 项目与确有需要的平台差异 |
+| `firmware/` | 原厂输入的来源、版本、尺寸和哈希 |
+| `tools/` | 输入准备、源码应用、标准构建与产物检查 |
+| `archive/hybrid/` | 已退出主构建路径的镜像改写工具与历史兼容补丁 |
+| `validation/` | 带日期的验证记录；历史通过不能视为新版本通过 |
 
-快照整理日期：2026-09-13。仅维护 23.2；不迁入旧版 Darwin 构建绕过、历史 permissive 调试或无关裁剪。源码树不纳入账号凭据、设备原始日志、用户数据、ROM 镜像或厂商 APK；配套测试二进制通过单独的 Pre-release 提供，验收范围见该 Release 说明。
+标准构建从源码生成系统镜像。2026-09-14 的 Global `user` 完整包曾通过离线校验，最终 SCP-only 包含 14 个 OTA 分区，见 [历史完整包记录](validation/repack-scp-only-20260914.json)；该结果早于后续实机修复。2026-09-16 的最新部署是 `userdebug` 增量镜像验证，见 [实机修复摘要](validation/device-fixes-20260916.json)。完整硬件、包含最新修复的完整包和保数据 OTA 尚未验收。
 
-提交问题时请描述底包版本、源码基线、补丁顺序、可复现步骤，并先清除日志中的号码、SIM 标识和设备序列号。未经覆盖测试的功能请不要从“编译成功”推断为“可用”。
+构建入口已移除额外的源码/厂商输入预检查及 `input-receipt.json` 机制，准备好输入后直接进入配置和编译；原包提取检查及构建后的产物验证由各自入口完成。本次 24 项主机工具测试通过，见 [源码更新记录](validation/source-update-20260917.json)。
+
+## 已发布版本
+
+[CN R1 测试版](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260913-r1) 使用 OS3.0.10.0.VNQCNXM / 6.6.89，曾通过全新安装和首次启动，完整硬件及 OTA 更新验收未完成。其 [安装说明](docs/INSTALL_TEST.md) 与 [状态记录](docs/STATUS_R1.md) 仅适用于该发布版本，不适用于本次 Global 源码迁移。
+
+本仓库不存放签名密钥、设备原始日志、用户数据或原厂 APK/ROM 镜像。未授权刷机、发布和远端推送不属于构建步骤。
 
 ## 致谢
 
-感谢 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold) 的维护者与贡献者。本项目直接继承其 `lineage-23.0` 设备树（HyperOS 1 / 5.10 基线），固定起点为 [`d3d941c29395ce770b95b735b27bd28e6a8c6946`](https://github.com/mt6833-devs/android_device_xiaomi_gold/commit/d3d941c29395ce770b95b735b27bd28e6a8c6946)，并在此基础上继续适配 LineageOS 23.2。保留上游原有版权声明与许可证。
+设备树继承自 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold)，固定起点为 `d3d941c29395ce770b95b735b27bd28e6a8c6946`，保留原始版权与许可证。本次 6.6 迁移参考 [Dhterech/android_device_xiaomi_gold](https://github.com/Dhterech/android_device_xiaomi_gold/tree/lineage-23.2)，具体采用内容与固定版本见设备提取记录和 NOTICE。
 
-当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。
+本项目与 Xiaomi、MediaTek、LineageOS 官方无隶属关系。

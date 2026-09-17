@@ -7,3 +7,12 @@ __pycache__/
 *.pem
 *.key
 *.log
+
+# Generated from locked stock inputs; authored IMS source remains tracked.
+/vendor/xiaomi/gold/proprietary/
+/vendor/xiaomi/gold/radio/
+/vendor/xiaomi/gold/input-receipt.json
+/vendor/xiaomi/gold/Android.bp
+/vendor/xiaomi/gold/Android.mk
+/vendor/xiaomi/gold/BoardConfigVendor.mk
+/vendor/xiaomi/gold/gold-vendor.mk

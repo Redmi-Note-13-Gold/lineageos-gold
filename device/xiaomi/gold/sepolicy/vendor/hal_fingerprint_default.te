@@ -1,0 +1,4 @@
+# Stock FPC module control access; do not grant writes to generic sysfs.
+allow hal_fingerprint_default vendor_sysfs_fingerprint_control:file rw_file_perms;
+allow vendor_init vendor_sysfs_fingerprint_control:file setattr;
+set_prop(hal_fingerprint_default, vendor_gold_fingerprint_prop)

@@ -1,0 +1,168 @@
+{
+  "schema_version": 2,
+  "stock_version": "OS3.0.5.0.VNQMIXM",
+  "region": "Global",
+  "archive_format": "recovery-full-ota",
+  "lock_sha256": "b5a599efb5926944de858f8e76a724a0c6b82dcb46cf0c966ce136ae28f9750b",
+  "archive": {
+    "size": 5419567545,
+    "sha256": "35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9",
+    "md5": "df9ff3aa93ea8ea98df428b13ceb20c3"
+  },
+  "images": {
+    "logical/mi_ext.img": {
+      "size": 888860672,
+      "sha256": "40835c15034f6158eecdcd08898f152923ae54fd7bdc27578d20084f378e222a",
+      "md5": "63ec867f0c303cfa8483090c0465c43c"
+    },
+    "logical/odm_dlkm.img": {
+      "size": 348160,
+      "sha256": "2119a393d7bb021034839ff794d72c53bdfc69609ecab777f3ecf1e76ae53f7c",
+      "md5": "969fb9348222debd75fa32ec45a578b7"
+    },
+    "logical/product.img": {
+      "size": 3288588288,
+      "sha256": "9bfdc26f1c13fc0c7a8e2f3b15ce4b614c8a89bf2ba3b68c61aa057fca99ddb0",
+      "md5": "3a93cd1b49a69f827fd3fd1f1eb797dd"
+    },
+    "logical/system.img": {
+      "size": 917180416,
+      "sha256": "facffea3cd7157d9fb1dc0f2fb74dfd34d7f26d358be41e9777a9927410b0463",
+      "md5": "46e9afb11894cd27b6fc4a78ffbbd53d"
+    },
+    "logical/system_dlkm.img": {
+      "size": 7323648,
+      "sha256": "bfec601a7dcff06aa4802043cb04e19288be068de9442900cb13f0dc982593ab",
+      "md5": "cd109e780d3ec43c56518bb08c34007e"
+    },
+    "logical/system_ext.img": {
+      "size": 989097984,
+      "sha256": "1b01c17e3771fee04f6ded8830beeecfc4a915872763399f69c00c757711b4b9",
+      "md5": "8ec6454c11d729b382bdbe9e351b4e4a"
+    },
+    "logical/vendor.img": {
+      "size": 1372213248,
+      "sha256": "9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f",
+      "md5": "706085793b7af32cecb8bb4093becc34"
+    },
+    "logical/vendor_dlkm.img": {
+      "size": 13983744,
+      "sha256": "6da6a3e7a4dea6e1cacc3b23e813fedd6cd8bf3713a99e7805abaf7bc24b4db4",
+      "md5": "8f0feebd601ef2e1eee66051e820f262"
+    },
+    "physical/boot.img": {
+      "size": 67108864,
+      "sha256": "d86a63ccdc4a2f7870830fea6b3d0a0d07fda82afd59ad7dd5725427ae0271b2",
+      "md5": "c85b257af01808cf7e27f7508551643b"
+    },
+    "physical/dpm.img": {
+      "size": 151552,
+      "sha256": "35360db0952b43be31d123cc9a2426bcf695b699af6ffa66a268cbd54bd5981b",
+      "md5": "3a4b3c2da2838ff5d0cd13d256fad969"
+    },
+    "physical/dtbo.img": {
+      "size": 8388608,
+      "sha256": "63e8bf2fae093bdcfcf1f0574a0a150bd7f0c15cecc9c7aa893b5b44f13bc8f9",
+      "md5": "8134fe9cb0b1a048a60015f545addccd"
+    },
+    "physical/gz.img": {
+      "size": 2797568,
+      "sha256": "17635215d7f02c2df82849835b8c64ef733b92f58eb97dfac3186716e16f32dc",
+      "md5": "d744aa141b8a30acb61738b81b9dec72"
+    },
+    "physical/lk.img": {
+      "size": 1695744,
+      "sha256": "ef3b103d19ec67f9d8bfc89f481098f922b3ca512539743e1317becaa9f2db92",
+      "md5": "d47eb9679d34c630d85e823d14ec6e95"
+    },
+    "physical/mcupm.img": {
+      "size": 413696,
+      "sha256": "841fcf84c1310633d9f2f920afec211f88142321968a178117e433b39083510f",
+      "md5": "fbe3f7cfe06c5dfc32b46f6ecd1245f1"
+    },
+    "physical/md1img.img": {
+      "size": 66318336,
+      "sha256": "5be36d7dd19ec13cccd7f4a948118f1b53454e9b14e58f4d3806c382e578dea4",
+      "md5": "c01619868d75129ca6a27c9ed52d68e5"
+    },
+    "physical/pi_img.img": {
+      "size": 8192,
+      "sha256": "ee9aa8fda34533fab590dedf10008773ea1316b4d625e937f6a2325c422559a3",
+      "md5": "96a0d1143e8a74a7e868b400cfc76038"
+    },
+    "physical/preloader_raw.img": {
+      "size": 430080,
+      "sha256": "526dece14a5012d35d195a0785105a44218313a1bc6640bb16c5e3e65c466fb5",
+      "md5": "f3d5b60542df06a50554feed42c89dc0"
+    },
+    "physical/scp.img": {
+      "size": 1200128,
+      "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+      "md5": "920bd666c250cdc7be5480593b132831"
+    },
+    "physical/spmfw.img": {
+      "size": 16384,
+      "sha256": "ce3233a99d847c1aea16db37fc39140165b6b6ca4d421a76909bbf027ba44224",
+      "md5": "cc5f691f66805c0a58a5e4a45dbcafe9"
+    },
+    "physical/sspm.img": {
+      "size": 557056,
+      "sha256": "089a81e700254271d60d6dc63e9b3d6666128f6a7c78f23dd2b5a051c5349339",
+      "md5": "48bf9140c83c6299618112767c3b6d85"
+    },
+    "physical/tee.img": {
+      "size": 3317760,
+      "sha256": "d2b5d4b2c7d21d98e19f9b4197c0b5ccbd6dfd80d67a64f39bf8aeef25483d15",
+      "md5": "89241fb8c346dfb2f60d2712b4dc9eb9"
+    },
+    "physical/vbmeta.img": {
+      "size": 8192,
+      "sha256": "5125b784e07417f3ce4d8695e5f1ea662f6fd362cd42de3c6f86fa65ddf93abe",
+      "md5": "f415da065f62d02bf9e9ea22f8b5a2e0"
+    },
+    "physical/vbmeta_system.img": {
+      "size": 4096,
+      "sha256": "033293cc59b375110950be19d2f3637d5869ef7110930c80d8d8c0dfba0b9bf7",
+      "md5": "f89a26bfcdccdb643270aeda4ad7b7eb"
+    },
+    "physical/vbmeta_vendor.img": {
+      "size": 4096,
+      "sha256": "791b90a39ea60c9cc5d44ac86234bb6a8447fcee3c30e8c78a1ffabb8348dfbb",
+      "md5": "eae644c703169962418b518bef1172df"
+    },
+    "physical/vendor_boot.img": {
+      "size": 67108864,
+      "sha256": "d15d8ce678b14869e43b22855dbff4f58e816cf043281c20b49690f8d0934b97",
+      "md5": "390df0451d42094027ded1b35dfe5930"
+    }
+  },
+  "kernel_release": "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k",
+  "phone_commands_executed": false,
+  "prepared_only": true,
+  "acceptance": {
+    "archive_integrity": true,
+    "partition_integrity": true,
+    "signature_trust_chain": false,
+    "full_build": false,
+    "device": false
+  },
+  "ota_metadata": {
+    "ota-property-files": "payload_metadata.bin:4667:212868,payload.bin:4667:5419559206,payload_properties.txt:5419563931:156,apex_info.pb:2213:1364,care_map.pb:3624:976,metadata:69:685,metadata.pb:822:1343                        ",
+    "ota-required-cache": "0",
+    "ota-streaming-property-files": "payload.bin:4667:5419559206,payload_properties.txt:5419563931:156,apex_info.pb:2213:1364,care_map.pb:3624:976,metadata:69:685,metadata.pb:822:1343                          ",
+    "ota-type": "AB",
+    "post-build": "Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.5.0.VNQMIXM:user/release-keys",
+    "post-build-incremental": "OS3.0.5.0.VNQMIXM",
+    "post-sdk-level": "35",
+    "post-security-patch-level": "2026-08-01",
+    "post-timestamp": "1786451683",
+    "pre-device": "gold"
+  },
+  "payload_integrity": {
+    "file_sha256": "0ea779148cc1ea965c2d5c2b5876a144036c2dc2d183c9b34d9fd67069e5eaed",
+    "file_size": 5419559206,
+    "metadata_sha256": "2bae9d5563dba144907746bbef5312fa7009b61ea9de5a7a88a64009bcabe073",
+    "metadata_size": 212601,
+    "signature_trust_chain_verified": false
+  }
+}

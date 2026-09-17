@@ -1,0 +1,25 @@
+Common_CFlags = ["-Wall"]
+Common_CFlags += ["-Werror"]
+
+cc_binary {
+    name: "vendor.qti.hardware.vibrator.service.gold",
+    vendor: true,
+    relative_install_path: "hw",
+    init_rc: ["vendor.qti.hardware.vibrator.service.gold.rc"],
+    vintf_fragments: [
+        "vendor.qti.hardware.vibrator.service.gold.xml",
+    ],
+    cflags: Common_CFlags,
+    srcs: [
+        "service.cpp",
+        "Vibrator.cpp",
+    ],
+    shared_libs: [
+        "libcutils",
+        "libutils",
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+        "android.hardware.vibrator-V1-ndk",
+    ],
+}

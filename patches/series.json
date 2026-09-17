@@ -8,13 +8,20 @@
     ]
   },
   {
+    "path": "build/soong",
+    "url": "https://github.com/LineageOS/android_build_soong",
+    "revision": "9aa045a2aef10b8089e32e847fed26d9aa3d61be",
+    "patches": [
+      "patches/build__soong/0001-vendor-ramdisk-kati-fallback.patch"
+    ]
+  },
+  {
     "path": "device/xiaomi/gold",
     "url": "https://github.com/mt6833-devs/android_device_xiaomi_gold",
     "revision": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
-    "patches": [
-      "patches/device__xiaomi__gold/0001-gold-23.2-integration.patch",
-      "patches/device__xiaomi__gold/0002-power-boost-restorecon.patch"
-    ]
+    "patches": [],
+    "source": "device/xiaomi/gold",
+    "remove": []
   },
   {
     "path": "frameworks/base",
@@ -22,14 +29,6 @@
     "revision": "35ad1f68539dce0857d25154dacb1116100737e9",
     "patches": [
       "patches/frameworks__base/0001-status-icon-packing-r2.patch"
-    ]
-  },
-  {
-    "path": "hardware/mediatek",
-    "url": "https://github.com/LineageOS/android_hardware_mediatek",
-    "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
-    "patches": [
-      "patches/hardware__mediatek/0001-aidl-codec2-service.patch"
     ]
   },
   {
@@ -65,5 +64,13 @@
     "url": "https://gitea.angry.im/PeterCxy/android_prebuilts_openeuicc-deps",
     "revision": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
     "patches": []
+  },
+  {
+    "path": "hardware/mediatek",
+    "url": "https://github.com/LineageOS/android_hardware_mediatek",
+    "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
+    "patches": [
+      "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch"
+    ]
   }
 ]

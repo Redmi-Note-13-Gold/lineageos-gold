@@ -1,0 +1,35 @@
+{
+  "checked_on": "2026-09-14",
+  "scope": "Real isolated Global Recovery assembly using existing CN R1 Lineage upper images; no full source build or device installation",
+  "source_result": "global-final-status.json",
+  "orchestrator_service": [
+    "ExecMainStatus=0",
+    "ActiveState=inactive",
+    "SubState=dead"
+  ],
+  "recovery_exit_code": 0,
+  "compatibility_exit_code": 1,
+  "compatibility_passed": false,
+  "checks": {
+    "kernel_sha256": "0281e33d7e25c54aa65a6460a8f3b86f7c414e520b88db3919ce7efaa12754f9",
+    "kernel_version": "6.6.118",
+    "kernel_config_sha256": "b4bdfa788a4f501ff39d3ed8a6729d728aa4cea8e9fb651ab816383eb8e805e1",
+    "device_flashed": false,
+    "runtime_policy_compilation": true,
+    "property_contexts_valid": true,
+    "strict_neverallow_pass": false,
+    "strict_neverallow_failures": 27,
+    "vintf_compatible": true,
+    "lineage_messaging_present": true,
+    "global_mi_ext_minimal": true,
+    "global_mi_ext_version": true
+  },
+  "recovery_result": "Recovery candidate built and AVB/ramdisk integrity verified; device testing pending.",
+  "acceptance": {
+    "recovery_offline_integrity": true,
+    "strict_policy_gate": false,
+    "full_source_build": false,
+    "device": false
+  },
+  "exit_status_note": "The service exited 0 after collecting subprocess results; the compatibility subprocess exited 1. Service success does not mean compatibility passed."
+}

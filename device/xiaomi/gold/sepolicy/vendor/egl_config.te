@@ -1,0 +1,5 @@
+# EGL format capabilities are public, read-only vendor configuration.
+get_prop(domain, vendor_arm_egl_config_prop)
+
+# Init loads these read-only values from vendor/build.prop during boot.
+set_prop(vendor_init, vendor_arm_egl_config_prop)

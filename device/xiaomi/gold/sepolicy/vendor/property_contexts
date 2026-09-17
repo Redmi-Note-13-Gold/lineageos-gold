@@ -1,0 +1,21 @@
+ro.vendor.arm.egl.configs. u:object_r:vendor_arm_egl_config_prop:s0 prefix
+persist.vendor.sys.fp.vendor u:object_r:vendor_gold_fingerprint_prop:s0 exact string
+
+# The stock FPC hwid check returns the hardware-info property write result.
+persist.vendor.sys.fp.info u:object_r:vendor_gold_fingerprint_prop:s0 exact string
+persist.vendor.sys.fp.uid u:object_r:vendor_gold_fingerprint_prop:s0 exact string
+persist.vendor.sys.fp.module u:object_r:vendor_gold_fingerprint_prop:s0 exact string
+
+# Stock camera identity and calibration status, using the existing camera property type.
+vendor.camera.sensor.w.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
+vendor.camera.sensor.f.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
+vendor.camera.sensor.u.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
+vendor.camera.sensor.d.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
+vendor.camera.sensor.m.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.main u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.front u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.ultra u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.depth u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.macro u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.camera.mi.dualcal.state u:object_r:vendor_mtk_camera_prop:s0 exact string
+persist.vendor.cam.dualcal u:object_r:vendor_mtk_camera_prop:s0 exact string

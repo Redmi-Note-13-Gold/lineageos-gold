@@ -1,6 +1,10 @@
 # 官方 6.6 基线的 Lineage Recovery
 
-日期：2026-09-13。**以下是经过离线检查的候选构建方法，随后已观察到 Recovery 启动和 ADB shell 可用；data 格式化、第二次 sideload（最终日志 status 0）、首次 Android 启动均已确认；安装后再次进入 Recovery 仍待验证，进度见 [FULL_BUILD.md](FULL_BUILD.md)。测试者步骤见 [INSTALL_TEST.md](INSTALL_TEST.md)，尚不是稳定版完整验收。**
+> 历史范围：本文记录 CN R1 与早期 Global 混合镜像流程。当前源码构建请以 [BUILD.md](BUILD.md) 为准；本文的通过结果不继承到新构建。
+
+以下验收记录对应 2026-09-13 的 CN R1；新 Global 工具接口更新于 2026-09-14，不能沿用 CN 实机结果。
+
+**以下是经过离线检查的候选构建方法，随后已观察到 Recovery 启动和 ADB shell 可用；data 格式化、第二次 sideload（最终日志 status 0）、首次 Android 启动均已确认；安装后再次进入 Recovery 仍待验证，进度见 [FULL_BUILD.md](FULL_BUILD.md)。测试者步骤见 [INSTALL_TEST.md](INSTALL_TEST.md)，尚不是稳定版完整验收。**
 
 ## 为什么需要单独整合
 
@@ -15,15 +19,16 @@
 在已具备 Android 主机工具的 Linux 编译环境运行，使用新输出目录和与其他组装任务共用的锁：
 
 ```sh
-python3 tools/build-recovery.py \
+python3 archive/hybrid/tools/build-recovery.py \
   --source /path/to/android \
   --assembly /path/to/verified-stock-assembly \
   --lineage-vendor-boot /path/to/android/out/target/product/gold/vendor_boot.img \
   --output /path/to/new-recovery-candidate \
-  --lock /path/to/shared-build.lock
+  --lock /path/to/shared-build.lock \
+  --firmware-lock firmware/gold-global.json
 ```
 
-输入必须是本仓库 `build-stock-base.py` 的 OS3.0.10 组装结果，以及匹配本轮 Lineage 构建的 vendor_boot。工具保留未修改镜像的引用，不能在归档前删除这些输入。输出中的 `vendor_boot.img` 和 `vbmeta.img` 必须成对进入后续完整 OTA；不应只替换 ZIP 内某个镜像或沿用旧 payload。
+输入必须是本仓库 `build-stock-base.py` 生成、且与 `--firmware-lock` 完全一致的组装结果，以及匹配本轮 Lineage 构建的 vendor_boot。工具保留未修改镜像的引用，不能在归档前删除这些输入。输出中的 `vendor_boot.img` 和 `vbmeta.img` 必须成对进入后续完整 OTA；不应只替换 ZIP 内某个镜像或沿用旧 payload。
 
 工具会重建 vendor_boot 的 AVB footer 与父级 vbmeta，并重新解包检查：
 
@@ -33,7 +38,7 @@ python3 tools/build-recovery.py \
 
 默认使用 AOSP 公开开发测试密钥；可用 `--key` 显式指定自有密钥。此候选不支持重新锁定 bootloader。
 
-## 当前结果与下一步
+## 已发布 CN R1 结果与下一步
 
 候选构建及上述离线检查已通过，结果见 [recovery-candidate-20260913.json](../validation/recovery-candidate-20260913.json)。带该 Recovery 的完整 OTA 已重新打包并通过签名、分区解包、AVB/FEC 及兼容性检查，文件名和新哈希见 [FULL_BUILD.md](FULL_BUILD.md)；旧完整包的哈希不代表 R1 候选。
 

@@ -1,0 +1,54 @@
+{
+  "checked_on": "2026-09-14",
+  "baseline_commit": "e14a7fa605391f61e8e4c0b09b679e31c042a34a",
+  "models": {
+    "count": 3,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "high"
+  },
+  "targeted_tests": {
+    "run": 14,
+    "pass": 14
+  },
+  "existing_tool_tests": {
+    "run": 117,
+    "pass": 108,
+    "skipped_for_missing_native_inputs": 9
+  },
+  "python_syntax_checked": 19,
+  "tools_help_checked": 7,
+  "repository_input_check": true,
+  "remote_preparation": {
+    "exit_code": 0,
+    "partitions": 25
+  },
+  "remote_assembly": {
+    "exit_code": 0,
+    "reused_cn_r1_upper_images": true,
+    "new_full_source_build": false
+  },
+  "remote_recovery": {
+    "exit_code": 0
+  },
+  "remote_compatibility": {
+    "exit_code": 1,
+    "vintf": true,
+    "runtime_policy": true,
+    "property_contexts": true,
+    "strict_neverallow_pass": false,
+    "strict_neverallow_failures": 27
+  },
+  "published": false,
+  "device_flashed": false,
+  "full_source_build": false,
+  "scripts": {
+    "tools/apply-patches.py": "e781e71c69bec51e0cad2e354b288daec3eb93761e7f4718e54322a67e21b405",
+    "tools/build-recovery.py": "e83c136f3cc32d8119be97136a97125d84214b5b5f4f1725a28e4928094498aa",
+    "tools/build-source.py": "dd511b01cac2042c66b841fba278af1b02a76bfdf4d281e48ec4ff8d872efc86",
+    "tools/build-stock-base.py": "6821df391427715a6b451916786c34306ccab9145a8d0ae2328f1747af541244",
+    "tools/check-build.py": "f3a2e2b8989e5e049e375090ccafec59458f1d8f80757e15d15aabce9fbed7ad",
+    "tools/prepare-stock.py": "73da22239b34e37c4e7ca9d715bbafda23c12a2c1c3b73ca66328fd8c31cfa17",
+    "tools/verify-stock-base.py": "1114327893634fc1b524913cdf44610844116a4bbc47f9ef20b776376802dde4"
+  },
+  "evidence_boundary": "Remote artifact records retain the exact tested builder hash. Final local alias fix for custom ODM filenames and unified stock preflight are covered by the 14 targeted tests; no remote result hashes were rewritten."
+}

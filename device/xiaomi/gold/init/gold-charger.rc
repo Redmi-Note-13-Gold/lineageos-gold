@@ -1,0 +1,22 @@
+# Gold loads its display driver asynchronously in insmod_sh.
+# minui initializes once: do not start the charger UI before DRM is ready.
+service vendor.charger /vendor/bin/hw/android.hardware.health-service.mediatek --charger
+    class charger
+    override
+    disabled
+    seclabel u:r:charger_vendor:s0
+    user system
+    group system graphics wakelock input
+    capabilities SYS_BOOT
+    file /dev/kmsg w
+    file /sys/fs/pstore/console-ramoops-0 r
+    file /sys/fs/pstore/console-ramoops r
+    file /proc/last_kmsg r
+
+on charger
+    wait_for_prop vendor.all.modules.ready 1
+    wait /dev/dri/card0 10
+    chown system system /dev/dri/card0
+    # Reapply the board default after DRM is ready; early LED probe precedes DRM.
+    write /sys/class/leds/lcd-backlight/brightness 1638
+    start vendor.charger

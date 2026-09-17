@@ -1,10 +1,10 @@
 # 来源与许可
 
-这是多来源补丁集合，不对所有文件统一改署名或声称重新授权。
+这是多来源设备适配与补丁集合，不对所有文件统一改署名或声称重新授权。
 
 | 内容 | 来源与许可处理 |
 |---|---|
-| Android / LineageOS / Gold 设备树差异 | 基线仓库和提交见 `patches/series.json`；保留原文件版权头和许可证。常见为 Apache-2.0，具体以原项目/文件为准 |
+| Android / LineageOS 平台差异及完整 Gold 设备树 | 基线仓库和提交见 `patches/series.json`；保留原文件版权头和许可证。常见为 Apache-2.0，具体以原项目/文件为准 |
 | codec2 集成源码 | 保留 Android Open Source Project 的原始版权头；属于已有 MediaTek/AOSP 适配输入，不声明为本项目从零编写 |
 | OpenEUICC 两处修改 | PeterCxy/OpenEUICC 与其贡献者，GPL-3.0；只分发差异，完整上游许可证收录于 `LICENSES/GPL-3.0.txt` |
 | OpenEUICC 的 lpac/cJSON 子模块与依赖 | 通过固定上游仓库获取，保留各自许可证；本仓库不复制二进制依赖或图标素材 |
@@ -22,3 +22,9 @@ Apache-2.0 完整文本见 `LICENSES/Apache-2.0.txt`。修改补丁的许可随�
 感谢 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold) 的维护者与贡献者。本项目直接继承其 `lineage-23.0` 设备树（HyperOS 1 / 5.10 基线），固定起点为 [`d3d941c29395ce770b95b735b27bd28e6a8c6946`](https://github.com/mt6833-devs/android_device_xiaomi_gold/commit/d3d941c29395ce770b95b735b27bd28e6a8c6946)，并在此基础上继续适配 LineageOS 23.2。保留上游原有版权声明与许可证。
 
 当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。
+
+## Global 6.6 迁移参考
+
+本次提取规则参考 Dhterech/android_device_xiaomi_gold 的固定提交 [`05f3e97ecf196e7f912cbcf7d1e93fa32958cf98`](https://github.com/Dhterech/android_device_xiaomi_gold/commit/05f3e97ecf196e7f912cbcf7d1e93fa32958cf98)。保留原始版权；参考文件哈希、实际原包与差异记录在 `device/xiaomi/gold/proprietary-source.json`。设备启动配置以实际 Global Recovery 的分区和 header 核验为准，未将参考仓库的开发绕过配置直接迁入。
+
+Global 内核与厂商固件来自锁定的 OS3.0.5.0.VNQMIXM 官方 Recovery。旧镜像修复工具和来源保留于 `archive/hybrid/`，不再参与主构建。

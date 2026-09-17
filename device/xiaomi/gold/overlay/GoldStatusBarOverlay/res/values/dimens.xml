@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="rounded_corner_content_padding">20dp</dimen>
+    <!-- Shade headers use the shared insets directly; avoid adding these a second time. -->
+    <dimen name="status_bar_padding_start">0dp</dimen>
+    <dimen name="status_bar_padding_end">0dp</dimen>
+    <dimen name="status_bar_clock_starting_padding">0dp</dimen>
+    <dimen name="status_bar_icons_padding_end">0dp</dimen>
+</resources>

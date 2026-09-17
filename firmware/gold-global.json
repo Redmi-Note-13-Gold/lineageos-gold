@@ -1,0 +1,166 @@
+{
+  "schema_version": 2,
+  "device": "gold",
+  "region": "Global",
+  "region_code": "MIXM",
+  "version": "OS3.0.5.0.VNQMIXM",
+  "android_version": "15",
+  "archive_format": "recovery-full-ota",
+  "checked_on": "2026-09-14",
+  "archive": {
+    "size": 5419567545,
+    "sha256": "35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9",
+    "md5": "df9ff3aa93ea8ea98df428b13ceb20c3",
+    "sha256_origin": "locally computed; MD5 compared with published firmware catalog",
+    "filename": "gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip",
+    "url": "https://bigota.d.miui.com/OS3.0.5.0.VNQMIXM/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip",
+    "mirrors": [
+      "https://hugeota.d.miui.com/OS3.0.5.0.VNQMIXM/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip",
+      "https://bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com/OS3.0.5.0.VNQMIXM/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip"
+    ]
+  },
+  "ota_metadata": {
+    "ota-type": "AB",
+    "pre-device": "gold",
+    "post-build": "Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.5.0.VNQMIXM:user/release-keys",
+    "post-build-incremental": "OS3.0.5.0.VNQMIXM",
+    "post-sdk-level": "35",
+    "post-security-patch-level": "2026-08-01",
+    "post-timestamp": "1786451683"
+  },
+  "payload_properties": {
+    "FILE_HASH": "Dqd5FIzB6pZcLVwrWHahRANsLcLRg8mzTZ/WcGnl6u0=",
+    "FILE_SIZE": "5419559206",
+    "METADATA_HASH": "K66dVWPboUSQd0a771MS+nAJth6p3lp6iKZACbyr4HM=",
+    "METADATA_SIZE": "212601"
+  },
+  "images": {
+    "physical/boot.img": {
+      "size": 67108864,
+      "sha256": "d86a63ccdc4a2f7870830fea6b3d0a0d07fda82afd59ad7dd5725427ae0271b2"
+    },
+    "physical/dpm.img": {
+      "size": 151552,
+      "sha256": "35360db0952b43be31d123cc9a2426bcf695b699af6ffa66a268cbd54bd5981b"
+    },
+    "physical/dtbo.img": {
+      "size": 8388608,
+      "sha256": "63e8bf2fae093bdcfcf1f0574a0a150bd7f0c15cecc9c7aa893b5b44f13bc8f9"
+    },
+    "physical/gz.img": {
+      "size": 2797568,
+      "sha256": "17635215d7f02c2df82849835b8c64ef733b92f58eb97dfac3186716e16f32dc"
+    },
+    "physical/lk.img": {
+      "size": 1695744,
+      "sha256": "ef3b103d19ec67f9d8bfc89f481098f922b3ca512539743e1317becaa9f2db92"
+    },
+    "physical/mcupm.img": {
+      "size": 413696,
+      "sha256": "841fcf84c1310633d9f2f920afec211f88142321968a178117e433b39083510f"
+    },
+    "physical/md1img.img": {
+      "size": 66318336,
+      "sha256": "5be36d7dd19ec13cccd7f4a948118f1b53454e9b14e58f4d3806c382e578dea4"
+    },
+    "logical/mi_ext.img": {
+      "size": 888860672,
+      "sha256": "40835c15034f6158eecdcd08898f152923ae54fd7bdc27578d20084f378e222a"
+    },
+    "logical/odm_dlkm.img": {
+      "size": 348160,
+      "sha256": "2119a393d7bb021034839ff794d72c53bdfc69609ecab777f3ecf1e76ae53f7c"
+    },
+    "physical/pi_img.img": {
+      "size": 8192,
+      "sha256": "ee9aa8fda34533fab590dedf10008773ea1316b4d625e937f6a2325c422559a3"
+    },
+    "physical/preloader_raw.img": {
+      "size": 430080,
+      "sha256": "526dece14a5012d35d195a0785105a44218313a1bc6640bb16c5e3e65c466fb5"
+    },
+    "logical/product.img": {
+      "size": 3288588288,
+      "sha256": "9bfdc26f1c13fc0c7a8e2f3b15ce4b614c8a89bf2ba3b68c61aa057fca99ddb0"
+    },
+    "physical/scp.img": {
+      "size": 1200128,
+      "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
+    },
+    "physical/spmfw.img": {
+      "size": 16384,
+      "sha256": "ce3233a99d847c1aea16db37fc39140165b6b6ca4d421a76909bbf027ba44224"
+    },
+    "physical/sspm.img": {
+      "size": 557056,
+      "sha256": "089a81e700254271d60d6dc63e9b3d6666128f6a7c78f23dd2b5a051c5349339"
+    },
+    "logical/system.img": {
+      "size": 917180416,
+      "sha256": "facffea3cd7157d9fb1dc0f2fb74dfd34d7f26d358be41e9777a9927410b0463"
+    },
+    "logical/system_dlkm.img": {
+      "size": 7323648,
+      "sha256": "bfec601a7dcff06aa4802043cb04e19288be068de9442900cb13f0dc982593ab"
+    },
+    "logical/system_ext.img": {
+      "size": 989097984,
+      "sha256": "1b01c17e3771fee04f6ded8830beeecfc4a915872763399f69c00c757711b4b9"
+    },
+    "physical/tee.img": {
+      "size": 3317760,
+      "sha256": "d2b5d4b2c7d21d98e19f9b4197c0b5ccbd6dfd80d67a64f39bf8aeef25483d15"
+    },
+    "physical/vbmeta.img": {
+      "size": 8192,
+      "sha256": "5125b784e07417f3ce4d8695e5f1ea662f6fd362cd42de3c6f86fa65ddf93abe"
+    },
+    "physical/vbmeta_system.img": {
+      "size": 4096,
+      "sha256": "033293cc59b375110950be19d2f3637d5869ef7110930c80d8d8c0dfba0b9bf7"
+    },
+    "physical/vbmeta_vendor.img": {
+      "size": 4096,
+      "sha256": "791b90a39ea60c9cc5d44ac86234bb6a8447fcee3c30e8c78a1ffabb8348dfbb"
+    },
+    "logical/vendor.img": {
+      "size": 1372213248,
+      "sha256": "9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f"
+    },
+    "physical/vendor_boot.img": {
+      "size": 67108864,
+      "sha256": "d15d8ce678b14869e43b22855dbff4f58e816cf043281c20b49690f8d0934b97"
+    },
+    "logical/vendor_dlkm.img": {
+      "size": 13983744,
+      "sha256": "6da6a3e7a4dea6e1cacc3b23e813fedd6cd8bf3713a99e7805abaf7bc24b4db4"
+    }
+  },
+  "kernel": {
+    "release": "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k",
+    "sha256": "0281e33d7e25c54aa65a6460a8f3b86f7c414e520b88db3919ce7efaa12754f9",
+    "sha256_origin": "Extracted compressed kernel from stock boot.img; independently equal in Global Recovery and Fastboot"
+  },
+  "policy": {
+    "kernel_and_modules": "Keep boot, vendor_boot, system_dlkm, vendor_dlkm and odm_dlkm from this exact archive together",
+    "custom_mddp_enabled": false,
+    "automatic_device_flashing": false,
+    "preloader_raw": "Retained as a verified original input only; excluded from the current OTA firmware selection",
+    "stock_android_userspace": "system/product/system_ext are extraction references; build Lineage partitions from source",
+    "legacy_cn_lock": "gold-cn.json",
+    "ota_firmware": "Only locked Global scp is selected at user request. Compatibility with Google apps or voice assistants has not been established."
+  },
+  "verification": {
+    "catalog_url": "https://mirom.ezbox.idv.tw/en/phone/gold/",
+    "latest_scope": "Latest publicly indexed Global MIXM stable full Recovery on checked_on, not proof of per-device rollout availability",
+    "archive_and_partition_hash_origin": "Full-file offline measurements from official CDN archive on 2026-09-14",
+    "signature_trust_chain_verified": false,
+    "source_build_completed": false,
+    "device_validated": false
+  },
+  "known_blockers": [
+    "27 strict SELinux neverallow failures in prior CN source build; must rerun and resolve for Global, never inherit a passed status",
+    "Global vendor/mi_ext compatibility changes and proprietary extraction require reevaluation",
+    "6.6.118 kernel/module pairing and boot/recovery/IMS/hotspot/GPU/power need fresh runtime acceptance"
+  ]
+}

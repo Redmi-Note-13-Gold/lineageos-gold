@@ -1,0 +1,1 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mediatek.ims.overlay.telephony" android:versionCode="1" android:versionName="1.0"><uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35"/><overlay android:isStatic="true" android:targetPackage="com.android.phone" android:priority="97"/><application android:hasCode="false"/></manifest>

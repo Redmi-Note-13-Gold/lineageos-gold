@@ -1,0 +1,7 @@
+runtime_resource_overlay {
+    name: "GoldImsCarrierOverlay",
+    system_ext_specific: true,
+    certificate: "platform",
+    sdk_version: "current",
+    aaptflags: ["--keep-raw-values"],
+}

@@ -1,10 +1,12 @@
 # 集成说明
 
+> 历史范围：本文记录 CN R1 与早期 Global 混合镜像流程。当前源码构建请以 [BUILD.md](BUILD.md) 为准；本文的通过结果不继承到新构建。
+
 ## IMS / VoLTE
 
 IMS 并不是给 LineageOS 增加一套通用“打开 VoLTE”的开关。这里适配的是 Gold 上的厂商 IMS 应用与 23.2 框架之间的接口、动态广播注册规则和权限。
 
-1. v5 修复为动态广播提供明确的 export 标志，并在视频能力不可用时保护视频相关调用。`sources/vendor/xiaomi/gold/ims/patches/receiver-and-video-guard.patch` 的基线是**已补齐依赖的 v1 smali 树**，不能直接套在任意原厂 APK 上。
+1. v5 修复为动态广播提供明确的 export 标志，并在视频能力不可用时保护视频相关调用。`vendor/xiaomi/gold/ims/patches/receiver-and-video-guard.patch` 的基线是**已补齐依赖的 v1 smali 树**，不能直接套在任意原厂 APK 上。
 2. 23.2 需要补充旧 `TelephonyMetrics` 接口。`compat/rebuild.py` 从固定 v5 输入创建额外 `classes2.dex`，保留原有 47 项有效载荷。兼容 Java 源码来自 LineageOS，版本和校验值见 `compat/provenance.json`。
 3. 权限与 framework/telephony/carrier overlay 配套。运营商 overlay 的 MCC 460 / MNC 01 是有意限定的；编译保留原始值中的前导零，不以全局强制属性冒充支持。
 4. APK 由产品构建使用自己的 platform key 签名。这里不提供厂商 APK、私钥或可直接安装包。
@@ -26,15 +28,15 @@ IMS 并不是给 LineageOS 增加一套通用“打开 VoLTE”的开关。这�
 
 普通源码策略先应用设备补丁，再应用 R3 的 restorecon 精确标签补丁。R3 原来在独立镜像上修复，因此公开序列显式补入该变化。
 
-`integration/stock/vendor-compat.patch` 从完整官方 vendor 开始，集中包含 boost 的窄范围 CIL 权限、file_contexts 标签、MDDP 节点模式和 kernel FCM 声明。组装工具同时移除过期的原厂预编译策略缓存，并核对输出文件、所有者、权限、SELinux 标签与 capabilities。普通源码 R3 restorecon 补丁仍保留在源码序列中。
+`archive/hybrid/stock/vendor-compat.patch` 从完整官方 vendor 开始，集中包含 boost 的窄范围 CIL 权限、file_contexts 标签、MDDP 节点模式和 kernel FCM 声明。组装工具同时移除过期的原厂预编译策略缓存，并核对输出文件、所有者、权限、SELinux 标签与 capabilities。普通源码 R3 restorecon 补丁仍保留在源码序列中。
 
 MDDP 节点权限只解除访问阻塞，不能使基带自动提供 WH 能力。`main` 使用官方匹配模块；自编译模块只在 [experimental 分支](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental/experiments/mddp)保留。
 
 ## 混合启动与打包
 
-主分支使用 `firmware/gold-cn.json` 固定的官方底包，下层内核、模块和固件保持配套。增量组装工具及必要的 vendor/mi_ext 兼容差异见 [官方底包整合](STOCK_BASE.md)。
+新的维护输入使用 `firmware/gold-global.json` 固定的 Global 完整 Recovery 底包，历史 CN 锁仍保留，下层内核、模块和固件保持配套。增量组装工具及必要的 vendor/mi_ext 兼容差异见 [官方底包整合](STOCK_BASE.md)。
 
-`sources/device/xiaomi/gold/tools/` 继续提供 property contexts、zygote、模块路径及只读启动观察工具。现阶段仍需要已经构建好的匹配 LineageOS 上层镜像、IMS 输入及 APEX 校验材料；普通 `bacon` 未统一这些步骤。增量组装通过不等于空目录可恢复整包，更不等于启动、硬件或 OTA 验收。
+`archive/hybrid/tools/` 继续提供 property contexts、zygote、模块路径及只读启动观察工具。现阶段仍需要已经构建好的匹配 LineageOS 上层镜像、IMS 输入及 APEX 校验材料；普通 `bacon` 未统一这些步骤。增量组装通过不等于空目录可恢复整包，更不等于启动、硬件或 OTA 验收。
 
 ## 其他设备差异
 

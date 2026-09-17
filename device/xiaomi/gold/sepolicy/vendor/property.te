@@ -1,0 +1,5 @@
+# Hardware format capabilities read by the vendor EGL driver in app processes.
+vendor_public_prop(vendor_arm_egl_config_prop)
+
+# Vendor fingerprint module selection reported by the source HAL.
+vendor_internal_prop(vendor_gold_fingerprint_prop)
