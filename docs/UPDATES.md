@@ -1,5 +1,7 @@
 # gold / LineageOS 23.2 ROM 更新方案
 
+2026-09-19 更新 · 最终整合候选包。完成三方补丁盘点：v1 全部合理补丁已在当前树（recovery 侧载内存、状态栏图标打包、电池信息、TCP conntrack、thermal 诊断、OpenEUICC service-slot）；mt6833-devs 的 keymint-V3 与 AIDL Codec2 修复已有等效实现；Dhterech 关机充电方案已在 `init/gold-charger.rc` 等效实现。GS101 MemTrack 与 Dhterech 2026-09-16 的 sepolicy/属性清理暂缓，待本包真机验收后评估。最终包 `lineage-23.2-20260919-UNOFFICIAL-gold.zip` 在科研机构建机增量构建成功（13m38s），三产物哈希与 A/B 结构校验见 [final-build-20260919.json](../validation/final-build-20260919.json)；完整设备验收仍待执行。
+
 2026-09-17 更新 · OTA 设计稿。Global 标准构建及后续启动、充电修复已进入源码；最新增量镜像已刷机并通过短时开机检查，见 [STATUS.md](STATUS.md)。本轮仅推送源码，暂不验证最新完整安装包，未启用更新源或发布新的 ROM Release。下文 r1 数据仅记录旧发布版本。
 
 **建议路线：先固定 Global 底包和发行密钥，完成“完整 ZIP 手动保数据升级”；随后让系统内 Lineage Updater 下载并安装同一个完整 ZIP；增量包等确有带宽收益时再做。** 使用现有 GitHub 仓库与 Release 即可，无需数据库、更新服务器或新客户端。
