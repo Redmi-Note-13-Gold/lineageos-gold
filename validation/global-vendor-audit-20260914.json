@@ -1,0 +1,13 @@
+{
+  "paths": 6490,
+  "metadata_and_xattrs_preserved": true,
+  "modified": [
+    "etc/selinux/vendor_file_contexts",
+    "etc/selinux/vendor_sepolicy.cil",
+    "etc/ueventd.rc",
+    "etc/vintf/manifest.xml"
+  ],
+  "removed": [
+    "etc/selinux/precompiled_sepolicy"
+  ]
+}

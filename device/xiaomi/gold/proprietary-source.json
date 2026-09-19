@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "reference_repository": "https://github.com/Dhterech/android_device_xiaomi_gold",
+  "reference_commit": "05f3e97ecf196e7f912cbcf7d1e93fa32958cf98",
+  "reference_license": "Apache-2.0 (extraction scripts); original authors retained",
+  "reference_files": {
+    "extract-files.py": "4a15e43b447cba184833482eabb7a5404135aca07d8c2066c7eb34587d6460c9",
+    "proprietary-files.txt": "951a6e7008a57446ebdfb3f13eeddf3b7804ddf64ed8bd70dea0be425e3d7397"
+  },
+  "stock_lock": "firmware/gold-global.json",
+  "stock_version": "OS3.0.5.0.VNQMIXM",
+  "changes": [
+    "Map ODM paths to vendor/odm as stored in this Recovery",
+    "Combine composer fixups so Python dict keys do not discard changes",
+    "Firmware included using standard extract-utils generation: Global scp only; all other stock firmware and stock AVB images excluded",
+    "Use original stock Widevine APEX SHA-1 1ab71fd60c1f96932979b1a9ae76786aa13e8642 instead of upstream foreign pin",
+    "Preserve authored IMS integration when cleaning generated vendor blobs",
+    "Add omitted stock mmagent/nvram AIDL services and tetheroffload init/VINTF registration; include missing nvram-V1-ndk direct dependency",
+    "Register EXTRACT_ONLY ODM SKU inputs using ODM_MANIFEST_SKUS and ODM_MANIFEST_<SKU>_FILES; platform android-info.mk generates and assembles the SKU modules without custom Soong rules"
+  ],
+  "proprietary_binaries": "Not redistributed by this repository; extracted from user-provided locked official archive"
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Physical-pixel geometry from the gold stock DevicesAndroidOverlay. -->
+    <string name="config_mainBuiltInDisplayCutout" translatable="false">M 0,0 H -28 V 111 H 28 V 0 H 0 Z</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation" translatable="false">M 0,0 H -28 V 111 H 28 V 0 H 0 Z</string>
+    <dimen name="status_bar_height_default">111px</dimen>
+    <dimen name="status_bar_height_portrait">111px</dimen>
+    <dimen name="rounded_corner_radius">70px</dimen>
+    <dimen name="rounded_corner_radius_top">70px</dimen>
+    <dimen name="rounded_corner_radius_bottom">70px</dimen>
+    <!-- Match the gold source policy; thermal and battery-saver votes still apply. -->
+    <integer name="config_defaultRefreshRate">0</integer>
+    <integer name="config_defaultPeakRefreshRate">120</integer>
+    <string-array name="config_ntpServers" translatable="false">
+        <item>ntp://ntp.aliyun.com</item>
+    </string-array>
+</resources>

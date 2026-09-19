@@ -1,0 +1,9 @@
+# Xiaomi thermal boost is a separate write target from thermal controls.
+type vendor_sysfs_thermal_boost, fs_type, sysfs_type;
+
+# The five control nodes used by the stock FPC fingerprint module.
+type vendor_sysfs_fingerprint_control, fs_type, sysfs_type;
+
+# Read-only board identification and display status nodes.
+type vendor_gold_sysfs_board_info, fs_type, sysfs_type;
+type vendor_gold_sysfs_panel, fs_type, sysfs_type;

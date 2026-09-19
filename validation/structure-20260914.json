@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-14",
+  "scope": "project-structure-and-source-entry",
+  "base_commit": "e14a7fa605391f61e8e4c0b09b679e31c042a34a",
+  "upstream_device_commit": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
+  "upstream_device_files": 64,
+  "device_files_after_existing_patches": 88,
+  "intentional_device_content_change_from_materialized_patches": [
+    "README.md"
+  ],
+  "moved_source_files_byte_identical": 18,
+  "manifest_projects": 1160,
+  "tests": {
+    "new_restore_and_input_tests": {
+      "run": 11,
+      "passed": 11
+    },
+    "existing_device_tool_tests": {
+      "run": 117,
+      "passed": 108,
+      "skipped": 9,
+      "skip_reason": "GOLD_HYBRID_TARGET_FILES and native integration inputs not provided"
+    },
+    "python_files_syntax_checked": 19,
+    "all_tools_help": true,
+    "git_diff_check": true
+  },
+  "android_build_started": false,
+  "full_source_tree_restored": false,
+  "new_rom_built": false,
+  "device_modified": false,
+  "published": false
+}

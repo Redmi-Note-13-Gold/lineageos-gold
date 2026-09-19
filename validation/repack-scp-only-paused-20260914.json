@@ -1,0 +1,43 @@
+{
+  "status": "paused-by-user",
+  "firmware_selection": [
+    "scp"
+  ],
+  "expected_ota_partitions": [
+    "boot",
+    "dtbo",
+    "odm_dlkm",
+    "product",
+    "scp",
+    "system",
+    "system_dlkm",
+    "system_ext",
+    "vbmeta",
+    "vbmeta_system",
+    "vbmeta_vendor",
+    "vendor",
+    "vendor_boot",
+    "vendor_dlkm"
+  ],
+  "generated_vendor_receipt_current": false,
+  "superseded_generated_receipt": "42795215415c24addc72704541cb935e84b73025aa3012f3a582e22368f53f32",
+  "requires_explicit_resume_before_prepare_build_package_download": true,
+  "updated_files": [
+    "<build-root>/migration/gold-architecture-20260914/project/device/xiaomi/gold/proprietary-firmware.txt",
+    "<build-root>/migration/gold-architecture-20260914/source/device/xiaomi/gold/proprietary-firmware.txt",
+    "<build-root>/migration/gold-architecture-20260914/vendor/tree/device/xiaomi/gold/proprietary-firmware.txt",
+    "<build-root>/migration/gold-architecture-20260914/project/device/xiaomi/gold/proprietary-source.json",
+    "<build-root>/migration/gold-architecture-20260914/source/device/xiaomi/gold/proprietary-source.json",
+    "<build-root>/migration/gold-architecture-20260914/vendor/tree/device/xiaomi/gold/proprietary-source.json",
+    "<build-root>/migration/gold-architecture-20260914/project/firmware/gold-global.json",
+    "<build-root>/migration/gold-architecture-20260914/vendor/tree/firmware/gold-global.json",
+    "<build-root>/migration/gold-architecture-20260914/project/vendor/xiaomi/gold/README.md",
+    "<build-root>/migration/gold-architecture-20260914/project/docs/BUILD.md",
+    "<build-root>/migration/gold-architecture-20260914/project/docs/UPDATES.md"
+  ],
+  "backup": "<build-root>/migration/gold-architecture-20260914/scp-only-config-backup-1789397243979486034",
+  "new_build_started": false,
+  "new_package_generated": false,
+  "device_written": false,
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

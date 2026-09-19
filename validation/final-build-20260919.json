@@ -1,0 +1,52 @@
+{
+  "date": "2026-09-19",
+  "type": "final-integration-build",
+  "builder": "research ECS i-0jl4ekmhqqhwv1bvz5ry (8 vCPU / 16 GiB, research machine build)",
+  "tree": "gold-architecture-20260914 merged overlay; project repo aligned to origin/main 95f8b0b; local draft preserved on branch backup/local-draft-20260918",
+  "targets": [
+    "bacon",
+    "target-files-package"
+  ],
+  "jobs": 2,
+  "duration": "13:38 (incremental)",
+  "build_datetime_utc": 1789821624,
+  "artifacts": {
+    "ota_zip": {
+      "name": "lineage-23.2-20260919-UNOFFICIAL-gold.zip",
+      "size": 1174754174,
+      "sha256": "db7ffb859ca4bbda398279053cb1935d56d3ee6defd18bc60b644e224b240180",
+      "structure": "A/B payload (payload.bin 1174746132 bytes + payload_properties.txt)"
+    },
+    "target_files_zip": {
+      "name": "lineage_gold-target_files.zip",
+      "sha256": "792d09249050b532d63b4530635a5407a9104c06d8229f4400e9c11344a8828d"
+    },
+    "settings_apk": {
+      "sha256": "2bf77b9e8aaf17831f6b57c425928a562e6eed398c9a4a17c189252fa63b7ae4",
+      "note": "byte-identical to 20260917 golden build; Betterr maintainer resources intact"
+    }
+  },
+  "patch_inventory": {
+    "v1_patches_in_tree": [
+      "bootable/recovery sideload block-cache cap (fuse_sideload.cpp + otautil/package.cpp)",
+      "frameworks/base status icon packing r2 (+ GoldStatusBarOverlay dimensions)",
+      "packages/apps/DeviceDiagnostics battery information validation",
+      "packages/modules/Connectivity tcp conntrack recycling",
+      "hardware/mediatek thermal missing-cooling diagnostic",
+      "external/openeuicc service-slot integration"
+    ],
+    "upstream_equivalents_present": [
+      "mt6833-devs keymint-V3-ndk vendor (Android 16 keystore2 bootability, 0b22bb7)",
+      "AIDL Codec2 source-built service (hardware/mediatek/aidl/codec2)"
+    ],
+    "equivalent_by_design": [
+      "Dhterech offline-charging pattern already in init/gold-charger.rc (disabled charger + DRM wait + explicit start)"
+    ],
+    "deferred_pending_device_validation": [
+      "mt6833-devs GS101 MemTrack switch (6c4aa12) - tree uses android.hardware.memtrack-service.mediatek",
+      "Dhterech 2026-09-16 cleanup set: sepolicy additions, legacy props removal, mtk usb rc fix",
+      "Dhterech custom health HAL (19a71ff/85ca188) - tree already carries aidl/health + gold-charger.rc"
+    ]
+  },
+  "device_validation": "pending - flash lineage-23.2-20260919-UNOFFICIAL-gold.zip and run acceptance checklist"
+}

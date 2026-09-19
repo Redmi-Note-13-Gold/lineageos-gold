@@ -1,0 +1,2 @@
+# libpowerhal set_value opens the Xiaomi boost node O_WRONLY.
+allow mtk_hal_power vendor_sysfs_thermal_boost:file { open write };

@@ -1,0 +1,5 @@
+# The same typed power-supply nodes are read by the normal Health HAL.
+r_dir_file(charger_vendor, sysfs_power_supply)
+
+# Permit the charger launch action to check whether the DRM node exists.
+allow vendor_init dri_device:chr_file getattr;

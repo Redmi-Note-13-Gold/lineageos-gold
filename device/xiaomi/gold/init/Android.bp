@@ -1,0 +1,82 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+prebuilt_etc {
+    name: "fstab.mt6833",
+    src: "fstab.mt6833",
+    vendor: true,
+    vendor_ramdisk_available: true,
+}
+
+prebuilt_etc {
+    name: "init.mt6833.rc",
+    src: "init.mt6833.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.mt6833.power.rc",
+    src: "init.mt6833.power.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.mt6833.thermal.rc",
+    src: "init.mt6833.thermal.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.mt6833.usb.rc",
+    src: "init.mt6833.usb.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.project.rc",
+    src: "init.project.rc",
+    relative_install_path: "init",
+    recovery: true,
+}
+
+prebuilt_etc {
+    name: "init.project.vendor.rc",
+    src: "init.project.rc",
+    filename: "init.project.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.recovery.mt6833.rc",
+    src: "init.recovery.mt6833.rc",
+    relative_install_path: "init",
+    recovery: true,
+}
+
+prebuilt_etc {
+    name: "init.sensor_2_0.rc",
+    src: "init.sensor_2_0.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.rc",
+    src: "init.connectivity.rc",
+    relative_install_path: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "ueventd.mtk.rc",
+    src: "ueventd.rc",
+    filename: "ueventd.rc",
+    vendor: true,
+}

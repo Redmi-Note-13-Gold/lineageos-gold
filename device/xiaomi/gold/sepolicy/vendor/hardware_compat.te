@@ -1,0 +1,16 @@
+# Read only the board ID needed to choose matching Wi-Fi/NVRAM variants.
+allow { wlan_assistant nvram_daemon } vendor_gold_sysfs_board_info:file r_file_perms;
+allow vendor_init vendor_gold_sysfs_board_info:file setattr;
+
+# Stock display and sensor HALs query panel identity and panel events.
+allow { mtk_hal_pq hal_sensors_default hal_graphics_composer_default } vendor_gold_sysfs_panel:file r_file_perms;
+
+# Camera calibration stays on the original persist partition, with read-only HAL access.
+type vendor_gold_camera_cal_file, file_type, data_file_type;
+allow mtk_hal_camera persist_data_file:dir search;
+r_dir_file(mtk_hal_camera, vendor_gold_camera_cal_file)
+
+# Camera-owned runtime files belong to this vendor HAL, not generic vendor data.
+type vendor_gold_camera_data_file, file_type, data_file_type;
+allow mtk_hal_camera vendor_gold_camera_data_file:dir create_dir_perms;
+allow mtk_hal_camera vendor_gold_camera_data_file:file create_file_perms;

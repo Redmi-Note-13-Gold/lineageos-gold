@@ -1,0 +1,231 @@
+{
+  "date": "2026-09-14",
+  "status": "standard-user-build-and-artifact-validation-passed",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "agents": 3,
+  "backup": "work/architecture-20260914/before.tar.gz",
+  "reference_commit": "05f3e97ecf196e7f912cbcf7d1e93fa32958cf98",
+  "input_check": {
+    "schema_version": 2,
+    "checks_pass": true,
+    "scope": "pinned-source-and-input-consistency",
+    "manifest_projects": 1160,
+    "manifest_sha256": "aa357c1e257cc655750eb03686f539bb737306837a31d618cdbb52231fdee6d9",
+    "source_tree_checked": true,
+    "stock": null,
+    "full_build_verified": false,
+    "reproducible_build_verified": false,
+    "device_accepted": false,
+    "errors": [],
+    "warnings": [
+      "Input checks do not establish successful compilation, release signing, strict policy tests or device/OTA acceptance"
+    ]
+  },
+  "vendor_evidence": "global-standard-vendor-20260914.json",
+  "device_hal_audit": {
+    "all_blob_hal_declarations_match_verified_stock": true,
+    "duplicate_device_and_extracted_hal_declarations": [],
+    "installed_blob_services": [
+      "composer3 AIDL3",
+      "allocator AIDL2",
+      "gatekeeper AIDL1",
+      "keymint AIDL3",
+      "codec2 AIDL1"
+    ],
+    "source_audio_wrapper_runtime_verified": false
+  },
+  "targeted_tests": {
+    "passed": 27
+  },
+  "archived_tests": {
+    "passed": 108,
+    "skipped": 9
+  },
+  "source": "<build-root>/migration/gold-architecture-20260914/source",
+  "out": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard",
+  "build_service": "gold-standard-20260914-3",
+  "build_targets": [
+    "bacon",
+    "target-files-package"
+  ],
+  "variant": "user",
+  "jobs": 8,
+  "original_source_modified": false,
+  "stock_cil_imported": false,
+  "new_source_policy_rule": "Exact Codec2 executable label reuses existing mtk_hal_c2 domain",
+  "full_build_verified": true,
+  "device_flashed": false,
+  "device_accepted": false,
+  "published": false,
+  "pushed": false,
+  "limitations": [
+    "IMS requires pinned existing compatibility APK; complete stock-to-IMS reconstruction remains separate",
+    "Artifacts use test keys; release signing and device/runtime/OTA acceptance remain pending"
+  ],
+  "build_attempts": [
+    {
+      "stage": "Soong graph",
+      "result": "failed",
+      "error": "fsgen rejects multiple vendor ramdisk fragments despite Make/Kati build",
+      "fix_status": "patched and eight native Go regression cases passed"
+    },
+    {
+      "stage": "Soong graph",
+      "result": "failed",
+      "error": "absolute OUT_DIR rejected by upstream host test path handling",
+      "fix_status": "relative OUT_DIR inside source; 26 entry tests passed"
+    },
+    {
+      "stage": "Make packaging rules",
+      "result": "failed",
+      "out_dir_env": "out-gold-standard",
+      "error": "VINTF manifest_iron_gl.xml copied via PRODUCT_COPY_FILES instead of standard VINTF input",
+      "fix_status": "SKU manifests natively assembled; generated definitions and all 2462 vendor inputs verified"
+    },
+    {
+      "stage": "standard full user build after SKU VINTF fix",
+      "result": "failed",
+      "out_dir_env": "out-gold-standard",
+      "error": "android-info.mk requires ODM_MANIFEST_IRON_GL_FILES for registered SKU",
+      "fix_status": "Native android-info.mk rules tested; custom SKU modules removed; standard inputs synchronized and verified"
+    },
+    {
+      "stage": "Ninja compilation",
+      "result": "passed",
+      "out_dir_env": "out-gold-standard",
+      "make_packaging_rules_passed": true,
+      "total_actions": 212478,
+      "observed_actions_completed": 212478,
+      "observed_total_actions": 212478,
+      "build_elapsed": "05:49:38"
+    }
+  ],
+  "soong_regression_cases": 8,
+  "blocker": {
+    "kind": "cloud-data-disk-io",
+    "observed_utc": "2026-09-14T02:46:00Z/2026-09-14T02:52:00Z",
+    "cloud_read_bytes_per_second_range": [
+      124654,
+      238455
+    ],
+    "cloud_read_latency_microseconds_range": [
+      10701796,
+      21878216
+    ],
+    "guest_memory_available_gib": 60.1,
+    "guest_data_disk_free_gib": 195.7,
+    "guest_io_full_pressure_avg10_percent": 98.99,
+    "kernel_io_error_seen": false,
+    "build_restarted_after_vintf_fix": false,
+    "prepare_process_stopped": true,
+    "recheck": {
+      "timestamp_utc": "2026-09-14T03:04:00Z",
+      "cached_boot_sha256_probe_seconds": 0.050386064,
+      "cold_read_reproduced": true,
+      "cloud_read_bps": [
+        179131,
+        214084
+      ],
+      "cloud_read_latency_microseconds": [
+        22672324,
+        16959542
+      ],
+      "guest_full_io_pressure_avg10_percent": 98.97,
+      "instance_health": "Ok",
+      "disk_health": "Ok",
+      "scheduled_instance_events": [],
+      "disk_events": [],
+      "prepare_exit_code": -15,
+      "prepare_written_bytes": 0,
+      "android_build_restarted": false,
+      "root_cause_confirmed": false
+    },
+    "latest_recheck": {
+      "checked_utc": "2026-09-14T03:12:15Z",
+      "direct_read_mib": 64,
+      "direct_read_offset_mib": 128,
+      "direct_read_seconds": 0.123280611,
+      "full_image_bytes": 888860672,
+      "full_image_sha256_matches_lock": true,
+      "full_image_read_seconds": 3.645797225,
+      "reproduced_this_probe": false,
+      "root_cause_confirmed": false,
+      "build_restarted": false
+    },
+    "resume_authorized": true,
+    "resolved_for_resume": true
+  },
+  "vintf_fix_evidence": "global-vintf-registration-fix-20260914.json",
+  "remote_state": {
+    "source": "New SKU recipes and vendor definitions synchronized; full receipt verification passed",
+    "vendor_receipt_sha256": "4039bd7dfe6765e9ebf3ee3c7fcec96dd66d85fb3b815772026e448d976c4df5",
+    "new_receipt_generated": true,
+    "active_android_build": false
+  },
+  "compiled_policy_checkpoint": {
+    "checked_utc": "2026-09-14T08:34:17Z",
+    "tool_exists": true,
+    "policy_candidates": [
+      "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/soong/.intermediates/system/sepolicy/precompiled_sepolicy/android_common/gold/precompiled_sepolicy"
+    ],
+    "packaged_policy_verified": false,
+    "policy_sha256": "09a7eb94ca6b60be06882089426b677da3c216f65fe5ff885899adef5a7b77b8",
+    "policy_bytes": 1267933,
+    "exit_code": 0,
+    "permissive_domains": [],
+    "stderr": ""
+  },
+  "final_build_evidence": "standard-build-20260914.json",
+  "final_artifact_validation": {
+    "build_exit_code": 0,
+    "artifact_contract_verified": true,
+    "android_validators_passed": true,
+    "release_signing_verified": false,
+    "device_accepted": false,
+    "target_files_sha256": "ce0f6ebda091d581218f96cee8559b91c7282e482df98a4cfdbe4282ab623a49",
+    "ota_sha256": "b20808db94df7b347ec585c8a9fa2633c165b17dc8f9d9d57268bc27b5b0f171",
+    "partitions": [
+      "boot",
+      "dpm",
+      "dtbo",
+      "gz",
+      "lk",
+      "mcupm",
+      "md1img",
+      "odm_dlkm",
+      "product",
+      "scp",
+      "spmfw",
+      "sspm",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "tee",
+      "vbmeta",
+      "vbmeta_system",
+      "vbmeta_vendor",
+      "vendor",
+      "vendor_boot",
+      "vendor_dlkm"
+    ],
+    "dynamic_partitions": [
+      "odm_dlkm",
+      "product",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "vendor",
+      "vendor_dlkm"
+    ],
+    "post_timestamp": 1789352400,
+    "signing_tag": "test-keys",
+    "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
+    "packaged_policy_sha256": "09a7eb94ca6b60be06882089426b677da3c216f65fe5ff885899adef5a7b77b8",
+    "permissive_domains": [],
+    "ota_and_payload_signatures_verified": true,
+    "target_files": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+    "ota": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip"
+  },
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

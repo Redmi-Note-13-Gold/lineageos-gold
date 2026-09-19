@@ -1,87 +1,85 @@
-# 官方底包整合
+# 官方底包：Global Recovery
 
-`main` 固定使用 Redmi Note 13 5G `gold` 国行官方 **OS3.0.10.0.VNQCNXM**（Android 15）作为下层固件基线，LineageOS 上层仍为 **23.2 / Android 16**。版本与完整归档校验值见 [gold-cn.json](../firmware/gold-cn.json)。初始阶段只构建和检查；后续 R1 完整 OTA 已安装并首次启动，详见 [FULL_BUILD.md](FULL_BUILD.md)。
+> 历史范围：本文记录 CN R1 与早期 Global 混合镜像流程。当前源码构建请以 [BUILD.md](BUILD.md) 为准；本文的通过结果不继承到新构建。
 
-旧 OS3.0.9 组合、调试输入与自编译 MDDP 研究保留在 [experimental 分支](https://github.com/Redmi-Note-13-Gold/lineageos-gold/tree/experimental)。`main` 不使用该候选模块。
+工作基线切换为 **gold Global MIXM OS3.0.5.0.VNQMIXM 完整 Recovery ZIP**，Android 15、系统补丁 2026-08-01、内核 6.6.118；Lineage 上层仍为 23.2 / Android 16。锁定记录见 [gold-global.json](../firmware/gold-global.json)。2026-09-14 重新查询时这是公开目录最新的 Global 稳定完整 Recovery；EEA EUXM、增量 OTA、Fastboot 均不混用。
 
-## 下载与提取
+**这是新迁移基线，不等于新 ROM 已编译或实机通过。** 已发布 R1 的 CN OS3.0.10 / 6.6.89 安装、启动、回读与尚未完成的硬件记录继续保留；[gold-cn.json](../firmware/gold-cn.json)、旧 `validation/*20260913*` 与 `clean-install-20260914.json` 不能改写成 Global 结果。
 
-在 Linux 编译服务器直接下载归档。主地址是 `bigota.d.miui.com`，可以尝试同路径的 `hugeota.d.miui.com`、`bn.d.miui.com`；不同节点的可达性和限速会变化。下载时保留官方页面 Referer，分段下载必须检查每段的 `Content-Range`，合并后重新验证整个文件。
+## 来源与校验
 
-SHA-256 是本项目对完整文件计算的值，**并非小米签名校验声明**。无论选哪个端点，都必须与固定文件的大小、MD5 和 SHA-256 同时匹配。不要仅凭 HTTP 200、文件名或预分配文件大小认定下载完成。
+- 官方入口：[Recovery ZIP](https://bigota.d.miui.com/OS3.0.5.0.VNQMIXM/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip)，[官方镜像](https://hugeota.d.miui.com/OS3.0.5.0.VNQMIXM/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip)。官方镜像本次 Range 请求返回 206、总长 5,419,567,545 字节；主入口本地返回 403，不能把这一点当成版本不存在。
+- MD5：`df9ff3aa93ea8ea98df428b13ceb20c3`。
+- SHA-256：`35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9`，来自实际完整包计算，**不是小米签名发布的 SHA-256**。
+- ZIP 内 `pre-device=gold`、`post-build-incremental=OS3.0.5.0.VNQMIXM`、`ota-type=AB`，无增量包所需旧版本条件。锁还固定完整 payload 与 metadata 哈希、25 个重建分区的大小和 SHA-256。
+- ETag 未充当 MD5；ZIP/payload/partition 一致性验证不等于独立的小米签名信任链验证。
 
-使用已有的 Linux / Python 3.11+ 和 Android 主机工具：
+## 提取
+
+使用已有 Linux Android 主机工具。脚本不下载，不安装，不运行原厂刷写脚本。
 
 ```sh
-python3 /path/to/lineageos-gold/tools/prepare-stock.py \
-  --archive /path/to/official.tgz \
-  --output /path/to/fresh-stock-inputs \
+python3 tools/prepare-stock.py \
+  --archive /path/to/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip \
+  --output /path/to/new-stock-staging \
   --host-bin /path/to/android/out/host/linux-x86/bin
+
+python3 tools/prepare-stock.py \
+  --verify-prepared --output /path/to/new-stock-staging
 ```
 
-工具只提取所需镜像，不执行原厂刷机脚本。保留原归档、16 个物理分区输入及 vendor、mi_ext、三个 dlkm 逻辑分区；super 解包临时副本在成功后删除。LK、基带等物理固件单独保留在 `physical/`，不自动写入设备。
+输出 `physical/*.img`、`logical/*.img`、`prepared.json`。先校验整 ZIP，再校验包内身份和 payload，使用 AOSP `ota_extractor`，最后逐个核对 25 个分区。只有全部通过才写完成清单。`--verify-prepared` 对锁和所有图片重新计算哈希；它可在原生 arm64 Mac 上运行，实际提取仍在 Linux 构建主机进行。
 
-## 增量组装
+CN 历史提取显式加 `--lock firmware/gold-cn.json`。旧清单没有 `lock_sha256` 时，应保留旧记录并在新目录重新提取，不能把历史记录简单改成新 schema。
 
-这一步需要**已完成 hybrid 适配的 LineageOS 上层镜像**：system、system_ext、product、对应 vbmeta_system，以及 23.2 构建的 ODM。它们须包含既有 property contexts、zygote、模块路径、IMS 和 framework VINTF 适配。普通 `bacon` 输出尚不能直接替代这组输入；本仓库没有宣称已经解决从空目录恢复整包。
+`physical/preloader_raw.img` 仅用于来源记录；现有组装和 OTA 分区集合不自动纳入它。原厂 `system/product/system_ext` 保留为 proprietary 提取参照，上层镜像仍必须来自 Lineage 构建。
 
-使用新输出目录，保留旧镜像供回退。以 root 运行是为了只读挂载镜像、读取原始 UID/GID/SELinux/capabilities；不会访问手机。
+## 组装与 Recovery 接口
+
+`build-stock-base.py`、`build-recovery.py` 和 `verify-stock-base.py` 都默认读取 Global 锁；`--firmware-lock` 可明确选择 CN 历史锁。原先 `--lock` 仍是构建互斥文件，不改其含义。组装清单记录锁、原包、prepared 清单、构建脚本及 vendor 兼容补丁哈希。任何跨底包混搭在进入镜像改动前被拒绝。
 
 ```sh
-sudo python3 /path/to/lineageos-gold/tools/build-stock-base.py \
-  --source /path/to/android \
-  --stock /path/to/fresh-stock-inputs \
+python3 archive/hybrid/tools/build-stock-base.py \
+  --source /path/to/android --stock /path/to/new-stock-staging \
   --lineage-images /path/to/matching-lineage-images \
-  --output /path/to/fresh-assembly \
-  --lock /path/to/shared-build.lock
+  --output /path/to/new-assembly --lock /path/to/assembly.lock
+
+python3 archive/hybrid/tools/build-recovery.py \
+  --source /path/to/android --assembly /path/to/new-assembly \
+  --lineage-vendor-boot /path/to/matching-lineage-vendor_boot.img \
+  --output /path/to/new-recovery-assembly --lock /path/to/recovery.lock
+
+python3 archive/hybrid/tools/verify-stock-base.py \
+  --source /path/to/android --assembly /path/to/new-recovery-assembly \
+  --apex-root /path/to/matching-lineage-apex-root
 ```
 
-官方包没有独立 ODM 分区，这一分区由 Lineage 构建提供；若不在同一输入目录，可用 `--lineage-odm /path/to/odm.img` 指定。
+这些命令是已有上层镜像的离线组装与校验，不是整棵 Android 源码的重新编译。`verify-stock-base.py` 在严格 neverallow 检查失败时返回失败，同时保存问题数量；运行时策略可编译或 VINTF 通过不能覆盖此门槛。
 
-组装原则：
+## Global 必需的迁移处理
 
-- boot、vendor_boot、dtbo、内核模块及对应固件来自同一份官方包。
-- vendor 从新官方镜像提取，仅应用 `integration/stock/vendor-compat.patch` 并移除过期预编译策略缓存；回读重建镜像核对全部文件、权限及扩展属性。
-- mi_ext 保留新底包内容及版本，只移除会遮挡 Lineage Messaging 的零字节 `product/app/messaging/messaging.apk` 占位文件。
-- 重新生成 AVB 描述符与父镜像，保留真正的官方版本字段；顶层 flags 为 0，独立重算修改分区的 FEC。
-- 默认使用 AOSP 公开开发测试密钥签署重建的 vbmeta；可通过 `--key` 指定自有构建密钥。这不意味着获得小米签名，也不是锁定 bootloader 或正式发布密钥流程。
+Global `mi_ext` 是 888,860,672 字节，包含 49 个 APK，其中六个是零字节遮挡：Calendar、Messaging、Contacts、Dialer、MtkCalendar、MtkContacts。还有 Google/Miui 实际应用、权限 XML、地区预装和渠道分成 init。仅删除 Messaging 后整张继承会混入原厂应用。
 
-输出 `assembly.json`、`SHA256SUMS` 和审计结果；固件输入与重建产物分开保留。不执行 adb、fastboot 或 A/B 切换。
+Global 组装现重建最小内容：保留 NOTICE、十条版本/region/IMEISV 属性和原目录骨架；移除其他文件、所有 APK 和 OEM init，回读验证内容及元数据。保留空目录让 vendor_boot 等外部 overlay 路径仍有目标，但其运行时挂载行为还要实机验证。CN 分支保留原来的单 Messaging 占位删除逻辑。
 
-## 配套 Lineage Recovery
+现有 `vendor-compat.patch` 在实际 Global 四个源文件上 `git apply --check` 通过，Global CIL 原文完整保留，仅追加已有兼容规则。它仍只涉及 boost 标签/权限、MDDP 节点、FCM 目标声明，并移除旧预编译策略缓存；这不是严格 SELinux 问题已解决的证明。
 
-上述基础组装保持官方 vendor_boot。用于终端用户 sideload 的完整包，还需完成 [Lineage Recovery 整合](RECOVERY.md)，成对替换 vendor_boot 与 vbmeta 后重新生成并验证完整 OTA。后续 R1 已完成实机 sideload 与首次启动，安装后再次进入 Recovery 和完整硬件验收仍待完成。
+内核、vendor_boot 平台 ramdisk、system_dlkm、vendor_dlkm、odm_dlkm必须来自同包。Global 官方 kernel 的 SHA-256 是 `0281e33d7e25c54aa65a6460a8f3b86f7c414e520b88db3919ce7efaa12754f9`。Recovery 工具仅换 Lineage recovery fragment，其他 ramdisk、DTB、bootconfig 保持一致并重新校验 AVB；仍需真正的开机与安装验收。
 
-## 编译与兼容性检查
+## 尚需验收
 
-```sh
-sudo python3 /path/to/lineageos-gold/tools/verify-stock-base.py \
-  --source /path/to/android \
-  --assembly /path/to/fresh-assembly \
-  --apex-root /path/to/matching-extracted-apex
-```
+1. 重新编译 Global 组合并逐项解决严格 SELinux neverallow；历史 CN 曾有 **27 项失败**，不能隐藏或通过 `-N` 当作通过。
+2. 完整 target-files/OTA 与动态分区、AVB、FEC、Recovery ramdisk和兼容性检查。单纯组装成功不代表可复现源码构建完成。
+3. Recovery 重入、升级安装及数据保留、启动链回读、普通与 VoLTE 通话/双卡、eSIM、热点 TCP/WH、GPU 帧积压、功耗、传感器等实机验收。
 
-检查直接读取组装后的镜像，并从官方 kernel 提取内嵌配置：编译合并 SELinux 策略、检查 property contexts、VINTF 和 Messaging 文件。`--apex-root` 必须来自对应 Lineage 上层的 APEX 提取结果，不能指向任意空目录。
+Global 的 IMS dex 与旧 CN 相同，热点和图形重点模块代码段未显示已修复，因此既有兼容补丁不能因底包升级直接删除。区域无线/基带配置有变化，不能预先承诺国内 SIM 或 WH 协商改善。
 
-init 使用的运行时策略编译与启用全部 neverallow 的严格检查分别记录。旧 hybrid 已有严格策略冲突；不得把 `-N` 的编译成功写成严格 SELinux/CTS 通过。离线检查也不能验证 modem 握手、VoLTE 通话、热点加速或新底包启动。
+## 本轮离线执行记录
 
-## 本轮结果
+2026-09-14，新提取器使用实际官方 ZIP 重建并核验全部 25 个分区，退出 0；Global 组装重建 vendor/最小 mi_ext、元数据回读、完整 AVB 链与两分区 FEC 均通过，退出 0。见 `validation/global-assembly-20260914.json`。本轮复用 CN R1 的 Lineage 上层镜像，只验证新底包的离线接入，`clean_source_build`、`device_flashed`、`hardware_verified` 均为 false。
 
-日期：2026-09-13。服务器直接下载了完整官方归档，大小 **7,818,573,046 字节**，MD5 与 SHA-256 均匹配；提取 21 个官方分区输入。没有传输 Mini 上的底包，也没有刷手机。
+随后真实 Global Recovery 重建退出 0，平台/init_boot ramdisk、DTB、bootconfig 保留并通过 AVB；内核锁、运行时策略、property contexts、VINTF、Lineage Messaging 和最小 mi_ext 两文件/版本检查均通过。**严格 neverallow 仍失败 27 项，兼容性子进程退出 1，兼容验收未通过**。外层收集服务的退出 0 不能覆盖该失败。见 `validation/global-compatibility-20260914.json`。这 27 项是本次 Global 组合重新运行的结果；完整源码构建、严格策略收敛和实机验收仍未完成。
 
-| 检查 | 结果 |
-|---|---|
-| 官方输入 | boot / vendor_boot / dtbo / LK / 基带及三个 dlkm 来自同一份 OS3.0.10 归档；内核载荷为 6.6.89 |
-| vendor 回读审计 | 6482 个路径的元数据与扩展属性保持一致；仅修改列出的 4 个配置文件、移除预编译策略缓存 |
-| mi_ext 回读审计 | 47 个路径的元数据与扩展属性保持一致；仅移除零字节 Messaging 占位文件，保持原分区大小 |
-| Lineage 上层 | 保留既有 23.2 system / system_ext / product / vbmeta_system，并使用 23.2 构建的 ODM |
-| AVB | 完整链验证通过；重建顶层 flags=0；新 vendor 的版本属性保持原始字节值 |
-| FEC | vendor、mi_ext 均独立重新编码并与镜像中的纠错数据匹配 |
-| 策略与属性 | init 使用路径的 SELinux 策略编译通过，property contexts 检查通过 |
-| 严格 neverallow | **未通过：27 项冲突**，与旧 hybrid 已知数量相同；本轮没有修复这项既有缺口 |
-| VINTF | 使用新官方 kernel 的内嵌配置，与组装镜像和匹配的 Lineage APEX 输入检查，结果 COMPATIBLE |
-| 启动设备树 | 新 LK、vendor_boot 中的 DTB 及新 DTBO 载荷，与此前成功做过 overlay 合并检查的输入逐字节一致 |
-| Messaging | Lineage 23.2 的实际 APK 保留在 product，mi_ext 遮挡占位文件已移除 |
-| 实机 / OTA | **未刷入、未验收、未做 OTA 验证**；不能从离线结果推断 VoLTE、热点、相机或稳定性 |
+## 最终源码与运行记录的对应
 
-机器可读摘要与最终镜像哈希见 [stock-base-20260913.json](../validation/stock-base-20260913.json)。这些是增量镜像组装及兼容性编译结果，不是全新源码完整 ROM 编译记录。
+远端实跑的产物保留当时构建脚本的真实哈希。之后本地修正了自定义 ODM 输入文件名的目标链接，并统一构建前底包校验；这些变化已通过 14 项针对性测试。没有把此前运行记录中的脚本哈希改写成新值。已发布 CN R1 和原始官方输入未被修改。

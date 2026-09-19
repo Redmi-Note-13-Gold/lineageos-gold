@@ -1,0 +1,80 @@
+{
+  "observed_date": "2026-09-16",
+  "published_summary_date": "2026-09-17",
+  "scope": "incremental vendor images and bounded runtime acceptance",
+  "build_variant": "userdebug",
+  "build_targets": [
+    "vendorimage",
+    "vbmetaimage"
+  ],
+  "candidate": "userdebug-charger-final-20260916",
+  "installed_slot": "b",
+  "data_erased_this_charger_repair": false,
+  "a_slot_and_debug_recovery_preserved": true,
+  "full_avb_verified": true,
+  "all_14_readbacks_match": true,
+  "system_mappings_preserved": true,
+  "temporary_charger_diagnostics_removed": true,
+  "normal_boot_verified": true,
+  "screen": "Normal Android lock screen visually verified after waking the sleeping display",
+  "capture_seconds": 91.4,
+  "critical_error_counts": {
+    "fatal_exception": 0,
+    "phone_anr": 0,
+    "modem_assertions": 0,
+    "hf_manager_open_failures": 0,
+    "native_fatal_signal": 0,
+    "system_watchdog_kill": 0
+  },
+  "targeted_access_denial_counts": {
+    "health": 0,
+    "camera_private_runtime": 0,
+    "panel": 0,
+    "wakeup_statistics": 0
+  },
+  "other_avc_groups": 27,
+  "other_avc_scope_note": "Includes startup and detection attempts. Zero critical errors does not mean all logs are error-free or every hardware function is accepted.",
+  "services": {
+    "thermal_ready": true,
+    "physical_sensor_count": 28,
+    "bluetooth_on": true,
+    "bluetooth_crashes": 0,
+    "fingerprint_hal_deaths": 0,
+    "camera_device_count": 4,
+    "radio_data_slots_registered": [
+      1,
+      2
+    ],
+    "wifi_enabled": true,
+    "wifi_connected": false
+  },
+  "not_independently_accepted": [
+    "最终清理版尚未另做完整关机插电循环；充电图案在包含相同永久修复的诊断版上由用户确认",
+    "关机充电熄屏后短按电源再次显示未单独确认",
+    "相机预览及拍照",
+    "指纹录入及解锁",
+    "实际通话与蜂窝数据",
+    "蓝牙配对及音频播放",
+    "Wi-Fi 实际联网"
+  ],
+  "boot_observation": {
+    "early_uptime_seconds": 60.81,
+    "late_uptime_seconds": 150.8,
+    "boot_id_unchanged": true,
+    "critical_processes_unchanged": true,
+    "boot_completed": true,
+    "selinux_enforcing": true,
+    "file_based_encrypted": true,
+    "data_mounted": true,
+    "persist_mounted": true
+  },
+  "charging_ui": {
+    "user_confirmed_seen": true,
+    "observed_candidate": "userdebug-charger-display-20260916",
+    "same_permanent_fix_in_final": true,
+    "final_cleanup_cycle_separately_observed": false
+  },
+  "full_package_with_all_current_fixes_validated": false,
+  "full_package_validation_deferred": true,
+  "privacy": "Device identifiers, boot IDs, process IDs, host paths and raw logs are omitted."
+}

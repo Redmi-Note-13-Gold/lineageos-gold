@@ -1,0 +1,179 @@
+{
+  "status": "built-and-verified",
+  "unit": "gold-repack-scp-20260914.service",
+  "log": "<build-root>/migration/gold-architecture-20260914/scp-only-build.log",
+  "build_datetime": 1789397621,
+  "jobs": 8,
+  "expected_partitions": [
+    "boot",
+    "dtbo",
+    "odm_dlkm",
+    "product",
+    "scp",
+    "system",
+    "system_dlkm",
+    "system_ext",
+    "vbmeta",
+    "vbmeta_system",
+    "vbmeta_vendor",
+    "vendor",
+    "vendor_boot",
+    "vendor_dlkm"
+  ],
+  "legacy_artifacts": "<build-root>/migration/gold-architecture-20260914/retained-22-partition-build-1789356597523890222",
+  "vendor_receipt_sha256": "c15f44a5039328bce380083d925055a24ac6d7a12bf10b04edf17ca7667b30da",
+  "new_package_verified": true,
+  "device_written": true,
+  "vendor_prepare_result": "Local evidence: work/firmware-repack/vendor-scp-only-result.json",
+  "result": {
+    "build_exit_code": 0,
+    "artifact_contract_verified": true,
+    "android_validators_passed": true,
+    "release_signing_verified": false,
+    "device_accepted": false,
+    "target_files_sha256": "d3c39c97360c96e489d94175c3375bd47061330201a52ff3c1e0bbf8c6e1496f",
+    "ota_sha256": "9b1dfc002d9a291210f845a9df16b4925454002535eb30d4301c82d1cda7c08a",
+    "partitions": [
+      "boot",
+      "dtbo",
+      "odm_dlkm",
+      "product",
+      "scp",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "vbmeta",
+      "vbmeta_system",
+      "vbmeta_vendor",
+      "vendor",
+      "vendor_boot",
+      "vendor_dlkm"
+    ],
+    "dynamic_partitions": [
+      "odm_dlkm",
+      "product",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "vendor",
+      "vendor_dlkm"
+    ],
+    "post_timestamp": 1789397621,
+    "signing_tag": "test-keys",
+    "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
+    "packaged_policy_sha256": "09a7eb94ca6b60be06882089426b677da3c216f65fe5ff885899adef5a7b77b8",
+    "permissive_domains": [],
+    "ota_and_payload_signatures_verified": true,
+    "target_files": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+    "ota": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip"
+  },
+  "payload_partitions": [
+    "boot",
+    "dtbo",
+    "odm_dlkm",
+    "product",
+    "scp",
+    "system",
+    "system_dlkm",
+    "system_ext",
+    "vbmeta",
+    "vbmeta_system",
+    "vbmeta_vendor",
+    "vendor",
+    "vendor_boot",
+    "vendor_dlkm"
+  ],
+  "radio_entries": [
+    "RADIO/scp.img"
+  ],
+  "scp_matches_locked_original": true,
+  "build_record": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789397823611175488",
+  "artifacts": {
+    "ota": {
+      "path": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+      "bytes": 1167970585
+    },
+    "target_files": {
+      "path": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+      "bytes": 2881238137
+    }
+  },
+  "source_match": {
+    "local_files": 114,
+    "recorded_files": 114,
+    "differences": [],
+    "matched": true
+  },
+  "local_delivery": {
+    "status": "verified",
+    "directory": "outputs/gold-global-scp-only-20260914-test",
+    "files": {
+      "boot.img": {
+        "bytes": 67108864,
+        "sha256": "82f0bf7947a41010491d180d5cc32d0538a0ecf564dcfcca5a9e4c1cd2dd3a07"
+      },
+      "dtbo.img": {
+        "bytes": 8388608,
+        "sha256": "e0da196748aa77bf1dfe47a6c6bec897976ae9fa9d7ef9d980af87c47df2bffc"
+      },
+      "vendor_boot.img": {
+        "bytes": 67108864,
+        "sha256": "8a976b3735eeb73347b82f1a1aead0c0558d78896731eec10565974171a89d04"
+      },
+      "vbmeta.img": {
+        "bytes": 8192,
+        "sha256": "cd476384f39676b324a9a8d9f2a2c0a1e0d1c4ae3e61eeace48ee632db6feb11"
+      },
+      "vbmeta_system.img": {
+        "bytes": 4096,
+        "sha256": "73c8161c515819fd8c8c850532cd038315caebfe926913e1d9cbc6a0dafe2d1c"
+      },
+      "vbmeta_vendor.img": {
+        "bytes": 4096,
+        "sha256": "79846e1da4fe40c738af0967e16699276387f5789dd4a7749237f5e20d08e54f"
+      },
+      "lineage_gold-ota.zip": {
+        "bytes": 1167970585,
+        "sha256": "9b1dfc002d9a291210f845a9df16b4925454002535eb30d4301c82d1cda7c08a"
+      }
+    },
+    "source_match": {
+      "local_files": 114,
+      "recorded_files": 114,
+      "differences": [],
+      "matched": true
+    },
+    "download": {
+      "method": "rsync delta using local historical OTA as seed",
+      "received_bytes": 30031086,
+      "sent_bytes": 208482,
+      "matched_bytes": 1138074464,
+      "unmatched_bytes": 29896121
+    }
+  },
+  "device_test": {
+    "checked_unix": 1789399733,
+    "device": "gold",
+    "initial_slot": "a",
+    "bootloader_unlocked": true,
+    "recovery_bootstrap_partitions": [
+      "boot_a",
+      "dtbo_a",
+      "vendor_boot_a",
+      "vbmeta_a"
+    ],
+    "recovery_menu_confirmed_by_user": true,
+    "data_format_completed": "not independently confirmed",
+    "sideload_started": true,
+    "sideload_completed": true,
+    "ota_sha256": "9b1dfc002d9a291210f845a9df16b4925454002535eb30d4301c82d1cda7c08a",
+    "device_accepted": false,
+    "host_exit_code": 0,
+    "total_xfer": "2.00x",
+    "recovery_final_status": "install completed / status 0",
+    "recovery_result_source": "user confirmed on device",
+    "installation_accepted": true,
+    "first_boot_accepted": false
+  },
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

@@ -1,0 +1,4 @@
+# MiTEE KeyMint mirrors the stock policy by logging initialization failures to
+# the kernel log.  Access to the TEE client node itself is inherited through
+# the platform hal_keymint_server -> tee_device rule.
+allow hal_keymint_default kmsg_device:chr_file w_file_perms;

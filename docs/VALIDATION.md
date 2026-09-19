@@ -1,5 +1,7 @@
 # 发布前检查
 
+> 历史范围：本文记录 CN R1 与早期 Global 混合镜像流程。当前源码构建请以 [BUILD.md](BUILD.md) 为准；本文的通过结果不继承到新构建。
+
 日期：2026-09-13。下表记录首次整理时的源码检查；本轮官方底包升级的镜像与编译检查另见 [STOCK_BASE.md](STOCK_BASE.md)。两轮均未重新刷机。随后完成的完整 OTA 构建、签名和解包校验见 [FULL_BUILD.md](FULL_BUILD.md)，2026-09-14 后续已通过 R1 sideload 和首次启动；安装后 Recovery 与完整硬件验收仍待完成。
 
 | 检查 | 本次结果 |
@@ -18,4 +20,4 @@
 
 MDDP 测试夹具只做了未使用参数标记和枚举比较的编译警告清理，未修改实验内核补丁。模拟的锁/IPC/调度行为不能代表内核并发和 modem 运行结果。
 
-首次整理未运行 Android View 测试、完整 Android 测试套件或全新源码恢复构建。后续 R1 实机 sideload 安装与首次启动结果见 [FULL_BUILD.md](FULL_BUILD.md)。实际部署的功能状态见 [STATUS.md](STATUS.md)。
+首次整理未运行 Android View 测试、完整 Android 测试套件或全新源码恢复构建。后续 R1 实机 sideload 安装与首次启动结果见 [FULL_BUILD.md](FULL_BUILD.md)。历史 R1 功能状态见 [STATUS_R1.md](STATUS_R1.md)，当前 Global 修复见 [STATUS.md](STATUS.md)。

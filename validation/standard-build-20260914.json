@@ -1,0 +1,185 @@
+{
+  "checked_utc": "2026-09-14T11:54:16.204590+00:00",
+  "record_id": "1789356597523890222",
+  "result": {
+    "build_exit_code": 0,
+    "artifact_contract_verified": true,
+    "android_validators_passed": true,
+    "release_signing_verified": false,
+    "device_accepted": false,
+    "target_files_sha256": "ce0f6ebda091d581218f96cee8559b91c7282e482df98a4cfdbe4282ab623a49",
+    "ota_sha256": "b20808db94df7b347ec585c8a9fa2633c165b17dc8f9d9d57268bc27b5b0f171",
+    "partitions": [
+      "boot",
+      "dpm",
+      "dtbo",
+      "gz",
+      "lk",
+      "mcupm",
+      "md1img",
+      "odm_dlkm",
+      "product",
+      "scp",
+      "spmfw",
+      "sspm",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "tee",
+      "vbmeta",
+      "vbmeta_system",
+      "vbmeta_vendor",
+      "vendor",
+      "vendor_boot",
+      "vendor_dlkm"
+    ],
+    "dynamic_partitions": [
+      "odm_dlkm",
+      "product",
+      "system",
+      "system_dlkm",
+      "system_ext",
+      "vendor",
+      "vendor_dlkm"
+    ],
+    "post_timestamp": 1789352400,
+    "signing_tag": "test-keys",
+    "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
+    "packaged_policy_sha256": "09a7eb94ca6b60be06882089426b677da3c216f65fe5ff885899adef5a7b77b8",
+    "permissive_domains": [],
+    "ota_and_payload_signatures_verified": true,
+    "target_files": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+    "ota": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip"
+  },
+  "artifacts": {
+    "ota": {
+      "path": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+      "bytes": 1206980305,
+      "mtime_utc": "2026-09-14T09:12:36.751128+00:00"
+    },
+    "target_files": {
+      "path": "<build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+      "bytes": 2926299497,
+      "mtime_utc": "2026-09-14T09:10:04.546776+00:00"
+    }
+  },
+  "metadata_flags": [
+    "avb_enable=true",
+    "odm_dlkm_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "oem_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "product_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "system_dlkm_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "system_ext_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "system_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "vendor_dlkm_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "vendor_selinux_fc=out-gold-standard/target/product/gold/obj/ETC/file_contexts.bin_intermediates/file_contexts.bin",
+    "vintf_enforce=true",
+    "vintf_include_empty_vendor_sku=true",
+    "vintf_odm_manifest_skus=iron_gl iron_p_gl"
+  ],
+  "policy_build_lines": [
+    "[ 75% 160083/212478] //system/sepolicy:sepolicy_neverallows.checkpolicy.conf Transform policy to conf: sepolicy_neverallows.checkpolicy.conf [common]",
+    "[ 80% 170263/212478] //system/sepolicy:sepolicy_neverallows.sepolicy_analyze.conf Transform policy to conf: sepolicy_neverallows.sepolicy_analyze.conf [common]",
+    "[ 80% 170293/212478] //system/sepolicy:sepolicy_neverallows Neverallow check: sepolicy_neverallows [common]",
+    "[ 83% 176643/212478] //system/sepolicy:sepolicy_neverallows Neverallow check: sepolicy_neverallows [common]",
+    "[ 84% 179842/212478] Fake: out-gold-standard/target/product/gold/obj/FAKE/sepolicy_neverallows_intermediates/sepolicy_neverallows-timestamp",
+    "[ 86% 183464/212478] //system/sepolicy/tests:sepolicy_tests python library archive [linux_glibc]",
+    "[ 86% 183494/212478] //system/sepolicy/tests:treble_sepolicy_tests python library archive [linux_glibc]",
+    "[ 89% 189148/212478] Install: out-gold-standard/target/product/gold/fake_packages/sepolicy_neverallows-timestamp",
+    "[ 89% 190092/212478] //system/sepolicy/treble_sepolicy_tests_for_release:202404_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190093/212478] //system/sepolicy/treble_sepolicy_tests_for_release:202504_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190094/212478] //system/sepolicy/treble_sepolicy_tests_for_release:29.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190097/212478] //system/sepolicy/treble_sepolicy_tests_for_release:30.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190100/212478] //system/sepolicy/treble_sepolicy_tests_for_release:31.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190103/212478] //system/sepolicy/treble_sepolicy_tests_for_release:32.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190106/212478] //system/sepolicy/treble_sepolicy_tests_for_release:33.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190110/212478] //system/sepolicy/treble_sepolicy_tests_for_release:34.0_mapping.combined.cil raw genrule.sbox.textproto [common]",
+    "[ 89% 190499/212478] //system/sepolicy/tests:sepolicy_tests Precompile the python sources of sepolicy_tests [linux_glibc]",
+    "[ 89% 190510/212478] //system/sepolicy/tests:treble_sepolicy_tests Precompile the python sources of treble_sepolicy_tests [linux_glibc]",
+    "[ 91% 194799/212478] //system/sepolicy/treble_sepolicy_tests_for_release:202404_mapping.combined.cil generate 202404_mapping.combined.cil [common]",
+    "[ 91% 194800/212478] //system/sepolicy/treble_sepolicy_tests_for_release:202504_mapping.combined.cil generate 202504_mapping.combined.cil [common]",
+    "[ 91% 194801/212478] //system/sepolicy/treble_sepolicy_tests_for_release:29.0_mapping.combined.cil generate 29.0_mapping.combined.cil [common]",
+    "[ 91% 194803/212478] //system/sepolicy/treble_sepolicy_tests_for_release:30.0_mapping.combined.cil generate 30.0_mapping.combined.cil [common]",
+    "[ 91% 194805/212478] //system/sepolicy/treble_sepolicy_tests_for_release:31.0_mapping.combined.cil generate 31.0_mapping.combined.cil [common]",
+    "[ 91% 194807/212478] //system/sepolicy/treble_sepolicy_tests_for_release:32.0_mapping.combined.cil generate 32.0_mapping.combined.cil [common]",
+    "[ 91% 194809/212478] //system/sepolicy/treble_sepolicy_tests_for_release:33.0_mapping.combined.cil generate 33.0_mapping.combined.cil [common]",
+    "[ 91% 194811/212478] //system/sepolicy/treble_sepolicy_tests_for_release:34.0_mapping.combined.cil generate 34.0_mapping.combined.cil [common]",
+    "[ 91% 194931/212478] //system/sepolicy/tests:sepolicy_tests embedded python archive [linux_glibc]",
+    "[ 91% 194951/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_202404 raw genrule.sbox.textproto [common]",
+    "[ 91% 194952/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_202504 raw genrule.sbox.textproto [common]",
+    "[ 91% 194953/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_29.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194954/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_30.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194955/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_31.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194956/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_32.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194957/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_33.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194958/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_34.0 raw genrule.sbox.textproto [common]",
+    "[ 91% 194959/212478] //system/sepolicy/tests:treble_sepolicy_tests embedded python archive [linux_glibc]",
+    "[ 92% 196029/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_202404 generate treble_sepolicy_tests_202404 [common]",
+    "[ 92% 196030/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_202504 generate treble_sepolicy_tests_202504 [common]",
+    "[ 92% 196032/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_29.0 generate treble_sepolicy_tests_29.0 [common]",
+    "[ 92% 196033/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_30.0 generate treble_sepolicy_tests_30.0 [common]",
+    "[ 92% 196034/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_31.0 generate treble_sepolicy_tests_31.0 [common]",
+    "[ 92% 196043/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_32.0 generate treble_sepolicy_tests_32.0 [common]",
+    "[ 92% 196047/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_33.0 generate treble_sepolicy_tests_33.0 [common]",
+    "[ 92% 196048/212478] //system/sepolicy/treble_sepolicy_tests_for_release:treble_sepolicy_tests_34.0 generate treble_sepolicy_tests_34.0 [common]"
+  ],
+  "nonfatal_duplicate_vendor_properties": {
+    "ro.vendor.mtk_c2k_support": [
+      "ro.vendor.mtk_c2k_support=1",
+      "ro.vendor.mtk_c2k_support=1"
+    ],
+    "persist.vendor.mtk_sim_switch_policy": [
+      "persist.vendor.mtk_sim_switch_policy=2",
+      "persist.vendor.mtk_sim_switch_policy=2"
+    ],
+    "ro.vendor.mtk_nn_baseline_support": [
+      "ro.vendor.mtk_nn_baseline_support=1",
+      "ro.vendor.mtk_nn_baseline_support=1"
+    ]
+  },
+  "validators": {
+    "check_target_files_vintf.log": "2026-09-14 17:20:41 - common.py - WARNING : Failed to read SYSTEM/etc/build.prop\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read VENDOR/etc/build.prop\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read ODM/etc/build.prop\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read ODM/build.prop\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read build.prop for partition odm\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read IMAGES/boot.img\n2026-09-14 17:20:41 - common.py - WARNING : Failed to read IMAGES/init_boot.img\n",
+    "check_ota_package_signature.log": "The command rsautl was deprecated in version 3.0. Use 'pkeyutl' instead.\nPackage: <build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip\nCertificate: <build-root>/migration/gold-architecture-20260914/source/build/make/target/product/security/testkey.x509.pem\nPackage length: 1206980305\nComment length: 1734\nSigned data length: 1206978569\nSignature start: 1206978589\nUse SHA-256: False\nDigest: 1efd815b8cd327368784102438403b8b0e06a9c2\n\nWhole package signature VERIFIED\n\nVerifying A/B OTA payload signatures...\n\nPayload signatures VERIFIED\n\n\n",
+    "validate_target_files.log": "2026/09/14 17:20:16 - validate_target_files.py - INFO    : Unzipping the input target_files.zip: <build-root>/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read SYSTEM/etc/build.prop\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read VENDOR/etc/build.prop\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read ODM/etc/build.prop\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read ODM/build.prop\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read build.prop for partition odm\n2026/09/14 17:20:36 - common.py - WARNING : Unable to get boot image build props: Failed to run command '['toybox', 'cpio', '-F', '/tmp/boot_qveni4mj.img/uncompressed_ramdisk', '-i']' (exit code 1):\ncpio: empty archive\n\n2026/09/14 17:20:36 - common.py - WARNING : Failed to read IMAGES/init_boot.img\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Validating file consistency.\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking system image.\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : system is non-sparse image\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking vendor image.\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : vendor is non-sparse image\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/PRODUCT/etc/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/SYSTEM/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/ODM_DLKM/etc/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/SYSTEM_DLKM/etc/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/VENDOR_DLKM/etc/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/SYSTEM_EXT/etc/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Checking /tmp/targetfiles-sa9pc5ym/VENDOR/build.prop\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Duplicated key found for ro.vendor.mtk_c2k_support\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Duplicated key found for persist.vendor.mtk_sim_switch_policy\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Duplicated key found for ro.vendor.mtk_nn_baseline_support\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : VENDOR/bin/install-recovery.sh does not exist in input_tmp\n2026/09/14 17:20:36 - validate_target_files.py - INFO    : Verifying Verified Boot 2.0 (AVB) images...\n2026/09/14 17:20:40 - validate_target_files.py - INFO    : Verified /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta.img with avbtool (key: external/avb/test/data/testkey_rsa4096.pem):\nVerifying image /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta.img using embedded public key\nvbmeta: Successfully verified SHA256_RSA4096 vbmeta struct in /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta.img\nboot: Successfully verified chain partition descriptor matches expected data\n--\nVerifying image /tmp/targetfiles-sa9pc5ym/IMAGES/boot.img using embedded public key\nvbmeta: Successfully verified footer and SHA256_RSA4096 vbmeta struct in /tmp/targetfiles-sa9pc5ym/IMAGES/boot.img\nboot: Successfully verified sha256 hash of /tmp/targetfiles-sa9pc5ym/IMAGES/boot.img for image of 14692352 bytes\nvbmeta_system: Successfully verified chain partition descriptor matches expected data\n--\nVerifying image /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta_system.img using embedded public key\nvbmeta: Successfully verified SHA256_RSA4096 vbmeta struct in /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta_system.img\nproduct: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/product.img for image of 502607872 bytes\nsystem: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/system.img for image of 1012039680 bytes\nsystem_dlkm: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/system_dlkm.img for image of 7077888 bytes\nsystem_ext: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/system_ext.img for image of 453566464 bytes\nvbmeta_vendor: Successfully verified chain partition descriptor matches expected data\n--\nVerifying image /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta_vendor.img using embedded public key\nvbmeta: Successfully verified SHA256_RSA4096 vbmeta struct in /tmp/targetfiles-sa9pc5ym/IMAGES/vbmeta_vendor.img\nodm_dlkm: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/odm_dlkm.img for image of 8192 bytes\nvendor: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/vendor.img for image of 472182784 bytes\nvendor_dlkm: Successfully verified sha1 hashtree of /tmp/targetfiles-sa9pc5ym/IMAGES/vendor_dlkm.img for image of 13623296 bytes\ndtbo: Successfully verified sha256 hash of /tmp/targetfiles-sa9pc5ym/IMAGES/dtbo.img for image of 65552 bytes\nvendor_boot: Successfully verified sha256 hash of /tmp/targetfiles-sa9pc5ym/IMAGES/vendor_boot.img for image of 34205696 bytes\n2026/09/14 17:20:40 - validate_target_files.py - INFO    : Done.\n"
+  },
+  "independent_vintf_review": {
+    "record_id": "1789356597523890222",
+    "review_scope": "Read-only review of final validation evidence and pinned releasetools; no rebuild or source changes.",
+    "pinned_build_make_commit": "5a841be38fec92de9a8a408cf5812ca748ccc02e",
+    "conclusion": "VINTF compatibility and kernel configuration checks were not skipped.",
+    "evidence": {
+      "vintf_enforce": "true",
+      "entrypoint": "CLI main calls CheckVintf directly; it does not call CheckVintfIfTrebleEnabled or use that wrapper skip_compatibility_check branch.",
+      "invocation": "build-source.py invokes host check_target_files_vintf with final target-files path and subprocess.run(check=True); validators_passed is set only after all validators and packaged policy analysis complete.",
+      "logging": "Pinned common.InitLogging uses WARNING by default; compatible command results are INFO. Warning-only log with exit 0 is expected successful behavior.",
+      "sku_combinations": [
+        {
+          "odm": "iron_gl",
+          "vendor": ""
+        },
+        {
+          "odm": "iron_p_gl",
+          "vendor": ""
+        }
+      ],
+      "failure_handling": "Any incompatible SKU sets success=False and CLI exits 1; checkvintf execution errors raise. SKU defaults prevent an empty validation loop.",
+      "warnings": "SYSTEM/VENDOR etc/build.prop probes fall back to root build.prop; absent separate ODM build.prop is expected. The VINTF unzip subset excludes IMAGES/boot.img and IMAGES/init_boot.img, causing optional LoadInfoDict probes to warn; those warnings do not skip compatibility checks.",
+      "kernel_metadata_read_from_final_zip": {
+        "META/kernel_version.txt": {
+          "present": true,
+          "size": 47,
+          "value": "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k"
+        },
+        "META/kernel_configs.txt": {
+          "present": true,
+          "size": 211851
+        }
+      },
+      "kernel_branch": "Both META files exist, so GetArgsForKernel passes --kernel version_path:config_path to checkvintf for both SKU combinations.",
+      "kernel_input_consistency": "Parent independently confirms this version matches the verified locked Global stock boot/kernel input; compressed kernel SHA256 0281e33d7e25c54aa65a6460a8f3b86f7c414e520b88db3919ce7efaa12754f9."
+    },
+    "required_supplemental_checks": [],
+    "acceptance_boundary": "These are offline build/artifact compatibility checks. Release key trust, installation, runtime and hardware acceptance remain separate and unverified."
+  },
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

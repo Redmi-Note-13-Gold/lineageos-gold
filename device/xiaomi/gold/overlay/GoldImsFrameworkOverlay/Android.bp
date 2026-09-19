@@ -1,0 +1,6 @@
+runtime_resource_overlay {
+    name: "GoldImsFrameworkOverlay",
+    system_ext_specific: true,
+    certificate: "platform",
+    sdk_version: "current",
+}

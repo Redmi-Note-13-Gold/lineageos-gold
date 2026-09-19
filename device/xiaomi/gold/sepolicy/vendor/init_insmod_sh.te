@@ -1,0 +1,4 @@
+# Send modprobe's existing before/after messages directly to the kernel log.
+userdebug_or_eng(`
+  allow init_insmod_sh kmsg_device:chr_file { open write };
+')

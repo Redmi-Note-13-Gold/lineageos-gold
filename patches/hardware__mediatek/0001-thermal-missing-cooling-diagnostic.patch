@@ -1,0 +1,16 @@
+--- a/aidl/thermal/thermal-helper.cpp
++++ b/aidl/thermal/thermal-helper.cpp
+@@ -854,7 +854,12 @@
+         const std::unordered_map<std::string, std::string> &path_map, std::string_view name,
+         CdevInfo &cdev_info) {
+     if (!path_map.contains(name.data())) {
+-        LOG(ERROR) << "Could not find " << name << " in CDEV sysfs";
++        std::ostringstream available;
++        for (const auto &[available_name, available_path] : path_map) {
++            available << available_name << " ";
++        }
++        LOG(ERROR) << "Could not find " << name << " in CDEV sysfs; available: "
++                   << available.str();
+         return false;
+     }
+     // Add cooling device path for thermalHAL to get current state

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "stock_version": "OS3.0.5.0.VNQMIXM",
+  "archive_sha256": "35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9",
+  "kernel_release": "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k",
+  "receipt_sha256": "4039bd7dfe6765e9ebf3ee3c7fcec96dd66d85fb3b815772026e448d976c4df5",
+  "generated_files": 2462,
+  "blob_files": 1985,
+  "kernel_files": 463,
+  "radio_files": 9,
+  "recipe_sha256": {
+    "extract-files.py": "dcce3f9160b5fa0e3b80b39d89cf5b87d9a6242851c98d7f3e72212b0c61326f",
+    "prepare-vendor.py": "0e295cf0d3b1c25f2c405b2c68e1e6ff456e8dc3095a4f5ef25fdafb47d640e3",
+    "proprietary-files.txt": "d83f74b8c66ecb650ca1cb44b4b8d0e9964a5d3adb07e3375263ff0fc64e6650",
+    "proprietary-firmware.txt": "f3cf8d6719bf3242b054d076c509bf81cbb78d8c94bf3cd44cea131fdd2d3708",
+    "proprietary-source.json": "6a692be126e59801333edf36111f8a1e6c216b00db4d08a0f75a2d6f631e185f"
+  },
+  "negative_integrity_tests": {
+    "modified_payload_rejected": true,
+    "extra_payload_rejected": true,
+    "changed_recipe_rejected": true
+  },
+  "source_build_completed": false,
+  "device_validated": false,
+  "source_tree": "<build-root>/migration/gold-architecture-20260914/source",
+  "isolated_preparation_tree": "<build-root>/migration/gold-architecture-20260914/vendor/tree",
+  "checks": [
+    "All 25 locked image sizes and SHA256 matched",
+    "Standard extract-utils completed without missing blobs or disabled ELF dependency checks",
+    "Every generated payload SHA256 verified after extraction and copy",
+    "Authored IMS directory retained; pinned compatibility APK checked",
+    "Both ODM SKU manifests compiled with native assemble_vintf; no VINTF metadata in PRODUCT_COPY_FILES"
+  ],
+  "limitations": [
+    "IMS stock-to-compatible-APK reconstruction is not complete; uses explicit pinned prebuilt",
+    "Library provider audit uses existing module-info; fresh source build and runtime remain required"
+  ],
+  "reference_commit": "05f3e97ecf196e7f912cbcf7d1e93fa32958cf98",
+  "vendor_32bit_elf_files_in_stock": 1337,
+  "generated_soong_modules": 1290,
+  "shared_library_dependencies": 1302,
+  "unresolved_library_providers_against_existing_module_info": 0,
+  "sku_vintf_registered": [
+    "iron_gl",
+    "iron_p_gl"
+  ],
+  "sku_vintf_generation": "Platform build/make/target/board/android-info.mk; no custom Soong SKU modules",
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

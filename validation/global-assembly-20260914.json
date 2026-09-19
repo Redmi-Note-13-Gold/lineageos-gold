@@ -1,0 +1,111 @@
+{
+  "stock_version": "OS3.0.5.0.VNQMIXM",
+  "region": "Global",
+  "firmware_lock_sha256": "b5a599efb5926944de858f8e76a724a0c6b82dcb46cf0c966ce136ae28f9750b",
+  "stock_archive_sha256": "35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9",
+  "stock_prepared_sha256": "3ef64ce17ce8c77b2fcedd53de390157351903cc4692705ab65595eed50f3737",
+  "builder_sha256": "e7fbb323ec9e4bf437e29da5c2d1d4fffa8f66f7de3dbfd59d1956c385c6e476",
+  "vendor_compat_patch_sha256": "44dae80cb1fc0940ee13ce812d367b0f3349622d0564c89a99dc35e8be111434",
+  "mi_ext_profile": "global-minimal",
+  "lineage_inputs": {
+    "system": {
+      "size": 1049243648,
+      "sha256": "4b56855fd2d058c24ef8a9faeef84647b516a8756b2486e5d0d1cb78f65c4ba5"
+    },
+    "system_ext": {
+      "size": 461287424,
+      "sha256": "29013aec29cf893a8729fe1bdbd391d75fe0fedf7bf98813edca0ca1f652e831"
+    },
+    "product": {
+      "size": 510750720,
+      "sha256": "157b4e3089bc75ac49cafa156ade3e2a0a11f0a1f8256306c1bf1a0d8da6c6cf"
+    },
+    "vbmeta_system": {
+      "size": 4096,
+      "sha256": "df13f69f2c898fa52ad350969c9a14c5c1ea05dd2149cad721956a11ae7280ff"
+    },
+    "odm": {
+      "size": 720896,
+      "sha256": "da7c8dc5dd9c985a42ad0c20e684ae96fd1f0ecd527a5f8c92a582f59605b83e"
+    }
+  },
+  "images": {
+    "boot.img": {
+      "size": 67108864,
+      "sha256": "d86a63ccdc4a2f7870830fea6b3d0a0d07fda82afd59ad7dd5725427ae0271b2"
+    },
+    "dtbo.img": {
+      "size": 8388608,
+      "sha256": "63e8bf2fae093bdcfcf1f0574a0a150bd7f0c15cecc9c7aa893b5b44f13bc8f9"
+    },
+    "mi_ext.img": {
+      "size": 888860672,
+      "sha256": "93eab5be05c241f1d433717d1787797867c2d36959a4bb2ca4af5da8b1387795"
+    },
+    "odm.img": {
+      "size": 720896,
+      "sha256": "da7c8dc5dd9c985a42ad0c20e684ae96fd1f0ecd527a5f8c92a582f59605b83e"
+    },
+    "odm_dlkm.img": {
+      "size": 348160,
+      "sha256": "2119a393d7bb021034839ff794d72c53bdfc69609ecab777f3ecf1e76ae53f7c"
+    },
+    "product.img": {
+      "size": 510750720,
+      "sha256": "157b4e3089bc75ac49cafa156ade3e2a0a11f0a1f8256306c1bf1a0d8da6c6cf"
+    },
+    "system.img": {
+      "size": 1049243648,
+      "sha256": "4b56855fd2d058c24ef8a9faeef84647b516a8756b2486e5d0d1cb78f65c4ba5"
+    },
+    "system_dlkm.img": {
+      "size": 7323648,
+      "sha256": "bfec601a7dcff06aa4802043cb04e19288be068de9442900cb13f0dc982593ab"
+    },
+    "system_ext.img": {
+      "size": 461287424,
+      "sha256": "29013aec29cf893a8729fe1bdbd391d75fe0fedf7bf98813edca0ca1f652e831"
+    },
+    "vbmeta.img": {
+      "size": 65536,
+      "sha256": "98353fbf60f770062dddc404108b4d28d799068312eb65fdcc6ae79261f0138b"
+    },
+    "vbmeta_system.img": {
+      "size": 4096,
+      "sha256": "df13f69f2c898fa52ad350969c9a14c5c1ea05dd2149cad721956a11ae7280ff"
+    },
+    "vbmeta_vendor.img": {
+      "size": 4096,
+      "sha256": "118f7251d8ee47e2f5d526e1dd8c0ac8033e9af61840314563e614f94742ade6"
+    },
+    "vendor.img": {
+      "size": 1372213248,
+      "sha256": "8f76214d5d965b908744677b2ad2d6802ca79dbfe0a5292e667bc9ce7b166d94"
+    },
+    "vendor_boot.img": {
+      "size": 67108864,
+      "sha256": "d15d8ce678b14869e43b22855dbff4f58e816cf043281c20b49690f8d0934b97"
+    },
+    "vendor_dlkm.img": {
+      "size": 13983744,
+      "sha256": "6da6a3e7a4dea6e1cacc3b23e813fedd6cd8bf3713a99e7805abaf7bc24b4db4"
+    }
+  },
+  "avb_chain_verified": true,
+  "top_level_avb_flags": 0,
+  "fec": {
+    "vendor": {
+      "roots": 2,
+      "bytes": 8691712,
+      "matches": true
+    },
+    "mi_ext": {
+      "roots": 2,
+      "bytes": 8192,
+      "matches": true
+    }
+  },
+  "clean_source_build": false,
+  "device_flashed": false,
+  "hardware_verified": false
+}

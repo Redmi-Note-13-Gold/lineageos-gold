@@ -1,0 +1,105 @@
+on init
+    write /sys/module/musb_hdrc/parameters/mu3d_force_on 1
+
+on post-fs-data
+    # Camera
+    chmod 0660 /dev/MAINAF
+    chown system camera /dev/MAINAF
+    chmod 0660 /dev/MAINAF2
+    chown system camera /dev/MAINAF2
+    chmod 0660 /dev/SUBAF
+    chown system camera /dev/SUBAF
+    chmod 0660 /dev/GAF001AF
+    chown system camera /dev/GAF001AF
+    chmod 0660 /dev/DW9714AF
+    chown system camera /dev/DW9714AF
+    chmod 0660 /dev/LC898212AF
+    chown system camera /dev/LC898212AF
+    chmod 0660 /dev/BU64745GWZAF
+    chown system camera /dev/BU64745GWZAF
+    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
+    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
+    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wt.bin
+    chmod 0777 /data/vendor/camera/rear_dc_cal_wd.bin
+    chmod 0777 /data/vendor/camera/rear_dc_cal_wu.bin
+    restorecon /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
+    restorecon /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
+    mkdir /mnt/vendor/persist 0777 system camera
+    mkdir /mnt/vendor/persist/camera 0777 system camera
+    restorecon_recursive /mnt/vendor/persist/camera
+    chmod 0777 /vendor/etc/camera/com.xiaomi.dcal.wd.golden
+    chmod 0777 /vendor/etc/camera/com.xiaomi.dcal.wu.golden
+    chmod 0777 /vendor/etc/camera/golden_ov13b10_i_ov2180_i.bin
+    chmod 0777 /vendor/etc/camera/golden_ov13b10_i_ov2180_ii.bin
+    chmod 0777 /vendor/etc/camera/golden_ov13b10_ii_ov2180_i.bin
+    chmod 0777 /vendor/etc/camera/golden_ov13b10_ii_ov2180_ii.bin
+    chmod 0777 /data/vendor/camera/golden_rear_dc_cal_wt.bin
+    chmod 0777 /data/vendor/camera/golden_s5k3l6_ii_ov2180_ii.bin
+    chown system system /sys/class/touch/touch_dev/palm_sensor
+    mkdir /data/vendor/camera 0777 system camera
+    restorecon_recursive /data/vendor/camera
+    mkdir /data/vendor/camera/model 0777 system camera
+    mkdir /data/vendor/camera/model/dof_model 0777 system camera
+    mkdir /data/vendor/camera/model/rt_model 0777 system camera
+    mkdir /data/vendor/camera/dof_mecp 0777 system camera
+    chown system system /data/vendor/camera/com.xiaomi.dcal.wd.data
+    chown system system /data/vendor/camera/com.xiaomi.dcal.wu.data
+    chmod 0777 /data/vendor/camera/com.xiaomi.dcal.wd.data
+    chmod 0777 /data/vendor/camera/com.xiaomi.dcal.wu.data
+    copy /vendor/etc/camera/model/dof_model/capture_model /data/vendor/camera/model/dof_model/capture_model
+    copy /vendor/etc/camera/model/dof_model/capture_cache /data/vendor/camera/model/dof_model/capture_cache
+    copy /vendor/etc/camera/model/dof_model/capture_policy /data/vendor/camera/model/dof_model/capture_policy
+    copy /vendor/etc/camera/model/rt_model/preview_cache /data/vendor/camera/model/rt_model/preview_cache
+    copy /vendor/etc/camera/model/rt_model/preview_model /data/vendor/camera/model/rt_model/preview_model
+    copy /vendor/etc/camera/model/rt_model/preview_policy /data/vendor/camera/model/rt_model/preview_policy
+    copy /vendor/etc/camera/dof_mecp/dof_mecp.bin /data/vendor/camera/dof_mecp/dof_mecp.bin
+    chmod 0666 /data/vendor/camera/model/dof_model/capture_model
+    chmod 0666 /data/vendor/camera/model/dof_model/capture_cache
+    chmod 0666 /data/vendor/camera/model/dof_model/capture_policy
+    chmod 0666 /data/vendor/camera/model/rt_model/preview_cache
+    chmod 0666 /data/vendor/camera/model/rt_model/preview_model
+    chmod 0666 /data/vendor/camera/model/rt_model/preview_policy
+    chmod 0666 /data/vendor/camera/dof_mecp/dof_mecp.bin
+
+    # SMB
+    chown system system /proc/smb/ScreenComm
+    chmod 0660 /proc/smb/ScreenComm
+    chmod 0660 /dev/spm
+    chown system system /dev/spm
+
+    # Fingerprint
+    chown system system /dev/goodix_fp
+    chmod 0644 /dev/goodix_fp
+    chown system system /sys/bus/platform/devices/fingerprint/clk_enable
+    chmod 0660 /sys/bus/platform/devices/fingerprint/clk_enable
+    chown system /sys/bus/platform/devices/fingerprint/irq
+    chmod 0660 /sys/bus/platform/devices/fingerprint/irq
+    chown system system /sys/bus/platform/devices/fingerprint/hw_reset
+    chmod 0660 /sys/bus/platform/devices/fingerprint/hw_reset
+    chown system system /sys/bus/platform/devices/fingerprint/wakeup_enable
+    chmod 0660 /sys/bus/platform/devices/fingerprint/wakeup_enable
+    chown system system /sys/bus/platform/devices/fingerprint/fingerdown_wait
+    chmod 0660 /sys/bus/platform/devices/fingerprint/fingerdown_wait
+
+on boot
+    chown system system /sys/devices/virtual/mi_display/disp_feature/disp-DSI-0/doze_brightness
+    chmod 0664 /sys/devices/virtual/mi_display/disp_feature/disp-DSI-0/doze_brightness
+    chmod 0777 /sys/class/mi_display/disp-DSI-0/brightness_clone
+    chown system system /sys/class/mi_display/disp-DSI-0/brightness_clone
+    chmod 0777 /dev/mi_display/disp_feature
+    chown system system /dev/mi_display/disp_feature
+    chmod 0777 /sys/class/mi_display/disp-DSI-0/disp_param
+    chown system system /sys/class/mi_display/disp-DSI-0/disp_param
+
+on property:sys.boot_completed=1
+    write /sys/class/mi_display/disp-DSI-0/disp_param "6 1"
+
+    # Widevine
+    chmod 0660 /dev/drm_wv
+    chown media system /dev/drm_wv
+
+    # Flashlight
+    chmod 0777 /sys/devices/platform/11e01000.i2c/i2c-5/5-0034/mt6360_led.4.auto/leds/mt6360_flash_ch1/brightness
+
+on property:ro.boot.hwc=IN
+    write /sys/class/power_supply/battery/cid_enable 1

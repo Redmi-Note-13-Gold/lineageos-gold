@@ -13,12 +13,25 @@ Android 16；官方底包 OS3.0.10.0.VNQCNXM；官方内核 6.6.89。
 - 使用公开开发测试密钥，**安装后不要锁回 Bootloader**。不要混用其他版本 boot、vendor_boot、DTBO、LK 或 vbmeta。
 - 本包包含当前组合所需的官方固件分区；本次测试从旧 LineageOS 23.2 / OS3.0.9 混合环境开始，不等于已经验证从全套原厂 HyperOS 或任意旧固件直接安装。
 
-## 文件
+## 下载附件
 
-- `rom/`：通过 Recovery 的 ADB sideload 安装的完整 ROM ZIP，保持 ZIP 原样，不要解压刷入。
-- `rec/`：配套 Recovery 启动链：`lk.img`、`boot.img`、`dtbo.img`、`vendor_boot.img`、`vbmeta.img`。Recovery 位于 vendor_boot，**没有独立的 recovery.img，也不要使用 fastboot flash recovery**。
-- `rec/super_empty.img`：用于修复本次遇到的旧动态分区布局冲突；不是 ROM，仅在下文对应情形使用。
-- `SHA256SUMS`：以上文件与本 README 的 SHA-256 校验清单。
+从 [本版 GitHub Release](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260913-r1) 下载附件，全部放在电脑的同一个目录中。各文件独立提供，不需要下载或解压外层总包。
+
+**唯一应传给 `adb sideload` 的文件是：**
+
+```text
+lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip
+```
+
+| 附件 | 用途 |
+|---|---|
+| `lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip` | 完整 ROM；保持 ZIP 原样，在 Recovery 中 sideload |
+| `lk.img`、`boot.img`、`dtbo.img`、`vendor_boot.img`、`vbmeta.img` | 配套 Recovery 启动链，在 Bootloader Fastboot 中按第 1 节逐个刷入 |
+| `super_empty.img` | 仅用于第 3 节所述旧布局重名问题；不是 ROM，不是普通升级步骤 |
+| `README.md` | 本安装说明 |
+| `SHA256SUMS` | ROM、六个镜像及 README 的 SHA-256 校验清单 |
+
+Recovery 位于 vendor_boot，没有独立的 recovery.img，也不要使用 `fastboot flash recovery`。GitHub 自动生成的 **Source code (zip/tar.gz) 不是可刷 ROM**。旧的 `Gold-LineageOS-23.2-20260913-R1-TEST.zip` 是资料总包，不能直接 sideload；新版附件布局已改为独立文件。
 
 ROM SHA-256：
 
@@ -26,7 +39,7 @@ ROM SHA-256：
 cf04a5d81fb6b897165978f0b0982fd67ec0128585fdc234d8f5cef4b3a20a74
 ```
 
-在本文件夹中打开终端执行下列命令。Windows PowerShell 如需调用当前目录的工具，请将 `adb` / `fastboot` 写为 `.\adb.exe` / `.\fastboot.exe`，或先把 Platform-Tools 加入 PATH。
+在保存上述附件的同一个目录中打开终端执行下列命令。Windows PowerShell 如需调用当前目录的工具，请将 `adb` / `fastboot` 写为 `.\adb.exe` / `.\fastboot.exe`，或先把 Platform-Tools 加入 PATH。
 
 macOS 校验全部文件：`shasum -a 256 -c SHA256SUMS`；Linux：`sha256sum -c SHA256SUMS`。Windows 可用 `Get-FileHash -Algorithm SHA256` 校验各文件并对照清单。校验不符时重新取得文件，不要继续刷入。
 
@@ -51,11 +64,11 @@ fastboot getvar is-userspace
 应为 `product: gold`、`unlocked: yes`、槽位 `a` 或 `b`、`is-userspace: no`。身份不符、未解锁或命令失败时停下。下列不带槽位后缀的 flash 命令使用 Fastboot 默认的**当前活动槽位**；不要额外切换槽位或加 `--slot=all`。
 
 ```sh
-fastboot flash lk rec/lk.img
-fastboot flash boot rec/boot.img
-fastboot flash dtbo rec/dtbo.img
-fastboot flash vendor_boot rec/vendor_boot.img
-fastboot flash vbmeta rec/vbmeta.img
+fastboot flash lk lk.img
+fastboot flash boot boot.img
+fastboot flash dtbo dtbo.img
+fastboot flash vendor_boot vendor_boot.img
+fastboot flash vbmeta vbmeta.img
 fastboot reboot recovery
 ```
 
@@ -71,7 +84,7 @@ fastboot reboot recovery
 
 ```sh
 adb devices
-adb sideload rom/lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip
+adb sideload lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zip
 ```
 
 设备应显示 `sideload`。安装时保持 USB 连接，不重启手机或 ADB 服务。本次完整安装约 10 分 36 秒，实际时间会变化；电脑端百分比和传输结束不能单独证明成功，**以手机 Recovery 的最终成功提示为准**。若出现签名、分区或安装错误，保留完整信息，不要盲目忽略。
@@ -85,7 +98,7 @@ adb sideload rom/lineage-23.2-20260913-UNOFFICIAL-gold-OS3.0.10.0-recovery-r1.zi
 确认属于上述旧布局问题且已备份、接受全新安装后，在 Recovery 的 Advanced 菜单选择 Reboot to bootloader，进入 Bootloader Fastboot，再执行：
 
 ```sh
-fastboot wipe-super rec/super_empty.img
+fastboot wipe-super super_empty.img
 fastboot reboot recovery
 ```
 

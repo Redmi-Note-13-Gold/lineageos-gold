@@ -1,0 +1,24 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+sh_binary {
+    name: "init.insmod.sh",
+    src: "init.insmod.sh",
+    required: ["init.insmod.rc"],
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.insmod.mt6833.cfg",
+    src: "init.insmod.mt6833.cfg",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.insmod.rc",
+    src: "init.insmod.rc",
+    sub_dir: "init",
+    vendor: true,
+}

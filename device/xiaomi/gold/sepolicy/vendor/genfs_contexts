@@ -1,0 +1,36 @@
+# Use the canonical sysfs path, not the /sys/class symlink.
+genfscon sysfs /devices/virtual/thermal/thermal_message/boost u:object_r:vendor_sysfs_thermal_boost:s0
+
+# Canonical paths for the stock fingerprint control nodes.
+genfscon sysfs /devices/platform/fingerprint/clk_enable u:object_r:vendor_sysfs_fingerprint_control:s0
+genfscon sysfs /devices/platform/fingerprint/irq u:object_r:vendor_sysfs_fingerprint_control:s0
+genfscon sysfs /devices/platform/fingerprint/hw_reset u:object_r:vendor_sysfs_fingerprint_control:s0
+genfscon sysfs /devices/platform/fingerprint/wakeup_enable u:object_r:vendor_sysfs_fingerprint_control:s0
+genfscon sysfs /devices/platform/fingerprint/fingerdown_wait u:object_r:vendor_sysfs_fingerprint_control:s0
+
+# Exact Gold hardware paths observed during boot and Recovery.
+genfscon sysfs /devices/virtual/huaqin/interface/hw_info/pcba_config u:object_r:vendor_gold_sysfs_board_info:s0
+genfscon sysfs /devices/virtual/mi_display/disp_feature/disp-DSI-0/panel_info u:object_r:vendor_gold_sysfs_panel:s0
+genfscon sysfs /devices/virtual/mi_display/disp_feature/disp-DSI-0/panel_event u:object_r:vendor_gold_sysfs_panel:s0
+genfscon sysfs /devices/platform/14000000.dispsys_config/drm/card0/card0-DSI-1/panel_info u:object_r:vendor_gold_sysfs_panel:s0
+genfscon sysfs /devices/platform/14000000.dispsys_config/drm/card0/card0-DSI-1/panel_event u:object_r:vendor_gold_sysfs_panel:s0
+genfscon sysfs /devices/platform/11e02000.i2c/i2c-7/7-0051/power_supply/ln8000-charger u:object_r:sysfs_batteryinfo:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-0034/mt6360-chg.2.auto/power_supply/primary_chg u:object_r:sysfs_batteryinfo:s0
+genfscon sysfs /devices/virtual/power_supply/batt_verify/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e02000.i2c/i2c-7/7-0051/power_supply/ln8000-charger/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-0034/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-0034/mt6360-chg.2.auto/power_supply/primary_chg/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-0034/mt6360-chg.2.auto/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-004e/tcpc/type_c_port0/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/11e01000.i2c/i2c-5/5-004e/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/charger/power_supply/mtk-mst-hvdiv-chg/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/charger/power_supply/mtk-slv-hvdiv-chg/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/10027000.spmi/spmi-0/0-03/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/battery-manager/power_supply/battery/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/fingerprint/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/10026000.pwrap/10026000.pwrap:mt6359p/mt6359p-rtc/rtc/rtc0/alarmtimer.0.auto/wakeup/wakeup u:object_r:sysfs_wakeup:s0
+
+# Additional paths observed only after normal Android loads all drivers.
+genfscon sysfs /devices/platform/14013000.dsi/14013000.dsi.2/panel_event u:object_r:vendor_gold_sysfs_panel:s0
+genfscon sysfs /devices/platform/charger/power_supply/usb/wakeup u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/18002000.consys/wakeup/wakeup u:object_r:sysfs_wakeup:s0

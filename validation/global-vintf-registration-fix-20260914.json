@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "problem": "ODM SKU VINTF metadata needs platform SKU declarations instead of copy rules or duplicate custom modules",
+  "fix": "EXTRACT_ONLY inputs plus ODM_MANIFEST_SKUS and ODM_MANIFEST_IRON_GL_FILES/ODM_MANIFEST_IRON_P_GL_FILES; platform android-info.mk generates, assembles and installs both modules",
+  "custom_sku_soong_modules": 0,
+  "vintf_copy_rules": 0,
+  "remote_assemble_vintf_completed": true,
+  "new_generated_vendor_verified": true,
+  "new_receipt_created": true,
+  "uses_platform_odm_ignore_target_fcm_flag": true,
+  "flag_reference": "build/make/target/board/android-info.mk _add_odm_sku_manifest",
+  "final_checkvintf_not_disabled": true,
+  "platform_consumer_validation": {
+    "platform_consumer": "build/make/target/board/android-info.mk",
+    "platform_consumer_sha256": "37b05e12fe37fd12fa68670e415fb2b6515fb7a20ce6c6d9bbc54c7b77eac089",
+    "platform_sku_make_test_passed": true,
+    "custom_sku_soong_modules": 0,
+    "vintf_copy_rules": 0,
+    "sku_outputs": {
+      "iron_gl": {
+        "assembled": true,
+        "manifest_version": "9.0",
+        "hal_instances": [
+          {
+            "name": "android.hardware.nfc",
+            "fqname": "INfc/default"
+          },
+          {
+            "name": "android.hardware.secure_element",
+            "fqname": "ISecureElement/SIM1"
+          }
+        ]
+      },
+      "iron_p_gl": {
+        "assembled": true,
+        "manifest_version": "9.0",
+        "hal_instances": [
+          {
+            "name": "android.hardware.nfc",
+            "fqname": "INfc/default"
+          },
+          {
+            "name": "android.hardware.secure_element",
+            "fqname": "ISecureElement/SIM1"
+          }
+        ]
+      }
+    },
+    "full_android_build_started": false
+  },
+  "regeneration": {
+    "changed_generated_files": [
+      "Android.bp",
+      "BoardConfigVendor.mk"
+    ],
+    "receipt_sha256": "4039bd7dfe6765e9ebf3ee3c7fcec96dd66d85fb3b815772026e448d976c4df5",
+    "recipe_sha256": {
+      "extract-files.py": "dcce3f9160b5fa0e3b80b39d89cf5b87d9a6242851c98d7f3e72212b0c61326f",
+      "proprietary-files.txt": "d83f74b8c66ecb650ca1cb44b4b8d0e9964a5d3adb07e3375263ff0fc64e6650",
+      "proprietary-firmware.txt": "f3cf8d6719bf3242b054d076c509bf81cbb78d8c94bf3cd44cea131fdd2d3708",
+      "proprietary-source.json": "6a692be126e59801333edf36111f8a1e6c216b00db4d08a0f75a2d6f631e185f",
+      "prepare-vendor.py": "0e295cf0d3b1c25f2c405b2c68e1e6ff456e8dc3095a4f5ef25fdafb47d640e3"
+    },
+    "base_receipt_sha256": "022d967e933bdd1779f8d95467137c168bf1b92323f3ce8530b4ee424e3fcf2e",
+    "all_payloads_unchanged": true,
+    "backup": "<build-root>/migration/gold-architecture-20260914/vendor/before-platform-sku-regen-1789356473"
+  },
+  "synchronization": {
+    "schema_version": 1,
+    "generated_vendor_verified": true,
+    "source_recipe_matches_receipt": true,
+    "project_recipe_matches_receipt": true,
+    "receipt_sha256": "4039bd7dfe6765e9ebf3ee3c7fcec96dd66d85fb3b815772026e448d976c4df5",
+    "generated_files": 2462,
+    "changed_generated_files": [
+      "Android.bp",
+      "BoardConfigVendor.mk"
+    ],
+    "unchanged_payload_files": 2460,
+    "backup": "<build-root>/migration/gold-architecture-20260914/vendor/before-platform-sku-sync-1789356555",
+    "recipe_sha256": {
+      "extract-files.py": "dcce3f9160b5fa0e3b80b39d89cf5b87d9a6242851c98d7f3e72212b0c61326f",
+      "prepare-vendor.py": "0e295cf0d3b1c25f2c405b2c68e1e6ff456e8dc3095a4f5ef25fdafb47d640e3",
+      "proprietary-files.txt": "d83f74b8c66ecb650ca1cb44b4b8d0e9964a5d3adb07e3375263ff0fc64e6650",
+      "proprietary-firmware.txt": "f3cf8d6719bf3242b054d076c509bf81cbb78d8c94bf3cd44cea131fdd2d3708",
+      "proprietary-source.json": "6a692be126e59801333edf36111f8a1e6c216b00db4d08a0f75a2d6f631e185f"
+    },
+    "build_started": false,
+    "device_validated": false
+  },
+  "full_build_completed": false,
+  "device_validated": false,
+  "public_path_note": "Build-host absolute paths are shown relative to <build-root>; recorded hashes and results are unchanged."
+}

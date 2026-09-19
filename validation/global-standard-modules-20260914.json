@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "stock_version": "OS3.0.5.0.VNQMIXM",
+  "kernel_release": "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k",
+  "module_count": 446,
+  "module_counts_by_partition": {
+    "vendor_ramdisk": 179,
+    "vendor_dlkm": 189,
+    "system_dlkm": 78
+  },
+  "vermagic_counts": {
+    "6.6.118-android15-8-g4d05d8779bfd-4k SMP preempt mod_unload modversions aarch64": 361,
+    "6.6.30-android15-8-g41085fa58973-4k SMP preempt mod_unload modversions aarch64": 7,
+    "6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k SMP preempt mod_unload modversions aarch64": 78
+  },
+  "old_release_modules": [
+    "binder_gki.ko",
+    "millet_binder.ko",
+    "millet_core.ko",
+    "millet_hs.ko",
+    "millet_oem_cgroup.ko",
+    "millet_pkg.ko",
+    "millet_sig.ko"
+  ],
+  "all_module_layout_crc": "0x4e276f37",
+  "load_list_missing_files": 0,
+  "absolute_modules_dep_missing_references": 0,
+  "module_to_module_symbol_crc_mismatches": 0,
+  "strong_elf_imports_without_candidate_provider": 0,
+  "weak_unresolved_symbols": {
+    "leds-mtk-disp.ko": [
+      "mtk_drm_gateic_set_backlight",
+      "_gate_ic_backlight_set"
+    ]
+  },
+  "different_bytes_for_duplicate_basenames": [
+    "libarc4.ko",
+    "rfkill.ko"
+  ],
+  "input_audit_passed": true,
+  "kernel_actual_load_validated": false,
+  "limitations": [
+    "Symbol candidate scan does not verify every actual GKI export CRC or signature trust",
+    "Original input audit does not validate final build dependency files or real kernel loading"
+  ],
+  "recommendation": "Keep the complete locked stock module set; validate final generated dependencies and runtime dmesg",
+  "vermagic_reference": "https://github.com/aosp-mirror/kernel_common/blob/android15-6.6/kernel/module/version.c",
+  "raw_audit_sha256": "87168034c43946b0006bb7bec2bfd22010d5415ad0b2dff0341a6d9463b5a772"
+}

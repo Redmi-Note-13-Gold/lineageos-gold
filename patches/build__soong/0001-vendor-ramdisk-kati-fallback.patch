@@ -1,0 +1,228 @@
+--- a/fsgen/boot_imgs.go
++++ b/fsgen/boot_imgs.go
+@@ -143,6 +143,10 @@
+ 
+ func createVendorBootImage(ctx android.LoadHookContext, dtbImg dtbImg) bool {
+ 	partitionVariables := ctx.Config().ProductVariables().PartitionVarsForSoongMigrationOnlyDoNotUse
++	if !vendorRamdiskFragmentsSupported(partitionVariables) {
++		// Kati can build these fragments; report this Soong image as unsupported.
++		return false
++	}
+ 
+ 	bootImageName := generatedModuleNameForPartition(ctx.Config(), "vendor_boot")
+ 
+@@ -214,6 +218,10 @@
+ // Same as vendor_boot, with the exception of the ramdisk module.
+ func createVendorBootDebugImage(ctx android.LoadHookContext, dtbImg dtbImg) bool {
+ 	partitionVariables := ctx.Config().ProductVariables().PartitionVarsForSoongMigrationOnlyDoNotUse
++	if !vendorRamdiskFragmentsSupported(partitionVariables) {
++		// Kati can build these fragments; report this Soong image as unsupported.
++		return false
++	}
+ 
+ 	bootImageName := generatedModuleNameForPartition(ctx.Config(), "vendor_boot-debug")
+ 
+@@ -281,6 +289,10 @@
+ // Same as vendor_boot-debug, with the exception of some additional properties in the installed adb_debug.prop file.
+ func createVendorBootTestHarnessImage(ctx android.LoadHookContext, dtbImg dtbImg) bool {
+ 	partitionVariables := ctx.Config().ProductVariables().PartitionVarsForSoongMigrationOnlyDoNotUse
++	if !vendorRamdiskFragmentsSupported(partitionVariables) {
++		// Kati can build these fragments; report this Soong image as unsupported.
++		return false
++	}
+ 
+ 	bootImageName := generatedModuleNameForPartition(ctx.Config(), "vendor_boot-test-harness")
+ 
+@@ -505,14 +517,21 @@
+ 	return exists && vendorKernelBootVariables.BuildingImage
+ }
+ 
++func vendorRamdiskFragmentsSupported(partitionVars android.PartitionVariables) bool {
++	fragments := partitionVars.BoardVendorRamdiskFragments
++	return len(fragments) == 0 || (len(fragments) == 1 && fragments[0] == "dlkm")
++}
++
+ func buildingVendorRamdiskFragmentDlkm(ctx android.EarlyModuleContext, partitionVars android.PartitionVariables) bool {
+-	if len(partitionVars.BoardVendorRamdiskFragments) == 0 {
++	if !vendorRamdiskFragmentsSupported(partitionVars) {
++		// Fsgen also runs for mixed Soong/Kati builds. Make supports arbitrary
++		// named fragments, so its valid configurations must not fail analysis.
++		if !ctx.Config().KatiEnabled() {
++			ctx.ModuleErrorf("Only a single dlkm vendor ramdisk fragment is currently supported in Soong-only builds")
++		}
+ 		return false
+ 	}
+-	if len(partitionVars.BoardVendorRamdiskFragments) > 1 || partitionVars.BoardVendorRamdiskFragments[0] != "dlkm" {
+-		ctx.ModuleErrorf("Multiple vendor ramdisk fragments is currently not supported in soong only builds")
+-	}
+-	return true
++	return len(partitionVars.BoardVendorRamdiskFragments) != 0
+ }
+ 
+ // Derived from: https://cs.android.com/android/platform/superproject/main/+/main:build/make/core/board_config.mk;l=480;drc=5b55f926830963c02ab1d2d91e46442f04ba3af0
+--- a/fsgen/filesystem_creator.go
++++ b/fsgen/filesystem_creator.go
+@@ -259,6 +259,31 @@
+ 	return result
+ }
+ 
++func (f *filesystemCreator) createVendorBootImages(ctx android.LoadHookContext, dtbImg dtbImg) {
++	partitionVars := ctx.Config().ProductVariables().PartitionVarsForSoongMigrationOnlyDoNotUse
++	if buildingVendorBootImage(partitionVars) {
++		if createVendorBootImage(ctx, dtbImg) {
++			f.properties.Vendor_boot_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot")
++		} else {
++			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot")
++		}
++	}
++	if buildingDebugVendorBootImage(partitionVars) {
++		if createVendorBootDebugImage(ctx, dtbImg) {
++			f.properties.Vendor_boot_debug_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot-debug")
++		} else {
++			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot-debug")
++		}
++		if createVendorBootTestHarnessImage(ctx, dtbImg) {
++			f.properties.Vendor_boot_test_harness_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot-test-harness")
++		} else {
++			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot-test-harness")
++		}
++
++	}
++
++}
++
+ func (f *filesystemCreator) createInternalModules(ctx android.LoadHookContext) {
+ 	partitions := generatedPartitions(ctx)
+ 	for i := range partitions {
+@@ -277,26 +302,7 @@
+ 			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "boot")
+ 		}
+ 	}
+-	if buildingVendorBootImage(partitionVars) {
+-		if createVendorBootImage(ctx, dtbImg) {
+-			f.properties.Vendor_boot_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot")
+-		} else {
+-			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot")
+-		}
+-	}
+-	if buildingDebugVendorBootImage(partitionVars) {
+-		if createVendorBootDebugImage(ctx, dtbImg) {
+-			f.properties.Vendor_boot_debug_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot-debug")
+-		} else {
+-			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot-debug")
+-		}
+-		if createVendorBootTestHarnessImage(ctx, dtbImg) {
+-			f.properties.Vendor_boot_test_harness_image = ":" + generatedModuleNameForPartition(ctx.Config(), "vendor_boot-test-harness")
+-		} else {
+-			f.properties.Unsupported_partition_types = append(f.properties.Unsupported_partition_types, "vendor_boot-test-harness")
+-		}
+-
+-	}
++	f.createVendorBootImages(ctx, dtbImg)
+ 
+ 	if buildingVendorKernelBootImage(partitionVars) {
+ 		createVendorKernelBootImage(ctx, dtbImg)
+--- a/fsgen/Android.bp
++++ b/fsgen/Android.bp
+@@ -32,6 +32,7 @@
+         "vbmeta_partitions.go",
+     ],
+     testSrcs: [
++        "boot_imgs_test.go",
+         "filesystem_creator_test.go",
+     ],
+     pluginFor: ["soong_build"],
+--- /dev/null
++++ b/fsgen/boot_imgs_test.go
+@@ -0,0 +1,91 @@
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package fsgen
++
++import (
++	"fmt"
++	"testing"
++
++	"android/soong/android"
++)
++
++// Unsupported images must return before creating any Soong modules. Embedding
++// a nil LoadHookContext makes an accidental call to CreateModule fail the test.
++type vendorRamdiskTestContext struct {
++	android.LoadHookContext
++	config android.Config
++	errors []string
++}
++
++func (c *vendorRamdiskTestContext) Config() android.Config { return c.config }
++func (c *vendorRamdiskTestContext) ModuleErrorf(format string, args ...interface{}) {
++	c.errors = append(c.errors, fmt.Sprintf(format, args...))
++}
++
++func TestVendorRamdiskFragmentBuildModes(t *testing.T) {
++	for _, kati := range []bool{false, true} {
++		for _, tc := range []struct {
++			name      string
++			fragments []string
++			supported bool
++			dlkm      bool
++		}{
++			{name: "none", supported: true},
++			{name: "dlkm", fragments: []string{"dlkm"}, supported: true, dlkm: true},
++			{name: "named_prebuilt", fragments: []string{"init_boot"}},
++			{name: "multiple", fragments: []string{"dlkm", "init_boot"}},
++		} {
++			t.Run(fmt.Sprintf("kati_%t/%s", kati, tc.name), func(t *testing.T) {
++				config := android.TestConfig(t.TempDir(), nil, "", nil)
++				if kati {
++					android.SetKatiEnabledForTests(config)
++				}
++				vars := android.PartitionVariables{
++					BoardVendorRamdiskFragments:  tc.fragments,
++					BoardBootHeaderVersion:       "4",
++					BuildingDebugVendorBootImage: true,
++				}
++				config.TestProductVariables.PartitionVarsForSoongMigrationOnlyDoNotUse = vars
++				ctx := &vendorRamdiskTestContext{config: config}
++				if got := vendorRamdiskFragmentsSupported(vars); got != tc.supported {
++					t.Fatalf("support = %t, want %t", got, tc.supported)
++				}
++				if got := buildingVendorRamdiskFragmentDlkm(ctx, vars); got != tc.dlkm {
++					t.Errorf("dlkm enabled = %t, want %t", got, tc.dlkm)
++				}
++				wantError := !kati && !tc.supported
++				if gotError := len(ctx.errors) != 0; gotError != wantError {
++					t.Errorf("errors = %v, want error: %t", ctx.errors, wantError)
++				}
++				if !tc.supported {
++					creator := &filesystemCreator{}
++					creator.createVendorBootImages(ctx, dtbImg{})
++					if creator.properties.Vendor_boot_image != "" || creator.properties.Vendor_boot_debug_image != "" || creator.properties.Vendor_boot_test_harness_image != "" {
++						t.Error("unsupported layout registered a partial vendor_boot image")
++					}
++					wantUnsupported := []string{"vendor_boot", "vendor_boot-debug", "vendor_boot-test-harness"}
++					android.AssertDeepEquals(t, "unsupported vendor_boot images", wantUnsupported, creator.properties.Unsupported_partition_types)
++					for _, create := range []func(android.LoadHookContext, dtbImg) bool{
++						createVendorBootImage,
++						createVendorBootDebugImage,
++						createVendorBootTestHarnessImage,
++					} {
++						if create(ctx, dtbImg{}) {
++							t.Error("unsupported layout created a partial vendor_boot image")
++						}
++					}
++				}
++			})
++		}
++	}
++}

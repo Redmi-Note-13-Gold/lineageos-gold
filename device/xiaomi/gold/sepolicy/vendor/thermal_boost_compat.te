@@ -1,0 +1,13 @@
+# Preserve existing sysfs_therm access to the one relabeled boost file.
+# These grants do not add access beyond the old label for these domains.
+allow factory vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
+allow hal_thermal_default vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
+allow init-thermal-logging-sh vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+allow init-thermal-symlinks-sh vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+allow merged_hal_service vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
+allow osi vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+allow recovery vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+allow thermal_core vendor_sysfs_thermal_boost:file { append getattr ioctl lock map open read watch watch_reads write };
+allow thermal_manager vendor_sysfs_thermal_boost:file { append lock map open write };
+allow untrusted_app_25 vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };
+allow untrusted_app_all vendor_sysfs_thermal_boost:file { getattr ioctl lock map open read watch watch_reads };

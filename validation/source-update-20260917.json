@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-17",
+  "scope": "source snapshot and host-tool checks; no new Android build or device write",
+  "changes": [
+    "Integrate the complete Global device tree, vendor recipes and standard Android build tools",
+    "Include boot, hardware and charger fixes observed on the development device",
+    "Remove source/vendor build preflight, generated vendor receipt and repeated source hashing",
+    "Update current status and preserve historical CN R1 and complete-package records"
+  ],
+  "host_tests": {
+    "command": "python3 -m unittest discover -s tests -v",
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+  },
+  "syntax_checked_python_files": 9,
+  "markdown_local_links_valid": true,
+  "vendor_reextracted_this_update": false,
+  "android_compiled_this_update": false,
+  "latest_full_package_validated": false,
+  "latest_full_package_validation": "deferred by maintainer for this source update",
+  "device_written_this_update": false,
+  "new_rom_release_created": false,
+  "runtime_evidence": "device-fixes-20260916.json"
+}
