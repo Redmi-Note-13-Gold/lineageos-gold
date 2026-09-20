@@ -3,11 +3,24 @@ cc_library_static {
     name: "libgold_power_requests",
     host_supported: true,
     vendor_available: true,
-    srcs: ["RequestManager.cpp"],
+    srcs: ["RequestManager.cpp", "NodeBackend.cpp"],
     export_include_dirs: ["."],
     cpp_std: "c++17",
     cppflags: ["-fexceptions"],
     cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
+cc_test {
+    name: "gold_power_nodes_test",
+    host_supported: true,
+    vendor: true,
+    gtest: false,
+    srcs: ["NodeBackendTest.cpp"],
+    static_libs: ["libgold_power_requests"],
+    cpp_std: "c++17",
+    cppflags: ["-fexceptions"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+    test_suites: ["device-tests"],
 }
 
 cc_test {
