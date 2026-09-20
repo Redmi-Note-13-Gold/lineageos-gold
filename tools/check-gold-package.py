@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -37,6 +38,23 @@ def verify_ims_startup_properties(lines):
         actual = [line.split('=', 1)[1].strip() for line in lines if line.startswith(name + '=')]
         require(actual == [value], 'Missing, duplicate or incorrect IMS startup property: ' + name)
     return expected
+
+
+def verify_vintf_fragment(packaged, source, assembler):
+    # Soong's android/defs.go processes fragments with this flag. Rebuild the
+    # expected XML with the same host tool: its schema version is not the HAL
+    # interface version, and source comments/paths are not runtime declarations.
+    env = os.environ.copy()
+    env['VINTF_IGNORE_TARGET_FCM_VERSION'] = 'true'
+    expected = subprocess.check_output([str(assembler), '-i', str(source)], env=env)
+
+    def identity(node):
+        return (node.tag, tuple(sorted(node.attrib.items())),
+                (node.text or '').strip(), (node.tail or '').strip(),
+                tuple(identity(child) for child in node))
+
+    require(identity(ET.fromstring(packaged)) == identity(ET.fromstring(expected)),
+            'Power VINTF declaration differs from assembled mainline: ' + str(source))
 
 
 def verify_images(target, host_bin, scratch_parent=None):
@@ -271,9 +289,10 @@ def verify(target, aapt2, readelf, profile):
         power_rc = 'VENDOR/etc/init/android.hardware.power-service.gold.rc'
         power_xml = 'VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml'
         power_root = profile.parents[4] / 'power'
-        for name in (power_rc, power_xml):
-            require(archive.read(name) == (power_root / Path(name).name).read_bytes(),
-                    'Power service definition differs from mainline: ' + name)
+        require(archive.read(power_rc) == (power_root / Path(power_rc).name).read_bytes(),
+                'Power service definition differs from mainline: ' + power_rc)
+        verify_vintf_fragment(archive.read(power_xml), power_root / Path(power_xml).name,
+                              Path(aapt2).with_name('assemble_vintf'))
         power_services = []
         for name in members:
             if not name.startswith(('VENDOR/', 'SYSTEM/', 'SYSTEM_EXT/')):
