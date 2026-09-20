@@ -28,16 +28,32 @@ def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def verify_ims_startup_properties(lines):
+    # ImsApp returns before constructing the modem backend when ims_support is
+    # missing. A bound framework service alone therefore cannot validate this.
+    expected = {'persist.vendor.ims_support': '1', 'persist.vendor.volte_support': '1',
+                'ro.vendor.md_auto_setup_ims': '1'}
+    for name, value in expected.items():
+        actual = [line.split('=', 1)[1].strip() for line in lines if line.startswith(name + '=')]
+        require(actual == [value], 'Missing, duplicate or incorrect IMS startup property: ' + name)
+    return expected
+
+
 def verify_images(target, host_bin, scratch_parent=None):
     """Compare actual final image contents with the package's checked members."""
     wanted = {
-        'vendor': ['lib/hw/mapper.mediatek.so', 'lib/libgpud.so', 'lib/libgralloc_metadata.so',
+        'vendor': ['build.prop', 'etc/selinux/vendor_property_contexts',
+                   'lib/hw/mapper.mediatek.so', 'lib/libgpud.so', 'lib/libgralloc_metadata.so',
                    'lib/libgralloctypes_mtk.so', 'lib/arm.graphics-V5-ndk.so',
                    'bin/hw/android.hardware.health-service.gold',
                    'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
                    'etc/vintf/manifest/android.hardware.health-service.gold.xml',
                    'etc/selinux/vendor_file_contexts', 'etc/permissions/android.hardware.telephony.ims.xml',
                    'etc/wifi/wpa_supplicant.conf', 'etc/wifi/wpa_supplicant_overlay.conf',
+                   'bin/hw/android.hardware.power-service.gold',
+                   'etc/init/android.hardware.power-service.gold.rc',
+                   'etc/vintf/manifest/android.hardware.power-service.gold.xml',
+                   'lib/libmtkperf_client_vendor.so', 'lib64/libmtkperf_client_vendor.so',
                    'overlay/FrameworkResOverlayGold.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
@@ -221,6 +237,13 @@ def verify(target, aapt2, readelf, profile):
                 'Packaged IMS privileged permission allowlist differs from mainline')
 
         vendor_properties = archive.read('VENDOR/build.prop').decode().splitlines()
+        ims_startup = verify_ims_startup_properties(vendor_properties)
+        property_contexts = archive.read('VENDOR/etc/selinux/vendor_property_contexts').decode()
+        for name, context in [('persist.vendor.ims_support', 'vendor_mtk_ims_prop'),
+                              ('ro.vendor.md_auto_setup_ims', 'vendor_mtk_ims_prop'),
+                              ('persist.vendor.volte_support', 'vendor_mtk_volte_support_prop')]:
+            require(re.search(r'^' + re.escape(name) + r'\s+u:object_r:' + context + r':s0(?:\s|$)',
+                              property_contexts, re.M), 'Missing IMS property label: ' + name)
         zygote = [line.split('=', 1)[1].strip() for line in vendor_properties if line.startswith('ro.zygote=')]
         require(zygote == ['zygote64'], 'Gold supports 64-bit applications only')
         require('service zygote /system/bin/app_process64 ' in archive.read(
@@ -244,6 +267,37 @@ def verify(target, aapt2, readelf, profile):
         require(b'on init && property:ro.build.type=userdebug\n'
                 b'    setprop ro.adb.secure.recovery 0\n' in recovery_rc,
                 'Debug Recovery must enable its own ADB access before userdata is available')
+
+        power_rc = 'VENDOR/etc/init/android.hardware.power-service.gold.rc'
+        power_xml = 'VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml'
+        power_root = profile.parents[4] / 'power'
+        for name in (power_rc, power_xml):
+            require(archive.read(name) == (power_root / Path(name).name).read_bytes(),
+                    'Power service definition differs from mainline: ' + name)
+        power_services = []
+        for name in members:
+            if not name.startswith(('VENDOR/', 'SYSTEM/', 'SYSTEM_EXT/')):
+                continue
+            if name.endswith('.rc'):
+                for line in archive.read(name).decode(errors='replace').splitlines():
+                    if re.match(r'^service\s+\S+\s+\S*(?:android\.hardware\.power-service|mtkpower@)', line):
+                        power_services.append((name, line))
+        require(len(power_services) == 1 and power_services[0][0] == power_rc,
+                'Multiple or stale Power resource owners in packaged init')
+        require('VENDOR/etc/powerhint.json' not in members,
+                'Obsolete independent libperfmgr policy still packaged')
+        clients = {}
+        for directory, elf_class in [('lib', 1), ('lib64', 2)]:
+            name = 'VENDOR/' + directory + '/libmtkperf_client_vendor.so'
+            data = archive.read(name)
+            require(data[:5] == b'\x7fELF' + bytes([elf_class]), 'Wrong native perf client ABI: ' + name)
+            output = subprocess.check_output([str(readelf), '-d', '-Ws', str(unpack(name))], text=True)
+            require('Shared library: [vendor.mediatek.hardware.mtkpower@1.2.so]' in output,
+                    'Perf client does not forward to the synchronous 1.2 service: ' + name)
+            for symbol in ('perf_lock_acq', 'perf_lock_rel', 'perf_cus_lock_hint'):
+                require(re.search(r'\bGLOBAL\s+DEFAULT\s+\d+\s+' + symbol + r'\b', output),
+                        'Missing public C perf ABI: ' + symbol)
+            clients[name] = sha256(data)
 
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
@@ -288,6 +342,7 @@ def verify(target, aapt2, readelf, profile):
                         'input_sha256': ims_input['sha256'], 'packaged_sha256': sha256(archive.read(ims_name)),
                         'dependency_payload_matches': True, 'payload_entries': len(payload),
                         'platform_signing_selected': True, 'privileged_permissions_match': True,
+                        'startup_properties': ims_startup, 'startup_property_labels_verified': True,
                         'registration_verified': False},
                 'settings': {'sha256': sha256(archive.read(settings_name)), 'maintainer_page_verified': True,
                              'languages': ['default', 'zh-rCN', 'zh-rTW'], 'peak_refresh_overlay': True},
@@ -297,6 +352,8 @@ def verify(target, aapt2, readelf, profile):
                 'zygote': 'zygote64', 'standard_module_links_verified': True,
                 'wifi_pmf_default': 1, 'wifi_pmf_upgrade_overlay': True,
                 'recovery_debug_adb_config_verified': True,
+                'power': {'single_resource_owner': True, 'native_clients': clients,
+                          'runtime_verified': False, 'performance_benefit_verified': False},
                 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}

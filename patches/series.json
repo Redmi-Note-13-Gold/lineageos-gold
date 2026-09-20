@@ -70,7 +70,8 @@
     "url": "https://github.com/LineageOS/android_hardware_mediatek",
     "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
     "patches": [
-      "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch"
+      "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch",
+      "patches/hardware__mediatek/0002-perf-client-forwarding.patch"
     ]
   },
   {

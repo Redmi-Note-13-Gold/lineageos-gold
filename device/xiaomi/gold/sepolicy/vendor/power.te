@@ -1,0 +1,10 @@
+# The existing MediaTek domain already owns the PPM, cgroup and display nodes.
+# Read the real thermal HAL; missing/stale severity blocks performance requests.
+hal_client_domain(mtk_hal_power, hal_thermal)
+
+# Non-secret, bounded, transient strategy controls for matched-device trials.
+vendor_public_prop(vendor_gold_power_prop)
+get_prop(mtk_hal_power, vendor_gold_power_prop)
+userdebug_or_eng(`
+    set_prop(shell, vendor_gold_power_prop)
+')

@@ -56,3 +56,6 @@
 
 # Device-specific health wrapper retains the standard health domain.
 /(vendor|system/vendor)/bin/hw/android\.hardware\.health-service\.gold    u:object_r:hal_health_default_exec:s0
+
+# One process serves the standard Power HAL and MediaTek performance locks.
+/(vendor|system/vendor)/bin/hw/android\.hardware\.power-service\.gold    u:object_r:mtk_hal_power_exec:s0

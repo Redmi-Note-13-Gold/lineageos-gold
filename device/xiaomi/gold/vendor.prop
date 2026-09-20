@@ -161,6 +161,11 @@ persist.vendor.radio.dynamic_sar=1
 persist.vendor.radio.mtk_dsbp_support=3
 persist.vendor.factory.GB2312=yes
 persist.vendor.mims_support=2
+# Locked Global modem/IMS startup contract. Carrier provisioning and the
+# per-subscription enabled state remain controlled by telephony.
+persist.vendor.ims_support=1
+persist.vendor.volte_support=1
+ro.vendor.md_auto_setup_ims=1
 ro.vendor.mtk_c2k_lte_mode=2
 ro.vendor.mtk_c2k_support=1
 persist.vendor.radio.flashless.fsm=0

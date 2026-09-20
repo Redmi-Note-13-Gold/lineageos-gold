@@ -1,0 +1,114 @@
+--- a/libmtkperf_client/Android.bp
++++ b/libmtkperf_client/Android.bp
+@@ -5,12 +5,19 @@
+ //
+ 
+ soong_namespace {
++    imports: ["hardware/mediatek"],
+ }
+ 
+ cc_defaults {
+     name: "libmtkperf_client_defaults",
+-    srcs: ["mtkperf_client.c"],
+-    shared_libs: ["liblog"],
++    srcs: ["mtkperf_client.cpp"],
++    cpp_std: "c++17",
++    shared_libs: [
++        "liblog", "libhidlbase", "libutils",
++        "vendor.mediatek.hardware.mtkpower@1.0",
++        "vendor.mediatek.hardware.mtkpower@1.1",
++        "vendor.mediatek.hardware.mtkpower@1.2",
++    ],
+ }
+ 
+ cc_defaults {
+--- a/libmtkperf_client/mtkperf_client.c
++++ /dev/null
+@@ -1,26 +0,0 @@
+-/*
+- * Copyright (C) 2022 The LineageOS Project
+- *
+- * SPDX-License-Identifier: Apache-2.0
+- */
+-
+-#define LOG_TAG "libmtkperf_client"
+-
+-#include <log/log.h>
+-
+-int perf_lock_acq(int hdl, int dur, long num, unsigned int tid) {
+-    ALOGI("[%s] hdl: %d, dur: %d, num: %ld, tid: %u", __func__, hdl, dur, num, tid);
+-    if (hdl > 0) return hdl;
+-
+-    return 233;
+-}
+-
+-int perf_lock_rel(int hdl) {
+-    ALOGI("[%s] hdl: %d", __func__, hdl);
+-    return 0;
+-}
+-
+-int perf_cus_lock_hint(int hint, int dur) {
+-    ALOGI("[%s], hint: %d, dur: %d", __func__, hint, dur);
+-    return 233;
+-}
+--- /dev/null
++++ b/libmtkperf_client/mtkperf_client.cpp
+@@ -0,0 +1,58 @@
++/*
++ * Copyright (C) 2022 The LineageOS Project
++ * SPDX-License-Identifier: Apache-2.0
++ */
++#include <vendor/mediatek/hardware/mtkpower/1.2/IMtkPerf.h>
++
++#include <cerrno>
++#include <mutex>
++
++namespace {
++using vendor::mediatek::hardware::mtkpower::V1_2::IMtkPerf;
++std::mutex serviceMutex;
++android::sp<IMtkPerf> cachedService;
++android::sp<IMtkPerf> service() {
++    std::lock_guard<std::mutex> lock(serviceMutex);
++    if (!cachedService) cachedService = IMtkPerf::tryGetService();
++    return cachedService;
++}
++void failed(const android::sp<IMtkPerf>& previous) {
++    std::lock_guard<std::mutex> lock(serviceMutex);
++    if (cachedService == previous) cachedService.clear();
++}
++}
++
++// The actual ARM and ARM64 vendor ABI is (handle, duration, int* list, count).
++// Never reinterpret the resource pointer as a number or caller-supplied TID.
++extern "C" int perf_lock_acq(int handle, int duration, int* list, int count) {
++    if (handle < 0 || duration < 0 || count <= 0 || count > 64 || count % 2 || !list) return -EINVAL;
++    auto peer = service();
++    if (!peer) return -ENODEV;
++    android::hardware::hidl_vec<int32_t> resources;
++    resources.resize(count);
++    for (int i = 0; i < count; ++i) resources[i] = list[i];
++    auto result = peer->perfLockAcquire(handle, duration, resources, 0);
++    // An ambiguous transport failure must not acquire a second hidden lease.
++    if (!result.isOk()) { failed(peer); return -EPIPE; }
++    return static_cast<int32_t>(result);
++}
++
++extern "C" int perf_lock_rel(int handle) {
++    if (handle <= 0) return -EINVAL;
++    auto peer = service();
++    if (!peer) return -ENODEV;
++    // The synchronous 1.2 API preserves the caller PID and reports whether the
++    // kernel reset succeeded. The oneway legacy API cannot authenticate PID.
++    auto result = peer->perfLockReleaseSync(handle, 0);
++    if (!result.isOk()) { failed(peer); return -EPIPE; }
++    return static_cast<int32_t>(result);
++}
++
++extern "C" int perf_cus_lock_hint(int hint, int duration) {
++    if (duration < 0) return -EINVAL;
++    auto peer = service();
++    if (!peer) return -ENODEV;
++    auto result = peer->perfCusLockHint(hint, duration);
++    if (!result.isOk()) { failed(peer); return -EPIPE; }
++    return static_cast<int32_t>(result);
++}

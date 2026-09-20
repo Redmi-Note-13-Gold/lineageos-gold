@@ -1,9 +1,30 @@
 // SPDX-License-Identifier: Apache-2.0
+cc_binary {
+    name: "android.hardware.power-service.gold",
+    defaults: ["hidl_defaults"],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["service.cpp"],
+    init_rc: ["android.hardware.power-service.gold.rc"],
+    vintf_fragments: ["android.hardware.power-service.gold.xml"],
+    static_libs: ["libgold_power_requests"],
+    shared_libs: [
+        "libbase", "libbinder_ndk", "libhidlbase", "libutils",
+        "android.hardware.power-V6-ndk", "android.hardware.thermal-V2-ndk",
+        "vendor.mediatek.hardware.mtkpower@1.0",
+        "vendor.mediatek.hardware.mtkpower@1.1",
+        "vendor.mediatek.hardware.mtkpower@1.2",
+    ],
+    cpp_std: "c++17",
+    cppflags: ["-fexceptions"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
 cc_library_static {
     name: "libgold_power_requests",
     host_supported: true,
     vendor_available: true,
-    srcs: ["RequestManager.cpp", "NodeBackend.cpp"],
+    srcs: ["RequestManager.cpp", "NodeBackend.cpp", "PowerEngine.cpp"],
     export_include_dirs: ["."],
     cpp_std: "c++17",
     cppflags: ["-fexceptions"],

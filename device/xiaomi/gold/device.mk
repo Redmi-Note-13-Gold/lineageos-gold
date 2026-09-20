@@ -211,17 +211,13 @@ PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power-service.pixel-libperfmgr \
-    vendor.mediatek.hardware.mtkpower@1.2-service.stub
+    android.hardware.power-service.gold
 
 PRODUCT_PACKAGES += \
     init.mt6833.power.rc
 
 PRODUCT_PACKAGES += \
     libmtkperf_client_vendor
-
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/configs/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json
 
 # Radio
 # The matching stock modem configuration is installed from proprietary-files.
