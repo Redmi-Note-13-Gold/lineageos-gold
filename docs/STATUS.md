@@ -8,12 +8,32 @@
 
 | 验证层次 | 当前结论 |
 |---|---|
-| 主机工具 | 26 项 Python 测试通过；原生 arm64 C++ 通过 8 个电量单位/边界用例 |
-| 本轮 Android 构建 | 加入实机发现的 Health 修复后复用原输出构建；终态及最终包验证待回查 |
+| 主机工具 | 26 项 Python 测试通过；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
+| 本轮 Android 构建 | 源码 `4cdee4a` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过 |
+| 振动契约测试 | ARM64 / ARM 测试程序已编译，未在手机执行 |
 | 本轮安装、分区回读、开机 | 尚未执行 |
 | 本轮硬件 | 本轮候选未安装；已读取现有系统基线，见下文 |
 
 具体采用与暂缓理由见 [ADAPTATION](ADAPTATION.md)。新增振动契约测试需要 Android 目标构建和运行，不把编译测试程序计作测试通过。
+
+## 9 月 20 日候选产物
+
+科研机在 13:21:39（UTC+8）完成构建及自动验证，Android 构建耗时 2:56:08。复用原 `out-gold-standard`，未 clean 或创建另一完整输出。最终证据见 [final-build-20260920.json](../validation/final-build-20260920.json)。
+
+产物根目录为 `/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/`：
+
+| 产物 | 相对路径 | 字节数 |
+|---|---|---|
+| 完整 OTA | `lineage-23.2-20260920-UNOFFICIAL-gold.zip` | 1174542977 |
+| target-files | `obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip` | 2903486079 |
+
+SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已再次确认 9 月 19 日 OTA 哈希不变，且与本轮可变 OTA 文件分离。
+
+五个 ARM 图形库及 graphics-common V7 依赖、Gold Health 正常/Recovery 服务、标签与各自唯一的 VINTF 声明、正常系统唯一 charger、Settings 维护者资源和刷新率 overlay、38 项功耗配置均已核验。`tools/check-gold-package.py` 可复查这些包内容。
+
+这是 **userdebug / test-keys** 候选，签名完整性通过不等于正式发行密钥验收。包内策略的 permissive 域为上游调试域 `su`、`osi`、`backuptool`；没有把新 Health/Vibrator 域设为 permissive，也未关闭全局 SELinux。VINTF 详细检查返回 `COMPATIBLE`，保留了路径回退、空 boot ramdisk及 kernel level 提示的原始日志，详见验证记录。
+
+构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。既有 swap 文件保留。本轮未安装候选，不将原手机系统的运行状态计入新包验收。
 
 ## 本轮读取的原有系统
 

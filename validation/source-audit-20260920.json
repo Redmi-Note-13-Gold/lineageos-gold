@@ -75,9 +75,10 @@
   "android_build": {
     "unit": "gold-audit-20260920-r2.service",
     "log": "/srv/build/logs/gold-audit-20260920-r2.log",
-    "state": "running; inspect live status and the final result.json",
-    "artifact_validators_passed": false,
-    "vibrator_contract_test_executed": false
+    "state": "completed; final evidence in final-build-20260920.json",
+    "artifact_validators_passed": true,
+    "vibrator_contract_test_executed": false,
+    "final_record": "final-build-20260920.json"
   },
   "device_accepted": false,
   "public_repository_pushed": false

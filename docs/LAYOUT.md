@@ -47,4 +47,4 @@ lineageos-gold/
 
 `source` 是 overlay 挂载点；当前 lower/upper/work 路径仍是系统挂载依赖，不移动或当成重复文件删除。`vendor` 及历史目录可能包含私有厂商输入和设备证据，不同步到公开源码仓库。目录整理采用同盘移动，路径映射存于 `history/layout-moves-20260920.json`。
 
-实时初查：8 vCPU，系统可见约 14 GiB RAM、23 GiB swap；数据盘 344 GiB，约 52 GiB 可用；构建进程空闲。后续磁盘/进程状态以现场读取为准。
+硬件为 8 vCPU，系统可见约 14 GiB RAM、23 GiB swap；数据盘总容量 344 GiB。剩余空间、进程及资源压力按现场读取，不把历史快照作为当前状态。最终构建结果见 [STATUS](STATUS.md)。

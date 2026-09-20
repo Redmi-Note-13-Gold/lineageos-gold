@@ -43,6 +43,17 @@ IMS 必须提供 SHA-256 为 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123e
 
 构建入口不扫描或重验 vendor receipt；它在构建后校验最终 target-files/OTA 分区、时间戳、VINTF、OTA/payload 签名和包内 SELinux 策略。默认输出 `out-gold-standard/gold-build-records/<id>/result.json`，以终态和验证日志为准。没有单独安装的 repo 命令时使用源码自带官方 Repo 启动器。重写可变 OTA 前会保留已有日期硬链接的内容，避免覆盖历史候选。
 
+Android 验证通过后，在科研机用同次构建的 `aapt2` 复查 Gold 组件和已编译资源：
+
+```sh
+python3 /srv/build/migration/gold-architecture-20260914/project/tools/check-gold-package.py \
+  --target-files out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip \
+  --aapt2 out-gold-standard/host/linux-x86/bin/aapt2
+out-gold-standard/host/linux-x86/nativetest64/gold_health_units_test/gold_health_units_test
+```
+
+以上命令在 Android 源码根执行。Health 测试需构建时附加 `--extra-target gold_health_units_test`；它在 Linux 主机执行，不访问手机。振动契约测试生成在 `data/nativetest64/vendor/gold_vibrator_contract_test/`（以及对应 ARM 目录），仅生成测试程序不能记作运行通过。包内容检查也不能代替 overlay 生效和硬件验收。
+
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
 源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。
