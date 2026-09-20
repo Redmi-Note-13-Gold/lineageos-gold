@@ -14,7 +14,7 @@
 | 本轮 Android 构建 | 源码 `4cdee4a` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过 |
 | 振动契约测试 | ARM64 / ARM 已在手机 shell 下各通过 4 项；同次构建的 AIDL 测试依赖临时部署后清理，未修改系统库或 SELinux |
 | 本轮安装、分区回读、开机 | 首次候选 Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽及新版 Recovery 往返启动完成，Enforcing，data/persist 正常；Virtual A/B 合并已完成 |
-| 本轮硬件 | Health 单位修复生效，显示 overlay 生效；eSIM 漫游 LTE 注册正常。IMS 缺失声明待修正版验收；其他硬件仍未全面验收 |
+| 本轮硬件 | Health 单位修复和显示 overlay 生效；前置预览出图，用户确认后置预览/拍照、已录入指纹解锁及基础振动正常；eSIM 漫游 LTE 注册正常。IMS 缺失声明待修正版验收；其他硬件仍未全面验收 |
 
 具体采用与暂缓理由见 [ADAPTATION](ADAPTATION.md)。新增振动契约测试需要 Android 目标构建和运行，不把编译测试程序计作测试通过。
 
@@ -56,7 +56,7 @@ root 首次实际构建暴露 Git 信任和旧输出所有权两个问题。已�
 
 ## 尚需完成
 
-先构建并安装 IMS feature 修正版，确认框架确实绑定 IMS 服务，再按可用测试条件验收相机、指纹、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、振动、USB、关机充电和温控功耗。首次同基线保数据 OTA、Virtual A/B 合并及新版 Recovery 往返已完成；回退尚未测试。
+先构建并安装 IMS feature 修正版，确认框架确实绑定 IMS 服务，再按可用测试条件验收相机完整模式、新指纹录入、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、USB 各模式、关机充电和温控功耗。首次同基线保数据 OTA、Virtual A/B 合并及新版 Recovery 往返已完成；回退尚未测试。
 
 当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位修复已在首次候选正常系统生效；关机充电完整循环与持续性能调校仍未完成，详见 ADAPTATION。
 

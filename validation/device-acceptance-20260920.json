@@ -1,6 +1,6 @@
 {
   "date": "2026-09-20",
-  "recorded_at": "2026-09-20T08:58:35.436558+00:00",
+  "recorded_at": "2026-09-20T09:13:37.227120+00:00",
   "candidate_source_revision": "4cdee4a4bc782aa70fb978eb0cd7a7a5898d17e9",
   "candidate_incremental": "1789870972",
   "ota_sha256": "e35824385ab2e6e915f6ea33be37ac2aa58296de1d9a877cd407f922cbc8f0a4",
@@ -240,6 +240,41 @@
         }
       ],
       "scope": "Direct contract unit tests, not physical motor acceptance. Same-build AIDL library staged temporarily because shell cannot read the vendor library; no SELinux or system-library change."
+    },
+    "camera": {
+      "application": "org.lineageos.aperture",
+      "front": {
+        "camera_id": "1",
+        "preview_frames_observed": 4602,
+        "preview_image_visually_checked": true,
+        "photo_capture_verified": false
+      },
+      "rear": {
+        "camera_id": "0",
+        "preview_frames_observed": 33,
+        "user_confirmed_preview_and_photo_capture": true
+      },
+      "device_or_service_error_tokens_in_post_test_dump": 0,
+      "temporary_ui_dump_removed": true,
+      "raw_images_and_logs_kept_private": true,
+      "all_camera_modes_auxiliary_lenses_video_and_quality_accepted": false
+    },
+    "vibrator_motor_probe": {
+      "oneshot_duration_ms": 300,
+      "oneshot_framework_status": "finished",
+      "prebaked_click_with_fallback_framework_status": "finished",
+      "both_shell_commands_exit_code": 0,
+      "physical_sensation_user_confirmation": "normal sensation confirmed on two repeated 300 ms probes",
+      "raw_dump_sha256": "f6200868c08b2c30f39ef9a2b5018cecb4d6a26b8a9223188bd13261d94e4920",
+      "repeated_oneshot_count": 2,
+      "repeated_oneshot_duration_ms": 300,
+      "repeated_framework_status": "both finished",
+      "repeated_dump_sha256": "4d27afd98ef3d2df3d4d2d85b9b771349ae5ccc71d62ac78095b656ed751620d"
+    },
+    "fingerprint": {
+      "previously_enrolled": true,
+      "unlock_user_confirmed_working": true,
+      "new_enrollment_tested": false
     }
   },
   "cellular": {
@@ -271,7 +306,7 @@
   },
   "remaining": [
     "Build and install IMS feature correction; verify actual service binding, then carrier registration where supported.",
-    "Physical camera, fingerprint, audio, Wi-Fi/hotspot, Bluetooth audio, GNSS, sensors, vibration, offline charging and sustained thermal/power acceptance.",
+    "Full camera modes/video/quality and auxiliary lenses, new fingerprint enrollment, audio, Wi-Fi/hotspot, Bluetooth audio, GNSS, sensors, USB modes, offline charging and sustained thermal/power acceptance.",
     "No full hardware, carrier IMS call, or long-duration stability claim."
   ],
   "privacy": "Raw device logs, SIM identifiers, boot IDs, process IDs and user data are not included in this record.",
@@ -321,6 +356,7 @@
       "system_watchdog_kill": 0
     },
     "shared_storage_canary_matches": true,
-    "checked_after_unlock_at": "2026-09-20T08:58:35.436558+00:00"
+    "checked_after_unlock_at": "2026-09-20T08:58:35.436558+00:00",
+    "latest_observed_uptime_seconds": 1157.37
   }
 }
