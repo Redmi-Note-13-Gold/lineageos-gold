@@ -11,7 +11,7 @@ lineageos-gold/
 ├── patches/                 平台补丁及 series.json
 ├── firmware/                Global/CN 官方输入锁
 ├── tools/                   恢复、提取、构建、产物验证
-│   └── host/                可选科研机 Soong 宿主补丁
+│   └── host/                科研机入口及可选 Soong 宿主补丁
 ├── tests/                   主机工具测试
 ├── docs/                    当前最终文档
 │   └── releases/CN-R1.md    已发布 CN 版本最终说明
@@ -27,7 +27,7 @@ lineageos-gold/
 
 ```text
 /srv/build/
-├── build-gold.sh                         现有增量编译入口
+├── build-gold.sh                         统一构建与验证入口（指向项目脚本）
 ├── lineage-23.2-gold/                    overlay lower，迁入的 Android 基础树
 ├── ccache-gold-betterr/                  可复用编译缓存
 ├── stock-rom/                           官方输入归档

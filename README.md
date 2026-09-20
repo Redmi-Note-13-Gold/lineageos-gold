@@ -2,7 +2,7 @@
 
 主线使用标准 Android 源码构建，固定 **Global OS3.0.5.0.VNQMIXM / Android 15 vendor / kernel 6.6.118**。从官方 Recovery 提取厂商输入，再构建完整 target-files 和 A/B OTA。旧 Python 混合镜像流程保留为适配参考，不参与主构建。
 
-2026-09-20 已重新审查主线、科研机实际源码和 Dhterech 参考树。当前修改包含 32 位图形依赖补齐、原厂功耗统计资源、实际屏幕模式选择、振动 HAL 契约修复、相机目录权限收敛及维护者补丁入库。**本轮候选的 Android 构建和实机验收状态见 [STATUS](docs/STATUS.md)。**
+2026-09-20 已重新审查主线、科研机实际源码和 Dhterech 参考树。当前修改包含 32 位图形依赖补齐、原厂功耗统计资源、实际屏幕模式选择、电量计数单位修复、振动 HAL 契约修复、相机目录权限收敛及维护者补丁入库。**本轮候选的 Android 构建和实机验收状态见 [STATUS](docs/STATUS.md)。**
 
 - [当前状态](docs/STATUS.md)：构建、安装、启动和硬件证据分别列出。
 - [构建](docs/BUILD.md) · [恢复源码](docs/RESTORE.md)

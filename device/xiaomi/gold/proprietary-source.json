@@ -30,13 +30,17 @@
       "change": "Expose peak refresh rate choices queried from supported display modes; no invented refresh rates."
     },
     {
-      "reference_commit": "70fa7c9",
+      "reference_commit": "70fa7c9756797062f477bed73d67af5556b6cd90",
       "change": "Install the stock power profile under res/xml; all 38 named entries numerically match the locked Global stock overlay after correcting u.core_power.cluster1 to cpu.core_power.cluster1. This supplies battery usage estimates, not performance tuning.",
       "stock_overlay": "product/overlay/AospFrameworkResOverlay.apk",
       "stock_overlay_sha256": "e08a366407b91f90cbb38867247feb853fc95637110c22c4564319ed641368d8"
     },
     {
       "change": "Add the stock config_mainDisplayShape from DevicesAndroidOverlay; preserve existing cutout dimensions."
+    },
+    {
+      "reference_commit": "85ca188a00c5736f4f51d65633e999229704674d",
+      "change": "Use a device-specific AIDL Health wrapper with fixed mAh-to-uAh charge-counter conversion for the pinned Global 6.6.118 kernel, independently confirmed on the connected device. Do not import magnitude/SOC heuristics; current and full capacity already use micro-units. Keep the existing board charger startup order."
     }
   ]
 }

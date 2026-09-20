@@ -6,13 +6,13 @@
 
 科研机复用 `/srv/build/migration/gold-architecture-20260914/source` 和其中的 `out-gold-standard`，不 clean，不创建第二份完整输出。先确认 source 是正确 overlay 挂载且没有另一构建，再以 `goldbuild` 用户执行。
 
-现有 `/srv/build/build-gold.sh [targets...]` 只负责 lunch 和编译。需要完整产物验收时使用本仓库入口；它保留同一输出和缓存，并检查最终包：
+科研机 `/srv/build/build-gold.sh [extra_targets...]` 统一指向本仓库 `tools/host/build-research.sh`：以 goldbuild 账户复用现有输出、执行完整构建与产物校验。额外参数用于同时编译模块或测试，不省略完整 OTA。底层入口也可直接调用：
 
 ```sh
 export USER=builder LOGNAME=builder BUILD_USERNAME=builder
 export USE_CCACHE=1 CCACHE_EXEC=/usr/bin/ccache
 export CCACHE_DIR=/srv/build/ccache-gold-betterr
-export GOGC=50 GOMEMLIMIT=10GiB
+export GOGC=50 GOMEMLIMIT=10GiB GOMAXPROCS=4
 python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-source.py \
   --tree /srv/build/migration/gold-architecture-20260914/source \
   --lunch lineage_gold-bp4a-userdebug --out out-gold-standard \

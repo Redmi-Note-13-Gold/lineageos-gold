@@ -21,7 +21,7 @@ Apache-2.0 完整文本见 `LICENSES/Apache-2.0.txt`。修改补丁的许可随�
 
 感谢 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold) 的维护者与贡献者。本项目直接继承其 `lineage-23.0` 设备树（HyperOS 1 / 5.10 基线），固定起点为 [`d3d941c29395ce770b95b735b27bd28e6a8c6946`](https://github.com/mt6833-devs/android_device_xiaomi_gold/commit/d3d941c29395ce770b95b735b27bd28e6a8c6946)，并在此基础上继续适配 LineageOS 23.2。保留上游原有版权声明与许可证。
 
-当前 R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。
+已发布的历史 CN R1 测试包使用 OS3.0.10.0.VNQCNXM 官方提供的 6.6.89 内核镜像；设备树的继承来源与当前内核二进制来源分别记录。
 
 ## Global 6.6 迁移参考
 

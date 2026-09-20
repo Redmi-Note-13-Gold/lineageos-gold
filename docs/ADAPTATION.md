@@ -33,10 +33,10 @@
 | USB NCM | 已包含 Lineage NcmTetheringOverlay；不重复添加设备覆盖 |
 | `204c251` ADB 鉴权 | 主线未配置 WITH_ADB_INSECURE，无需新补丁；历史实机 debug Recovery 与正式产物分开记录 |
 | `b1790f9` mmstat 调试删除 | 主线已经没有该 tracing 配置；其 modem 目录删除没有适配证据，不跟随扩大清理 |
-| `19a71ff`/`85ca188` Health HAL | 不合并猜测式 mAh→µAh 倍乘。现有 AIDL health **不等价于**参考树的单位换算；需内核/实机单位证据后再作确定性修正 |
+| `19a71ff`/`85ca188` Health HAL | 采用独立 Health wrapper；依据当前 6.6.118 实机证据将 charge_counter 从 mAh 转成 µAh，同时覆盖单项查询和 HealthInfo 更新。电流、满充容量保持原有微单位，拒绝负值与整数溢出。不合并按 SOC/数值大小猜测单位的逻辑 |
 | `1d8d063` 关机充电 | 主线已有驱动就绪、DRM 等待和显式启动顺序；不叠加另一套 charger 服务 |
-| `7b66ebb` 性能 hint/定时数值 | 暂缓。没有当前节点、调频行为与功耗对照，不能宣称性能收益 |
-| AOD、相机 UW/macro SKU overlay | 暂缓。需当前 SKU、相机 ID、doze/亮度/唤醒的实机验证 |
+| `7b66ebb` 性能 hint/定时数值 | 不导入任意 hint 数值。实机小核最高 2 GHz，原有持续性能动作也写 2 GHz；框架不再宣称支持已调校的持续性能模式。启动/交互 boost 仍待实现和测量 |
+| AOD、相机 UW/macro SKU overlay | 当前 gold_cn 枚举四个相机 ID，但未证明 UW/macro 角色；仍需焦距/镜头、实际拍照及 doze/亮度/唤醒验证 |
 | `3d3bf28` 额外 SELinux 规则 | 不整批复制。匹配当前域、对象和实际拒绝后才增加最小规则；保持 neverallow 检查 |
 | GS101 memtrack | 未证实当前 GPU 内核接口与实现匹配，不盲换服务 |
 
@@ -50,6 +50,10 @@
 
 ## 电源接口缺口
 
-实际源码的 Pixel libperfmgr 依赖 powerhint.json；当前只有小核最高频率的 SUSTAINED_PERFORMANCE 动作，没有 LAUNCH/INTERACTION。MTK perf stub 的锁接口仅返回句柄/常数，libmtkperf_client_vendor 也是空实现，不会转交原厂调频请求。因此旧 restorecon 规则只能修标签，不能证明 boost 已保留。当前配置的 2 GHz 与原厂小核功耗表最高频率相同，尚不能证明持续性能模式有有效限制。此项保持待验证，不能列为已完成优化；需核对实机频率策略、原厂 hint 语义和温控约束，再实现与测量。
+实际源码的 Pixel libperfmgr 依赖 powerhint.json；原配置只有小核最高频率的 SUSTAINED_PERFORMANCE 动作，没有 LAUNCH/INTERACTION。MTK perf stub 的锁接口仅返回句柄/常数，libmtkperf_client_vendor 也是空实现，不会转交原厂调频请求。因此旧 restorecon 规则只能修标签，不能证明 boost 已保留。实机确认小核正常最高频率就是 2 GHz，原配置不能作为持续性能控制的证据，已关闭框架对此能力的声明。启动/交互 boost 仍不能列为已完成优化；需结合原厂 hint 语义与温控约束实现和测量。
 
 构建工具在重写可变 OTA 前拆开历史日期文件的硬链接，避免下一次构建覆盖上一份证据。新增回归测试实际覆写可变路径后检查历史文件内容不变。
+
+## 本轮实机依据
+
+[只读基线记录](../validation/device-baseline-20260920.json) 属于手机原有系统：6.6.118、B 槽、Enforcing、已完成启动并运行约 70 小时，非本轮候选验收。91% 时 charge_counter=4515，而 charge_full=4962300、设计容量=5000000；Android 错将 4515 作为 µAh 上报。这是引入确定性单位适配的依据。刷新率由屏幕报告 60/90/120 Hz。shell 无权读取 persist/相机目录，未更改设备权限。
