@@ -31,6 +31,7 @@ lineageos-gold/
 
 /srv/build/
 ├── build-gold.sh                         统一构建与验证入口（指向项目脚本）
+├── gold-git-safe-directories.config      root 对当前源码确切仓库路径的 Git 信任清单
 ├── lineage-23.2-gold/                    overlay lower，迁入的 Android 基础树
 ├── gold-build-swapfile                   数据盘 24 GiB swap，fstab 持久化
 ├── stock-rom/                           官方输入归档

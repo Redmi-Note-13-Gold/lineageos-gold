@@ -187,5 +187,21 @@
   "limits": [
     "Root execution and real ccache miss/hit tested; the complete Android candidate was built before this host-only migration.",
     "No phone writes, reboot, output clean or public repository push."
-  ]
+  ],
+  "root_git_trust_followup": {
+    "verified_at": "2026-09-20T08:46:35.191460+00:00",
+    "uid": 0,
+    "source": "/srv/build/migration/gold-architecture-20260914/source",
+    "config": "/srv/build/gold-git-safe-directories.config",
+    "config_sha256": "9c4ebd8513fad7015d1a029169844a37501be53730a72b484d61546747ab8a5b",
+    "git_version": "git version 2.43.0",
+    "repo_project_count": 1158,
+    "exact_safe_directory_count": 1161,
+    "wildcard_trust": false,
+    "source_ownership_changed": false,
+    "pinned_manifest_export_verified": true,
+    "manifest_sha256": "b6d72b7309abb932cef0d2a6570c64b229b89172e88f9d18eb5ad3371d9ff5e0",
+    "reproduction_script": "/srv/build/build-jobs/gold-ims-feature-20260920/configure-research-git-trust.py",
+    "host_tool_tests_passed": 27
+  }
 }

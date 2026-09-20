@@ -22,7 +22,9 @@ python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-sour
 
 `UNIX_TIMESTAMP` 使用本次构建时间。USER、LOGNAME、BUILD_USERNAME 的 `builder` 仅保留已有产物标识，真实进程 UID 是 root，HOME 是 `/root`；这些环境字符串不代表运行账户。可附加 `--extra-target gold_vibrator_contract_test`，只编译振动契约测试程序，不代表该测试已经运行。
 
-先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径和缓存读写。长期构建通过 root systemd 服务启动，保留资源上限：
+迁入的源码仍由原账户拥有。当前 root 的 Git 配置通过 `include.path` 加载 `/srv/build/gold-git-safe-directories.config`，只信任本源码树 `repo list -p` 枚举的 1158 个项目和 3 个 Repo 元数据仓库的确切路径。没有设置 `safe.directory=*`，也没有递归更改 overlay 所有权。新增项目或迁到新路径时，应核对后更新清单；对单个已核对仓库可执行 `git config --global --add safe.directory /exact/repository/path`。科研机 Git 2.43 的 `source/*` 未通过实际检查，不能用它替代确切路径。
+
+先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建通过 root systemd 服务启动，保留资源上限：
 
 ```sh
 unit=gold-build-$(date +%Y%m%d-%H%M%S)

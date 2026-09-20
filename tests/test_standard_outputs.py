@@ -1,11 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
+import contextlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
 import struct
+import subprocess
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -140,6 +145,27 @@ class OutputContractTest(unittest.TestCase):
         missing = self.root / 'not-built.zip'
         self.assertFalse(BUILD.detach_shared_output(missing))
         self.assertFalse(missing.exists())
+
+    def test_manifest_failure_leaves_unsuccessful_build_record(self):
+        tree = self.root / 'android'
+        (tree / '.repo').mkdir(parents=True)
+        argv = ['build-source', '--tree', str(tree), '--lunch',
+                'lineage_gold-bp4a-userdebug', '--execute', '--build-datetime', '123']
+        failure = subprocess.CalledProcessError(1, ['repo', 'manifest', '-r'])
+        with patch.object(sys, 'argv', argv), \
+                patch.object(BUILD.platform, 'system', return_value='Linux'), \
+                patch.object(BUILD.platform, 'machine', return_value='x86_64'), \
+                patch.object(BUILD.subprocess, 'run', side_effect=failure), \
+                contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                BUILD.main()
+        records = list((tree / 'out-gold-standard/gold-build-records').glob('*/result.json'))
+        self.assertEqual(len(records), 1)
+        result = json.loads(records[0].read_text())
+        self.assertIsNone(result['build_exit_code'])
+        self.assertFalse(result['artifact_contract_verified'])
+        self.assertFalse(result['android_validators_passed'])
+        self.assertIn('manifest', result['error'])
 
 
 if __name__ == '__main__':

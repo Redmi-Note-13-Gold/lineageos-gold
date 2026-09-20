@@ -150,17 +150,17 @@ def main():
         config_dir = record_dir / 'config'
         config_dir.mkdir(parents=True)
         (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
-        with (record_dir / 'manifest.xml').open('w') as manifest:
-            # Migrated trees already contain the official Repo launcher even
-            # when the new host has no separately installed `repo` command.
-            repo = shutil.which('repo') or str(tree / '.repo/repo/repo')
-            subprocess.run([repo, 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
         env = os.environ.copy()
         env.update(OUT_DIR=plan['out_dir_env'], BUILD_DATETIME=str(args.build_datetime), SOURCE_DATE_EPOCH=str(args.build_datetime))
         env.pop('OUT_DIR_COMMON_BASE', None)
         result_record = {'build_exit_code': None, 'artifact_contract_verified': False, 'android_validators_passed': False,
                          'release_signing_verified': False, 'device_accepted': False}
         try:
+            with (record_dir / 'manifest.xml').open('w') as manifest:
+                # A migrated tree can fail Git ownership checks before lunch.
+                # Preserve that failure in result.json just like build errors.
+                repo = shutil.which('repo') or str(tree / '.repo/repo/repo')
+                subprocess.run([repo, 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
             configure = 'set -e; source build/envsetup.sh; lunch "$1"; config_dir="$2"; shift 2; for name in "$@"; do get_build_var "$name" > "$config_dir/$name"; done'
             subprocess.run(['bash', '-c', configure, 'gold-config', args.lunch, str(config_dir), *CONFIG_VARS], cwd=tree, env=env, check=True)
             config = {name: (config_dir / name).read_text().strip() for name in CONFIG_VARS}

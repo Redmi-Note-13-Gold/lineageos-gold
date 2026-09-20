@@ -25,10 +25,14 @@ import json
 import os
 from pathlib import Path
 import pwd
+import subprocess
 import sys
 import tempfile
 
 cache = Path(os.environ['CCACHE_DIR'])
+tree = Path(sys.argv[1]).resolve()
+subprocess.run([str(tree / '.repo/repo/repo'), 'manifest', '-r'],
+               cwd=tree, stdout=subprocess.DEVNULL, check=True)
 if not cache.is_dir() or cache.is_symlink():
     raise SystemExit('Expected a real cache directory: ' + str(cache))
 with tempfile.TemporaryFile(dir=cache) as probe:
@@ -40,8 +44,9 @@ print(json.dumps({'uid': os.getuid(), 'euid': os.geteuid(),
                   'account': pwd.getpwuid(os.geteuid()).pw_name,
                   'home': os.environ['HOME'], 'ccache_dir': str(cache),
                   'cache_read_write_verified': True,
+                  'pinned_manifest_export_verified': True,
                   'build_username': os.environ['BUILD_USERNAME'],
-                  'source_tree': sys.argv[1]}, indent=2))
+                  'source_tree': str(tree)}, indent=2))
 PY
     exit 0
 fi

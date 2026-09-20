@@ -10,7 +10,7 @@
 
 | 验证层次 | 当前结论 |
 |---|---|
-| 主机工具 | 26 项 Python 测试通过；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
+| 主机工具 | 27 项 Python 测试通过，包括清单导出失败仍保存失败记录；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
 | 本轮 Android 构建 | 源码 `4cdee4a` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过 |
 | 振动契约测试 | ARM64 / ARM 已在手机 shell 下各通过 4 项；同次构建的 AIDL 测试依赖临时部署后清理，未修改系统库或 SELinux |
 | 本轮安装、分区回读、开机 | 首次候选 Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽开机完成，Enforcing，data/persist 正常 |
@@ -38,6 +38,8 @@ SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已�
 构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。该构建记录是安装前的包验证快照，后续实机结果单独保留在 [device-acceptance-20260920.json](../validation/device-acceptance-20260920.json)。
 
 构建验证完成后，按用户新要求迁移了宿主布局：swap 移到 `/srv/build/gold-build-swapfile`，缓存实际移到 `/root/ccache`，统一入口直接以 root 执行。先启用并持久化替代 swap，再停用旧文件；缓存校验通过后才移除旧目录。候选产物未重建，原构建记录中的旧路径是历史事实。当前配置及入口验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
+
+root 首次实际构建在导出清单时触发 Git 所有权检查。已针对当前源码配置确切路径的信任清单，并以 root 成功导出全部 Repo 项目的固定清单；入口环境检查也已覆盖此步骤。未更改整棵源码所有权或加入全局通配信任。IMS 修正版仍须以新的构建终态与产物验证记录判定完成。
 
 ## 本轮读取的原有系统
 
