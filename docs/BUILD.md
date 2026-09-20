@@ -1,55 +1,48 @@
-# 标准 Android 构建
+# 构建与验证
 
-2026-09-17：当前源码已包含后续实机修复，部署和验收范围见 [STATUS.md](STATUS.md)。本次只推送源码，暂不重建或验证最新完整安装包。
+主路径：固定源码 + Global 官方提取输入 → 标准 `bacon target-files-package` → Android 官方验证工具。执行环境为原生 Linux x86_64；Mac 只做源码审阅和原生主机测试。
 
-主路径为固定源码 + Global 官方提取输入 → `bacon target-files-package` → 官方工具验证。设备配置负责最终分区、boot/vendor_boot、模块和策略；不读取旧 R1 镜像，不调用 `archive/hybrid/`。
+## 日常增量
 
-## 输入
+科研机复用 `/srv/build/migration/gold-architecture-20260914/source` 和其中的 `out-gold-standard`，不 clean，不创建第二份完整输出。先确认 source 是正确 overlay 挂载且没有另一构建，再以 `goldbuild` 用户执行。
 
-使用原生 Linux x86_64 Android 构建环境。固定的 Repo 源码和本仓库 device/vendor 集成通过 [RESTORE.md](RESTORE.md) 准备。Mac 仅用于审阅与主机脚本测试。
+现有 `/srv/build/build-gold.sh [targets...]` 只负责 lunch 和编译。需要完整产物验收时使用本仓库入口；它保留同一输出和缓存，并检查最终包：
 
-固件固定为 `firmware/gold-global.json` 指定的 Global 完整 Recovery；先由 `tools/prepare-stock.py` 提取到含 `physical/`、`logical/`、`prepared.json` 的独立目录。提取器的参数见 `--help`。
+```sh
+export USER=builder LOGNAME=builder BUILD_USERNAME=builder
+export USE_CCACHE=1 CCACHE_EXEC=/usr/bin/ccache
+export CCACHE_DIR=/srv/build/ccache-gold-betterr
+export GOGC=50 GOMEMLIMIT=10GiB
+python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-source.py \
+  --tree /srv/build/migration/gold-architecture-20260914/source \
+  --lunch lineage_gold-bp4a-userdebug --out out-gold-standard \
+  --jobs 2 --build-datetime UNIX_TIMESTAMP --execute
+```
 
-在已恢复的 Android 源码中执行：
+`UNIX_TIMESTAMP` 使用本次构建时间。保留旧输出的 builder 标识用于避免无意义地重算构建图；执行账户仍为 goldbuild。可附加 `--extra-target gold_vibrator_contract_test`，只编译振动契约测试程序，不代表该测试已经运行。
+
+内存环境转发补丁位于 `tools/host/soong-memory-env.patch`；当前科研机已经有此变化。恢复其他机器时先检查 `git -C build/soong diff`，只对未应用的对应基线使用 `git apply`，不要重复套用。它不改变 ROM 运行参数。长时间任务应有独立日志与明确进程/退出状态，不能靠日志文件存在判断成功。
+
+## 新环境准备
+
+先按 [RESTORE](RESTORE.md) 恢复源码。使用 `firmware/gold-global.json` 锁定的官方 Recovery，通过 `tools/prepare-stock.py --help` 选择本机已有工具提取。准备目录需包含 `physical/`、`logical/` 和 `prepared.json`，再执行：
 
 ```sh
 python3 device/xiaomi/gold/prepare-vendor.py \
-  --tree /path/to/android \
-  --lock /path/to/lineageos-gold/firmware/gold-global.json \
-  --stock /path/to/prepared-stock \
-  --ims-apk /path/to/ImsService.apk
+  --tree /path/to/android --lock /path/to/lineageos-gold/firmware/gold-global.json \
+  --stock /path/to/prepared-stock --ims-apk /path/to/ImsService.apk
 ```
 
-此入口验证全部 25 份原厂镜像，调用标准 extract-utils 生成 vendor 构建定义、闭源组件与固件，并提取匹配的 boot、kernel、DTB、DTBO 和 modules 到 `vendor/xiaomi/gold/proprietary/kernel/`。Android 使用源码重建 vendor_boot 与 DLKM 镜像，并将当前构建生成的 generic ramdisk 作为 `init_boot` 片段装入 vendor_boot。
+此步骤核验原厂镜像并提取配套 kernel、DTB、DTBO、modules 与厂商组件。日常源码修改不重做完整提取；提取配方改变时只重提取受影响部分，并重新生成 vendor 构建定义。不要直接只改生成的 Android.bp 而漏掉提取清单。
 
-随包底层固件仅保留锁定国际版 `scp`，以 [proprietary-firmware.txt](../device/xiaomi/gold/proprietary-firmware.txt) 为准。`md1img`、`lk`、`preloader_raw`、`dpm`、`gz`、`mcupm`、`spmfw`、`sspm`、`tee` 和 `pi_img` 均不随此系统包更新。完整官方输入的 25 份镜像及哈希仍保留，用于来源与提取验证。
+IMS 必须提供 SHA-256 为 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1` 的兼容输入。部分重建配方在 [IMS 说明](../vendor/xiaomi/gold/ims/README.md)，从任意原厂 APK 独立还原其完整依赖仍未闭合。
 
-当前产品配置为 14 个 OTA 分区，包括 `dtbo` 与 `odm_dlkm`；9 月 14 日完整包的 target-files 与 payload 已核实该数量。选择国际版 SCP 不等于已证明与 Google 套件、小爱或 Google 语音功能的对应关系；该兼容性仍未验证。
+## 产物与验收
 
-2026-09-14 的 SCP-only `user` 完整包包含 14 个分区，RADIO 仅 `scp.img`；当时的 target-files、VINTF、OTA/payload 签名与 AVB/策略检查通过，见 [历史记录](../validation/repack-scp-only-20260914.json)。其后 `userdebug` 启动与硬件修复采用增量镜像验证，旧完整包的结果不代表当前全部改动通过。此前 22 分区包为历史，四项固件/17 分区方案没有生成新包。
+当前配置为 14 个 OTA 分区；唯一随包底层固件是 `scp`，以 `proprietary-firmware.txt` 和最终 target-files 为准。其他基带、LK、TEE 等固件不由当前系统包替换。vendor_boot 由本次源码构建，包含 generic init 与 Recovery 片段。
 
-IMS 是独立锁定输入：`--ims-apk` 要求 SHA-256 为 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1` 的已有 23.2 兼容版本。其来源与部分重建配方见 `vendor/xiaomi/gold/ims/`；从原厂 APK 重建该版本的完整流程尚未闭合。不能用任意同名 APK 替代，也不能声称当前所有输入均可从 Recovery 独立还原。
+构建入口不扫描或重验 vendor receipt；它在构建后校验最终 target-files/OTA 分区、时间戳、VINTF、OTA/payload 签名和包内 SELinux 策略。默认输出 `out-gold-standard/gold-build-records/<id>/result.json`，以终态和验证日志为准。没有单独安装的 repo 命令时使用源码自带官方 Repo 启动器。重写可变 OTA 前会保留已有日期硬链接的内容，避免覆盖历史候选。
 
-厂商修正维护在提取清单和 fixup 中，以便后续提取保留修复。已移除 vendor receipt 的生成、验证和构建前源码比对；已有生成输入可直接用于增量开发。
+userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
-## 构建
-
-```sh
-python3 /path/to/lineageos-gold/tools/build-source.py \
-  --tree /path/to/android \
-  --lunch lineage_gold-bp4a-user \
-  --out /path/to/android/out-gold-standard \
-  --jobs 8 --build-datetime UNIX_TIMESTAMP --execute
-```
-
-`UNIX_TIMESTAMP` 替换为本次固定构建时间。省略 `--execute` 只显示计划。`userdebug` 可用于开发调试；正式 `user` 构建检查无 permissive 域。上游 userdebug 的 su/osi/backuptool 调试声明与全局关闭 SELinux 需区分。入口拒绝 neverallow/缺依赖/ELF 检查绕过和关闭 AVB 的配置。
-
-默认目标同时构建 `bacon` 与 `target-files-package`。输出目录必须在源码树内，传入构建系统时使用相对路径。独立输出目录防止将旧 R1 产物当成新结果；同目录允许本入口记录过的增量构建。构建前不额外扫描固定源码项目、比较本地改动或校验 vendor receipt，也不在构建过程中重复比对源码哈希。构建后使用 Android 自带验证工具检查 target-files、VINTF 与 OTA 签名，并核验时间戳、分区一致性与源码策略。
-
-测试密钥只用于开发构建；正式发布需要持久保存的发布密钥及独立签名步骤。入口不刷机、不发布、不推送仓库。
-
-## 验证边界
-
-2026-09-14 的架构改动与实际验证结果见 `validation/architecture-20260914.json`。原包提取、配置展开、源码编译、完整 OTA 验证、实机安装及保数据升级是不同结果，不能相互替代。历史 `validation/integration-20260914.json` 记录的是旧 Global 混合镜像流程，其 27 项严格策略失败不能作为新源码构建的结果。
-
-历史标准 `user -j8` 完整构建记录见 [standard-build-20260914.json](../validation/standard-build-20260914.json)，当时包内策略无 permissive 域，Neverallow 与 Treble 测试通过。最新增量镜像和启动摘要见 [device-fixes-20260916.json](../validation/device-fixes-20260916.json)。当前完整安装包验证暂缓；本次主机工具测试不计作 Android 编译或整包验收。
+源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。

@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import importlib.util
 import json
+import os
 from pathlib import Path
 import struct
 import tempfile
@@ -123,6 +124,22 @@ class OutputContractTest(unittest.TestCase):
     def test_false_environment_is_not_a_bypass(self):
         self.assertFalse(BUILD.enabled('false'))
         self.assertTrue(BUILD.enabled('true'))
+
+    def test_rebuild_does_not_overwrite_dated_ota_hardlink(self):
+        mutable = self.root / 'lineage_gold-ota.zip'
+        dated = self.root / 'lineage-previous-gold.zip'
+        mutable.write_bytes(b'previous verified OTA')
+        os.link(mutable, dated)
+        self.assertTrue(BUILD.detach_shared_output(mutable))
+        mutable.write_bytes(b'new candidate OTA')
+        self.assertEqual(dated.read_bytes(), b'previous verified OTA')
+        self.assertEqual(mutable.read_bytes(), b'new candidate OTA')
+        self.assertFalse(BUILD.detach_shared_output(mutable))
+
+    def test_missing_ota_needs_no_preservation(self):
+        missing = self.root / 'not-built.zip'
+        self.assertFalse(BUILD.detach_shared_output(missing))
+        self.assertFalse(missing.exists())
 
 
 if __name__ == '__main__':

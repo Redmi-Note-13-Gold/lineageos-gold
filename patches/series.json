@@ -72,5 +72,13 @@
     "patches": [
       "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch"
     ]
+  },
+  {
+    "path": "packages/apps/Settings",
+    "url": "https://github.com/LineageOS/android_packages_apps_Settings",
+    "revision": "9a102220cb80941628685585b6818e5715271cf0",
+    "patches": [
+      "patches/packages__apps__Settings/0001-device-maintainer.patch"
+    ]
   }
 ]

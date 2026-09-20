@@ -17,35 +17,35 @@ on post-fs-data
     chown system camera /dev/LC898212AF
     chmod 0660 /dev/BU64745GWZAF
     chown system camera /dev/BU64745GWZAF
-    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
-    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
-    chmod 0777 /mnt/vendor/persist/camera/rear_dc_cal_wt.bin
-    chmod 0777 /data/vendor/camera/rear_dc_cal_wd.bin
-    chmod 0777 /data/vendor/camera/rear_dc_cal_wu.bin
+    chown system camera /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
+    chmod 0660 /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
+    chown system camera /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
+    chmod 0660 /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
+    chown system camera /mnt/vendor/persist/camera/rear_dc_cal_wt.bin
+    chmod 0660 /mnt/vendor/persist/camera/rear_dc_cal_wt.bin
+    chown cameraserver camera /data/vendor/camera/rear_dc_cal_wd.bin
+    chmod 0660 /data/vendor/camera/rear_dc_cal_wd.bin
+    chown cameraserver camera /data/vendor/camera/rear_dc_cal_wu.bin
+    chmod 0660 /data/vendor/camera/rear_dc_cal_wu.bin
     restorecon /mnt/vendor/persist/camera/rear_dc_cal_wd.bin
     restorecon /mnt/vendor/persist/camera/rear_dc_cal_wu.bin
-    mkdir /mnt/vendor/persist 0777 system camera
-    mkdir /mnt/vendor/persist/camera 0777 system camera
+    mkdir /mnt/vendor/persist/camera 0770 system camera
     restorecon_recursive /mnt/vendor/persist/camera
-    chmod 0777 /vendor/etc/camera/com.xiaomi.dcal.wd.golden
-    chmod 0777 /vendor/etc/camera/com.xiaomi.dcal.wu.golden
-    chmod 0777 /vendor/etc/camera/golden_ov13b10_i_ov2180_i.bin
-    chmod 0777 /vendor/etc/camera/golden_ov13b10_i_ov2180_ii.bin
-    chmod 0777 /vendor/etc/camera/golden_ov13b10_ii_ov2180_i.bin
-    chmod 0777 /vendor/etc/camera/golden_ov13b10_ii_ov2180_ii.bin
-    chmod 0777 /data/vendor/camera/golden_rear_dc_cal_wt.bin
-    chmod 0777 /data/vendor/camera/golden_s5k3l6_ii_ov2180_ii.bin
+    chown cameraserver camera /data/vendor/camera/golden_rear_dc_cal_wt.bin
+    chmod 0660 /data/vendor/camera/golden_rear_dc_cal_wt.bin
+    chown cameraserver camera /data/vendor/camera/golden_s5k3l6_ii_ov2180_ii.bin
+    chmod 0660 /data/vendor/camera/golden_s5k3l6_ii_ov2180_ii.bin
     chown system system /sys/class/touch/touch_dev/palm_sensor
-    mkdir /data/vendor/camera 0777 system camera
+    mkdir /data/vendor/camera 0770 cameraserver camera
     restorecon_recursive /data/vendor/camera
-    mkdir /data/vendor/camera/model 0777 system camera
-    mkdir /data/vendor/camera/model/dof_model 0777 system camera
-    mkdir /data/vendor/camera/model/rt_model 0777 system camera
-    mkdir /data/vendor/camera/dof_mecp 0777 system camera
-    chown system system /data/vendor/camera/com.xiaomi.dcal.wd.data
-    chown system system /data/vendor/camera/com.xiaomi.dcal.wu.data
-    chmod 0777 /data/vendor/camera/com.xiaomi.dcal.wd.data
-    chmod 0777 /data/vendor/camera/com.xiaomi.dcal.wu.data
+    mkdir /data/vendor/camera/model 0770 cameraserver camera
+    mkdir /data/vendor/camera/model/dof_model 0770 cameraserver camera
+    mkdir /data/vendor/camera/model/rt_model 0770 cameraserver camera
+    mkdir /data/vendor/camera/dof_mecp 0770 cameraserver camera
+    chown cameraserver camera /data/vendor/camera/com.xiaomi.dcal.wd.data
+    chmod 0660 /data/vendor/camera/com.xiaomi.dcal.wd.data
+    chown cameraserver camera /data/vendor/camera/com.xiaomi.dcal.wu.data
+    chmod 0660 /data/vendor/camera/com.xiaomi.dcal.wu.data
     copy /vendor/etc/camera/model/dof_model/capture_model /data/vendor/camera/model/dof_model/capture_model
     copy /vendor/etc/camera/model/dof_model/capture_cache /data/vendor/camera/model/dof_model/capture_cache
     copy /vendor/etc/camera/model/dof_model/capture_policy /data/vendor/camera/model/dof_model/capture_policy
@@ -53,13 +53,20 @@ on post-fs-data
     copy /vendor/etc/camera/model/rt_model/preview_model /data/vendor/camera/model/rt_model/preview_model
     copy /vendor/etc/camera/model/rt_model/preview_policy /data/vendor/camera/model/rt_model/preview_policy
     copy /vendor/etc/camera/dof_mecp/dof_mecp.bin /data/vendor/camera/dof_mecp/dof_mecp.bin
-    chmod 0666 /data/vendor/camera/model/dof_model/capture_model
-    chmod 0666 /data/vendor/camera/model/dof_model/capture_cache
-    chmod 0666 /data/vendor/camera/model/dof_model/capture_policy
-    chmod 0666 /data/vendor/camera/model/rt_model/preview_cache
-    chmod 0666 /data/vendor/camera/model/rt_model/preview_model
-    chmod 0666 /data/vendor/camera/model/rt_model/preview_policy
-    chmod 0666 /data/vendor/camera/dof_mecp/dof_mecp.bin
+    chown cameraserver camera /data/vendor/camera/model/dof_model/capture_model
+    chmod 0660 /data/vendor/camera/model/dof_model/capture_model
+    chown cameraserver camera /data/vendor/camera/model/dof_model/capture_cache
+    chmod 0660 /data/vendor/camera/model/dof_model/capture_cache
+    chown cameraserver camera /data/vendor/camera/model/dof_model/capture_policy
+    chmod 0660 /data/vendor/camera/model/dof_model/capture_policy
+    chown cameraserver camera /data/vendor/camera/model/rt_model/preview_cache
+    chmod 0660 /data/vendor/camera/model/rt_model/preview_cache
+    chown cameraserver camera /data/vendor/camera/model/rt_model/preview_model
+    chmod 0660 /data/vendor/camera/model/rt_model/preview_model
+    chown cameraserver camera /data/vendor/camera/model/rt_model/preview_policy
+    chmod 0660 /data/vendor/camera/model/rt_model/preview_policy
+    chown cameraserver camera /data/vendor/camera/dof_mecp/dof_mecp.bin
+    chmod 0660 /data/vendor/camera/dof_mecp/dof_mecp.bin
 
     # SMB
     chown system system /proc/smb/ScreenComm

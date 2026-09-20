@@ -14,7 +14,9 @@ import os
 from pathlib import Path
 import platform
 import re
+import shutil
 import subprocess
+import tempfile
 import time
 import zipfile
 
@@ -86,6 +88,25 @@ def single(paths, description):
     return paths[0]
 
 
+def detach_shared_output(path):
+    """Keep dated OTA hardlinks intact when Android rewrites its mutable OTA."""
+    if not path.exists() or path.stat().st_nlink == 1:
+        return False
+    if path.is_symlink():
+        raise ValueError('Mutable OTA must not be a symlink: ' + str(path))
+    # Copy on the same filesystem, then replace only the mutable directory
+    # entry. Unlinking the old file first would lose the last good build if
+    # copying fails or the host runs out of space.
+    with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.gold-ota-', delete=False) as temp:
+        temporary = Path(temp.name)
+    try:
+        shutil.copy2(path, temporary)
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--tree', required=True, type=Path)
@@ -94,6 +115,8 @@ def main():
     parser.add_argument('--build-datetime', type=int, help='Fixed Unix timestamp; required for execution')
     parser.add_argument('--out', type=Path, help='Managed output inside source; relative paths are relative to TREE; default out-gold-standard')
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--extra-target', action='append', default=[],
+                        help='Also build a test/module target; full OTA validation remains required')
     args = parser.parse_args()
     match = re.fullmatch(r'lineage_gold-[A-Za-z0-9_]+-(user|userdebug)', args.lunch)
     if not match or args.jobs < 1:
@@ -102,7 +125,7 @@ def main():
     out = output_path(tree, args.out)
     plan = {'source_tree': str(tree), 'out_dir': str(out), 'out_dir_env': out.relative_to(tree).as_posix(), 'lunch': args.lunch, 'jobs': args.jobs,
             'build_datetime': args.build_datetime,
-            'targets': ['bacon', 'target-files-package'], 'execute': args.execute,
+            'targets': ['bacon', 'target-files-package', *args.extra_target], 'execute': args.execute,
             'output_role': 'standard Android target-files and full A/B OTA',
             'release_signing_verified': False, 'device_accepted': False}
     print(json.dumps(plan, indent=2), flush=True)
@@ -128,7 +151,10 @@ def main():
         config_dir.mkdir(parents=True)
         (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
         with (record_dir / 'manifest.xml').open('w') as manifest:
-            subprocess.run(['repo', 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
+            # Migrated trees already contain the official Repo launcher even
+            # when the new host has no separately installed `repo` command.
+            repo = shutil.which('repo') or str(tree / '.repo/repo/repo')
+            subprocess.run([repo, 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
         env = os.environ.copy()
         env.update(OUT_DIR=plan['out_dir_env'], BUILD_DATETIME=str(args.build_datetime), SOURCE_DATE_EPOCH=str(args.build_datetime))
         env.pop('OUT_DIR_COMMON_BASE', None)
@@ -140,6 +166,8 @@ def main():
             config = {name: (config_dir / name).read_text().strip() for name in CONFIG_VARS}
             verify_config(config, match.group(1))
             plan['resolved_config'] = config
+            plan['preserved_previous_ota_links'] = detach_shared_output(
+                out / 'target/product/gold/lineage_gold-ota.zip')
             (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
             command = 'set -e; source build/envsetup.sh; lunch "$1"; jobs="$2"; shift 2; m -j"$jobs" "$@"'
             result = subprocess.run(['bash', '-c', command, 'gold-build', args.lunch, str(args.jobs), *plan['targets']], cwd=tree, env=env)

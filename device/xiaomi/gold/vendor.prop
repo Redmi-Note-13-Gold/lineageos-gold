@@ -170,17 +170,14 @@ telephony.lteOnCdmaDevice=1
 ro.telephony.default_network=33,33,33,33
 ro.vendor.mtk_ps1_rat=N/Lf/Lt/W/G
 ro.vendor.mtk_lte_support=1
-ro.vendor.mtk_c2k_support=1
 persist.vendor.radio.mtk_ps2_rat=N/L/W/G
 persist.vendor.radio.mtk_ps3_rat=G
 persist.vendor.mtk_sim_switch_policy=2
 ro.vendor.mtk_world_phone_policy=0
 ro.vendor.mtk_rild_read_imsi=1
-persist.vendor.mtk_sim_switch_policy=2
 ro.vendor.sim_me_lock_mode=3
 ro.vendor.mtk_external_sim_support=1
 ro.vendor.mtk_external_sim_only_slots=0
-ro.vendor.mtk_nn_baseline_support=1
 ro.vendor.mtk_mobile_management=1
 ro.vendor.mtk_protocol1_rat_config=N/Lf/Lt/W/G
 ro.vendor.num_md_protocol=2
@@ -198,7 +195,6 @@ ro.vendor.mtk_fd_support=1
 persist.radio.multisim.config=dsds
 persist.vendor.radio.msimmode=dsds
 ro.vendor.radio.max.multisim=dsds
-ro.telephony.sim.count=2
 telephony.active_modems.max_count=2
 persist.vendor.radio.smart.data.switch=1
 
@@ -209,7 +205,6 @@ ro.vendor.mtk_mitee_support=1
 
 # WiFi
 wifi.interface=wlan0
-wifi.supplicant_scan_interval=120
 
 # Zygote
 zygote.critical_window.minute=10

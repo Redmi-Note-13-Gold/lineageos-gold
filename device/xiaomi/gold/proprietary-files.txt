@@ -1704,9 +1704,11 @@ vendor/lib64/egl/libMEOW_data.so
 vendor/lib64/egl/libMEOW_gift.so
 vendor/lib64/egl/libMEOW_qt.so
 vendor/lib64/egl/libMEOW_trace.so
+vendor/lib/arm.graphics-V5-ndk.so
 vendor/lib64/arm.graphics-V5-ndk.so
 vendor/lib64/hw/android.hardware.graphics.allocator-V2-mediatek.so
 vendor/lib64/hw/hwcomposer.mt6833.so:vendor/lib64/hw/hwcomposer.mtk_common.so;FIX_SONAME
+vendor/lib/hw/mapper.mediatek.so
 vendor/lib64/hw/mapper.mediatek.so
 vendor/lib64/hw/vulkan.mali.so
 vendor/lib64/mt6833/libaiselector.so:vendor/lib64/libaiselector.so
@@ -1722,10 +1724,13 @@ vendor/lib64/libaalservice.so
 vendor/lib64/libappgamepq.so
 vendor/lib64/libcomposer_ext.so
 vendor/lib64/libgpu_aux.so
+vendor/lib/libgpud.so
 vendor/lib64/libgpud.so
 vendor/lib64/libgpudataproducer.so
 vendor/lib64/libgralloc_extra.so
+vendor/lib/libgralloc_metadata.so
 vendor/lib64/libgralloc_metadata.so
+vendor/lib/libgralloctypes_mtk.so
 vendor/lib64/libgralloctypes_mtk.so
 vendor/lib64/libhdrvideo.so
 vendor/lib64/libion_mtk.so

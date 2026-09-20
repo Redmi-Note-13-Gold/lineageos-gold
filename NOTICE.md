@@ -28,3 +28,7 @@ Apache-2.0 完整文本见 `LICENSES/Apache-2.0.txt`。修改补丁的许可随�
 本次提取规则参考 Dhterech/android_device_xiaomi_gold 的固定提交 [`05f3e97ecf196e7f912cbcf7d1e93fa32958cf98`](https://github.com/Dhterech/android_device_xiaomi_gold/commit/05f3e97ecf196e7f912cbcf7d1e93fa32958cf98)。保留原始版权；参考文件哈希、实际原包与差异记录在 `device/xiaomi/gold/proprietary-source.json`。设备启动配置以实际 Global Recovery 的分区和 header 核验为准，未将参考仓库的开发绕过配置直接迁入。
 
 Global 内核与厂商固件来自锁定的 OS3.0.5.0.VNQMIXM 官方 Recovery。旧镜像修复工具和来源保留于 `archive/hybrid/`，不再参与主构建。
+
+## 2026-09-20 参考更新
+
+本轮审查参考树至 `3dce0bbc357c63b28008e329593a412587618edc`，采用 32 位图形依赖、按实际模式选择刷新率与正确路径下的功耗资源。功耗数据与固定 Global 原厂 overlay 对照，来源哈希及字段修正见 `device/xiaomi/gold/proprietary-source.json`。采用与暂缓项见 [适配说明](docs/ADAPTATION.md)。

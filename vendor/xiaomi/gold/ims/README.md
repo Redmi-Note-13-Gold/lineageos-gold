@@ -19,7 +19,7 @@ the script and recorded in `compat/provenance.json`. Review the output before
 placing it at the `ImsService.apk` path consumed by Android.bp; the product build
 performs platform signing. The script does not install or flash anything.
 
-See the repository's `docs/INTEGRATION.md` for the unresolved dependency-bundling
+See the repository's `docs/ADAPTATION.md` for the unresolved dependency-bundling
 step, carrier scope and runtime validation boundary. Do not treat this recipe
 as a complete stock-to-working-IMS pipeline.
 
