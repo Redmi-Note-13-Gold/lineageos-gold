@@ -111,6 +111,36 @@ int main() {
     test("expiry overflow rejected", [](auto& f) {
         check(f.manager.acquire(f.a, 0, 100, {{1, 50}}, std::numeric_limits<Millis>::max() - 10) == -EINVAL);
     });
+    test("untimed session resources require authenticated process identity", [](auto& f) {
+        FakeBackend backend;
+        RequestManager manager{{{3, 0, 100, 0, true, true}}, backend, 2000};
+        Owner missingGeneration{1000, 10, 0};
+        check(manager.acquire(missingGeneration, 0, 0, {{3, 40}}, 0) == -EINVAL);
+        int handle = manager.acquire(f.a, 0, 0, {{3, 40}}, 0);
+        check(handle > 0 && manager.expire(100000) && backend.hardware.at(3) == 40);
+        check(manager.releaseOwner(f.a, 100001) && backend.hardware.at(3) == 0);
+    });
+    test("mixed untimed request cannot keep frequency resources pinned", [](auto& f) {
+        FakeBackend backend;
+        RequestManager manager{{{1, 0, 100, 0, true}, {3, 0, 100, 0, true, true}}, backend, 2000};
+        check(manager.acquire(f.a, 0, 0, {{1, 50}, {3, 40}}, 0) == -EINVAL);
+        check(manager.snapshot().requests == 0 && backend.hardware.at(1) == 0);
+    });
+    test("held session can atomically become a timed request", [](auto& f) {
+        FakeBackend backend;
+        RequestManager manager{{{3, 0, 100, 0, true, true}}, backend, 2000};
+        int handle = manager.acquire(f.a, 0, 0, {{3, 40}}, 0);
+        check(manager.acquire(f.a, handle, 100, {{3, 20}}, 10) == handle);
+        check(manager.snapshot().nextExpiry == 110 && backend.hardware.at(3) == 20);
+        check(manager.expire(110) && backend.hardware.at(3) == 0);
+    });
+    test("thermal inhibit cancels held sessions without resurrection", [](auto& f) {
+        FakeBackend backend;
+        RequestManager manager{{{3, 0, 100, 0, true, true}}, backend, 2000};
+        check(manager.acquire(f.a, 0, 0, {{3, 40}}, 0) > 0);
+        check(manager.setInhibit(Inhibit::Thermal, true, 1) && backend.hardware.at(3) == 0);
+        check(manager.setInhibit(Inhibit::Thermal, false, 2) && manager.snapshot().requests == 0);
+    });
     test("expired handles cannot resurrect an old vote", [](auto& f) {
         int a = f.manager.acquire(f.a, 0, 100, {{1, 50}}, 0);
         check(f.manager.acquire(f.a, a, 100, {{1, 90}}, 100) == -ENOENT);

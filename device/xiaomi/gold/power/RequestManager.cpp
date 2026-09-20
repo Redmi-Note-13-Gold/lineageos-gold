@@ -66,9 +66,10 @@ int32_t RequestManager::acquire(Owner owner, int32_t handle, Millis duration, co
     removeExpired(now);
     if (!reconcile()) return -EIO;
     if (!enabled_) return -EAGAIN;
-    // Indefinite and oversized requests require a separately reviewed policy.
-    // Never silently turn them into an unbounded frequency lock or claim success.
-    if (owner.uid < 0 || owner.pid <= 0 || handle < 0 || duration <= 0 ||
+    // Some vendor display/media requests use zero until explicit release. Only
+    // resources reviewed for this lifetime can opt in; frequency boosts cannot
+    // silently become permanent locks or be acknowledged without an action.
+    if (owner.uid < 0 || owner.pid <= 0 || owner.generation == 0 || handle < 0 || duration < 0 ||
         duration > maximumDuration_ || now < 0 || now > std::numeric_limits<Millis>::max() - duration ||
         values.empty()) return -EINVAL;
     for (const auto& [id, value] : values) {
@@ -76,6 +77,7 @@ int32_t RequestManager::acquire(Owner owner, int32_t handle, Millis duration, co
         const auto resource = std::find_if(resources_.begin(), resources_.end(),
                                           [wanted](const auto& item) { return item.id == wanted; });
         if (resource == resources_.end()) return -EOPNOTSUPP;
+        if (duration == 0 && !resource->allowUntimed) return -EINVAL;
         if (value < resource->minimum || value > resource->maximum) return -EINVAL;
     }
     const auto old = requests_.find(handle);
@@ -86,7 +88,8 @@ int32_t RequestManager::acquire(Owner owner, int32_t handle, Millis duration, co
     if (handle == 0 && nextHandle_ > std::numeric_limits<int32_t>::max()) return -ENOSPC;
     const int32_t actualHandle = handle == 0 ? static_cast<int32_t>(nextHandle_) : handle;
     Requests candidate = requests_;
-    candidate.insert_or_assign(actualHandle, Request{owner, now + duration, values});
+    candidate.insert_or_assign(actualHandle, Request{owner, duration == 0 ?
+            std::numeric_limits<Millis>::max() : now + duration, values});
     const Values desired = aggregate(candidate);
     if (desired != applied_ && !backend_.apply(desired)) {
         // Even a partially failing adapter cannot publish a successful handle.

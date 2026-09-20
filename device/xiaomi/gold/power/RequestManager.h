@@ -18,6 +18,9 @@ struct Resource {
     int32_t maximum;
     int32_t reset;
     bool preferHigher;
+    // Only reviewed non-frequency session resources may use duration == 0.
+    // The adapter must authenticate and monitor the owning process first.
+    bool allowUntimed = false;
 };
 
 // Identifies an authenticated process instance, not a caller-supplied TID.
