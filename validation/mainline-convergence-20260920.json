@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T01:36:40.801225+08:00",
+  "updated_at": "2026-09-21T03:07:12.730803+08:00",
   "task_state": "in_progress",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
-  "latest_source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+  "latest_source_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
   "latest_candidate_build": {
     "unit": "gold-power-ims-r2-20260921.service",
     "commit": "c36757a561fe563181e41b8b857c3e8460486ed8",
@@ -32,11 +32,67 @@
       "1789914079640672965",
       "1789918353346734747"
     ],
-    "phase": "Build corrected vendor-owned debug controls, client lifecycle fixes, IMS, Wi-Fi and Recovery on existing output",
+    "phase": "Authorized standard update_engine OTA writing inactive A slot; terminal install result pending",
     "device_accepted": false,
-    "terminal_result": "pending",
+    "terminal_result": "Android compilation succeeded; original wrapper failed on VINTF XML byte comparison; corrected package revalidation passed",
     "guard_unit": "gold-power-ims-r2-vm-guard-20260921.service",
-    "resource_limits_verified": true
+    "resource_limits_verified": true,
+    "build_exit_code": 0,
+    "original_wrapper_exit_code": 1,
+    "android_elapsed": "01:15:15",
+    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
+    "candidate": {
+      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
+      "original_wrapper_exit": 1,
+      "original_failure": "Byte comparison of assembled Power VINTF schema/comment against source",
+      "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a",
+      "validation_completed": true,
+      "device_accepted": false,
+      "ota": {
+        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+        "sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
+        "bytes": 1174889334
+      },
+      "target_files": {
+        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage_gold-target_files.zip",
+        "sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
+        "bytes": 2903014669
+      },
+      "frozen_source_hashes": {
+        "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
+        "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
+        "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+        "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+        "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+        "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+        "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+        "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
+        "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
+      },
+      "host_tool_hashes": {
+        "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
+        "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
+        "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+        "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
+        "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+        "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
+        "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
+        "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
+        "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+        "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
+      },
+      "actual_image_files": 29,
+      "payload_partitions": 14,
+      "completed_at": "2026-09-20T19:01:06.136929+00:00"
+    },
+    "guard_restored_live": {
+      "swappiness": "0",
+      "zpool": "zbud",
+      "zswap": "N",
+      "shrinker_enabled": "Y"
+    }
   },
   "legacy_platform_patch_comparison": [
     {
@@ -730,6 +786,36 @@
       ],
       "patch_applies_to_actual_pinned_base": true,
       "runtime_android_abi_tested": false
+    },
+    "python_latest": {
+      "revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "passed": 75,
+      "failed": 0,
+      "includes_assembled_vintf_regression_tests": 4
+    },
+    "power_latest_linux": {
+      "source": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "build_record": "1789925665663472655",
+      "timestamp": "2026-09-20T18:52:13.812304+00:00",
+      "runs": [
+        {
+          "test": "gold_power_requests_test",
+          "binary": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/nativetest64/gold_power_requests_test/gold_power_requests_test",
+          "sha256": "9892fb8b4318adb231ac30e391f6d30aa5376f68d51094f983e45ef8a953c9a9",
+          "exit_code": 0,
+          "log": "/srv/build/build-jobs/gold-mainline-20260920/gold_power_requests_test-c36757a-linux.log",
+          "output": "PASS overlap releases only the owner vote\nPASS update replaces resources and duration atomically\nPASS early expiration cannot release a longer concurrent request\nPASS lower wins for maximum constraints\nPASS cross process release and update rejected\nPASS PID reuse cannot acquire old process locks\nPASS owner death clears only that process\nPASS unknown resource rejects entire request\nPASS out of range value does not affect existing request\nPASS empty and indefinite requests do not claim success\nPASS expiry overflow rejected\nPASS untimed session resources require authenticated process identity\nPASS mixed untimed request cannot keep frequency resources pinned\nPASS held session can atomically become a timed request\nPASS thermal inhibit cancels held sessions without resurrection\nPASS expired handles cannot resurrect an old vote\nPASS failed acquisition never returns a handle\nPASS failed update keeps earlier lease and expiry\nPASS failed expiry restoration is retried with no live leases\nPASS failed rollback remains visible and retries\nPASS display off cancels pending boosts and blocks new requests\nPASS independent thermal and battery saver gates cannot override each other\nPASS unchanged aggregate avoids duplicate writes\nPASS per owner allocation is bounded without discarding existing votes\nPASS parallel framework and vendor requests are serialized\nPASS duplicate resource specifications rejected\n26 passed, 0 failed\n"
+        },
+        {
+          "test": "gold_power_nodes_test",
+          "binary": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/nativetest64/gold_power_nodes_test/gold_power_nodes_test",
+          "sha256": "f97f649374af24f32740d7e1b6c362580e4cff7e08925cb586220efdecb0a274",
+          "exit_code": 0,
+          "log": "/srv/build/build-jobs/gold-mainline-20260920/gold_power_nodes_test-c36757a-linux.log",
+          "output": "PASS unchanged aggregate does not rewrite nodes\nPASS PPM writes only PERFSERV and preserves other users\nPASS frequency floors round up and caps round down to actual OPPs\nPASS maximum constraint wins over a conflicting floor\nPASS unknown out of range or incomplete requests never write\nPASS write success with no kernel action is rejected\nPASS partial scalar failure rolls back PPM and previous scalars\nPASS failed rollback cannot publish an applied state\nPASS kernel changes are detected and reconciled\nPASS malformed or external PPM global votes cannot look applied\nPASS missing thermal arbitration refuses initialization\nPASS unexpected OPP ordering refuses initialization\nPASS manager expiration really resets hardware votes\nPASS failed kernel action never returns a live handle\nPASS unknown thermal or display state refuses a vendor boost\nPASS framework and vendor votes share one aggregate\nPASS repeated interaction updates instead of adding leases\nPASS display and power restrictions cannot clear each other\nPASS stale thermal updates cancel held display and frequency requests\nPASS process death and PID reuse release the original generation\nPASS vendor release requires the authenticated process not a shared UID\nPASS application UIDs invalid processes and duplicate pairs cannot acquire\nPASS private unsupported resources do not partially acquire valid resources\nPASS invalid framework update keeps the original handle releasable\nPASS process generation parses parenthesized names and rejects zombies\nPASS a short request wakes an idle expiry worker\nPASS diagnostics distinguish authenticated requests and failed release attempts\nPASS untrusted diagnostic requests cannot grow the event buffer or payload\n28 passed; 0 failed\n"
+        }
+      ],
+      "device_hardware_verified": false
     }
   },
   "ims_input": {
@@ -1317,6 +1403,19 @@
       "data_available_gib": 106,
       "update_started": false,
       "note": "Normal-system standard payload installation can be evaluated for the next signed candidate; no update command was executed."
+    },
+    "current_candidate_preflight": {
+      "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "slot": "_b",
+      "incremental": "1789911389",
+      "boot_completed": true,
+      "selinux": "Enforcing",
+      "snapshot_state": "none",
+      "update_engine": "IDLE",
+      "installed_ota_certificate_matches": true,
+      "retained_canaries_verified": 2,
+      "write_started": true
     }
   },
   "retirement": {
@@ -1326,7 +1425,7 @@
     "stock_to_complete_ims_payload_rebuild": false,
     "missing_ims_rebuild_is_declared_prebuilt_limitation": true,
     "blocking_work": [
-      "c36757a corrected policy and integrated Power/IMS/Recovery build and package terminal validation pending",
+      "c36757a compiled and package revalidation passed using 05f156a checker; newest candidate device installation and runtime acceptance pending",
       "IMS startup fix must be installed and validated through real modem backend, capabilities, registration and recovery; carrier limits must be separated from defects",
       "Power Android service and actual caller/resource lifecycles need device validation; framework strategy adoption requires reproducible latency/frame/energy evidence",
       "Wi-Fi PMF upgrade fix must pass association, DHCP, connectivity and reconnect",
@@ -1727,7 +1826,7 @@
   },
   "power_implementation": {
     "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
-    "android_compilation": "pending",
+    "android_compilation": "passed at c36757a; requests and nodes executables generated for ARM and ARM64; device tests pending",
     "single_service": "android.hardware.power-service.gold",
     "clients": "Native ARM and ARM64 C ABI forwards to synchronous HIDL 1.2; one shared engine with framework AIDL V6",
     "resources": [
@@ -1771,7 +1870,9 @@
       "shell_or_su_vendor_write_permission_added": false,
       "neverallow_exception_added": false,
       "permission_and_runtime_validation": "Android build pending; device not tested",
-      "reload": "standard controlled service restart to refresh framework capability discovery; no vendor reload property trigger"
+      "reload": "standard controlled service restart to refresh framework capability discovery; no vendor reload property trigger",
+      "android_compilation_passed": true,
+      "device_verified": false
     }
   },
   "local_followup": {
@@ -1783,7 +1884,7 @@
       "bounded in-memory native request records and bounded unsupported caller diagnostics",
       "device --client lifecycle probe using installed C ABI and enforcing HAL"
     ],
-    "android_build_and_device_tests": "pending",
+    "android_build_and_device_tests": "Android compilation and corrected package validation passed; device tests pending",
     "next_sync": "No further source sync while r2 is active",
     "synced_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
     "sync_record": {
@@ -1896,5 +1997,531 @@
       "source_final_audit_matches": true,
       "fix_revision": "c36757a561fe563181e41b8b857c3e8460486ed8"
     }
-  ]
+  ],
+  "latest_android_source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+  "latest_candidate_validation": {
+    "build_result": {
+      "build_exit_code": 0,
+      "artifact_contract_verified": true,
+      "android_validators_passed": true,
+      "release_signing_verified": false,
+      "device_accepted": false,
+      "target_files_sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
+      "ota_sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
+      "partitions": [
+        "boot",
+        "dtbo",
+        "odm_dlkm",
+        "product",
+        "scp",
+        "system",
+        "system_dlkm",
+        "system_ext",
+        "vbmeta",
+        "vbmeta_system",
+        "vbmeta_vendor",
+        "vendor",
+        "vendor_boot",
+        "vendor_dlkm"
+      ],
+      "dynamic_partitions": [
+        "odm_dlkm",
+        "product",
+        "system",
+        "system_dlkm",
+        "system_ext",
+        "vendor",
+        "vendor_dlkm"
+      ],
+      "post_timestamp": 1789925665,
+      "signing_tag": "test-keys",
+      "payload_images_verified": true,
+      "payload_images": [
+        {
+          "partition": "boot",
+          "entry": "IMAGES/boot.img",
+          "bytes": 67108864,
+          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f"
+        },
+        {
+          "partition": "dtbo",
+          "entry": "IMAGES/dtbo.img",
+          "bytes": 8388608,
+          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01"
+        },
+        {
+          "partition": "odm_dlkm",
+          "entry": "IMAGES/odm_dlkm.img",
+          "bytes": 348160,
+          "sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391"
+        },
+        {
+          "partition": "product",
+          "entry": "IMAGES/product.img",
+          "bytes": 510750720,
+          "sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8"
+        },
+        {
+          "partition": "scp",
+          "entry": "RADIO/scp.img",
+          "bytes": 1200128,
+          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
+        },
+        {
+          "partition": "system",
+          "entry": "IMAGES/system.img",
+          "bytes": 1048506368,
+          "sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26"
+        },
+        {
+          "partition": "system_dlkm",
+          "entry": "IMAGES/system_dlkm.img",
+          "bytes": 7303168,
+          "sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd"
+        },
+        {
+          "partition": "system_ext",
+          "entry": "IMAGES/system_ext.img",
+          "bytes": 461287424,
+          "sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4"
+        },
+        {
+          "partition": "vbmeta",
+          "entry": "IMAGES/vbmeta.img",
+          "bytes": 8192,
+          "sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1"
+        },
+        {
+          "partition": "vbmeta_system",
+          "entry": "IMAGES/vbmeta_system.img",
+          "bytes": 4096,
+          "sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5"
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "entry": "IMAGES/vbmeta_vendor.img",
+          "bytes": 4096,
+          "sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b"
+        },
+        {
+          "partition": "vendor",
+          "entry": "IMAGES/vendor.img",
+          "bytes": 483639296,
+          "sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911"
+        },
+        {
+          "partition": "vendor_boot",
+          "entry": "IMAGES/vendor_boot.img",
+          "bytes": 67108864,
+          "sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573"
+        },
+        {
+          "partition": "vendor_dlkm",
+          "entry": "IMAGES/vendor_dlkm.img",
+          "bytes": 13967360,
+          "sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d"
+        }
+      ],
+      "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
+      "packaged_policy_sha256": "f457aa9737ce3ca42435920a15fe169c73f5441bf0b5f449bbe824efff7e8344",
+      "permissive_domains": [
+        "su",
+        "osi",
+        "backuptool"
+      ],
+      "ota_and_payload_signatures_verified": true,
+      "target_files": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+      "ota": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+      "error": "Command '['python3', '/srv/build/migration/gold-architecture-20260914/project/tools/check-gold-package.py', '--target-files', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip', '--aapt2', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/bin/aapt2', '--image-tools', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/bin', '--scratch-parent', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655']' returned non-zero exit status 1."
+    },
+    "corrected_validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+    "original_result_preserved": true,
+    "candidate": {
+      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
+      "original_wrapper_exit": 1,
+      "original_failure": "Byte comparison of assembled Power VINTF schema/comment against source",
+      "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a",
+      "validation_completed": true,
+      "device_accepted": false,
+      "ota": {
+        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+        "sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
+        "bytes": 1174889334
+      },
+      "target_files": {
+        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage_gold-target_files.zip",
+        "sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
+        "bytes": 2903014669
+      },
+      "frozen_source_hashes": {
+        "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
+        "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
+        "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+        "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+        "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+        "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+        "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+        "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
+        "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
+      },
+      "host_tool_hashes": {
+        "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
+        "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
+        "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+        "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
+        "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+        "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
+        "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
+        "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
+        "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+        "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
+      },
+      "actual_image_files": 29,
+      "payload_partitions": 14,
+      "completed_at": "2026-09-20T19:01:06.136929+00:00"
+    },
+    "gold_package": {
+      "gold_package_contents_verified": true,
+      "graphics_32bit": {
+        "VENDOR/lib/hw/mapper.mediatek.so": {
+          "sha256": "1b960188125e6a5b3531e91d26883f9c4881e30e8038247f9a146598c1e0f99e",
+          "needed": [
+            "arm.graphics-V5-ndk.so",
+            "android.hardware.graphics.common-V7-ndk.so",
+            "libhidlbase.so",
+            "libdrm.so",
+            "android.hardware.graphics.mapper@4.0.so",
+            "libgralloctypes.so",
+            "libutils.so",
+            "libsync.so",
+            "libcutils.so",
+            "libgralloc_extra.so",
+            "libgralloc_metadata.so",
+            "libgralloctypes_mtk.so",
+            "libged.so",
+            "libgpud.so",
+            "libdmabufheap.so",
+            "libnativewindow.so",
+            "libhardware.so",
+            "libutilscallstack.so",
+            "android.hardware.graphics.common@1.2.so",
+            "liblog.so",
+            "libbase.so",
+            "libc++.so",
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ]
+        },
+        "VENDOR/lib/libgpud.so": {
+          "sha256": "967b9dad0c0db2f14ae0852466c662783c84574f14be7b8c5ae30ea1f2d531a1",
+          "needed": [
+            "android.hardware.graphics.common-V7-ndk.so",
+            "android.hardware.graphics.allocator-V2-ndk.so",
+            "libcutils.so",
+            "libutils.so",
+            "libutilscallstack.so",
+            "liblog.so",
+            "libsync.so",
+            "libhardware.so",
+            "libnativewindow.so",
+            "libgralloc_extra.so",
+            "libhidlbase.so",
+            "libgralloctypes.so",
+            "libc++.so",
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ]
+        },
+        "VENDOR/lib/libgralloc_metadata.so": {
+          "sha256": "f35f05400da4cfbd2f177749fbc234169361dfe326cbed9cf8c5672171d7bb4e",
+          "needed": [
+            "android.hardware.graphics.mapper@4.0.so",
+            "libhidlbase.so",
+            "libcutils.so",
+            "libutils.so",
+            "liblog.so",
+            "libion.so",
+            "libc.so",
+            "libc++.so",
+            "libm.so",
+            "libdl.so"
+          ]
+        },
+        "VENDOR/lib/libgralloctypes_mtk.so": {
+          "sha256": "380b79f6f3476f8255f4fa7698a7c131b3aa6247e1f7adaafef3c87ddde3e25e",
+          "needed": [
+            "android.hardware.graphics.mapper@4.0.so",
+            "libhidlbase.so",
+            "libhardware.so",
+            "libcutils.so",
+            "libutils.so",
+            "liblog.so",
+            "libion.so",
+            "libc.so",
+            "libc++.so",
+            "libm.so",
+            "libdl.so"
+          ]
+        },
+        "VENDOR/lib/arm.graphics-V5-ndk.so": {
+          "sha256": "8151a875f8b0a71194d7d56c63e04bac95502be42adb02b19cb078c8f1612f4b",
+          "needed": [
+            "libbinder_ndk.so",
+            "libc++.so",
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ]
+        }
+      },
+      "health": {
+        "VENDOR/bin/hw/android.hardware.health-service.gold": {
+          "sha256": "a7fb548dc36749f3abbbe358c03bc2a86e3c43c04162c27557821de3999f11c5",
+          "init": "VENDOR/etc/init/android.hardware.health-service.gold.rc"
+        },
+        "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/bin/hw/android.hardware.health-service.gold-recovery": {
+          "sha256": "80f899240fba23edbbfdce41ef3148569000698aa5908c3cfdafee7b40e90a48",
+          "init": "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/android.hardware.health-service.gold-recovery.rc"
+        }
+      },
+      "health_vintf": {
+        "android": [
+          "VENDOR/etc/vintf/manifest/android.hardware.health-service.gold.xml"
+        ],
+        "recovery": [
+          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/vintf/manifest/android.hardware.health-service.gold.xml"
+        ]
+      },
+      "charger_definitions": {
+        "android": [
+          {
+            "file": "VENDOR/etc/init/gold-charger.rc",
+            "service": "service vendor.charger /vendor/bin/hw/android.hardware.health-service.gold --charger"
+          }
+        ],
+        "recovery": [
+          {
+            "file": "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/hw/init.rc",
+            "service": "service charger /system/bin/charger"
+          }
+        ]
+      },
+      "ims": {
+        "feature_permission": "VENDOR/etc/permissions/android.hardware.telephony.ims.xml",
+        "feature_declared": true,
+        "input_sha256": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+        "packaged_sha256": "990ccde5fce4f4a437d6f325d8d0e34b283820b577ab56f930ceccef332af950",
+        "dependency_payload_matches": true,
+        "payload_entries": 47,
+        "platform_signing_selected": true,
+        "privileged_permissions_match": true,
+        "startup_properties": {
+          "persist.vendor.ims_support": "1",
+          "persist.vendor.volte_support": "1",
+          "ro.vendor.md_auto_setup_ims": "1"
+        },
+        "startup_property_labels_verified": true,
+        "registration_verified": false
+      },
+      "settings": {
+        "sha256": "2bf77b9e8aaf17831f6b57c425928a562e6eed398c9a4a17c189252fa63b7ae4",
+        "maintainer_page_verified": true,
+        "languages": [
+          "default",
+          "zh-rCN",
+          "zh-rTW"
+        ],
+        "peak_refresh_overlay": true
+      },
+      "power_profile": {
+        "named_entries": 38,
+        "matches_source": true,
+        "source_sha256": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+        "big_core_key_corrected": true
+      },
+      "sustained_performance_advertised": false,
+      "zygote": "zygote64",
+      "standard_module_links_verified": true,
+      "wifi_pmf_default": 1,
+      "wifi_pmf_upgrade_overlay": true,
+      "recovery_debug_adb_config_verified": true,
+      "power": {
+        "single_resource_owner": true,
+        "native_clients": {
+          "VENDOR/lib/libmtkperf_client_vendor.so": "2fbbc0b08777b2c292adbfacb08b59330ca722d6faa0ef39e80dd868d3c0398c",
+          "VENDOR/lib64/libmtkperf_client_vendor.so": "02e9de3056331d3ae6ae7f57e2a84a1f6466d016afed4667e09c912609e0f729"
+        },
+        "runtime_verified": false,
+        "performance_benefit_verified": false
+      },
+      "wifi_association_verified": false,
+      "limitations": [
+        "Checks target-files members; Android validators check image/AVB contracts.",
+        "Does not prove runtime overlay activation or hardware behavior."
+      ],
+      "actual_images": {
+        "verified": true,
+        "matched_files": 29,
+        "members": {
+          "VENDOR/build.prop": "e02941a3f2d12383ac879d1146da6a422def6b826f6c451bfedd4bc691b59ce3",
+          "VENDOR/etc/selinux/vendor_property_contexts": "484e918715a9424855cd6b36bacf6134038271e8387124db95cfb8d7359a2eaf",
+          "VENDOR/lib/hw/mapper.mediatek.so": "1b960188125e6a5b3531e91d26883f9c4881e30e8038247f9a146598c1e0f99e",
+          "VENDOR/lib/libgpud.so": "967b9dad0c0db2f14ae0852466c662783c84574f14be7b8c5ae30ea1f2d531a1",
+          "VENDOR/lib/libgralloc_metadata.so": "f35f05400da4cfbd2f177749fbc234169361dfe326cbed9cf8c5672171d7bb4e",
+          "VENDOR/lib/libgralloctypes_mtk.so": "380b79f6f3476f8255f4fa7698a7c131b3aa6247e1f7adaafef3c87ddde3e25e",
+          "VENDOR/lib/arm.graphics-V5-ndk.so": "8151a875f8b0a71194d7d56c63e04bac95502be42adb02b19cb078c8f1612f4b",
+          "VENDOR/bin/hw/android.hardware.health-service.gold": "a7fb548dc36749f3abbbe358c03bc2a86e3c43c04162c27557821de3999f11c5",
+          "VENDOR/etc/init/android.hardware.health-service.gold.rc": "f59d6de0348facee3dc778daf1634466caa0981c70c77be9b92eed80b1cfd3a1",
+          "VENDOR/etc/init/gold-charger.rc": "6d6080e2a412228fde3a729f31a4a677b6320db22d27afb21a233b40a7818ee0",
+          "VENDOR/etc/vintf/manifest/android.hardware.health-service.gold.xml": "cafcca4609fae1ed6e065d017907e49a9efcd23e6b69a6d77aac3f04cd0c984d",
+          "VENDOR/etc/selinux/vendor_file_contexts": "2b8a91d7c4384f2b0b58ca2056a08bf92f9c0d10740e2434b5851c576ad40897",
+          "VENDOR/etc/permissions/android.hardware.telephony.ims.xml": "6f0d8f1e1dc0657e39ff63129b1633fdd9971417dcc9982271f089024666dadd",
+          "VENDOR/etc/wifi/wpa_supplicant.conf": "a5b5dd6c3fd02a0dbbe62d6e58d3c3157a94a2ed9ec98191cc57a3908dbba6ae",
+          "VENDOR/etc/wifi/wpa_supplicant_overlay.conf": "2c24549d233cc613a65f788df8a5ab82314f5cdf3f3a773d513df3790145d6d8",
+          "VENDOR/bin/hw/android.hardware.power-service.gold": "fcabec09523a159792c1cfd5929f37d64434b12bcb82bb53f1cd095c910cf138",
+          "VENDOR/etc/init/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+          "VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml": "1df915c5b3bbbfed0ae68687b6b804b7d9860e8f08655ae39c6e9b162f2ab571",
+          "VENDOR/lib/libmtkperf_client_vendor.so": "2fbbc0b08777b2c292adbfacb08b59330ca722d6faa0ef39e80dd868d3c0398c",
+          "VENDOR/lib64/libmtkperf_client_vendor.so": "02e9de3056331d3ae6ae7f57e2a84a1f6466d016afed4667e09c912609e0f729",
+          "VENDOR/overlay/FrameworkResOverlayGold.apk": "392bcda38c459fd8b849416d5fe564aee0edfd6f70785948a6184309ff0f509e",
+          "VENDOR/overlay/SettingsResOverlayGold.apk": "c37915dc27dae6d9992af3c73bfb843c6a397d2601d323b37cea07f3aa687911",
+          "SYSTEM_EXT/priv-app/Settings/Settings.apk": "2bf77b9e8aaf17831f6b57c425928a562e6eed398c9a4a17c189252fa63b7ae4",
+          "SYSTEM_EXT/priv-app/ImsService/ImsService.apk": "990ccde5fce4f4a437d6f325d8d0e34b283820b577ab56f930ceccef332af950",
+          "SYSTEM_EXT/etc/permissions/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
+          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/bin/hw/android.hardware.health-service.gold-recovery": "80f899240fba23edbbfdce41ef3148569000698aa5908c3cfdafee7b40e90a48",
+          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/android.hardware.health-service.gold-recovery.rc": "0f162e3fecca557d3877193d13f27c26922221884235d6412ccf9fd52ff415ed",
+          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
+          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/vintf/manifest/android.hardware.health-service.gold.xml": "cafcca4609fae1ed6e065d017907e49a9efcd23e6b69a6d77aac3f04cd0c984d"
+        }
+      }
+    },
+    "artifact_recheck": {
+      "artifact_contract_verified": true,
+      "target_files_sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
+      "ota_sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
+      "partitions": [
+        "boot",
+        "dtbo",
+        "odm_dlkm",
+        "product",
+        "scp",
+        "system",
+        "system_dlkm",
+        "system_ext",
+        "vbmeta",
+        "vbmeta_system",
+        "vbmeta_vendor",
+        "vendor",
+        "vendor_boot",
+        "vendor_dlkm"
+      ],
+      "dynamic_partitions": [
+        "odm_dlkm",
+        "product",
+        "system",
+        "system_dlkm",
+        "system_ext",
+        "vendor",
+        "vendor_dlkm"
+      ],
+      "post_timestamp": 1789925665,
+      "signing_tag": "test-keys",
+      "payload_images_verified": true,
+      "payload_images": [
+        {
+          "partition": "boot",
+          "entry": "IMAGES/boot.img",
+          "bytes": 67108864,
+          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f"
+        },
+        {
+          "partition": "dtbo",
+          "entry": "IMAGES/dtbo.img",
+          "bytes": 8388608,
+          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01"
+        },
+        {
+          "partition": "odm_dlkm",
+          "entry": "IMAGES/odm_dlkm.img",
+          "bytes": 348160,
+          "sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391"
+        },
+        {
+          "partition": "product",
+          "entry": "IMAGES/product.img",
+          "bytes": 510750720,
+          "sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8"
+        },
+        {
+          "partition": "scp",
+          "entry": "RADIO/scp.img",
+          "bytes": 1200128,
+          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
+        },
+        {
+          "partition": "system",
+          "entry": "IMAGES/system.img",
+          "bytes": 1048506368,
+          "sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26"
+        },
+        {
+          "partition": "system_dlkm",
+          "entry": "IMAGES/system_dlkm.img",
+          "bytes": 7303168,
+          "sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd"
+        },
+        {
+          "partition": "system_ext",
+          "entry": "IMAGES/system_ext.img",
+          "bytes": 461287424,
+          "sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4"
+        },
+        {
+          "partition": "vbmeta",
+          "entry": "IMAGES/vbmeta.img",
+          "bytes": 8192,
+          "sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1"
+        },
+        {
+          "partition": "vbmeta_system",
+          "entry": "IMAGES/vbmeta_system.img",
+          "bytes": 4096,
+          "sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5"
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "entry": "IMAGES/vbmeta_vendor.img",
+          "bytes": 4096,
+          "sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b"
+        },
+        {
+          "partition": "vendor",
+          "entry": "IMAGES/vendor.img",
+          "bytes": 483639296,
+          "sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911"
+        },
+        {
+          "partition": "vendor_boot",
+          "entry": "IMAGES/vendor_boot.img",
+          "bytes": 67108864,
+          "sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573"
+        },
+        {
+          "partition": "vendor_dlkm",
+          "entry": "IMAGES/vendor_dlkm.img",
+          "bytes": 13967360,
+          "sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d"
+        }
+      ],
+      "device_accepted": false
+    },
+    "vintf_verbose_compatible": true,
+    "vintf_kernel_level_warning": "Tool uses kernel level 202404 reported by kernel instead of manifest level 6; full compatibility check returned COMPATIBLE",
+    "release_signing_verified": false,
+    "device_accepted": false
+  }
 }

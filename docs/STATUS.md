@@ -1,21 +1,21 @@
-更新于 2026-09-21 01:36（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
+更新于 2026-09-21 03:07（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
 **尚不可删除旧 hybrid Python 流程。** 完整对照及条件删除清单见 [ADAPTATION](ADAPTATION.md)。当前必须闭合的是最新候选构建与上机、IMS 后端／注册、Wi-Fi 关联和 Power 实际请求及收益验证；本轮未删除归档、历史镜像或唯一输入。
 
-本机最新源码 `f17a75a` 另补 C 句柄跨 HAL 重启隔离、有界调用记录及实际 C ABI 设备探针；71 项主线测试（含真实适配器源码的传输替身测试）和 28 项节点／引擎主机测试通过。它已随 `c36757a` 受控同步科研机，Android 构建和实机运行仍待通过。
+`f17a75a` 补充 C 句柄跨 HAL 重启隔离、有界调用记录及实际 C ABI 设备探针；71 项主线测试（含真实适配器源码的传输替身测试）和 28 项节点／引擎主机测试通过。它已随 `c36757a` 受控同步科研机，Android 编译已通过，实机运行仍待验证。
 
 `3ee80e9` 构建在 01:15 以 exit 1 结束，Android 耗时 01:41:24；失败是 shell 写 vendor 性能属性触发平台 neverallow，没有合格新候选。VM guard 已退出，swappiness/zpool/zswap/shrinker 四项原值恢复并实读确认。
 
-当前构建源码 `c36757a` 将测量配置写入交给拥有属性的 vendor HAL，仅允许 userdebug 的 UID 0 诊断命令；未增加 shell/su 跨分区写权限或 neverallow 豁免。它同时包含 f17a75a、IMS 启动配置、Wi-Fi PMF overlay 和调试 Recovery 自动 ADB。只同步 8 个内容改变的文件，158 个合并输入逐项匹配，未触碰未变 Android.bp 的时间戳。科研机 `gold-power-ims-r2-20260921.service` 在唯一 `out-gold-standard` 增量构建，BUILD_DATETIME=1789925665；guard 为 `gold-power-ims-r2-vm-guard-20260921.service`。原 OverlayFS、缓存、24 GiB swap 和资源上限均保留，未 clean。
+当前构建源码 `c36757a` 将测量配置写入交给拥有属性的 vendor HAL，仅允许 userdebug 的 UID 0 诊断命令；未增加 shell/su 跨分区写权限或 neverallow 豁免。它同时包含 f17a75a、IMS 启动配置、Wi-Fi PMF overlay 和调试 Recovery 自动 ADB。只同步 8 个内容改变的文件，158 个合并输入逐项匹配，未触碰未变 Android.bp 的时间戳。科研机 `gold-power-ims-r2-20260921.service` 在唯一 `out-gold-standard` 完成 Android 编译，耗时 01:15:15，BUILD_DATETIME=1789925665。原入口因校验器逐字节比较构建工具格式化后的 Power VINTF XML 而返回 1；`05f156a` 按同次 `assemble_vintf` 输出严格比较声明，75 项主线测试通过。同一份不可变候选随后通过全部包检查，14 个 payload 分区和 29 个最终镜像文件一致；原失败记录未改写。guard 四项临时参数已恢复并实读确认。原 OverlayFS、缓存、24 GiB swap 和资源上限均保留，未 clean。
 
 | 验证层次 | 本轮实际结果 |
 |---|---|
-| 主机工具 | 71 项 Python 测试通过；f17a75a 无 archive 导出仍通过 71 项并含可验证 IMS 输入 |
+| 主机工具 | 05f156a 的 75 项测试通过；f17a75a 无 archive 导出的 71 项结果保留为早先边界 |
 | Power 单元测试 | 请求核心 Mac arm64／Soong Linux x86_64 各 26 项通过；节点和引擎 Mac arm64 另 28 项通过；Android HAL/客户端和性能收益未验证 |
 | 97969dc 构建 | Android 11:44，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 20 个实际镜像文件匹配 |
 | 2cd2675 构建 | Android 59:21，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 21 个实际镜像文件匹配；未安装 |
 | 3ee80e9 构建 | **失败**：vendor 属性写权限触发 neverallow；未产生合格新候选 |
-| c36757a 构建 | 正在构建；尚无编译／包／安装通过结论 |
+| c36757a 构建 | Android 01:15:15；原入口 XML 比较误报已定位，05f156a 校验器对同一候选重验通过；14 分区／29 文件、签名、VINTF、SELinux 通过；Linux Power 26+28 项通过；标准 update_engine 正向非活动 A 槽安装，设备验证待完成 |
 | 97969dc 安装／启动 | 侧载 host exit 0；用户手动重启后 B 槽 incremental 1789911389、boot_completed=1、Enforcing；稳定启动观察通过，data/persist 正常、两个 canary 一致、快照 state none；Recovery 最终 status 0、安装器 14 项哈希和独立回读 14 个分区的最终镜像字节范围全部匹配 |
 | IMS | 97969dc feature、框架初始化及 MTK 服务实际绑定通过；MMTEL UNAVAILABLE，后端被缺失 ims_support 阻断；3ee80e9 修复待验证。未通过注册／通话／短信 |
 | Wi-Fi | 97969dc data pmf=0、vendor 模板=1，证实升级漏覆盖；2cd2675 overlay 修复未上机，当前尚未关联 |
@@ -28,7 +28,7 @@ IMS APK SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c
 
 原始证据和后续检查路径在 [mainline-convergence-20260920.json](../validation/mainline-convergence-20260920.json)。2cd2675 构建记录 `source/out-gold-standard/gold-build-records/1789914079640672965/`；保留产物 `verified-candidates/20260920-222119-2cd2675/`，OTA SHA-256 `a908222f5162bdc01c18b87634d18f9c433d258199e5292cb7fd3269f55a290d`，target-files SHA-256 `efbc1306c820fe83b38031aa8de3444584be136864c2bf59401acba04ab125e1`。97969dc 保留路径仍为 `verified-candidates/20260920-213629-97969dc/`，OTA SHA-256 `30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6`。不得用可变平铺路径代替候选身份。
 
-97969dc、2cd2675 和失败的 3ee80e9 所用 VM guard 均已退出并恢复临时参数。c36757a 使用新的独立 guard；源码和集成仓库在活动构建期间保持冻结。
+97969dc、2cd2675 和失败的 3ee80e9 所用 VM guard 均已退出并恢复临时参数。c36757a 的独立 guard 也已恢复并退出；Android 输入在整个构建与验证期间保持冻结。05f156a 只更新校验器与测试，不改变候选系统镜像。
 
 以下内容仅保留为历史验收记录，不表示当前待装候选已经通过。
 
