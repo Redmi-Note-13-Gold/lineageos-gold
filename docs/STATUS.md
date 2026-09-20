@@ -1,25 +1,31 @@
-# 当前适配状态
+更新于 2026-09-20 23:38（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
-更新于 2026-09-20。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，开发目标 `lineage_gold-bp4a-userdebug`。
+**尚不可删除旧 hybrid Python 流程。** 完整对照及条件删除清单见 [ADAPTATION](ADAPTATION.md)。当前必须闭合的是最新候选构建与上机、IMS 后端／注册、Wi-Fi 关联和 Power 实际请求及收益验证；本轮未删除归档、历史镜像或唯一输入。
 
-IMS 修正版已于 18:31:35（UTC+8）完成构建及自动验证，源码为 `5b8b9ab`，版本时间戳为 `1789894861`。新 OTA 已下载到本机并核对 SHA-256、ZIP CRC 和证书；当前 ADB 未连接，尚未安装此候选。
+当前构建源码 `3ee80e9` 包含共享 Power HAL／C ABI 转发、IMS 启动配置、保数据 Wi-Fi PMF overlay 和 userdebug Recovery 自动 ADB。158 个实际合并源码文件逐项匹配，没有旧 upper 覆盖。科研机 `gold-power-ims-20260920.service` 正在唯一的 `out-gold-standard` 增量构建，BUILD_DATETIME=1789918353。保留原 OverlayFS、缓存、24 GiB swap 和资源限制，未 clean、未创建第二份输出。
 
-首次候选 `4cdee4a` 已完成保数据 OTA、A 槽启动及部分实机检查。验收发现 IMS feature 声明缺失，导致框架跳过 IMS 初始化；修正版已补齐声明并通过包检查。首次候选的硬件结果不能替代修正版验收，漫游 eSIM 的 LTE 注册也不能作为 IMS / VoLTE 通过的依据。
-
-## 本轮源码候选
-
-已修改：补齐 32 位 mapper 的五个厂商库及对应 AIDL 依赖修正；恢复原厂功耗统计资源并纠正大核字段名；启用按实际屏幕模式生成的刷新率选择；补齐显示轮廓；按当前内核实际单位修复电量计数器；撤下未有效调校的持续性能能力声明；修复振动 HAL 虚报能力和文件描述符泄漏；收窄相机数据/标定目录权限；清理重复及无读取方的属性；将实际编译树中的 Betterr 设置条目纳入恢复补丁。
-
-| 验证层次 | 当前结论 |
+| 验证层次 | 本轮实际结果 |
 |---|---|
-| 主机工具 | 27 项 Python 测试通过，包括清单导出失败仍保存失败记录；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
-| IMS 修正版构建 | 源码 `5b8b9ab` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过；实际镜像的 17 个关键文件、OTA payload 全部 14 个分区哈希与最终 target-files 匹配 |
-| 振动契约测试 | 首次候选 ARM64 / ARM 已在手机 shell 下各通过 4 项；临时程序和依赖已清理。修正版生成的测试 ELF 与首次相同，但尚未在修正版上运行 |
-| 首次候选安装、分区回读、开机 | Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽及新版 Recovery 往返启动完成，Enforcing，data/persist 正常；Virtual A/B 合并已完成 |
-| 首次候选硬件 | Health 单位修复和显示 overlay 生效；前置预览出图，用户确认后置预览/拍照、已录入指纹解锁及基础振动正常；eSIM 漫游 LTE 注册正常。其他硬件仍未全面验收 |
-| IMS 修正版实机 | 尚未安装；IMS 框架初始化、服务绑定及运营商注册仍待验证 |
+| 主机工具 | 70 项 Python 测试通过；3ee80e9 无 archive 导出仍通过 70 项并含可验证 IMS 输入 |
+| Power 单元测试 | 请求核心 Mac arm64／Soong Linux x86_64 各 26 项通过；节点和引擎 Mac arm64 另 26 项通过；Android HAL/客户端和性能收益未验证 |
+| 97969dc 构建 | Android 11:44，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 20 个实际镜像文件匹配 |
+| 2cd2675 构建 | Android 59:21，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 21 个实际镜像文件匹配；未安装 |
+| 3ee80e9 构建 | 正在构建；尚无编译终态、产物或安装结论 |
+| 97969dc 安装／启动 | 侧载 host exit 0；用户手动重启后 B 槽 incremental 1789911389、boot_completed=1、Enforcing；稳定启动观察通过，data/persist 正常、两个 canary 一致、快照 state none；最终 Recovery status 和独立分区回读尚缺 |
+| IMS | 97969dc feature、框架初始化及 MTK 服务实际绑定通过；MMTEL UNAVAILABLE，后端被缺失 ims_support 阻断；3ee80e9 修复待验证。未通过注册／通话／短信 |
+| Wi-Fi | 97969dc data pmf=0、vendor 模板=1，证实升级漏覆盖；2cd2675 overlay 修复未上机，当前尚未关联 |
+| 性能／能耗 | 真实节点、匹配内核协议和调用者静态证据已核对；尚无同机可重复收益，新增框架 boost 默认关闭 |
+| 其他硬件 | 旧候选的相机／指纹／振动结果保留为历史，不挪给 97969dc 或新候选 |
 
-具体采用与暂缓理由见 [ADAPTATION](ADAPTATION.md)。新增振动契约测试需要 Android 目标构建和运行，不把编译测试程序计作测试通过。
+IMS APK SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1`，为主线普通 Git blob。47 个载荷条目和重编兼容 dex 已核验；原厂完整依赖打包配方不完整，但当前输入可独立取得，不依赖旧 Python 环境。
+
+用户已授权本会话同基线保数据 OTA、正常系统／Recovery 重启、分区回读、临时 adb root、安装并清理测试程序、Wi-Fi 重连和网络调试；不清数据、不改 SIM、不拨号或发短信。最后现场卡为第二槽漫游 eSIM。用户报告已进桌面，但 23:33 本机 USB 未枚举到手机；网络 ADB 尚未启用。
+
+原始证据和后续检查路径在 [mainline-convergence-20260920.json](../validation/mainline-convergence-20260920.json)。2cd2675 构建记录 `source/out-gold-standard/gold-build-records/1789914079640672965/`；保留产物 `verified-candidates/20260920-222119-2cd2675/`，OTA SHA-256 `a908222f5162bdc01c18b87634d18f9c433d258199e5292cb7fd3269f55a290d`，target-files SHA-256 `efbc1306c820fe83b38031aa8de3444584be136864c2bf59401acba04ab125e1`。97969dc 保留路径仍为 `verified-candidates/20260920-213629-97969dc/`，OTA SHA-256 `30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6`。不得用可变平铺路径代替候选身份。
+
+97969dc 和 2cd2675 的构建及 VM guard 均已成功退出，临时参数恢复已核对。3ee80e9 使用新的独立 guard；源码和集成仓库在活动构建期间不再同步改动。
+
+以下内容仅保留为历史验收记录，不表示当前待装候选已经通过。
 
 ## 9 月 20 日 IMS 修正版产物
 
@@ -62,13 +68,3 @@ SHA-256 见 [IMS 修正版校验清单](../validation/ims-build-20260920-SHA256S
 - 9 月 16 日已有最终增量镜像的 [设备记录](../validation/device-fixes-20260916.json)：记录包含 B 槽 14 项回读一致、短时正常开机、加密 data/persist 正常和 Enforcing。这是历史记录，本轮没有重现实机检查。
 - 该记录只证明服务就绪和有限日志窗口；没有完成相机拍照、指纹录入、Wi-Fi 联网、蓝牙音频、通话/蜂窝数据和长时稳定性测试。
 - 关机充电图案曾由用户在包含相同永久修复的诊断版确认；最终清理版的完整插电循环及熄屏唤醒仍需测试。
-
-## 尚需完成
-
-ADB 重新连接后，核对身份、当前槽位、合并状态和电量，继续已授权的同基线保数据 OTA；然后单独验证 Recovery 安装终态、分区回读、稳定开机和 IMS 框架服务绑定。不会把包内 feature 声明直接计作运营商 IMS 注册通过。构建回查在等待设备连接期间暂停。
-
-其后按可用测试条件验收相机完整模式、新指纹录入、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、USB 各模式、关机充电和温控功耗。首次同基线保数据 OTA、Virtual A/B 合并及新版 Recovery 往返已完成；回退尚未测试。
-
-当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位修复已在首次候选正常系统生效；关机充电完整循环与持续性能调校仍未完成，详见 ADAPTATION。
-
-IMS 固定兼容 APK 已作为主线受管 prebuilt 保存并锁定哈希；原厂 APK 到完整依赖包的重建流程仍未闭合，明确保留此二进制输入。未用关闭 SELinux、跳过 neverallow、伪造硬件能力或强行声明 MDDP WH 支持来代替验证。

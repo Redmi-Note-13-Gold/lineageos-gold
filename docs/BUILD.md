@@ -49,7 +49,7 @@ swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`�
 ```sh
 python3 device/xiaomi/gold/prepare-vendor.py \
   --tree /path/to/android --lock /path/to/lineageos-gold/firmware/gold-global.json \
-  --stock /path/to/prepared-stock --ims-apk /path/to/ImsService.apk
+  --stock /path/to/prepared-stock
 ```
 
 此步骤核验原厂镜像并提取配套 kernel、DTB、DTBO、modules 与厂商组件。日常源码修改不重做完整提取；提取配方改变时只重提取受影响部分，并重新生成 vendor 构建定义。不要直接只改生成的 Android.bp 而漏掉提取清单。
