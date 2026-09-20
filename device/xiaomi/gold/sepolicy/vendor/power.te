@@ -1,4 +1,4 @@
-# The existing MediaTek domain already owns the PPM, cgroup and display nodes.
+# The existing MediaTek domain already owns the PPM and cgroup vote nodes.
 # Read the real thermal HAL; missing/stale severity blocks performance requests.
 hal_client_domain(mtk_hal_power, hal_thermal)
 
@@ -8,3 +8,11 @@ get_prop(mtk_hal_power, vendor_gold_power_prop)
 # The vendor service owns its strategy properties. Debug trials enter through
 # its root-only Binder diagnostic command, not a coredomain property writer.
 set_prop(mtk_hal_power, vendor_gold_power_prop)
+
+# The authorized root C ABI diagnostic runs in su on userdebug. Authenticate its
+# process generation via /proc/PID/stat just as for real native media callers.
+# No ptrace, process-memory access or production su access is granted.
+userdebug_or_eng(`
+    allow mtk_hal_power su:dir search;
+    allow mtk_hal_power su:file { getattr open read };
+')

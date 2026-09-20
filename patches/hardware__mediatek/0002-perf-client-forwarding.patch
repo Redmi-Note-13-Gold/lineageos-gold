@@ -125,7 +125,7 @@
 +    }
 +    int local = handle ? handle : static_cast<int>(nextHandle++);
 +    // Start the local timeout after the reply, so we never forget an active
-+    // remote timed lease early. Held display leases end on explicit release.
++    // remote timed lease early. The HAL decides which resources permit zero.
 +    leases.insert_or_assign(local, Lease{peer, remote, duration == 0 ? Clock::time_point::max() :
 +            Clock::now() + std::chrono::milliseconds(duration)});
 +    return local;

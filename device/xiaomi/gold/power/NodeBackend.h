@@ -14,6 +14,8 @@ constexpr int32_t kCpu1Min = 0x00400100;
 constexpr int32_t kCpu1Max = 0x00404100;
 constexpr int32_t kTopAppUclamp = 0x01408300;
 constexpr int32_t kTopAppPreferIdle = 0x01404300;
+// Recognized only for explicit unsupported-request diagnostics/tests. This is
+// a shared DRM interval, not an independently releasable performance vote.
 constexpr int32_t kDisplayIdleTime = 0x0240C000;
 
 struct NodeIo {
@@ -28,9 +30,11 @@ class PosixNodeIo final : public NodeIo {
     bool write(const std::string& path, const std::string& value) override;
 };
 
-// Owns only the PERFSERV PPM client and the three reviewed scheduler/display
+// Owns only the PERFSERV PPM client and the two reviewed scheduler
 // nodes. PPM merges its votes with THERMAL/DLPT and the other sysboost users.
 // No global cpufreq max, core_ctl, thermal or governor configuration is changed.
+// Do not write display idletime: the matched DRM kernel updates the same scalar
+// itself, with no per-client vote or neutral reset (50 is not a reset protocol).
 class NodeBackend final : public Backend {
   public:
     explicit NodeBackend(NodeIo& io);

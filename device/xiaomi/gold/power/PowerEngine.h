@@ -55,6 +55,7 @@ class PowerEngine {
 
   private:
     struct Lease { Owner owner; Millis expiry; };
+    bool initializeLocked(Millis now);
     bool identity(int uid, int pid, Owner* owner) const;
     void displayGate(Millis now);
     void gate(Inhibit reason, bool blocked, Millis now);
@@ -71,6 +72,10 @@ class PowerEngine {
     bool interactive_ = false;
     bool displayInactive_ = false;
     bool deviceIdle_ = false;
+    bool lowPower_ = false;
+    bool thermalSafe_ = false;
+    bool stopped_ = false;
+    Millis lastInitialize_ = -1;
     Millis lastThermal_ = -1;
     int launch_ = 0, interaction_ = 0;
     uint64_t accepted_ = 0, rejected_ = 0;

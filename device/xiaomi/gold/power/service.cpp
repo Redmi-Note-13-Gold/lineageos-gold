@@ -68,7 +68,7 @@ class Power final : public p::BnPower {
             case p::Mode::DEVICE_IDLE: engine_.deviceIdle(enabled, now()); break;
             case p::Mode::DISPLAY_INACTIVE: engine_.displayInactive(enabled, now()); break;
             case p::Mode::LAUNCH:
-                if (launchClamp() == 0) return unsupported();
+                if (launchClamp() == 0 || !engine_.status().ready) return unsupported();
                 engine_.launch(enabled, launchClamp(), now());
                 break;
             default: return unsupported();
@@ -83,7 +83,7 @@ class Power final : public p::BnPower {
     }
     ndk::ScopedAStatus setBoost(p::Boost boost, int32_t duration) override {
         if (!frameworkCaller()) return ndk::ScopedAStatus::fromExceptionCode(EX_SECURITY);
-        if (boost != p::Boost::INTERACTION || interactionClamp() == 0) return unsupported();
+        if (boost != p::Boost::INTERACTION || interactionClamp() == 0 || !engine_.status().ready) return unsupported();
         engine_.interaction(duration, interactionClamp(), now());
         return ndk::ScopedAStatus::ok();
     }
@@ -264,7 +264,10 @@ int main(int, char** argv) {
     gold::power::PosixNodeIo io;
     gold::power::NodeBackend backend(io);
     PowerEngine engine(backend, [&](int pid) { return gold::power::processGeneration(io, pid); });
-    if (!engine.initialize(now())) { LOG(ERROR) << "Power backend unavailable: " << backend.error(); return 1; }
+    // Optional performance resources must not prevent the framework from
+    // booting. Publish the control interface, reject boosts/leases while the
+    // backend is unavailable, and let the worker retry with cached policy gates.
+    if (!engine.initialize(now())) LOG(ERROR) << "Power backend unavailable; requests disabled: " << backend.error();
     std::signal(SIGTERM, stopSignal);
     std::signal(SIGINT, stopSignal);
     ABinderProcess_setThreadPoolMaxThreadCount(2);

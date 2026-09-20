@@ -14,7 +14,7 @@ namespace {
 constexpr std::array<int, 2> kMin{kCpu0Min, kCpu1Min};
 constexpr std::array<int, 2> kMax{kCpu0Max, kCpu1Max};
 const std::map<int, std::string> kScalarNodes{{kTopAppUclamp, NodeBackend::kUclamp},
-        {kTopAppPreferIdle, NodeBackend::kPreferIdle}, {kDisplayIdleTime, NodeBackend::kIdleTime}};
+        {kTopAppPreferIdle, NodeBackend::kPreferIdle}};
 bool scalar(NodeIo& io, const std::string& path, int expected) {
     std::string text;
     if (!io.read(path, &text)) return false;
@@ -99,8 +99,7 @@ std::vector<Resource> NodeBackend::resources() const {
             {kCpu1Min, -1, frequencies_[1].front(), -1, true},
             {kCpu1Max, -1, frequencies_[1].front(), -1, false},
             {kTopAppUclamp, 0, 100, 0, true},
-            {kTopAppPreferIdle, 0, 1, 0, true},
-            {kDisplayIdleTime, 33, 100, 50, true, true}};
+            {kTopAppPreferIdle, 0, 1, 0, true}};
 }
 
 int NodeBackend::index(unsigned cluster, int frequency) const {
@@ -184,7 +183,13 @@ bool NodeBackend::verify(const Values& values) {
 bool NodeBackend::apply(const Values& values) {
     Values effective;
     if (!normalize(values, &effective)) { error_ = "Invalid resource values"; return false; }
-    if (!uncertain_ && effective == applied_ && verify(effective)) return true;
+    if (!uncertain_ && effective == applied_) {
+        if (verify(effective)) { error_.clear(); return true; }
+        // A cached aggregate does not prove the kernel still has our vote.
+        // Force the owned resources back to that aggregate before acknowledging
+        // an unchanged request or a successful timeout/release.
+        uncertain_ = true;
+    }
     if (writeState(effective, uncertain_ || applied_.empty())) {
         applied_ = std::move(effective);
         uncertain_ = false;

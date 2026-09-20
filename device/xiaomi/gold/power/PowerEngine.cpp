@@ -45,10 +45,19 @@ PowerEngine::PowerEngine(NodeBackend& backend, Generation generation)
 
 bool PowerEngine::initialize(Millis now) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (manager_ || !backend_.discover()) return false;
+    return initializeLocked(now);
+}
+
+bool PowerEngine::initializeLocked(Millis now) {
+    if (manager_) return true;
+    lastInitialize_ = now;
+    if (stopped_ || !backend_.discover()) return false;
     manager_ = std::make_unique<RequestManager>(backend_.resources(), backend_, kMaximumDuration);
-    bool reset = manager_->setInhibit(Inhibit::Thermal, true, now);
-    reset = manager_->setInhibit(Inhibit::DisplayOff, true, now) && reset;
+    bool reset = manager_->setInhibit(Inhibit::Thermal,
+            !thermalSafe_ || lastThermal_ < 0 || now - lastThermal_ > kThermalFreshness, now);
+    reset = manager_->setInhibit(Inhibit::DisplayOff,
+            !interactive_ || displayInactive_ || deviceIdle_, now) && reset;
+    reset = manager_->setInhibit(Inhibit::LowPower, lowPower_, now) && reset;
     if (!reset) manager_.reset();
     return reset;
 }
@@ -82,7 +91,10 @@ void PowerEngine::gate(Inhibit reason, bool blocked, Millis now) {
 }
 
 void PowerEngine::tickLocked(Millis now) {
-    if (!manager_) return;
+    if (!manager_) {
+        if (stopped_ || (lastInitialize_ >= 0 && now - lastInitialize_ < 1000)) return;
+        if (!initializeLocked(now)) return;
+    }
     if (lastThermal_ < 0 || now - lastThermal_ > kThermalFreshness) gate(Inhibit::Thermal, true, now);
     for (auto it = leases_.begin(); it != leases_.end();) {
         auto generation = generation_(it->second.owner.pid);
@@ -185,10 +197,10 @@ void PowerEngine::deviceIdle(bool enabled, Millis now) {
     std::lock_guard<std::mutex> lock(mutex_); deviceIdle_ = enabled; displayGate(now);
 }
 void PowerEngine::lowPower(bool enabled, Millis now) {
-    std::lock_guard<std::mutex> lock(mutex_); gate(Inhibit::LowPower, enabled, now);
+    std::lock_guard<std::mutex> lock(mutex_); lowPower_ = enabled; gate(Inhibit::LowPower, enabled, now);
 }
 void PowerEngine::thermal(bool safe, Millis now) {
-    std::lock_guard<std::mutex> lock(mutex_); lastThermal_ = now; gate(Inhibit::Thermal, !safe, now);
+    std::lock_guard<std::mutex> lock(mutex_); lastThermal_ = now; thermalSafe_ = safe; gate(Inhibit::Thermal, !safe, now);
 }
 
 void PowerEngine::framework(int* handle, bool enabled, int duration, int clamp, Millis now) {
@@ -224,7 +236,9 @@ void PowerEngine::waitForWork(Millis now) {
     // missing a wakeup during the otherwise one-second idle wait.
     changed_.wait_for(lock, std::chrono::milliseconds(delay));
 }
-void PowerEngine::stop(Millis now) { std::lock_guard<std::mutex> lock(mutex_); gate(Inhibit::Manual, true, now); }
+void PowerEngine::stop(Millis now) {
+    std::lock_guard<std::mutex> lock(mutex_); stopped_ = true; gate(Inhibit::Manual, true, now);
+}
 EngineStatus PowerEngine::status() const {
     std::lock_guard<std::mutex> lock(mutex_);
     return {manager_ != nullptr, manager_ ? manager_->snapshot() : Snapshot{}, backend_.effective(),

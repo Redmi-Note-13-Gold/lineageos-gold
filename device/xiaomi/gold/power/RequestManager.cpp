@@ -46,7 +46,9 @@ Values RequestManager::aggregate(const Requests& requests) const {
 
 bool RequestManager::reconcile() {
     const Values desired = aggregate(requests_);
-    if (!dirty_ && desired == applied_) return true;
+    // The backend verifies the real votes even when the aggregate is unchanged;
+    // it owns suppression of redundant writes. Otherwise an externally lost
+    // vote could still be acknowledged or retained as a successful lease.
     dirty_ = true;
     if (!backend_.apply(desired)) return false;
     applied_ = desired;

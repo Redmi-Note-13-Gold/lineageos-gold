@@ -14,8 +14,11 @@ using namespace gold::power;
 struct FakeBackend : Backend {
     Values hardware;
     unsigned writes = 0;
+    unsigned checks = 0;
     unsigned failures = 0;
     bool apply(const Values& values) override {
+        ++checks;
+        if (hardware == values) return true;
         ++writes;
         // Exercise recovery even if a real multi-node write fails halfway.
         hardware[values.begin()->first] = values.begin()->second;
@@ -196,6 +199,17 @@ int main() {
         int b = f.manager.acquire(f.b, 0, 100, {{1, 50}}, 0);
         check(a > 0 && b > 0 && f.backend.writes == writes);
         check(f.manager.release(f.b, b, 10) == 0 && f.backend.writes == writes);
+    });
+    test("unchanged leases verify and restore externally lost votes", [](auto& f) {
+        int a = f.manager.acquire(f.a, 0, 300, {{1, 90}}, 0);
+        check(a > 0);
+        auto checked = f.backend.checks;
+        f.backend.hardware.at(1) = 0;
+        int b = f.manager.acquire(f.b, 0, 100, {{1, 50}}, 10);
+        check(b > 0 && f.backend.hardware.at(1) == 90 && f.backend.checks > checked);
+        f.backend.hardware.at(1) = 0;
+        check(f.manager.expire(20) && f.backend.hardware.at(1) == 90);
+        check(f.manager.release(f.b, b, 30) == 0 && f.backend.hardware.at(1) == 90);
     });
     test("per owner allocation is bounded without discarding existing votes", [](auto& f) {
         for (int i = 0; i < 16; ++i) check(f.manager.acquire(f.a, 0, 100, {{1, i}}, 0) > 0);
