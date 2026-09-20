@@ -19,8 +19,22 @@ APPLY = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(APPLY)
 
 
+def git_result(tree, *args, check=True):
+    # Explicitly requested, pinned trees can retain their original build UID.
+    # Trust only this exact path for this read, without changing global config.
+    tree = Path(tree).resolve()
+    result = subprocess.run(['git', '-c', 'safe.directory=' + str(tree), '-C', str(tree), *args],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if check and result.returncode:
+        raise RuntimeError(result.stderr.decode(errors='replace'))
+    return result
+
+
+APPLY.git = git_result
+
+
 def git(tree, *args):
-    return subprocess.check_output(['git', '-C', str(tree), *args])
+    return git_result(tree, *args).stdout
 
 
 def digest(data):
@@ -91,7 +105,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--tree', required=True, type=Path)
     args = parser.parse_args()
-    result = check(args.tree.resolve())
+    try:
+        result = check(args.tree.resolve())
+    except (OSError, RuntimeError, ValueError, subprocess.CalledProcessError) as error:
+        result = {'merged_inputs_match_mainline': False, 'failures': [str(error)]}
     print(json.dumps(result, indent=2))
     raise SystemExit(0 if result['merged_inputs_match_mainline'] else 1)
 

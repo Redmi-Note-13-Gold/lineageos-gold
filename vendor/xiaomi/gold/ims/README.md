@@ -23,7 +23,11 @@ python3 vendor/xiaomi/gold/ims/compat/rebuild.py \
 Input SHA-256 and the upstream compatibility source revision are enforced by
 the script and recorded in `compat/provenance.json`. Review the output before
 placing it at the `ImsService.apk` path consumed by Android.bp; the product build
-performs platform signing. The script does not install or flash anything.
+performs platform signing. ZIP compression metadata can differ between host
+versions even when the regenerated dex and every payload entry are identical.
+The report distinguishes payload equality from full APK byte equality. A
+different complete APK hash requires an explicit input-lock update before
+`prepare-vendor.py` accepts it. The script does not install or flash anything.
 
 See `input.json` for source limitations and `docs/ADAPTATION.md` for carrier
 scope and the separate runtime acceptance boundary. Retaining the binary

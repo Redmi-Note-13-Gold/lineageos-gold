@@ -67,11 +67,16 @@ def main():
             info = zipfile.ZipInfo('classes2.dex', (1980, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
             dst.writestr(info, (dex / 'classes.dex').read_bytes())
-        require(sha(staged) == lock['sha256'], 'Rebuilt APK differs from the mainline input')
+        with zipfile.ZipFile(args.base_apk) as original, zipfile.ZipFile(staged) as rebuilt:
+            names = {name for name in original.namelist() if not name.startswith('META-INF/')}
+            require(names == set(rebuilt.namelist()), 'Rebuilt APK dependency entry set changed')
+            require(all(original.read(name) == rebuilt.read(name) for name in names),
+                    'Rebuilt APK dependency payload changed')
         # Exclusive publication: never replace an existing user output.
         os.link(staged, args.output)
     print(json.dumps({'input_sha256': sha(args.base_apk), 'output_sha256': sha(args.output),
                       'metrics_dex_rebuilt': True, 'proprietary_payload_preserved': True,
+                      'apk_byte_identical': sha(args.output) == lock['sha256'],
                       'stock_dependency_bundle_rebuilt': False}, indent=2))
 
 
