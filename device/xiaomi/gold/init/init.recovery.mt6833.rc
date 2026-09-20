@@ -3,3 +3,9 @@ on init
     setprop sys.usb.configfs 1
 
     setprop sys.usb.controller "musb-hdrc"
+
+# The debug Recovery must be usable before encrypted userdata (and adb_keys)
+# is available. This is the same Recovery-only switch as its Enable ADB menu.
+# Normal Android and user Recovery retain their existing authentication.
+on init && property:ro.build.type=userdebug
+    setprop ro.adb.secure.recovery 0

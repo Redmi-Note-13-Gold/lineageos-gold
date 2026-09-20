@@ -46,7 +46,8 @@ def verify_images(target, host_bin, scratch_parent=None):
     recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
     recovery_wanted = ['system/bin/hw/android.hardware.health-service.gold-recovery',
                        'system/etc/init/android.hardware.health-service.gold-recovery.rc',
-                       'system/etc/vintf/manifest/android.hardware.health-service.gold.xml']
+                       'system/etc/vintf/manifest/android.hardware.health-service.gold.xml',
+                       'system/etc/init/init.recovery.mt6833.rc']
     hashes = {}
     with zipfile.ZipFile(target) as archive, tempfile.TemporaryDirectory(
             prefix='gold-image-check-', dir=scratch_parent) as temporary:
@@ -235,6 +236,15 @@ def verify(target, aapt2, readelf, profile):
             require(wifi_pmf == ['pmf=1'],
                     'Wi-Fi PMF default must apply to fresh installs and upgrades: ' + wifi_name)
 
+        recovery_rc_name = ('VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
+                            'system/etc/init/init.recovery.mt6833.rc')
+        recovery_rc = archive.read(recovery_rc_name)
+        recovery_source = (profile.parents[4] / 'init/init.recovery.mt6833.rc').read_bytes()
+        require(recovery_rc == recovery_source, 'Recovery USB configuration differs from mainline')
+        require(b'on init && property:ro.build.type=userdebug\n'
+                b'    setprop ro.adb.secure.recovery 0\n' in recovery_rc,
+                'Debug Recovery must enable its own ADB access before userdata is available')
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -286,6 +296,7 @@ def verify(target, aapt2, readelf, profile):
                 'sustained_performance_advertised': False,
                 'zygote': 'zygote64', 'standard_module_links_verified': True,
                 'wifi_pmf_default': 1, 'wifi_pmf_upgrade_overlay': True,
+                'recovery_debug_adb_config_verified': True,
                 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}
