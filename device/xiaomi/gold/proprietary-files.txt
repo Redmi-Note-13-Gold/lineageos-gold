@@ -1809,7 +1809,8 @@ vendor/lib/libvcodec_oal.so
 vendor/lib/libvpudv3a_vcodec.so
 
 # Media (Codec2)
-vendor/bin/hw/android.hardware.media.c2-mediatek-64b:vendor/bin/hw/android.hardware.media.c2-mediatek;TRYSRCFIRST
+# The service entrypoint is source-built; keep the matching codec libraries,
+# service identity, AIDL-only manifest and stock syscall policies.
 vendor/etc/init/android.hardware.media.c2-mediatek.rc
 vendor/etc/seccomp_policy/android.hardware.media.c2@1.2-extended-seccomp-policy
 vendor/etc/seccomp_policy/android.hardware.media.c2@1.2-mediatek-seccomp-policy

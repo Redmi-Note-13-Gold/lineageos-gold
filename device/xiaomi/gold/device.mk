@@ -108,6 +108,11 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.ir-service.example
 
+# Build the Codec2 frontend against this platform's private C++ layout. The
+# matched stock entrypoint allocates an Android 15 ComponentStore object.
+PRODUCT_PACKAGES += \
+    android.hardware.media.c2-service.gold
+
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.consumerir.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.consumerir.xml
 

@@ -85,6 +85,8 @@ Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数�
 
 `tests/android/GoldMediaDecodeProbe.java` 是有 20 秒期限的硬件解码调用者探针，仅读取明确提供的本地测试片段，不读用户媒体或联网。可在科研机以现有 JDK 的 `javac --release 8 -cp prebuilts/sdk/current/public/android.jar` 编译，用同树 `d8 --min-api 35 --lib prebuilts/sdk/current/public/android.jar --output <独立测试目录> <classes.jar>` 生成 dex（PATH 包含该 JDK 的 bin）；临时推送到专属 `/data/local/tmp/` 后，`CLASSPATH=<classes.dex> app_process /system/bin GoldMediaDecodeProbe <测试片段>` 执行。要求实际组件为 `c2.mtk.*`、至少一帧且收到 EOS，退出后删除自己的 dex／测试片段。保存同期 HAL 调用记录及 AVC，不能把无渲染解码耗时作为播放帧率或能耗成绩。
 
+Codec2 的 AIDL 服务入口由 `device/xiaomi/gold/codec2/` 编译，继续调用匹配 Global 的 MTK codec store／编解码库，保留原有服务路径、身份和唯一 AIDL 声明。固定原厂入口在 0x3c2c 只分配 336 字节，当前 `libcodec2_aidl` 的 `ComponentStore` 实际需要 352 字节；实机首次编码已在组件表插入处崩溃。因此不能再把原厂可执行文件直接当作当前平台 ABI 兼容输入，也不能手工改一个分配常数替代源码编译。原 seccomp 规则继续生效，仅按实际崩溃报告被二次 SIGSYS 中断的证据追加只读 `uname`。验收需覆盖服务冷启动后的首次编码、多次创建／销毁及解码，核对 PID、信号与日志；客户端自动重试后成功不算无崩溃通过。
+
 在已有明确设备授权内，正常系统的标准 `update_engine_client` 可以安装已签名的完整 A/B OTA，避免为升级临时进入旧 Recovery。首先核对显式 ADB 序号、gold 身份、当前槽位／incremental、剩余空间和电量、签名证书与已装 `otacerts.zip`、snapshot state none，以及 `timeout 2 update_engine_client --follow` 回调的 `UPDATE_STATUS_IDLE (0)`。该只读跟随因超时退出 124 属于预期；此版本没有 `--status` 参数。加密用户未首次解锁时，共享存储保留文件只能记作待核验，不能误报为丢失。
 
 从已核验 OTA 中读取未压缩的 `payload.bin`、`payload_properties.txt` 和 OTA metadata。payload 偏移必须根据 ZIP 本地文件头中的文件名／extra 长度计算，并核对 metadata 的 property-files；不是固定偏移。metadata 文件包括 CrAU v2 的 24 字节头、manifest 和 metadata signature；属性里的 METADATA_SIZE 不包括签名，单独核对 METADATA_HASH。将完整 OTA 和 metadata 放入专属 `/data/ota_package/` 子目录，采用 system:cache、目录 0750／文件 0640、标准 ota_package_file 标签，并在设备端复核完整 OTA SHA-256。只读适用性命令是 `update_engine_client --verify --metadata=<metadata文件绝对路径>`；`--payload` 不用于 verify。

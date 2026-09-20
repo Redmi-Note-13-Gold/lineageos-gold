@@ -72,6 +72,12 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'etc/init/android.hardware.power-service.gold.rc',
                    'etc/vintf/manifest/android.hardware.power-service.gold.xml',
                    'lib/libmtkperf_client_vendor.so', 'lib64/libmtkperf_client_vendor.so',
+                   'bin/hw/android.hardware.media.c2-mediatek',
+                   'etc/init/android.hardware.media.c2-mediatek.rc',
+                   'etc/vintf/manifest/manifest_media_c2_default.xml',
+                   'etc/seccomp_policy/android.hardware.media.c2@1.2-mediatek-seccomp-policy',
+                   'etc/seccomp_policy/android.hardware.media.c2@1.2-extended-seccomp-policy',
+                   'etc/seccomp_policy/gold-codec2-crash.policy',
                    'overlay/FrameworkResOverlayGold.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
@@ -318,6 +324,34 @@ def verify(target, aapt2, readelf, profile):
                         'Missing public C perf ABI: ' + symbol)
             clients[name] = sha256(data)
 
+        codec_name = 'VENDOR/bin/hw/android.hardware.media.c2-mediatek'
+        codec = archive.read(codec_name)
+        require(codec[:6] == b'\x7fELF\x02\x01' and struct.unpack_from('<H', codec, 18)[0] == 183,
+                'Codec2 frontend must use the matched native AArch64 ABI')
+        require(b'Gold Codec2 bridge: platform ComponentStore size=' in codec,
+                'Stale stock Codec2 entrypoint with incompatible platform object allocation')
+        codec_dynamic = subprocess.check_output([str(readelf), '-d', str(unpack(codec_name))], text=True)
+        for library in ('libcodec2_aidl.so', 'libcodec2_mtk_c2store.so'):
+            require('Shared library: [' + library + ']' in codec_dynamic,
+                    'Missing actual Codec2 frontend dependency: ' + library)
+        codec_services = []
+        codec_hals = []
+        for name in members:
+            if name.startswith('VENDOR/') and name.endswith('.rc'):
+                codec_services.extend(line for line in archive.read(name).decode(errors='replace').splitlines()
+                                      if re.match(r'^service\s+\S+\s+\S*android\.hardware\.media\.c2-', line))
+            if name.startswith(('VENDOR/etc/vintf/', 'ODM/etc/vintf/')) and name.endswith('.xml'):
+                for hal in ET.fromstring(archive.read(name)).findall('hal'):
+                    if hal.findtext('name') == 'android.hardware.media.c2':
+                        codec_hals.append((hal.get('format'), hal.findtext('version'), hal.findtext('fqname')))
+        require(codec_services == ['service android-hardware-media-c2-hal /vendor/bin/hw/android.hardware.media.c2-mediatek'],
+                'Duplicate or stale vendor Codec2 init service')
+        require(codec_hals == [('aidl', '1', 'IComponentStore/default')],
+                'Vendor Codec2 must retain its single AIDL instance')
+        codec_policy = 'VENDOR/etc/seccomp_policy/gold-codec2-crash.policy'
+        require(archive.read(codec_policy) == (profile.parents[4] / 'codec2/gold-codec2-crash.policy').read_bytes(),
+                'Codec2 crash-report syscall addition differs from mainline')
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -373,6 +407,9 @@ def verify(target, aapt2, readelf, profile):
                 'recovery_debug_adb_config_verified': True,
                 'power': {'single_resource_owner': True, 'native_clients': clients,
                           'runtime_verified': False, 'performance_benefit_verified': False},
+                'codec2': {'source_frontend_marker_verified': True, 'sha256': sha256(codec),
+                           'single_vendor_service': True, 'matched_vendor_store_retained': True,
+                           'runtime_verified': False},
                 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}
