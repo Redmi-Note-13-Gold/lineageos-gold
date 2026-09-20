@@ -9,6 +9,10 @@ get_prop(mtk_hal_power, vendor_gold_power_prop)
 # its root-only Binder diagnostic command, not a coredomain property writer.
 set_prop(mtk_hal_power, vendor_gold_power_prop)
 
+# dumpsys passes a shell-owned output pipe to the HAL. Allow diagnostics to
+# write that pipe without granting shell access to vendor strategy properties.
+allow mtk_hal_power shell:fifo_file write;
+
 # The authorized root C ABI diagnostic runs in su on userdebug. Authenticate its
 # process generation via /proc/PID/stat just as for real native media callers.
 # No ptrace, process-memory access or production su access is granted.

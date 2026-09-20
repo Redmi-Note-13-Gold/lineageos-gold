@@ -122,7 +122,11 @@ class Power final : public p::BnPower {
             // Keep vendor configuration writes in the owning vendor domain.
             // This diagnostic operation is unavailable to shell/apps and user
             // builds. Resource requests still pass every normal policy gate.
-            if (uid != 0 || !android::base::GetBoolProperty("ro.debuggable", false)) return STATUS_PERMISSION_DENIED;
+            // Lineage sets ro.debuggable=0 even on authenticated userdebug
+            // builds. Use the immutable build variant, preserving that global
+            // security setting and rejecting this command on production user.
+            const auto buildType = android::base::GetProperty("ro.build.type", "");
+            if (uid != 0 || (buildType != "userdebug" && buildType != "eng")) return STATUS_PERMISSION_DENIED;
             int launch, interaction;
             if (count != 3 || !android::base::ParseInt(args[1], &launch, 0, 60) ||
                     !android::base::ParseInt(args[2], &interaction, 0, 60)) {

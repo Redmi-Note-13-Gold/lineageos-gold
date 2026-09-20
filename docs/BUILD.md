@@ -77,13 +77,19 @@ out-gold-standard/host/linux-x86/nativetest64/gold_health_units_test/gold_health
 
 Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数运行是主机／设备上的确定性测试，不驱动硬件。`gold_power_nodes_test --hardware` 是短时写入探针：只能在确认没有其他节点写入者、已受控停止 Power HAL 并核对基线后运行，结束后必须恢复服务并读取复位状态。不能把 root 探针当作 HAL 的 SELinux 权限验收。
 
-框架策略对照通过 userdebug、UID 0 专用的 `dumpsys android.hardware.power.IPower/default --set-strategy LAUNCH INTERACTION` 设置，两个参数均为 0..60，默认 0。由拥有属性的 vendor HAL 写入，不能给 shell/su 新增跨分区属性写权限或把属性加入 neverallow 豁免。受控重启 Power HAL 后核对框架能力重新发现、参数和真实动作；对照结束同样设回 `0 0`、重启并验证复位。此调试命令不放宽普通资源请求的温控／省电／屏幕状态限制。
+框架策略对照通过 userdebug/eng、UID 0 专用的 `dumpsys android.hardware.power.IPower/default --set-strategy LAUNCH INTERACTION` 设置，两个参数均为 0..60，默认 0。调试入口依据只读 `ro.build.type`，因为当前 Lineage 上游在已鉴权的 userdebug 中也设置 `ro.debuggable=0`；不改变全局属性或正常系统 ADB 鉴权。由拥有属性的 vendor HAL 写入，不能给 shell/su 新增跨分区属性写权限或把属性加入 neverallow 豁免。受控重启 Power HAL 后核对框架能力重新发现、参数和真实动作；对照结束同样设回 `0 0`、重启并验证复位。HAL 重启后保守等待框架重新报告显示状态，必要时在授权范围内熄屏再唤醒，确认 enabled=1 后开始试验。此调试命令不放宽普通资源请求的温控／省电／屏幕状态限制。
 
 `gold_power_nodes_test --client` 通过已安装的 `libmtkperf_client_vendor.so` 发起请求，不直接写节点；它检查两个 uclamp 请求的聚合、更新、独立释放、超时，以及共享显示 idle、未知资源和越界时长的明确拒绝。只在屏幕亮起、温控正常、关闭实验框架 boost、无媒体等竞争负载时运行；基线被占用则退出。此探针要在对应候选上执行，再核对 HAL 域、AVC、`dumpsys android.hardware.power.IPower/default` 的有界调用记录和节点复位。仍须单独覆盖真实媒体调用、进程退出、服务恢复及可比的启动／帧时间／能耗；生成探针或通过主机测试不表示这些项目已通过。
 
 `--client-exit` 申请 2000 ms 的 uclamp=10 后主动退出且不调用 release；协调者应记录进程退出时间，并确认 HAL 在超时之前恢复 0，区分所有者回收和普通超时。`--client-restart` 输出 READY 后最多等 10 秒；协调者受控重启 `vendor.power-hal-gold`，确认新 PID、屏幕／温控许可及节点复位后向探针标准输入写 `G`。探针要求旧 Binder 返回传输错误，然后用独立新请求验证旧 C 句柄不能释放新 HAL 的票值。两种探针仍须没有竞争负载，完成后确认 0 票值和服务恢复。探针退出码不替代协调者对条件和动作的记录。
 
 `tests/android/GoldMediaDecodeProbe.java` 是有 20 秒期限的硬件解码调用者探针，仅读取明确提供的本地测试片段，不读用户媒体或联网。可在科研机以现有 JDK 的 `javac --release 8 -cp prebuilts/sdk/current/public/android.jar` 编译，用同树 `d8 --min-api 35 --lib prebuilts/sdk/current/public/android.jar --output <独立测试目录> <classes.jar>` 生成 dex（PATH 包含该 JDK 的 bin）；临时推送到专属 `/data/local/tmp/` 后，`CLASSPATH=<classes.dex> app_process /system/bin GoldMediaDecodeProbe <测试片段>` 执行。要求实际组件为 `c2.mtk.*`、至少一帧且收到 EOS，退出后删除自己的 dex／测试片段。保存同期 HAL 调用记录及 AVC，不能把无渲染解码耗时作为播放帧率或能耗成绩。
+
+在已有明确设备授权内，正常系统的标准 `update_engine_client` 可以安装已签名的完整 A/B OTA，避免为升级临时进入旧 Recovery。首先核对显式 ADB 序号、gold 身份、当前槽位／incremental、剩余空间和电量、签名证书与已装 `otacerts.zip`、snapshot state none，以及 `timeout 2 update_engine_client --follow` 回调的 `UPDATE_STATUS_IDLE (0)`。该只读跟随因超时退出 124 属于预期；此版本没有 `--status` 参数。加密用户未首次解锁时，共享存储保留文件只能记作待核验，不能误报为丢失。
+
+从已核验 OTA 中读取未压缩的 `payload.bin`、`payload_properties.txt` 和 OTA metadata。payload 偏移必须根据 ZIP 本地文件头中的文件名／extra 长度计算，并核对 metadata 的 property-files；不是固定偏移。metadata 文件包括 CrAU v2 的 24 字节头、manifest 和 metadata signature；属性里的 METADATA_SIZE 不包括签名，单独核对 METADATA_HASH。将完整 OTA 和 metadata 放入专属 `/data/ota_package/` 子目录，采用 system:cache、目录 0750／文件 0640、标准 ota_package_file 标签，并在设备端复核完整 OTA SHA-256。只读适用性命令是 `update_engine_client --verify --metadata=<metadata文件绝对路径>`；`--payload` 不用于 verify。
+
+适用性、身份和空闲状态确认后，使用 `update_engine_client --update --follow --payload=file://<OTA绝对路径> --offset=<已验证偏移> --size=<已验证大小> --headers=<原始四行payload属性>`；协调程序须用参数数组或安全引用保留真实换行，不重写签名／镜像。保存客户端 `kSuccess(0)`、UPDATED_NEED_REBOOT(6)、daemon 最终分区哈希和 postinstall 结果，再重启预期非活动槽。中断时先核对服务状态与已有任务，不盲用 reset_status、cancel 或重复 update。启动后单独核对 build incremental、稳定 boot_completed、Enforcing、data/persist、快照合并、保留文件及最终镜像字节范围的分区回读；安装成功与原镜像启动、Recovery 往返、硬件验收分别记录。
 
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
