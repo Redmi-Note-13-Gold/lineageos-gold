@@ -37,7 +37,8 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
                    'etc/vintf/manifest/android.hardware.health-service.gold.xml',
                    'etc/selinux/vendor_file_contexts', 'etc/permissions/android.hardware.telephony.ims.xml',
-                   'etc/wifi/wpa_supplicant.conf', 'overlay/FrameworkResOverlayGold.apk',
+                   'etc/wifi/wpa_supplicant.conf', 'etc/wifi/wpa_supplicant_overlay.conf',
+                   'overlay/FrameworkResOverlayGold.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
@@ -227,10 +228,12 @@ def verify(target, aapt2, readelf, profile):
                                   ('VENDOR/lib/modules', b'/vendor_dlkm/lib/modules')]:
             require((archive.getinfo(name).external_attr >> 16) & 0o170000 == 0o120000
                     and archive.read(name) == destination, 'Wrong standard kernel module link: ' + name)
-        wifi_name = 'VENDOR/etc/wifi/wpa_supplicant.conf'
-        wifi_pmf = [line.strip() for line in archive.read(wifi_name).decode().splitlines()
-                    if line.startswith('pmf=')]
-        require(wifi_pmf == ['pmf=1'], 'Wi-Fi PMF default differs from locked Global firmware')
+        for wifi_name in ('VENDOR/etc/wifi/wpa_supplicant.conf',
+                          'VENDOR/etc/wifi/wpa_supplicant_overlay.conf'):
+            wifi_pmf = [line.strip() for line in archive.read(wifi_name).decode().splitlines()
+                        if line.strip().startswith('pmf=')]
+            require(wifi_pmf == ['pmf=1'],
+                    'Wi-Fi PMF default must apply to fresh installs and upgrades: ' + wifi_name)
 
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
@@ -282,7 +285,8 @@ def verify(target, aapt2, readelf, profile):
                                   'source_sha256': sha256(profile.read_bytes()), 'big_core_key_corrected': True},
                 'sustained_performance_advertised': False,
                 'zygote': 'zygote64', 'standard_module_links_verified': True,
-                'wifi_pmf_default': 1, 'wifi_association_verified': False,
+                'wifi_pmf_default': 1, 'wifi_pmf_upgrade_overlay': True,
+                'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}
 
