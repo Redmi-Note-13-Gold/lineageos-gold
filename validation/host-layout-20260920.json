@@ -179,13 +179,13 @@
   "old_active_profile_references": [],
   "source_overlay_output_preserved": true,
   "old_account_home_preserved": true,
-  "full_android_build_after_uid_change": false,
+  "full_android_build_after_uid_change": true,
   "reproduction": {
     "migration_script": "/srv/build/build-jobs/gold-audit-20260920/migrate-research-layout.py",
     "verification_script": "/srv/build/build-jobs/gold-audit-20260920/verify-root-build-env.py"
   },
   "limits": [
-    "Root execution and real ccache miss/hit tested; the complete Android candidate was built before this host-only migration.",
+    "Initial root entry/cache checks preceded the full Android build. The later root IMS product build passed; see root_product_build_followup and ims-build-20260920.json.",
     "No phone writes, reboot, output clean or public repository push."
   ],
   "root_git_trust_followup": {
@@ -222,5 +222,15 @@
     "probe_sha256_after": "2f6bc11fde86709734431e084f297a092e9bdb168dba086a4ce2b833a4008a87",
     "finished_at": "2026-09-20T08:57:29.198490+00:00",
     "reproduction_script": "/srv/build/build-jobs/gold-ims-feature-20260920/migrate-root-output-ownership.py"
+  },
+  "root_product_build_followup": {
+    "source_revision": "5b8b9abdf2d8039bf32e300dd41f576a9d28a374",
+    "finished_at": "2026-09-20T10:31:35.541961+00:00",
+    "execution_uid": 0,
+    "android_build_elapsed": "01:28:17",
+    "artifact_contract_verified": true,
+    "android_validators_passed": true,
+    "final_record": "ims-build-20260920.json",
+    "temporary_vm_restored": true
   }
 }

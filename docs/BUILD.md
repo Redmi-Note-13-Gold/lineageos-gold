@@ -38,7 +38,7 @@ systemd-run --unit="$unit" -p User=root -p Group=root \
   /srv/build/build-gold.sh gold_health_units_test gold_vibrator_contract_test
 ```
 
-swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`。原 `goldbuild` 账户和 `/srv/build/home` 仅保留历史内容，不再作为有效构建入口或 HOME。本次环境迁移没有重建或替换已验 9 月 20 日候选，其构建身份仍按最终记录保留。
+swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`。原 `goldbuild` 账户和 `/srv/build/home` 仅保留历史内容，不再作为有效构建入口或 HOME。迁移完成后的 IMS 修正版已以实际 UID 0 完成完整构建及验证，见 [最终记录](../validation/ims-build-20260920.json)。迁移前已安装的首次候选按其原构建身份和独立 OTA 路径保留。
 
 内存环境转发补丁位于 `tools/host/soong-memory-env.patch`；当前科研机已经有此变化。恢复其他机器时先检查 `git -C build/soong diff`，只对未应用的对应基线使用 `git apply`，不要重复套用。它不改变 ROM 运行参数。长时间任务应有独立日志与明确进程/退出状态，不能靠日志文件存在判断成功。
 
