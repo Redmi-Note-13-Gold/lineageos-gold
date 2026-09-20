@@ -33,7 +33,9 @@ SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已�
 
 这是 **userdebug / test-keys** 候选，签名完整性通过不等于正式发行密钥验收。包内策略的 permissive 域为上游调试域 `su`、`osi`、`backuptool`；没有把新 Health/Vibrator 域设为 permissive，也未关闭全局 SELinux。VINTF 详细检查返回 `COMPATIBLE`，保留了路径回退、空 boot ramdisk及 kernel level 提示的原始日志，详见验证记录。
 
-构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。既有 swap 文件保留。本轮未安装候选，不将原手机系统的运行状态计入新包验收。
+构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。本轮未安装候选，不将原手机系统的运行状态计入新包验收。
+
+构建验证完成后，按用户新要求迁移了宿主布局：swap 移到 `/srv/build/gold-build-swapfile`，缓存实际移到 `/root/ccache`，统一入口直接以 root 执行。先启用并持久化替代 swap，再停用旧文件；缓存校验通过后才移除旧目录。候选产物未重建，原构建记录中的旧路径是历史事实。当前配置及入口验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
 ## 本轮读取的原有系统
 

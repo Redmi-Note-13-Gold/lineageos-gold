@@ -26,14 +26,17 @@ lineageos-gold/
 ## 科研机
 
 ```text
+/root/
+└── ccache/                              实际编译缓存（系统盘，非符号链接）
+
 /srv/build/
 ├── build-gold.sh                         统一构建与验证入口（指向项目脚本）
 ├── lineage-23.2-gold/                    overlay lower，迁入的 Android 基础树
-├── ccache-gold-betterr/                  可复用编译缓存
+├── gold-build-swapfile                   数据盘 24 GiB swap，fstab 持久化
 ├── stock-rom/                           官方输入归档
 ├── logs/                                宿主构建日志
 ├── build-jobs/                          构建任务记录
-├── home/                                goldbuild 的现有工作环境
+├── home/                                原 goldbuild 工作环境，保留但不再使用
 └── migration/gold-architecture-20260914/
     ├── project/                         本项目主线 Git 仓库
     ├── source/                          当前挂载的可写 Android 源码
@@ -48,3 +51,5 @@ lineageos-gold/
 `source` 是 overlay 挂载点；当前 lower/upper/work 路径仍是系统挂载依赖，不移动或当成重复文件删除。`vendor` 及历史目录可能包含私有厂商输入和设备证据，不同步到公开源码仓库。目录整理采用同盘移动，路径映射存于 `history/layout-moves-20260920.json`。
 
 硬件为 8 vCPU，系统可见约 14 GiB RAM、23 GiB swap；数据盘总容量 344 GiB。剩余空间、进程及资源压力按现场读取，不把历史快照作为当前状态。最终构建结果见 [STATUS](STATUS.md)。
+
+当前构建实际 UID 为 root，HOME=/root，CCACHE_DIR=/root/ccache；完整缓存已跨盘校验迁移。源目录 `/srv/build/ccache-gold-betterr` 和原系统盘 `/gold-build-swapfile` 已移除，未用符号链接代替迁移。详情见 [宿主迁移记录](../validation/host-layout-20260920.json)。

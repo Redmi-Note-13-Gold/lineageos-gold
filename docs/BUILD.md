@@ -4,14 +4,15 @@
 
 ## 日常增量
 
-科研机复用 `/srv/build/migration/gold-architecture-20260914/source` 和其中的 `out-gold-standard`，不 clean，不创建第二份完整输出。先确认 source 是正确 overlay 挂载且没有另一构建，再以 `goldbuild` 用户执行。
+科研机复用 `/srv/build/migration/gold-architecture-20260914/source` 和其中的 `out-gold-standard`，不 clean，不创建第二份完整输出。先确认 source 是正确 overlay 挂载且没有另一构建，再以 **root（实际 UID 0）** 执行。
 
-科研机 `/srv/build/build-gold.sh [extra_targets...]` 统一指向本仓库 `tools/host/build-research.sh`：以 goldbuild 账户复用现有输出、执行完整构建与产物校验。额外参数用于同时编译模块或测试，不省略完整 OTA。底层入口也可直接调用：
+科研机 `/srv/build/build-gold.sh [extra_targets...]` 统一指向本仓库 `tools/host/build-research.sh`：直接由 root 执行，不再切换专用编译账户。HOME 固定为 `/root`，ccache 实际目录为 `/root/ccache`，24 GiB swap 位于数据盘 `/srv/build/gold-build-swapfile`。额外参数用于同时编译模块或测试，不省略完整 OTA。底层入口也可直接调用：
 
 ```sh
 export USER=builder LOGNAME=builder BUILD_USERNAME=builder
+export HOME=/root
 export USE_CCACHE=1 CCACHE_EXEC=/usr/bin/ccache
-export CCACHE_DIR=/srv/build/ccache-gold-betterr
+export CCACHE_DIR=/root/ccache
 export GOGC=50 GOMEMLIMIT=10GiB GOMAXPROCS=4
 python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-source.py \
   --tree /srv/build/migration/gold-architecture-20260914/source \
@@ -19,7 +20,21 @@ python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-sour
   --jobs 2 --build-datetime UNIX_TIMESTAMP --execute
 ```
 
-`UNIX_TIMESTAMP` 使用本次构建时间。保留旧输出的 builder 标识用于避免无意义地重算构建图；执行账户仍为 goldbuild。可附加 `--extra-target gold_vibrator_contract_test`，只编译振动契约测试程序，不代表该测试已经运行。
+`UNIX_TIMESTAMP` 使用本次构建时间。USER、LOGNAME、BUILD_USERNAME 的 `builder` 仅保留已有产物标识，真实进程 UID 是 root，HOME 是 `/root`；这些环境字符串不代表运行账户。可附加 `--extra-target gold_vibrator_contract_test`，只编译振动契约测试程序，不代表该测试已经运行。
+
+先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径和缓存读写。长期构建通过 root systemd 服务启动，保留资源上限：
+
+```sh
+unit=gold-build-$(date +%Y%m%d-%H%M%S)
+systemd-run --unit="$unit" -p User=root -p Group=root \
+  -p WorkingDirectory=/srv/build/migration/gold-architecture-20260914/source \
+  -p Environment=HOME=/root \
+  -p MemoryHigh=12800M -p MemoryMax=13G -p MemorySwapMax=20G \
+  -p StandardOutput=append:/srv/build/logs/"$unit".log -p StandardError=inherit \
+  /srv/build/build-gold.sh gold_health_units_test gold_vibrator_contract_test
+```
+
+swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`。原 `goldbuild` 账户和 `/srv/build/home` 仅保留历史内容，不再作为有效构建入口或 HOME。本次环境迁移没有重建或替换已验 9 月 20 日候选，其构建身份仍按最终记录保留。
 
 内存环境转发补丁位于 `tools/host/soong-memory-env.patch`；当前科研机已经有此变化。恢复其他机器时先检查 `git -C build/soong diff`，只对未应用的对应基线使用 `git apply`，不要重复套用。它不改变 ROM 运行参数。长时间任务应有独立日志与明确进程/退出状态，不能靠日志文件存在判断成功。
 

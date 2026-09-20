@@ -1,0 +1,191 @@
+{
+  "date": "2026-09-20",
+  "kind": "completed-host-layout-and-root-build-entry-migration",
+  "integration_base_revision": "4e69a590ac8a7112cbe531476c998bea93d7212f",
+  "authorized_changes": {
+    "swap": "/srv/build/gold-build-swapfile",
+    "ccache": "/root/ccache",
+    "build_process_uid": 0
+  },
+  "migration": {
+    "started_at": "2026-09-20T07:25:21.113435+00:00",
+    "status": "completed",
+    "events": [
+      {
+        "step": "preflight_complete",
+        "at": "2026-09-20T07:25:21.116838+00:00"
+      },
+      {
+        "step": "replacement_swap_enabled",
+        "at": "2026-09-20T07:25:21.275845+00:00",
+        "swaps": {
+          "/gold-build-swapfile": {
+            "kib": 25165820,
+            "used_kib": 69200
+          },
+          "/srv/build/gold-build-swapfile": {
+            "kib": 25165820,
+            "used_kib": 0
+          }
+        },
+        "mode": "0o600"
+      },
+      {
+        "step": "replacement_swap_persistent",
+        "at": "2026-09-20T07:25:21.495693+00:00"
+      },
+      {
+        "step": "old_swap_disabled_and_removed",
+        "at": "2026-09-20T07:25:21.803212+00:00",
+        "swaps": {
+          "/srv/build/gold-build-swapfile": {
+            "kib": 25165820,
+            "used_kib": 0
+          }
+        }
+      },
+      {
+        "step": "cache_copy_complete",
+        "at": "2026-09-20T07:27:58.526428+00:00",
+        "source_apparent_bytes": 10566898465
+      },
+      {
+        "step": "cache_checksum_comparison_passed",
+        "at": "2026-09-20T07:30:28.834660+00:00"
+      },
+      {
+        "step": "cache_moved_and_root_entry_verified",
+        "at": "2026-09-20T07:30:34.171014+00:00",
+        "entry_probe": {
+          "uid": 0,
+          "euid": 0,
+          "account": "root",
+          "home": "/root",
+          "ccache_dir": "/root/ccache",
+          "cache_read_write_verified": true,
+          "build_username": "builder",
+          "source_tree": "/srv/build/migration/gold-architecture-20260914/source"
+        }
+      }
+    ],
+    "before": {
+      "swaps": {
+        "/gold-build-swapfile": {
+          "kib": 25165820,
+          "used_kib": 69200
+        }
+      },
+      "free_root_bytes": 11384668160,
+      "free_build_bytes": 53907734528,
+      "build_lock_held": true
+    },
+    "fstab_before_sha256": "f8b5ba02d1586391e18d886d7df57515a695138f911271f873e771a20d338d64",
+    "persistent_swap": {
+      "fstab_line": "/srv/build/gold-build-swapfile none swap sw,nofail 0 0",
+      "unit": "srv-build-gold\\x2dbuild\\x2dswapfile.swap",
+      "unit_dependencies": "What=/srv/build/gold-build-swapfile\nRequires=srv-build.mount system.slice -.mount\nAfter=systemd-journald.socket -.mount srv-build.mount system.slice systemd-remount-fs.service\nFragmentPath=/run/systemd/generator/srv-build-gold\\x2dbuild\\x2dswapfile.swap\n",
+      "fstab_after_sha256": "5c964760986a4da129016188c77aafe9ef08fba1a9766a34a3f022a5defdeba7"
+    },
+    "entry_before_sha256": "853328ffdb49789b938af25b94c62bd033cb0ae83a6cecd36bf0e8d49ad9e4d9",
+    "finished_at": "2026-09-20T07:30:34.171355+00:00",
+    "entry_after_sha256": "c96264ea44c0d63e8e7b5902b9ba3da3e84db242715f03c2abbfb4969ce230e4",
+    "after": {
+      "swaps": {
+        "/srv/build/gold-build-swapfile": {
+          "kib": 25165820,
+          "used_kib": 0
+        }
+      },
+      "free_root_bytes": 26220339200,
+      "free_build_bytes": 39071830016,
+      "cache_path": "/root/ccache",
+      "cache_on_root_filesystem": true,
+      "old_cache_removed": true,
+      "old_swap_removed": true,
+      "goldbuild_home_preserved": true
+    }
+  },
+  "verification": {
+    "verified_at": "2026-09-20T07:31:05.264096+00:00",
+    "systemd_command": [
+      "systemd-run",
+      "--unit=gold-root-entry-check-20260920",
+      "--wait",
+      "--pipe",
+      "--collect",
+      "-p",
+      "User=root",
+      "-p",
+      "Group=root",
+      "-p",
+      "WorkingDirectory=/srv/build/migration/gold-architecture-20260914/source",
+      "-p",
+      "Environment=HOME=/root",
+      "-p",
+      "MemoryHigh=12800M",
+      "-p",
+      "MemoryMax=13G",
+      "-p",
+      "MemorySwapMax=20G",
+      "/srv/build/build-gold.sh",
+      "--check-environment"
+    ],
+    "systemd_exit_code": 0,
+    "systemd_output": "Running as unit: gold-root-entry-check-20260920.service\nFinished with result: success\nMain processes terminated with: code=exited/status=0\nService runtime: 33ms\nCPU time consumed: 32ms\nMemory peak: 2.6M\nMemory swap peak: 0B\n",
+    "entry": {
+      "uid": 0,
+      "euid": 0,
+      "account": "root",
+      "home": "/root",
+      "ccache_dir": "/root/ccache",
+      "cache_read_write_verified": true,
+      "build_username": "builder",
+      "source_tree": "/srv/build/migration/gold-architecture-20260914/source"
+    },
+    "cache_probe": {
+      "compile_calls": 2,
+      "second_compile_cache_hits": 1,
+      "object_sha256": "834eb9721b058e38f2afbd562ddb2b5375e18899dd5bc2016c272b8b70611de6",
+      "stats_delta": {
+        "cache_miss": 1,
+        "cache_size_kibibyte": 8,
+        "direct_cache_hit": 1,
+        "direct_cache_miss": 1,
+        "files_in_cache": 2,
+        "local_storage_hit": 1,
+        "local_storage_miss": 1,
+        "local_storage_read_hit": 2,
+        "local_storage_read_miss": 2,
+        "local_storage_write": 2,
+        "preprocessed_cache_miss": 1,
+        "stats_updated_timestamp": 7926
+      },
+      "compiler": "/usr/bin/cc",
+      "cache_config": "(default) absolute_paths_in_stderr = false\n(default) base_dir = \n(environment) cache_dir = /root/ccache\n(default) compiler = \n(default) compiler_check = mtime\n(default) compiler_type = auto\n(default) compression = true\n(default) compression_level = 0\n(default) cpp_extension = \n(default) debug = false\n(default) debug_dir = \n(default) debug_level = 2\n(default) depend_mode = false\n(default) direct_mode = true\n(default) disable = false\n(default) extra_files_to_hash = \n(default) file_clone = false\n(default) hard_link = false\n(default) hash_dir = true\n(default) ignore_headers_in_manifest = \n(default) ignore_options = \n(default) inode_cache = true\n(default) keep_comments_cpp = false\n(default) log_file = \n(default) max_files = 0\n(/root/ccache/ccache.conf) max_size = 12.0 GB\n(default) msvc_dep_prefix = Note: including file:\n(environment) namespace = gold-root-check-20260920\n(default) path = \n(default) pch_external_checksum = false\n(default) prefix_command = \n(default) prefix_command_cpp = \n(default) read_only = false\n(default) read_only_direct = false\n(default) recache = false\n(default) remote_only = false\n(default) remote_storage = \n(default) reshare = false\n(default) run_second_cpp = true\n(default) sloppiness = \n(default) stats = true\n(default) stats_log = \n(default) temporary_dir = /run/user/0/ccache-tmp\n(default) umask = \n"
+    },
+    "swap_unit": "What=/srv/build/gold-build-swapfile\nRequires=srv-build.mount system.slice -.mount\nAfter=systemd-journald.socket -.mount srv-build.mount system.slice systemd-remount-fs.service\nActiveState=active\nSubState=active\nFragmentPath=/run/systemd/generator/srv-build-gold\\x2dbuild\\x2dswapfile.swap\n",
+    "swap_file_allocated_bytes": 25769807872,
+    "swap_file_size_bytes": 25769803776,
+    "cache_same_filesystem_as_root": true,
+    "cache_not_symlink": true,
+    "no_rebuild_performed": true
+  },
+  "entry_sha256": "c96264ea44c0d63e8e7b5902b9ba3da3e84db242715f03c2abbfb4969ce230e4",
+  "candidate_file_sizes_and_mtimes_unchanged": {
+    "ota": true,
+    "target_files": true,
+    "previous_ota": true
+  },
+  "old_active_profile_references": [],
+  "source_overlay_output_preserved": true,
+  "old_account_home_preserved": true,
+  "full_android_build_after_uid_change": false,
+  "reproduction": {
+    "migration_script": "/srv/build/build-jobs/gold-audit-20260920/migrate-research-layout.py",
+    "verification_script": "/srv/build/build-jobs/gold-audit-20260920/verify-root-build-env.py"
+  },
+  "limits": [
+    "Root execution and real ccache miss/hit tested; the complete Android candidate was built before this host-only migration.",
+    "No phone writes, reboot, output clean or public repository push."
+  ]
+}
