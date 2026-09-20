@@ -23,11 +23,11 @@ python3 /path/to/lineageos-gold/tools/apply-patches.py /path/to/android --apply
 
 默认只检查；显式应用前检查各目标项目固定提交、工作区及补丁。执行后，device 采用本仓库完整源码，平台只应用 `patches/series.json` 中的差异，vendor 仅复制本项目 IMS 集成源码。已有未记录文件不应被覆盖；被中断的应用需先检查工作区，不要直接重复套补丁或清理。
 
-本项目目录中已没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁归档在 `archive/hybrid/`，不属于源码恢复步骤。
+必要的只读启动观察工具及回归测试已归入 `tools/capture_boot.py` 和 `tests/test_capture_boot.py`。本项目目录中没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁归档在 `archive/hybrid/`，不属于源码恢复步骤。
 
 ## 准备厂商组件并构建
 
-按 [BUILD.md](BUILD.md) 从固定 Global Recovery 准备 vendor/firmware/kernel，再运行标准完整产品构建。IMS 必须提供指定哈希的兼容 APK；缺少它时入口明确失败，不能通过缺依赖开关绕过。
+按 [BUILD.md](BUILD.md) 从固定 Global Recovery 准备 vendor/firmware/kernel，再运行标准完整产品构建。IMS 的固定兼容 APK 和 `input.json` 已归入主线 Git，恢复步骤直接复制，不需要旧检出或旧镜像；输入不符时入口明确失败。
 
 预编译内核与固件是有来源、版本和校验值的输入；它们与设备树来源分别记录。厂商修改应维护在提取规则中。构建入口已移除额外的源码比对和 vendor receipt 检查。
 

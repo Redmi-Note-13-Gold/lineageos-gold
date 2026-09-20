@@ -7,6 +7,7 @@ compiled resources, not installation, overlay activation or physical hardware.
 """
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -109,6 +110,28 @@ def verify(target, aapt2, readelf, profile):
             for feature in permissions.findall('feature')),
             'Missing IMS feature: the framework would skip ImsResolver and ImsPhone initialization')
 
+        ims_root = Path(__file__).resolve().parents[1] / 'vendor/xiaomi/gold/ims'
+        ims_input = json.loads((ims_root / 'input.json').read_text())
+        original = (ims_root / ims_input['file']).read_bytes()
+        require(sha256(original) == ims_input['sha256'] and len(original) == ims_input['size'],
+                'The mainline IMS prebuilt differs from its explicit input lock')
+        ims_name = 'SYSTEM_EXT/priv-app/ImsService/ImsService.apk'
+        with zipfile.ZipFile(io.BytesIO(original)) as source_apk, \
+                zipfile.ZipFile(io.BytesIO(archive.read(ims_name))) as signed_apk:
+            payload = [name for name in source_apk.namelist() if not name.startswith('META-INF/')]
+            require(len(payload) == len(set(payload)), 'Duplicate IMS payload entries')
+            require(set(payload) == {name for name in signed_apk.namelist() if not name.startswith('META-INF/')},
+                    'Signed IMS package has a different dependency payload')
+            require(all(source_apk.read(name) == signed_apk.read(name) for name in payload),
+                    'Signed IMS dependency payload differs from the mainline prebuilt')
+        apkcerts = archive.read('META/apkcerts.txt').decode()
+        ims_cert = [line for line in apkcerts.splitlines() if 'name="ImsService.apk"' in line]
+        require(len(ims_cert) == 1 and '/platform.x509.pem"' in ims_cert[0],
+                'ImsService must use the product platform certificate')
+        ims_permissions_name = 'SYSTEM_EXT/etc/permissions/privapp-permissions-com.mediatek.ims.xml'
+        require(archive.read(ims_permissions_name) == (ims_root / Path(ims_permissions_name).name).read_bytes(),
+                'Packaged IMS privileged permission allowlist differs from mainline')
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -149,6 +172,9 @@ def verify(target, aapt2, readelf, profile):
         return {'gold_package_contents_verified': True, 'graphics_32bit': graphics,
                 'health': health, 'health_vintf': declarations, 'charger_definitions': chargers,
                 'ims': {'feature_permission': ims_feature, 'feature_declared': True,
+                        'input_sha256': ims_input['sha256'], 'packaged_sha256': sha256(archive.read(ims_name)),
+                        'dependency_payload_matches': True, 'payload_entries': len(payload),
+                        'platform_signing_selected': True, 'privileged_permissions_match': True,
                         'registration_verified': False},
                 'settings': {'sha256': sha256(archive.read(settings_name)), 'maintainer_page_verified': True,
                              'languages': ['default', 'zh-rCN', 'zh-rTW'], 'peak_refresh_overlay': True},

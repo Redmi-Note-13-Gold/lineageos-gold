@@ -71,4 +71,4 @@ ADB 重新连接后，核对身份、当前槽位、合并状态和电量，继�
 
 当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位修复已在首次候选正常系统生效；关机充电完整循环与持续性能调校仍未完成，详见 ADAPTATION。
 
-IMS 仍依赖指定哈希的兼容 APK，从原厂 APK 独立重建完整依赖的流程尚未闭合。未用关闭 SELinux、跳过 neverallow、伪造硬件能力或强行声明 MDDP WH 支持来代替验证。
+IMS 固定兼容 APK 已作为主线受管 prebuilt 保存并锁定哈希；原厂 APK 到完整依赖包的重建流程仍未闭合，明确保留此二进制输入。未用关闭 SELinux、跳过 neverallow、伪造硬件能力或强行声明 MDDP WH 支持来代替验证。

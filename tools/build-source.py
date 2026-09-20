@@ -211,6 +211,13 @@ def main():
             result_record['android_validators_passed'] = True
             result_record['ota_and_payload_signatures_verified'] = True
             result_record.update(target_files=str(target), ota=str(ota))
+            # The unique product entry also enforces device-specific content;
+            # a separate historical job wrapper must not be required for this.
+            with (record_dir / 'gold-package.json').open('w') as report:
+                subprocess.run(['python3', str(REPO / 'tools/check-gold-package.py'),
+                                '--target-files', str(target), '--aapt2', str(host_bin / 'aapt2')],
+                               cwd=tree, env=verify_env, stdout=report, check=True)
+            result_record['gold_package_verified'] = True
         except (ValueError, OSError, KeyError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:
             result_record['error'] = str(error)
             raise

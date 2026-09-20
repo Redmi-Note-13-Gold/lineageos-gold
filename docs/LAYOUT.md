@@ -6,7 +6,7 @@
 lineageos-gold/
 ├── README.md                 当前入口
 ├── device/xiaomi/gold/       设备配置、init、overlay、HAL、SELinux、提取配方
-├── vendor/xiaomi/gold/ims/   IMS 集成源码与兼容输入说明
+├── vendor/xiaomi/gold/ims/   IMS 集成、固定 APK 与输入说明
 ├── manifests/               固定 Android 项目提交
 ├── patches/                 平台补丁及 series.json
 ├── firmware/                Global/CN 官方输入锁
@@ -21,7 +21,7 @@ lineageos-gold/
 └── NOTICE.md
 ```
 
-中间迁移、调试、失败尝试文档和重复的中间 JSON 已从当前检出移除，历史由 Git 保存。源码仓库不保存原厂闭源文件、用户日志或密钥。
+中间迁移、调试、失败尝试文档和重复的中间 JSON 已从当前检出移除，历史由 Git 保存。除明确锁定的 IMS prebuilt 外，源码仓库不保存生成的厂商组件；用户日志和密钥不入 Git。
 
 ## 科研机
 

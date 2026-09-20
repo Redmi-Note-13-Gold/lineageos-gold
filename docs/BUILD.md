@@ -54,7 +54,7 @@ python3 device/xiaomi/gold/prepare-vendor.py \
 
 此步骤核验原厂镜像并提取配套 kernel、DTB、DTBO、modules 与厂商组件。日常源码修改不重做完整提取；提取配方改变时只重提取受影响部分，并重新生成 vendor 构建定义。不要直接只改生成的 Android.bp 而漏掉提取清单。
 
-IMS 必须提供 SHA-256 为 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1` 的兼容输入。部分重建配方在 [IMS 说明](../vendor/xiaomi/gold/ims/README.md)，从任意原厂 APK 独立还原其完整依赖仍未闭合。
+IMS 固定输入现作为 `vendor/xiaomi/gold/ims/ImsService.apk` 普通 Git blob 纳入主线，SHA-256 为 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1`。恢复源码时随集成文件复制，准备 vendor 默认使用它；不再需要外部旧 APK。来源、版本、完整依赖载荷和原厂重建限制见 [IMS 说明](../vendor/xiaomi/gold/ims/README.md) 与 `input.json`。原厂依赖打包配方仍不完整，但构建输入本身可从主线 Git 独立取得。
 
 ## 产物与验收
 
