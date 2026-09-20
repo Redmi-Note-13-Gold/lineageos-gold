@@ -53,7 +53,7 @@
 -}
 --- /dev/null
 +++ b/libmtkperf_client/mtkperf_client.cpp
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,102 @@
 +/*
 + * Copyright (C) 2022 The LineageOS Project
 + * SPDX-License-Identifier: Apache-2.0
@@ -61,54 +61,98 @@
 +#include <vendor/mediatek/hardware/mtkpower/1.2/IMtkPerf.h>
 +
 +#include <cerrno>
++#include <chrono>
++#include <limits>
++#include <map>
 +#include <mutex>
 +
 +namespace {
 +using vendor::mediatek::hardware::mtkpower::V1_2::IMtkPerf;
-+std::mutex serviceMutex;
++using Clock = std::chrono::steady_clock;
++struct Lease {
++    android::sp<IMtkPerf> peer;
++    int remote;
++    Clock::time_point expiry;
++};
++std::mutex clientMutex;
 +android::sp<IMtkPerf> cachedService;
-+android::sp<IMtkPerf> service() {
-+    std::lock_guard<std::mutex> lock(serviceMutex);
++std::map<int, Lease> leases;
++uint64_t nextHandle = 1;
++
++// The C handle is process-local and never reused. A HAL restart may reuse its
++// remote integers; an old client handle must never update/release a new lease.
++android::sp<IMtkPerf> serviceLocked() {
 +    if (!cachedService) cachedService = IMtkPerf::tryGetService();
 +    return cachedService;
 +}
-+void failed(const android::sp<IMtkPerf>& previous) {
-+    std::lock_guard<std::mutex> lock(serviceMutex);
++void failedLocked(const android::sp<IMtkPerf>& previous) {
 +    if (cachedService == previous) cachedService.clear();
++    for (auto it = leases.begin(); it != leases.end();) {
++        if (it->second.peer == previous) it = leases.erase(it);
++        else ++it;
++    }
++}
++void expireLocked() {
++    const auto now = Clock::now();
++    for (auto it = leases.begin(); it != leases.end();) {
++        if (it->second.expiry <= now) it = leases.erase(it);
++        else ++it;
++    }
 +}
 +}
 +
 +// The actual ARM and ARM64 vendor ABI is (handle, duration, int* list, count).
 +// Never reinterpret the resource pointer as a number or caller-supplied TID.
 +extern "C" int perf_lock_acq(int handle, int duration, int* list, int count) {
-+    if (handle < 0 || duration < 0 || count <= 0 || count > 64 || count % 2 || !list) return -EINVAL;
-+    auto peer = service();
++    if (handle < 0 || duration < 0 || duration > 2000 || count <= 0 || count > 64 || count % 2 || !list) return -EINVAL;
++    std::lock_guard<std::mutex> lock(clientMutex);
++    expireLocked();
++    auto previous = leases.find(handle);
++    if (handle > 0 && previous == leases.end()) return -ENOENT;
++    if (!handle && (leases.size() >= 128 || nextHandle > std::numeric_limits<int>::max())) return -ENOSPC;
++    auto peer = handle ? previous->second.peer : serviceLocked();
 +    if (!peer) return -ENODEV;
 +    android::hardware::hidl_vec<int32_t> resources;
 +    resources.resize(count);
 +    for (int i = 0; i < count; ++i) resources[i] = list[i];
-+    auto result = peer->perfLockAcquire(handle, duration, resources, 0);
++    auto result = peer->perfLockAcquire(handle ? previous->second.remote : 0, duration, resources, 0);
 +    // An ambiguous transport failure must not acquire a second hidden lease.
-+    if (!result.isOk()) { failed(peer); return -EPIPE; }
-+    return static_cast<int32_t>(result);
++    if (!result.isOk()) { failedLocked(peer); return -EPIPE; }
++    int remote = static_cast<int32_t>(result);
++    if (remote <= 0) {
++        if (handle && (remote == 0 || remote == -ENOENT)) leases.erase(handle);
++        return remote;
++    }
++    int local = handle ? handle : static_cast<int>(nextHandle++);
++    // Start the local timeout after the reply, so we never forget an active
++    // remote timed lease early. Held display leases end on explicit release.
++    leases.insert_or_assign(local, Lease{peer, remote, duration == 0 ? Clock::time_point::max() :
++            Clock::now() + std::chrono::milliseconds(duration)});
++    return local;
 +}
 +
 +extern "C" int perf_lock_rel(int handle) {
 +    if (handle <= 0) return -EINVAL;
-+    auto peer = service();
-+    if (!peer) return -ENODEV;
-+    // The synchronous 1.2 API preserves the caller PID and reports whether the
-+    // kernel reset succeeded. The oneway legacy API cannot authenticate PID.
-+    auto result = peer->perfLockReleaseSync(handle, 0);
-+    if (!result.isOk()) { failed(peer); return -EPIPE; }
-+    return static_cast<int32_t>(result);
++    std::lock_guard<std::mutex> lock(clientMutex);
++    expireLocked();
++    const auto lease = leases.find(handle);
++    if (lease == leases.end()) return -ENOENT;
++    auto peer = lease->second.peer;
++    // Keep the original Binder instance: never resolve a stale handle against
++    // a replacement server. The synchronous 1.2 API authenticates the PID.
++    auto result = peer->perfLockReleaseSync(lease->second.remote, 0);
++    if (!result.isOk()) { failedLocked(peer); return -EPIPE; }
++    int status = static_cast<int32_t>(result);
++    if (status == 0 || status == -ENOENT || status == -EIO) leases.erase(handle);
++    return status;
 +}
 +
 +extern "C" int perf_cus_lock_hint(int hint, int duration) {
 +    if (duration < 0) return -EINVAL;
-+    auto peer = service();
++    std::lock_guard<std::mutex> lock(clientMutex);
++    auto peer = serviceLocked();
 +    if (!peer) return -ENODEV;
 +    auto result = peer->perfCusLockHint(hint, duration);
-+    if (!result.isOk()) { failed(peer); return -EPIPE; }
++    if (!result.isOk()) { failedLocked(peer); return -EPIPE; }
 +    return static_cast<int32_t>(result);
 +}

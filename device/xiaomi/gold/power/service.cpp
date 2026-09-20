@@ -124,6 +124,14 @@ class Power final : public p::BnPower {
                 static_cast<long long>(status.requests.nextExpiry));
         dprintf(fd, "launch_uclamp=%d interaction_uclamp=%d backend_error=%s\n", launchClamp(), interactionClamp(), status.backendError.c_str());
         for (const auto& [id, value] : status.effective) dprintf(fd, "effective[0x%08x]=%d\n", id, value);
+        for (const auto& event : status.events) {
+            dprintf(fd, "request t_ms=%lld op=%s uid=%d pid=%d handle=%d duration_ms=%lld result=%d words=%zu",
+                    static_cast<long long>(event.when), event.operation, event.uid, event.pid, event.handle,
+                    static_cast<long long>(event.duration), event.result, event.words);
+            for (size_t i = 0; i + 1 < event.pairs.size(); i += 2)
+                dprintf(fd, " 0x%08x=%d", event.pairs[i], event.pairs[i + 1]);
+            dprintf(fd, "\n");
+        }
         return STATUS_OK;
     }
   private:
@@ -152,13 +160,21 @@ class Perf final : public mt::V1_2::IMtkPerf {
         auto ipc = android::hardware::IPCThreadState::self();
         return engine_.release(ipc->getCallingUid(), ipc->getCallingPid(), handle, now());
     }
-    Return<int32_t> perfCusLockHint(int32_t, uint32_t) override { return -EOPNOTSUPP; }
+    Return<int32_t> perfCusLockHint(int32_t hint, uint32_t duration) override {
+        auto ipc = android::hardware::IPCThreadState::self();
+        if (warnings_.fetch_add(1) < 20) LOG(WARNING) << "unsupported perf hint uid=" << ipc->getCallingUid()
+                << " pid=" << ipc->getCallingPid() << " hint=" << hint << " duration=" << duration;
+        return -EOPNOTSUPP;
+    }
   private:
     void rejected(int error, const hidl_vec<int32_t>& pairs) {
         // Bound diagnostics; never log package names, activities or media data.
         if (warnings_.fetch_add(1) < 20) {
-            LOG(WARNING) << "vendor request rejected error=" << error << " words=" << pairs.size();
-            for (size_t i = 0; i + 1 < pairs.size(); i += 2) LOG(WARNING) << "resource=" << pairs[i] << " value=" << pairs[i + 1];
+            auto ipc = android::hardware::IPCThreadState::self();
+            LOG(WARNING) << "vendor request rejected uid=" << ipc->getCallingUid() << " pid=" << ipc->getCallingPid()
+                    << " error=" << error << " words=" << pairs.size();
+            for (size_t i = 0; i + 1 < pairs.size() && i < 64; i += 2)
+                LOG(WARNING) << "resource=" << pairs[i] << " value=" << pairs[i + 1];
         }
     }
     PowerEngine& engine_;
@@ -169,16 +185,28 @@ class Perf final : public mt::V1_2::IMtkPerf {
 // on the locked vendor. Do not invent results or report successful callbacks.
 class MtkPower final : public mt::V1_2::IMtkPower {
   public:
-    Return<void> mtkCusPowerHint(int32_t, int32_t) override { warn(); return Void(); }
-    Return<void> mtkPowerHint(int32_t, int32_t) override { warn(); return Void(); }
-    Return<void> notifyAppState(const hidl_string&, const hidl_string&, int32_t, int32_t, int32_t) override { warn(); return Void(); }
-    Return<int32_t> querySysInfo(int32_t, int32_t) override { return -EOPNOTSUPP; }
-    Return<int32_t> setSysInfo(int32_t, const hidl_string&) override { return -EOPNOTSUPP; }
-    Return<void> setSysInfoAsync(int32_t, const hidl_string&) override { warn(); return Void(); }
-    Return<int32_t> setMtkPowerCallback(const android::sp<mt::V1_1::IMtkPowerCallback>&) override { return -EOPNOTSUPP; }
-    Return<int32_t> setMtkScnUpdateCallback(int32_t, const android::sp<mt::V1_2::IMtkPowerCallback>&) override { return -EOPNOTSUPP; }
+    Return<void> mtkCusPowerHint(int32_t hint, int32_t data) override { warn("mtkCusPowerHint", hint, data); return Void(); }
+    Return<void> mtkPowerHint(int32_t hint, int32_t data) override { warn("mtkPowerHint", hint, data); return Void(); }
+    Return<void> notifyAppState(const hidl_string&, const hidl_string&, int32_t, int32_t, int32_t) override {
+        warn("notifyAppState"); return Void();
+    }
+    Return<int32_t> querySysInfo(int32_t command, int32_t parameter) override {
+        warn("querySysInfo", command, parameter); return -EOPNOTSUPP;
+    }
+    Return<int32_t> setSysInfo(int32_t command, const hidl_string&) override { warn("setSysInfo", command); return -EOPNOTSUPP; }
+    Return<void> setSysInfoAsync(int32_t command, const hidl_string&) override { warn("setSysInfoAsync", command); return Void(); }
+    Return<int32_t> setMtkPowerCallback(const android::sp<mt::V1_1::IMtkPowerCallback>&) override {
+        warn("setMtkPowerCallback"); return -EOPNOTSUPP;
+    }
+    Return<int32_t> setMtkScnUpdateCallback(int32_t command, const android::sp<mt::V1_2::IMtkPowerCallback>&) override {
+        warn("setMtkScnUpdateCallback", command); return -EOPNOTSUPP;
+    }
   private:
-    void warn() { if (warnings_.fetch_add(1) < 10) LOG(WARNING) << "unsupported private MTK control request"; }
+    void warn(const char* operation, int command = 0, int parameter = 0) {
+        auto ipc = android::hardware::IPCThreadState::self();
+        if (warnings_.fetch_add(1) < 20) LOG(WARNING) << "unsupported private MTK request uid=" << ipc->getCallingUid()
+                << " pid=" << ipc->getCallingPid() << " op=" << operation << " command=" << command << " parameter=" << parameter;
+    }
     std::atomic<unsigned> warnings_{0};
 };
 

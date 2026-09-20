@@ -6,6 +6,7 @@
 #include <atomic>
 #include <chrono>
 #include <csignal>
+#include <dlfcn.h>
 #include <functional>
 #include <future>
 #include <iostream>
@@ -121,8 +122,73 @@ int hardwareProbe() {
     return manager.setEnabled(false, clock()) ? 0 : 1;
 }
 
+int clientProbe() {
+    // This probe only calls the installed C ABI. All resource writes and
+    // readbacks must succeed inside the running HAL's enforcing SELinux domain.
+    // Run with framework experiments disabled and no competing media workload.
+    PosixNodeIo io;
+    const auto readScalar = [&](const char* path) {
+        std::string text;
+        double value;
+        if (!io.read(path, &text) || !(std::istringstream(text) >> value))
+            throw std::runtime_error(std::string("cannot read ") + path);
+        return value;
+    };
+    void* library = dlopen(sizeof(void*) == 8 ? "/vendor/lib64/libmtkperf_client_vendor.so" :
+                                             "/vendor/lib/libmtkperf_client_vendor.so", RTLD_NOW | RTLD_LOCAL);
+    if (!library) { std::cerr << dlerror() << '\n'; return 2; }
+    const auto acquire = reinterpret_cast<int (*)(int, int, int*, int)>(dlsym(library, "perf_lock_acq"));
+    const auto release = reinterpret_cast<int (*)(int)>(dlsym(library, "perf_lock_rel"));
+    if (!acquire || !release) { std::cerr << "missing reviewed perf C ABI\n"; return 2; }
+    struct Leases {
+        int (*release)(int);
+        std::vector<int> handles;
+        ~Leases() { for (int handle : handles) release(handle); }
+    } leases{release, {}};
+    const auto request = [&](int handle, int duration, std::vector<int> pairs) {
+        int result = acquire(handle, duration, pairs.data(), pairs.size());
+        if (result <= 0) throw std::runtime_error("C ABI acquire failed: " + std::to_string(result));
+        if (!handle) leases.handles.push_back(result);
+        else check(result == handle);
+        return result;
+    };
+    try {
+        if (readScalar(NodeBackend::kUclamp) != 0 || readScalar(NodeBackend::kIdleTime) != 50) {
+            std::cerr << "Resources are busy; refusing to attribute another caller's votes\n"; return 2;
+        }
+        int first = request(0, 1000, {kTopAppUclamp, 10});
+        check(readScalar(NodeBackend::kUclamp) == 10);
+        int second = request(0, 1400, {kTopAppUclamp, 20});
+        check(second != first && readScalar(NodeBackend::kUclamp) == 20);
+        request(first, 1000, {kTopAppUclamp, 30});
+        check(readScalar(NodeBackend::kUclamp) == 30);
+        check(release(first) == 0 && readScalar(NodeBackend::kUclamp) == 20);
+        std::cout << "PASS C ABI acquire, concurrent maximum, update and independent release\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1600));
+        check(readScalar(NodeBackend::kUclamp) == 0);
+        check(release(second) == -ENOENT);
+        std::cout << "PASS HAL worker timeout and expired-handle rejection\n";
+        int display = request(0, 0, {kDisplayIdleTime, 100});
+        check(readScalar(NodeBackend::kIdleTime) == 100);
+        check(release(display) == 0 && readScalar(NodeBackend::kIdleTime) == 50);
+        std::cout << "PASS reviewed untimed display lease and reset\n";
+        int unknown[] = {kTopAppUclamp, 10, 0x7fffffff, 1};
+        check(acquire(0, 100, unknown, 4) == -EOPNOTSUPP);
+        check(readScalar(NodeBackend::kUclamp) == 0);
+        int invalid[] = {kTopAppUclamp, 10};
+        check(acquire(0, 0, invalid, 2) == -EINVAL);
+        check(acquire(0, 2001, invalid, 2) == -EINVAL);
+        std::cout << "PASS unknown resources and unsafe duration rejected without partial action\n";
+        return 0;
+    } catch (const std::exception& error) {
+        std::cerr << "FAIL C ABI / HAL lifecycle: " << error.what() << '\n';
+        return 1;
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc == 2 && std::string(argv[1]) == "--hardware") return hardwareProbe();
+    if (argc == 2 && std::string(argv[1]) == "--client") return clientProbe();
     if (argc != 1) return 2;
     int passed = 0, failed = 0;
     const auto test = [&](const char* name, const std::function<void(Fixture&)>& body) {
@@ -333,6 +399,29 @@ int main(int argc, char** argv) {
         check(engine.acquire(1046, 42, 0, 50, {kTopAppUclamp, 10}, 0) > 0);
         check(waiting.wait_for(std::chrono::milliseconds(250)) == std::future_status::ready);
         engine.tick(50); check(engine.status().requests.requests == 0);
+    });
+    test("diagnostics distinguish authenticated requests and failed release attempts", [&](auto& f) {
+        PowerEngine engine(f.backend, generation); check(engine.initialize(0));
+        engine.thermal(true, 0); engine.interactive(true, 0);
+        int handle = engine.acquire(1046, 42, 0, 100, {kTopAppUclamp, 10}, 0);
+        check(handle > 0);
+        check(engine.release(1046, 43, handle, 10) == -EPERM);
+        check(engine.release(1046, 42, handle, 20) == 0);
+        const auto events = engine.status().events;
+        check(events.size() == 3 && events[0].uid == 1046 && events[0].pid == 42);
+        check(events[0].result == handle && events[0].pairs == std::vector<int32_t>({kTopAppUclamp, 10}));
+        check(events[1].pid == 43 && events[1].result == -EPERM && events[1].handle == handle);
+        check(events[2].when == 20 && events[2].result == 0 && std::string(events[2].operation) == "release");
+    });
+    test("untrusted diagnostic requests cannot grow the event buffer or payload", [&](auto& f) {
+        PowerEngine engine(f.backend, generation); check(engine.initialize(0));
+        engine.thermal(true, 0); engine.interactive(true, 0);
+        std::vector<int32_t> oversized(10000, 42);
+        for (int i = 0; i < 100; ++i) check(engine.acquire(1046, 42, 0, 100, oversized, i) == -EINVAL);
+        const auto events = engine.status().events;
+        check(events.size() == 64 && events.front().when == 36 && events.back().when == 99);
+        check(events.back().words == oversized.size() && events.back().pairs.size() == 64);
+        check(engine.status().requests.requests == 0);
     });
     std::cout << passed << " passed; " << failed << " failed\n";
     return failed != 0;

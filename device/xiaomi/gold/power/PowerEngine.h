@@ -5,10 +5,21 @@
 
 #include <functional>
 #include <condition_variable>
+#include <deque>
 #include <memory>
 #include <optional>
 
 namespace gold::power {
+
+struct RequestEvent {
+    Millis when;
+    const char* operation;
+    int uid, pid, handle;
+    Millis duration;
+    int result;
+    size_t words;
+    std::vector<int32_t> pairs;
+};
 
 struct EngineStatus {
     bool ready;
@@ -17,6 +28,7 @@ struct EngineStatus {
     uint64_t accepted;
     uint64_t rejected;
     std::string backendError;
+    std::deque<RequestEvent> events;
 };
 
 // Binder adapters pass credentials supplied by the transport, never reserved,
@@ -48,6 +60,8 @@ class PowerEngine {
     void gate(Inhibit reason, bool blocked, Millis now);
     void tickLocked(Millis now);
     void framework(int* handle, bool enabled, int duration, int clamp, Millis now);
+    int record(const char* operation, int uid, int pid, int handle, Millis duration,
+               int result, Millis now, const std::vector<int32_t>& pairs = {});
     mutable std::mutex mutex_;
     std::condition_variable changed_;
     NodeBackend& backend_;
@@ -60,6 +74,7 @@ class PowerEngine {
     Millis lastThermal_ = -1;
     int launch_ = 0, interaction_ = 0;
     uint64_t accepted_ = 0, rejected_ = 0;
+    std::deque<RequestEvent> events_;
 };
 
 std::optional<uint64_t> processGeneration(NodeIo& io, int pid);

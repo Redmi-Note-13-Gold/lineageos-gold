@@ -75,6 +75,10 @@ out-gold-standard/host/linux-x86/nativetest64/gold_health_units_test/gold_health
 
 运行振动契约测试时，普通 shell 可能无权读取 vendor 的 AIDL 库。将同次构建、对应 ABI 的测试 ELF 和 `vendor/lib64/android.hardware.vibrator-V1-ndk.so`（ARM 对应 `vendor/lib/`）临时放到独立的 `/data/local/tmp/` 子目录，以该目录作为 `LD_LIBRARY_PATH` 运行，随后删除。这四项契约测试不驱动马达，无需改变系统库、文件标签或 SELinux；仍需另验实际振动。包内容检查现在也要求标准 IMS feature XML，避免 APK 已打包但框架跳过 IMS 初始化。
 
+Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数运行是主机／设备上的确定性测试，不驱动硬件。`gold_power_nodes_test --hardware` 是短时写入探针：只能在确认没有其他节点写入者、已受控停止 Power HAL 并核对基线后运行，结束后必须恢复服务并读取复位状态。不能把 root 探针当作 HAL 的 SELinux 权限验收。
+
+`gold_power_nodes_test --client` 通过已安装的 `libmtkperf_client_vendor.so` 发起请求，不直接写节点；它检查两个 uclamp 请求的聚合、更新、独立释放、超时，显示 idle 的持有／释放，以及未知资源和越界时长拒绝。只在屏幕亮起、温控正常、关闭实验框架 boost、无媒体等竞争负载时运行；基线被占用则退出。此探针要在对应候选上执行，再核对 HAL 域、AVC、`dumpsys android.hardware.power.IPower/default` 的有界调用记录和节点复位。仍须单独覆盖真实媒体调用、进程退出、服务恢复及可比的启动／帧时间／能耗；生成探针或通过主机测试不表示这些项目已通过。
+
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
 源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。

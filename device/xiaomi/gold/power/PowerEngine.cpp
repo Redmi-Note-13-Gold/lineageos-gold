@@ -63,6 +63,17 @@ bool PowerEngine::identity(int uid, int pid, Owner* owner) const {
     return true;
 }
 
+int PowerEngine::record(const char* operation, int uid, int pid, int handle, Millis duration,
+                        int result, Millis now, const std::vector<int32_t>& pairs) {
+    // Caller/resource evidence stays bounded and in memory. No package names,
+    // activities, media contents or persistent log stream are collected.
+    if (events_.size() == 64) events_.pop_front();
+    const auto end = pairs.begin() + std::min<size_t>(pairs.size(), 64);
+    events_.push_back({now, operation, uid, pid, handle, duration, result, pairs.size(),
+                       std::vector<int32_t>(pairs.begin(), end)});
+    return result;
+}
+
 void PowerEngine::gate(Inhibit reason, bool blocked, Millis now) {
     changed_.notify_all();
     if (!manager_) return;
@@ -90,7 +101,8 @@ int PowerEngine::acquire(int uid, int pid, int handle, Millis duration,
     std::lock_guard<std::mutex> lock(mutex_);
     changed_.notify_all();
     tickLocked(now);
-    const auto reject = [&](int error) { ++rejected_; return error; };
+    const auto finish = [&](int result) { return record("acquire", uid, pid, handle, duration, result, now, pairs); };
+    const auto reject = [&](int error) { ++rejected_; return finish(error); };
     if (!manager_) return reject(-ENODEV);
     Owner owner;
     if (!identity(uid, pid, &owner)) return reject(-EPERM);
@@ -119,7 +131,7 @@ int PowerEngine::acquire(int uid, int pid, int handle, Millis duration,
         if (handle > 0) {
             int result = manager_->release(owner, handle, now);
             if (result == 0 || result == -EIO) leases_.erase(handle);
-            return result;
+            return finish(result);
         }
         return reject(-ENODATA);
     }
@@ -128,34 +140,36 @@ int PowerEngine::acquire(int uid, int pid, int handle, Millis duration,
         leases_[result] = {owner, duration == 0 ? std::numeric_limits<Millis>::max() : now + duration};
         ++accepted_;
     } else ++rejected_;
-    return result;
+    return finish(result);
 }
 
 int PowerEngine::release(int uid, int pid, int handle, Millis now) {
     std::lock_guard<std::mutex> lock(mutex_);
     changed_.notify_all();
     tickLocked(now);
+    const auto finish = [&](int result) { return record("release", uid, pid, handle, 0, result, now); };
     Owner owner;
-    if (!manager_) return -ENODEV;
-    if (!identity(uid, pid, &owner)) return -EPERM;
+    if (!manager_) return finish(-ENODEV);
+    if (!identity(uid, pid, &owner)) return finish(-EPERM);
     int result = manager_->release(owner, handle, now);
     if (result == 0 || result == -EIO) leases_.erase(handle);
-    return result;
+    return finish(result);
 }
 
 int PowerEngine::releaseAsync(int uid, int handle, Millis now) {
     std::lock_guard<std::mutex> lock(mutex_);
     changed_.notify_all();
     tickLocked(now);
-    if (!manager_) return -ENODEV;
+    const auto finish = [&](int result) { return record("release-oneway", uid, 0, handle, 0, result, now); };
+    if (!manager_) return finish(-ENODEV);
     auto lease = leases_.find(handle);
-    if (lease == leases_.end()) return -ENOENT;
-    if (lease->second.owner.uid != uid) return -EPERM;
+    if (lease == leases_.end()) return finish(-ENOENT);
+    if (lease->second.owner.uid != uid) return finish(-EPERM);
     // HIDL oneway carries UID but no PID; even a single known lease does not
     // authenticate the process sending this release. The current C ABI adapter
     // uses the existing 1.2 synchronous release. Do not guess from reserved/TID
     // or release a forked process's inherited handle on UID alone.
-    return -EOPNOTSUPP;
+    return finish(-EOPNOTSUPP);
 }
 
 void PowerEngine::displayGate(Millis now) {
@@ -214,7 +228,7 @@ void PowerEngine::stop(Millis now) { std::lock_guard<std::mutex> lock(mutex_); g
 EngineStatus PowerEngine::status() const {
     std::lock_guard<std::mutex> lock(mutex_);
     return {manager_ != nullptr, manager_ ? manager_->snapshot() : Snapshot{}, backend_.effective(),
-            accepted_, rejected_, backend_.error()};
+            accepted_, rejected_, backend_.error(), events_};
 }
 
 }  // namespace gold::power
