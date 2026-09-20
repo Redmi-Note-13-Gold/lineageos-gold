@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -33,11 +34,29 @@ class OutputContractTest(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
 
-    def fixture(self, timestamp=123, flags=0, partition='system', extra_metadata='', radio=False):
+    def fixture(self, timestamp=123, flags=0, partition='system', extra_metadata='', radio=False, bad_payload=False):
         target, ota = self.root / 'target.zip', self.root / 'ota.zip'
         vbmeta = bytearray(256)
         vbmeta[:4] = b'AVB0'
         vbmeta[120:124] = struct.pack('>I', flags)
+        def varint(value):
+            result = bytearray()
+            while value > 127:
+                result.append((value & 127) | 128)
+                value >>= 7
+            return bytes(result + bytes([value]))
+        def field(number, value):
+            if isinstance(value, int):
+                return varint(number << 3) + varint(value)
+            return varint(number << 3 | 2) + varint(len(value)) + value
+        images = {'vbmeta': bytes(vbmeta), partition: b'image'}
+        if radio:
+            images['lk'] = b'firmware'
+        manifest = b''
+        for name, data in images.items():
+            info = field(1, len(data)) + field(2, hashlib.sha256(data if not bad_payload else b'wrong').digest())
+            manifest += field(13, field(1, name.encode()) + field(7, info))
+        payload = struct.pack('>4sQQI', b'CrAU', 2, len(manifest), 0) + manifest
         with zipfile.ZipFile(target, 'w') as archive:
             archive.writestr('META/misc_info.txt', 'ab_update=true\navb_enable=true\nuse_dynamic_partitions=true\nvintf_enforce=true\navb_building_vbmeta_image=true\n')
             archive.writestr('META/ab_partitions.txt', 'vbmeta\n' + partition + '\n' + ('lk\n' if radio else ''))
@@ -49,8 +68,8 @@ class OutputContractTest(unittest.TestCase):
         with zipfile.ZipFile(ota, 'w') as archive:
             archive.writestr('META-INF/com/android/metadata', 'ota-type=AB\npre-device=gold\npost-sdk-level=36\npost-timestamp=' + str(timestamp) + '\npost-build=example/test-keys\n' + extra_metadata)
             archive.writestr('META-INF/com/android/metadata.pb', b'fixture')
-            archive.writestr('payload.bin', b'fixture payload')
-            archive.writestr('payload_properties.txt', 'FILE_SIZE=15\n')
+            archive.writestr('payload.bin', payload)
+            archive.writestr('payload_properties.txt', 'FILE_SIZE=' + str(len(payload)) + '\n')
         return target, ota
 
     def test_small_contract_does_not_claim_signature_verification(self):
@@ -58,6 +77,20 @@ class OutputContractTest(unittest.TestCase):
         self.assertTrue(result['artifact_contract_verified'])
         self.assertNotIn('ota_and_payload_signatures_verified', result)
         self.assertFalse(result['device_accepted'])
+        self.assertTrue(result['payload_images_verified'])
+
+    def test_payload_cannot_reference_different_images(self):
+        with self.assertRaisesRegex(ValueError, 'differs from target-files'):
+            CHECK.verify_artifacts(*self.fixture(bad_payload=True), 123)
+
+    def test_malformed_payload_protobuf_is_rejected(self):
+        for data in (b'\x80', b'\x0a\x08x', b'\x00\x01', b'\x0b', b'\xff' * 10):
+            with self.subTest(data=data), self.assertRaises(ValueError):
+                list(CHECK.protobuf_fields(data))
+
+    def test_duplicate_payload_singular_fields_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'repeated'):
+            CHECK.protobuf_single(b'\x08\x01\x08\x02', 1, 0)
 
     def test_standard_radio_firmware_is_accepted(self):
         result = CHECK.verify_artifacts(*self.fixture(radio=True), 123, ['system', 'vbmeta', 'lk'])

@@ -215,7 +215,8 @@ def main():
             # a separate historical job wrapper must not be required for this.
             with (record_dir / 'gold-package.json').open('w') as report:
                 subprocess.run(['python3', str(REPO / 'tools/check-gold-package.py'),
-                                '--target-files', str(target), '--aapt2', str(host_bin / 'aapt2')],
+                                '--target-files', str(target), '--aapt2', str(host_bin / 'aapt2'),
+                                '--image-tools', str(host_bin), '--scratch-parent', str(record_dir)],
                                cwd=tree, env=verify_env, stdout=report, check=True)
             result_record['gold_package_verified'] = True
         except (ValueError, OSError, KeyError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:

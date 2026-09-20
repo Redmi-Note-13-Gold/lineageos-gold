@@ -11,6 +11,7 @@ import io
 import json
 from pathlib import Path
 import re
+import shutil
 import struct
 import subprocess
 import tempfile
@@ -25,6 +26,91 @@ def require(condition, message):
 
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def verify_images(target, host_bin, scratch_parent=None):
+    """Compare actual final image contents with the package's checked members."""
+    wanted = {
+        'vendor': ['lib/hw/mapper.mediatek.so', 'lib/libgpud.so', 'lib/libgralloc_metadata.so',
+                   'lib/libgralloctypes_mtk.so', 'lib/arm.graphics-V5-ndk.so',
+                   'bin/hw/android.hardware.health-service.gold',
+                   'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
+                   'etc/vintf/manifest/android.hardware.health-service.gold.xml',
+                   'etc/selinux/vendor_file_contexts', 'etc/permissions/android.hardware.telephony.ims.xml',
+                   'etc/wifi/wpa_supplicant.conf', 'overlay/FrameworkResOverlayGold.apk',
+                   'overlay/SettingsResOverlayGold.apk'],
+        'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
+                       'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
+    }
+    recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
+    recovery_wanted = ['system/bin/hw/android.hardware.health-service.gold-recovery',
+                       'system/etc/init/android.hardware.health-service.gold-recovery.rc',
+                       'system/etc/vintf/manifest/android.hardware.health-service.gold.xml']
+    hashes = {}
+    with zipfile.ZipFile(target) as archive, tempfile.TemporaryDirectory(
+            prefix='gold-image-check-', dir=scratch_parent) as temporary:
+        scratch = Path(temporary)
+
+        def run(command):
+            result = subprocess.run([str(arg) for arg in command], capture_output=True)
+            require(result.returncode == 0, 'Image reader failed: ' + str(command[0]) + ': ' +
+                    result.stderr.decode(errors='replace')[-2000:])
+            return result.stdout
+
+        def compare(name, data):
+            require(name not in hashes, 'Duplicate actual image member: ' + name)
+            actual = sha256(data)
+            require(actual == sha256(archive.read(name)), 'Actual image/member mismatch: ' + name)
+            hashes[name] = actual
+
+        for partition in (*wanted, 'vendor_boot'):
+            image = scratch / (partition + '.img')
+            with archive.open('IMAGES/' + image.name) as src, image.open('wb') as dst:
+                shutil.copyfileobj(src, dst, 8 * 1024 * 1024)
+            if partition == 'vendor_boot':
+                continue
+            extracted = scratch / partition
+            if partition == 'vendor':
+                run([host_bin / 'fsck.erofs', '--extract=' + str(extracted), '--no-preserve', image])
+            else:
+                for relative in wanted[partition]:
+                    output = extracted / relative
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    run(['debugfs', '-R', 'dump /' + relative + ' ' + str(output), image])
+                    require(output.is_file(), 'debugfs did not extract ' + relative)
+            for relative in wanted[partition]:
+                compare(partition.upper() + '/' + relative, (extracted / relative).read_bytes())
+            image.unlink()
+
+        boot = scratch / 'boot'
+        run([host_bin / 'unpack_bootimg', '--boot_img', scratch / 'vendor_boot.img', '--out', boot])
+        for ramdisk in boot.glob('vendor_ramdisk*'):
+            if not ramdisk.is_file():
+                continue
+            raw = ramdisk.read_bytes()
+            if raw[:6] not in (b'070701', b'070702'):
+                raw = run([host_bin / 'lz4', '-d', '-c', ramdisk])
+            offset = 0
+            while offset + 110 <= len(raw):
+                header = raw[offset:offset + 110]
+                require(header[:6] in (b'070701', b'070702'), 'Unsupported Recovery cpio header')
+                fields = [int(header[6 + i * 8:14 + i * 8], 16) for i in range(13)]
+                size, namesz = fields[6], fields[11]
+                start = offset + 110
+                require(namesz > 0 and start + namesz <= len(raw), 'Truncated Recovery cpio name')
+                name = raw[start:start + namesz - 1].decode()
+                start = (start + namesz + 3) & ~3
+                require(start + size <= len(raw), 'Truncated Recovery cpio entry')
+                if name == 'TRAILER!!!':
+                    break
+                if name.startswith('./'):
+                    name = name[2:]
+                if name in recovery_wanted:
+                    compare(recovery_prefix + name, raw[start:start + size])
+                offset = (start + size + 3) & ~3
+        require(all(recovery_prefix + name in hashes for name in recovery_wanted),
+                'Missing actual Recovery image members')
+    return {'verified': True, 'matched_files': len(hashes), 'members': hashes}
 
 
 def verify(target, aapt2, readelf, profile):
@@ -206,9 +292,16 @@ def main():
     parser.add_argument('--target-files', required=True, type=Path)
     parser.add_argument('--aapt2', required=True, type=Path)
     parser.add_argument('--readelf', default='readelf')
+    parser.add_argument('--image-tools', type=Path,
+                        help='Also inspect final images using this build host-bin directory and debugfs')
+    parser.add_argument('--scratch-parent', type=Path,
+                        help='Temporary image extraction directory; removed after checking')
     args = parser.parse_args()
     profile = Path(__file__).resolve().parents[1] / 'device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml'
-    print(json.dumps(verify(args.target_files, args.aapt2, args.readelf, profile), indent=2, ensure_ascii=False))
+    result = verify(args.target_files, args.aapt2, args.readelf, profile)
+    if args.image_tools:
+        result['actual_images'] = verify_images(args.target_files, args.image_tools, args.scratch_parent)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
 if __name__ == '__main__':
