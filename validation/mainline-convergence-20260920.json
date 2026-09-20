@@ -1,98 +1,51 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T03:07:12.730803+08:00",
+  "updated_at": "2026-09-21T04:13:38.122785+08:00",
   "task_state": "in_progress",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
-  "latest_source_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+  "latest_source_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
   "latest_candidate_build": {
-    "unit": "gold-power-ims-r2-20260921.service",
-    "commit": "c36757a561fe563181e41b8b857c3e8460486ed8",
-    "build_datetime": 1789925665,
+    "unit": "gold-power-runtime-r3-20260921.service",
+    "guard": "gold-power-runtime-r3-vm-guard-20260921.service",
+    "commit": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "build_datetime": 1789933740,
     "source": "/srv/build/migration/gold-architecture-20260914/source",
     "out": "out-gold-standard",
-    "log": "/srv/build/logs/gold-power-ims-r2-20260921.log",
+    "log": "/srv/build/logs/gold-power-runtime-r3-20260921.log",
     "records_before": [
-      "1789870972867912990",
-      "1789442945709903724",
-      "1789438870571140872",
-      "1789436071622690739",
-      "1789404209822755068",
-      "1789894178297235723",
-      "1789893347560759279",
-      "1789401150371178312",
+      "1789353186009140661",
       "1789355968059835540",
-      "1789403686745335883",
-      "1789911389192271607",
-      "1789894861622125711",
-      "1789870292199957320",
       "1789356597523890222",
       "1789397823611175488",
-      "1789353186009140661",
+      "1789401150371178312",
+      "1789403686745335883",
+      "1789404209822755068",
+      "1789436071622690739",
+      "1789438870571140872",
+      "1789442945709903724",
+      "1789870292199957320",
+      "1789870972867912990",
+      "1789893347560759279",
+      "1789894178297235723",
+      "1789894861622125711",
+      "1789911389192271607",
       "1789914079640672965",
-      "1789918353346734747"
+      "1789918353346734747",
+      "1789925665663472655"
     ],
-    "phase": "Authorized standard update_engine OTA writing inactive A slot; terminal install result pending",
+    "phase": "Build runtime-proven Power boot fix, shared-display exclusion, readback reconciliation and enforcing C ABI diagnostics",
     "device_accepted": false,
-    "terminal_result": "Android compilation succeeded; original wrapper failed on VINTF XML byte comparison; corrected package revalidation passed",
-    "guard_unit": "gold-power-ims-r2-vm-guard-20260921.service",
+    "terminal_result": "success",
+    "guard_unit": "gold-power-runtime-r3-vm-guard-20260921.service",
     "resource_limits_verified": true,
     "build_exit_code": 0,
-    "original_wrapper_exit_code": 1,
-    "android_elapsed": "01:15:15",
-    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
-    "candidate": {
-      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
-      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
-      "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
-      "original_wrapper_exit": 1,
-      "original_failure": "Byte comparison of assembled Power VINTF schema/comment against source",
-      "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a",
-      "validation_completed": true,
-      "device_accepted": false,
-      "ota": {
-        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
-        "sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
-        "bytes": 1174889334
-      },
-      "target_files": {
-        "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a/lineage_gold-target_files.zip",
-        "sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
-        "bytes": 2903014669
-      },
-      "frozen_source_hashes": {
-        "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
-        "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
-        "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
-        "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
-        "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
-        "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
-        "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
-        "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
-        "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
-      },
-      "host_tool_hashes": {
-        "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
-        "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
-        "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
-        "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
-        "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
-        "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
-        "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
-        "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
-        "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
-        "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
-      },
-      "actual_image_files": 29,
-      "payload_partitions": 14,
-      "completed_at": "2026-09-20T19:01:06.136929+00:00"
-    },
-    "guard_restored_live": {
-      "swappiness": "0",
-      "zpool": "zbud",
-      "zswap": "N",
-      "shrinker_enabled": "Y"
-    }
+    "source_audit_inputs": 158,
+    "source_audit_matches": true,
+    "android_elapsed": "13:34",
+    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789933740204304290",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323",
+    "guard_restored_live": true
   },
   "legacy_platform_patch_comparison": [
     {
@@ -816,6 +769,37 @@
         }
       ],
       "device_hardware_verified": false
+    },
+    "latest_source": {
+      "revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+      "python_passed": 75,
+      "macos_arm64_request_tests_passed": 27,
+      "macos_arm64_node_engine_tests_passed": 32,
+      "android_and_linux_build_pending": false,
+      "linux_requests_passed": 27,
+      "linux_nodes_engine_passed": 32
+    },
+    "without_archive_export_latest": {
+      "revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+      "archive_directory_present": false,
+      "python_tests": 75,
+      "test_exit_code": 0,
+      "ims_apk_sha256": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "full_android_rebuild_proved": false,
+      "scope": "fresh Git export excludes archive; current mainline host tests and pinned input availability only"
+    },
+    "android_power_c36757a": {
+      "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "arm64": {
+        "requests_passed": 26,
+        "nodes_engine_passed": 28
+      },
+      "arm": {
+        "requests_passed": 26,
+        "nodes_engine_passed": 28
+      },
+      "scope": "deterministic native tests; not hardware or performance acceptance",
+      "runtime_modification": "temporary display node DAC permitted the system to boot"
     }
   },
   "ims_input": {
@@ -1038,14 +1022,14 @@
   ],
   "device": {
     "write_authorization": "User approved current session full scoped OTA and subsequent same-baseline revisions, Recovery/reboot/readback, temporary adb root and test programs, Wi-Fi reconnect/network debugging. No wipe, SIM changes, calls or SMS.",
-    "last_installed_incremental": "1789911389",
-    "last_installed_slot": "b",
+    "last_installed_incremental": "1789925665",
+    "last_installed_slot": "a",
     "latest_candidate_installed": false,
     "before_install_snapshot_state": "none; metadata OTA state and snapshots empty",
     "installed_ota_certificate_matches": true,
     "root_diagnostics_executed": true,
     "global_selinux": "Enforcing",
-    "transition": "97969dc sideload host exited 0; user manually rebooted; normal B boot confirmed. Reconnected USB; final Recovery status 0 and all 14 independent active-slot image-range hashes match the candidate.",
+    "transition": "c36757a standard update_engine install to A succeeded; installer and independent readback each match all 14 final images. Original image timed out before boot_complete due Power display-node DAC failure. Temporary display DAC allowed boot; original candidate is not accepted.",
     "network_adb_enabled": false,
     "sim_readonly": {
       "loaded_slot": 2,
@@ -1055,8 +1039,8 @@
       "confirmed_on_97969dc": true
     },
     "hardware_results_apply_to_new_candidate": false,
-    "last_installed_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
-    "latest_connection": "USB ADB connected at 2026-09-20T23:59:08+08:00; gold, B slot, incremental 1789911389, boot_completed=1, SELinux Enforcing",
+    "last_installed_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+    "latest_connection": "USB ADB connected; gold A 1789925665 boot_completed=1 Enforcing with a temporary display-node DAC modification; user 0 RUNNING_LOCKED at latest check",
     "sideload": {
       "start": "2026-09-20T14:31:49.700413+00:00",
       "ota_sha256": "30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6",
@@ -1065,35 +1049,11 @@
       "exit_code": 0,
       "end": "2026-09-20T14:44:29.679501+00:00"
     },
-    "recovery_final_status_verified": true,
+    "recovery_final_status_verified": false,
     "partition_readback_verified": true,
-    "after_install_snapshot_state": "none; metadata OTA state zero bytes and snapshots directory empty",
+    "after_install_snapshot_state": "none; metadata OTA state empty and snapshots directory empty",
     "data_persist_mounted": true,
-    "retained_canaries_verified": 2,
-    "boot_observer": {
-      "command_failures": 4,
-      "elapsed_seconds": 21.703423750000002,
-      "error": null,
-      "exit_code": 0,
-      "outcome": "booted",
-      "schema_version": 1,
-      "stable_samples": 9,
-      "stable_seconds": 21.474244290999998,
-      "target_slot": "b",
-      "last_observation": {
-        "boot_completed": "1",
-        "boot_modes": [
-          "normal",
-          "normal"
-        ],
-        "elapsed_seconds": 21.703120625,
-        "properties_ok": true,
-        "ready": true,
-        "recovery": false,
-        "slot": "b",
-        "transport": "device"
-      }
-    },
+    "retained_canaries_verified": 1,
     "ims_97969dc": {
       "feature_declared": true,
       "framework_initialized": true,
@@ -1122,7 +1082,54 @@
       "upgrade_fix_revision": "2cd2675",
       "upgrade_fix_installed": false
     },
-    "recovery_verification": {
+    "next_ota_preflight": {
+      "update_engine_client_available": true,
+      "help_reviewed": true,
+      "ota_package_directory_exists": true,
+      "ota_package_selinux_type": "ota_package_file",
+      "data_available_gib": 106,
+      "update_started": false,
+      "note": "Normal-system standard payload installation can be evaluated for the next signed candidate; no update command was executed."
+    },
+    "current_candidate_preflight": {
+      "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "slot": "_b",
+      "incremental": "1789911389",
+      "boot_completed": true,
+      "selinux": "Enforcing",
+      "snapshot_state": "none",
+      "update_engine": "IDLE",
+      "installed_ota_certificate_matches": true,
+      "retained_canaries_verified": 2,
+      "write_started": true,
+      "installation_completed": true
+    },
+    "boot_observer_97969dc": {
+      "command_failures": 4,
+      "elapsed_seconds": 21.703423750000002,
+      "error": null,
+      "exit_code": 0,
+      "outcome": "booted",
+      "schema_version": 1,
+      "stable_samples": 9,
+      "stable_seconds": 21.474244290999998,
+      "target_slot": "b",
+      "last_observation": {
+        "boot_completed": "1",
+        "boot_modes": [
+          "normal",
+          "normal"
+        ],
+        "elapsed_seconds": 21.703120625,
+        "properties_ok": true,
+        "ready": true,
+        "recovery": false,
+        "slot": "b",
+        "transport": "device"
+      }
+    },
+    "recovery_verification_97969dc": {
       "revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
       "read_method": "rescue ext4 mounted read-only ro,noload; own mount removed",
       "target_build": "1789911389",
@@ -1223,7 +1230,7 @@
         "max": 39100
       }
     },
-    "partition_readback": {
+    "partition_readback_97969dc": {
       "revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
       "incremental": "1789911389",
       "slot": "b",
@@ -1389,33 +1396,377 @@
       "completed_at": "2026-09-20T15:52:51.821128+00:00",
       "all_match": true
     },
-    "limited_log_check": {
+    "limited_log_check_97969dc": {
       "candidate": "97969dc",
       "window": "last 15000 logcat lines at 2026-09-20T23:54:00+08:00",
       "matching_avc_or_fatal_lines": 0,
       "meaning": "Limited log window only; does not establish full hardware or IMS acceptance"
     },
-    "next_ota_preflight": {
-      "update_engine_client_available": true,
-      "help_reviewed": true,
-      "ota_package_directory_exists": true,
-      "ota_package_selinux_type": "ota_package_file",
-      "data_available_gib": 106,
-      "update_started": false,
-      "note": "Normal-system standard payload installation can be evaluated for the next signed candidate; no update command was executed."
+    "emulated_storage_canary_pending_first_unlock": true,
+    "boot_observer": {
+      "command_failures": 9,
+      "elapsed_seconds": 180.01134445900001,
+      "error": null,
+      "exit_code": 13,
+      "last_observation": {
+        "boot_completed": null,
+        "ready": false,
+        "recovery": false,
+        "slot": null,
+        "transport": "disconnected"
+      },
+      "outcome": "timeout",
+      "schema_version": 1,
+      "stable_samples": 0,
+      "stable_seconds": 0.0,
+      "target_slot": "a",
+      "private_identifiers_redacted": true
     },
-    "current_candidate_preflight": {
+    "whole_candidate_unaided_boot_passed": false,
+    "partition_readback": {
       "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
-      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
-      "slot": "_b",
-      "incremental": "1789911389",
-      "boot_completed": true,
-      "selinux": "Enforcing",
+      "incremental": "1789925665",
+      "slot": "a",
+      "started_at": "2026-09-20T19:50:54.083145+00:00",
+      "snapshot_state_before": "none",
+      "method": "read-only SHA-256 of the exact final image byte range on active A slot block devices",
+      "partitions": [
+        {
+          "partition": "boot",
+          "path": "/dev/block/by-name/boot_a",
+          "block_device_bytes": 67108864,
+          "hashed_bytes": 67108864,
+          "expected_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "actual_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "matches": true,
+          "elapsed_seconds": 0.48
+        },
+        {
+          "partition": "dtbo",
+          "path": "/dev/block/by-name/dtbo_a",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 8388608,
+          "expected_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "actual_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "matches": true,
+          "elapsed_seconds": 0.224
+        },
+        {
+          "partition": "odm_dlkm",
+          "path": "/dev/block/mapper/odm_dlkm_a",
+          "block_device_bytes": 348160,
+          "hashed_bytes": 348160,
+          "expected_sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391",
+          "actual_sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391",
+          "matches": true,
+          "elapsed_seconds": 0.182
+        },
+        {
+          "partition": "product",
+          "path": "/dev/block/mapper/product_a",
+          "block_device_bytes": 510750720,
+          "hashed_bytes": 510750720,
+          "expected_sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8",
+          "actual_sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8",
+          "matches": true,
+          "elapsed_seconds": 2.028
+        },
+        {
+          "partition": "scp",
+          "path": "/dev/block/by-name/scp_a",
+          "block_device_bytes": 6291456,
+          "hashed_bytes": 1200128,
+          "expected_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "actual_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "matches": true,
+          "elapsed_seconds": 0.172
+        },
+        {
+          "partition": "system",
+          "path": "/dev/block/mapper/system_a",
+          "block_device_bytes": 1048506368,
+          "hashed_bytes": 1048506368,
+          "expected_sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26",
+          "actual_sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26",
+          "matches": true,
+          "elapsed_seconds": 2.535
+        },
+        {
+          "partition": "system_dlkm",
+          "path": "/dev/block/mapper/system_dlkm_a",
+          "block_device_bytes": 7303168,
+          "hashed_bytes": 7303168,
+          "expected_sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd",
+          "actual_sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd",
+          "matches": true,
+          "elapsed_seconds": 0.213
+        },
+        {
+          "partition": "system_ext",
+          "path": "/dev/block/mapper/system_ext_a",
+          "block_device_bytes": 461287424,
+          "hashed_bytes": 461287424,
+          "expected_sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4",
+          "actual_sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4",
+          "matches": true,
+          "elapsed_seconds": 1.233
+        },
+        {
+          "partition": "vbmeta",
+          "path": "/dev/block/by-name/vbmeta_a",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 8192,
+          "expected_sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1",
+          "actual_sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1",
+          "matches": true,
+          "elapsed_seconds": 0.166
+        },
+        {
+          "partition": "vbmeta_system",
+          "path": "/dev/block/by-name/vbmeta_system_a",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 4096,
+          "expected_sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5",
+          "actual_sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5",
+          "matches": true,
+          "elapsed_seconds": 0.177
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "path": "/dev/block/by-name/vbmeta_vendor_a",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 4096,
+          "expected_sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b",
+          "actual_sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b",
+          "matches": true,
+          "elapsed_seconds": 0.184
+        },
+        {
+          "partition": "vendor",
+          "path": "/dev/block/mapper/vendor_a",
+          "block_device_bytes": 483639296,
+          "hashed_bytes": 483639296,
+          "expected_sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911",
+          "actual_sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911",
+          "matches": true,
+          "elapsed_seconds": 1.498
+        },
+        {
+          "partition": "vendor_boot",
+          "path": "/dev/block/by-name/vendor_boot_a",
+          "block_device_bytes": 67108864,
+          "hashed_bytes": 67108864,
+          "expected_sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573",
+          "actual_sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573",
+          "matches": true,
+          "elapsed_seconds": 0.481
+        },
+        {
+          "partition": "vendor_dlkm",
+          "path": "/dev/block/mapper/vendor_dlkm_a",
+          "block_device_bytes": 13967360,
+          "hashed_bytes": 13967360,
+          "expected_sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d",
+          "actual_sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d",
+          "matches": true,
+          "elapsed_seconds": 0.247
+        }
+      ],
+      "runtime_modification": "temporary display node DAC only; not an unaided boot pass",
+      "finished_at": "2026-09-20T19:51:04.160661+00:00",
+      "all_partitions_match": true,
+      "snapshot_state_after": "none",
+      "whole_candidate_boot_accepted": false
+    },
+    "installation_c36757a": {
+      "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "incremental": "1789925665",
+      "target_slot": "_a",
+      "installer": "standard normal-system update_engine",
+      "installation_success": true,
+      "installer_hashes_match_final_images": [
+        {
+          "partition": "boot",
+          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "matches": true
+        },
+        {
+          "partition": "dtbo",
+          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "matches": true
+        },
+        {
+          "partition": "odm_dlkm",
+          "sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391",
+          "matches": true
+        },
+        {
+          "partition": "product",
+          "sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8",
+          "matches": true
+        },
+        {
+          "partition": "scp",
+          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "matches": true
+        },
+        {
+          "partition": "system",
+          "sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26",
+          "matches": true
+        },
+        {
+          "partition": "system_dlkm",
+          "sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd",
+          "matches": true
+        },
+        {
+          "partition": "system_ext",
+          "sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta",
+          "sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta_system",
+          "sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b",
+          "matches": true
+        },
+        {
+          "partition": "vendor",
+          "sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911",
+          "matches": true
+        },
+        {
+          "partition": "vendor_boot",
+          "sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573",
+          "matches": true
+        },
+        {
+          "partition": "vendor_dlkm",
+          "sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d",
+          "matches": true
+        }
+      ],
+      "independent_partition_readback": true,
+      "data_wiped": false,
+      "timestamp": "2026-09-20T19:11:07.963023+00:00"
+    },
+    "postinstall_c36757a": {
+      "checked_at": "2026-09-20T19:51:04.374441+00:00",
+      "identity": [
+        "gold",
+        "_a",
+        "1789925665",
+        "1",
+        "Enforcing"
+      ],
+      "data_mounted": true,
+      "persist_mounted": true,
+      "data_canary_matches": true,
+      "emulated_storage_canary": "pending first user unlock",
+      "user_state": "RUNNING_LOCKED",
       "snapshot_state": "none",
-      "update_engine": "IDLE",
-      "installed_ota_certificate_matches": true,
-      "retained_canaries_verified": 2,
-      "write_started": true
+      "global_selinux": "Enforcing",
+      "diagnostic_modification": "temporary display node DAC; not an unaided candidate boot pass",
+      "whole_candidate_boot_accepted": false
+    },
+    "ims_c36757a": {
+      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "runtime_condition": "temporary owner system:system and mode 0660 on /proc/displowpower/idletime after the original boot timeout; not accepted as an unmodified image",
+      "global_selinux": "Enforcing",
+      "feature_declared": true,
+      "bound_service": "com.mediatek.ims/.MtkDynamicImsService",
+      "startup_properties": {
+        "persist.vendor.ims_support": "1",
+        "persist.vendor.volte_support": "1",
+        "ro.vendor.md_auto_setup_ims": "1"
+      },
+      "mtkIms_binder_present": true,
+      "mmtel_feature_state": "READY on both slots",
+      "registered": false,
+      "voice_video_ut_sms_capabilities_reported_available": false,
+      "selected_slot_1_effective_carrier_config": {
+        "carrier_config_applied_bool": true,
+        "carrier_volte_available_bool": false,
+        "carrier_volte_provisioning_required_bool": false,
+        "carrier_vt_available_bool": false,
+        "carrier_wfc_ims_available_bool": false,
+        "enhanced_4g_lte_on_by_default_bool": true,
+        "editable_enhanced_4g_lte_bool": true
+      },
+      "effective_config_method": "cmd phone cc get-value -s 1 <explicit boolean key>; raw dumpsys also contains unrelated framework default values",
+      "framework_platform_volte_enabled": false,
+      "sim_plan_voice_entitlement_confirmed": false,
+      "carrier_fault_proved": false,
+      "global_carrier_override_added": false,
+      "sim_changed": false,
+      "calls_or_sms_sent": false,
+      "restart_recovery_tested": false
+    },
+    "wifi_c36757a": {
+      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "runtime_condition": "temporary owner system:system and mode 0660 on /proc/displowpower/idletime after the original boot timeout; not accepted as an unmodified image",
+      "global_selinux": "Enforcing",
+      "vendor_template_pmf": 1,
+      "vendor_overlay_pmf": 1,
+      "preserved_data_pmf": 0,
+      "associated": false,
+      "saved_test_hotspots_visible_in_refreshed_scan": false,
+      "association_dhcp_connectivity_reconnect_tested": false,
+      "network_adb_enabled": false,
+      "user_hotspot_availability_and_first_unlock_requested": true
+    },
+    "power_c36757a": {
+      "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "runtime_condition": "temporary owner system:system and mode 0660 on /proc/displowpower/idletime after the original boot timeout; not accepted as an unmodified image",
+      "global_selinux": "Enforcing",
+      "original_boot": "failed: Power exited before Binder registration when /proc/displowpower/idletime was root:root 0440; real DAC rejection recorded",
+      "temporary_dac_changed_only_one_node": true,
+      "root_c_abi_probe": "failed with -EPERM; enforcing mtk_hal_power denied su:dir search for /proc/PID/stat",
+      "media_probe": {
+        "encoder": "c2.mtk.avc.encoder",
+        "decoder": "c2.mtk.avc.decoder",
+        "clip_width": 1080,
+        "clip_height": 1920,
+        "encoder_duration_seconds": 3,
+        "decoded_frames": 29,
+        "decode_elapsed_ms": 276,
+        "decoder_eos": true,
+        "real_native_caller_domain": "vpud_native",
+        "real_native_caller_executable": "v3avpud",
+        "real_native_caller_uid": 1013,
+        "requests": [
+          {
+            "id": "0x0240c000",
+            "value": 100,
+            "duration_ms": 0,
+            "result": "positive handle then synchronous release 0"
+          },
+          {
+            "id": "0x01468000",
+            "value": 0,
+            "duration_ms": 0,
+            "result": "-EOPNOTSUPP"
+          }
+        ],
+        "full_playback_or_energy_acceptance": false,
+        "test_clip_deleted": true
+      },
+      "launch_interaction_uclamp_defaults": [
+        0,
+        0
+      ],
+      "temporary_probe_programs_cleaned": true,
+      "cleanup_record": "private runtime-c36757a/test-cleanup.json"
     }
   },
   "retirement": {
@@ -1425,11 +1776,11 @@
     "stock_to_complete_ims_payload_rebuild": false,
     "missing_ims_rebuild_is_declared_prebuilt_limitation": true,
     "blocking_work": [
-      "c36757a compiled and package revalidation passed using 05f156a checker; newest candidate device installation and runtime acceptance pending",
-      "IMS startup fix must be installed and validated through real modem backend, capabilities, registration and recovery; carrier limits must be separated from defects",
-      "Power Android service and actual caller/resource lifecycles need device validation; framework strategy adoption requires reproducible latency/frame/energy evidence",
-      "Wi-Fi PMF upgrade fix must pass association, DHCP, connectivity and reconnect",
-      "Newest candidate installation/Recovery/independent readback and affected hardware acceptance pending; 97969dc Recovery status and 14 partition readbacks now verified"
+      "2cca323 compiled and passed 14 payload/29 actual-file gates; need retained-data install, unmodified candidate boot and Recovery",
+      "IMS initialized/READY after c36757a boot workaround; registration/capabilities/recovery remain unverified, effective carrier VoLTE flag false and eSIM voice plan unknown",
+      "Power actual enforcing C ABI lifecycle/restart/exit and measured launch/frame/energy behavior remain pending",
+      "Wi-Fi PMF overlay is installed but saved hotspots not visible; need accessible hotspot, association/DHCP/connectivity/reconnect",
+      "first user unlock needed for emulated-storage canary and remaining affected hardware acceptance; c36757a installer and 14 independent A partition hashes passed"
     ],
     "conditional_delete_paths": [
       "archive/hybrid/README.md",
@@ -1825,15 +2176,14 @@
     "post_fix_device_accepted": false
   },
   "power_implementation": {
-    "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
-    "android_compilation": "passed at c36757a; requests and nodes executables generated for ARM and ARM64; device tests pending",
+    "revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "android_compilation": "2cca323 Android compiled in 13:34 and all package/image gates passed; installation and runtime tests pending",
     "single_service": "android.hardware.power-service.gold",
     "clients": "Native ARM and ARM64 C ABI forwards to synchronous HIDL 1.2; one shared engine with framework AIDL V6",
     "resources": [
       "PERFSERV user 2 cluster frequency floors/caps",
       "top-app uclamp.min",
-      "top-app latency_sensitive",
-      "display idle time"
+      "top-app latency_sensitive"
     ],
     "request_lifecycle": [
       "authenticated UID/PID/starttime",
@@ -1846,9 +2196,7 @@
       "screen, idle, low-power and thermal gates",
       "C client handles never reused and stay bound to the original HAL instance"
     ],
-    "untimed_resources": [
-      "reviewed display idle time only"
-    ],
+    "untimed_resources": [],
     "unsupported_requests_return_error": true,
     "framework_launch_uclamp_default": 0,
     "framework_interaction_uclamp_default": 0,
@@ -1859,8 +2207,8 @@
       "record": "/srv/build/build-jobs/gold-mainline-20260920/ppm-matched-kernel-contract.json"
     },
     "remaining": [
-      "Android compile and enforced-SELinux binder/native-caller validation",
-      "unknown live vendor resource contracts and core constraints",
+      "2cca323 Android compile and unaided boot/Recovery",
+      "enforcing real C ABI, owner exit and HAL restart; unsupported live private/core contracts remain explicit errors",
       "matched-temperature launch/frame/energy trials and restoration evidence"
     ],
     "diagnostics": "64 in-memory caller/resource records, at most 64 words each; no package/activity/media strings; bounded private protocol warnings",
@@ -1869,42 +2217,98 @@
       "property_writer": "mtk_hal_power vendor domain",
       "shell_or_su_vendor_write_permission_added": false,
       "neverallow_exception_added": false,
-      "permission_and_runtime_validation": "Android build pending; device not tested",
+      "permission_and_runtime_validation": "c36757a Android policy compiled; runtime strategy command/refresh still not exercised",
       "reload": "standard controlled service restart to refresh framework capability discovery; no vendor reload property trigger",
       "android_compilation_passed": true,
       "device_verified": false
-    }
+    },
+    "shared_display_scalar": {
+      "adopted": false,
+      "request_result": "-EOPNOTSUPP",
+      "reason": "Matched DRM proc handler directly overwrites a global interval also modified by display state; no caller-scoped vote or neutral release. Live values changed 34/50; hard-coded reset 50 is not valid ownership. Current service no longer reads/writes this scalar.",
+      "active_kernel_module": "device/xiaomi/gold-kernel/vendor_ramdisk/mediatek-drm.ko",
+      "module_sha256": "18a3559e23dcfa233312a93d0e0c228b0f56c2ed68d56d089b6285c8719384d6",
+      "contract_record": "/srv/build/build-jobs/gold-mainline-20260920/display-idletime-matched-kernel.txt"
+    },
+    "boot_independent_of_performance_backend": true,
+    "backend_unavailable_behavior": "register controls, reject leases with ENODEV and do not advertise boosts; retry with cached display/idle/low-power and fresh thermal gates",
+    "readback_reconciliation": "unchanged requests and expiry checks verify actual owned votes; backend suppresses redundant writes and restores drift before success",
+    "root_probe_policy": "userdebug/eng only: mtk_hal_power may search su process directories and read/getattr/open su process files for starttime; no ptrace, production su access or vendor-property exception"
   },
   "local_followup": {
-    "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
+    "revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
     "synced_to_research_host": true,
-    "reason": "Previous build reached a terminal policy failure; controlled sync completed before r2 started",
-    "changes": [
-      "process-local non-reused C ABI handles pinned to their original Binder instance across HAL restart",
-      "bounded in-memory native request records and bounded unsupported caller diagnostics",
-      "device --client lifecycle probe using installed C ABI and enforcing HAL"
-    ],
-    "android_build_and_device_tests": "Android compilation and corrected package validation passed; device tests pending",
-    "next_sync": "No further source sync while r2 is active",
-    "synced_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+    "synced_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
     "sync_record": {
-      "at": "2026-09-21T01:33:42.561962+08:00",
-      "from": "3ee80e9da54585f54e8e6a92741b9331fd3ff52b",
-      "to": "c36757a561fe563181e41b8b857c3e8460486ed8",
+      "previous_project_commit": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
+      "project_commit": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+      "before_inputs": 158,
+      "after_inputs": 158,
+      "merged_inputs_match_mainline": true,
+      "unchanged_bp_timestamps_preserved": true,
       "changed_files": [
-        "device/xiaomi/gold/power/NodeBackendTest.cpp",
-        "device/xiaomi/gold/power/PowerEngine.cpp",
-        "device/xiaomi/gold/power/PowerEngine.h",
-        "device/xiaomi/gold/power/android.hardware.power-service.gold.rc",
-        "device/xiaomi/gold/power/service.cpp",
-        "device/xiaomi/gold/sepolicy/vendor/power.te",
-        "device/xiaomi/gold/sepolicy/vendor/property_contexts",
-        "hardware/mediatek/libmtkperf_client/mtkperf_client.cpp"
+        {
+          "path": "device/xiaomi/gold/power/NodeBackend.cpp",
+          "before": "dd0467f5d5866e43c3284ee23418b091e4710dc9f64c84f1c157fb543df71569",
+          "after": "ea368123e7654b165dd95e9175a350b43ac9e88ea725f1fd6241610bb71e9c79"
+        },
+        {
+          "path": "device/xiaomi/gold/power/NodeBackend.h",
+          "before": "869e25b5260567603e2b1d32513dfc1db3c4d782f120e86994632a691e510b86",
+          "after": "44a8c7204fec85ffc6953a542aa9f65b2af0012102569bad3aeb3ac5731567eb"
+        },
+        {
+          "path": "device/xiaomi/gold/power/NodeBackendTest.cpp",
+          "before": "7c9e26522ae5dd88b6b5027a9f42aa1b71b9115a6b63729f4943a114edbe0aa1",
+          "after": "7277667be925196d2d861c0ca5067f076d9b5e90b0d920c6e8abf66bc278578b"
+        },
+        {
+          "path": "device/xiaomi/gold/power/PowerEngine.cpp",
+          "before": "01196d37df3a3258d9ecdf8c844fe29fa13462512ab3e940f678d76274ab2e0b",
+          "after": "e2707af5eeb58a98c7b8498daa51fbf4c18edb4aba9ad0a81c1c578251ec8a8d"
+        },
+        {
+          "path": "device/xiaomi/gold/power/PowerEngine.h",
+          "before": "710b43cca805f6136915d7734f4ebf70256a8048e6e1223cb337b420fc3f6b98",
+          "after": "5a1a4114de00d9ea36bbca9afd343ab0a3c8ec2eea5b07461de299bd90ad353b"
+        },
+        {
+          "path": "device/xiaomi/gold/power/RequestManager.cpp",
+          "before": "ea45d3de40b6177c093120fc65295b601d16e07550189673779c5c98ee0818f6",
+          "after": "5cddd80765cf17876d59452e8c3cad222a3f019c24ac1572d926616d84dba464"
+        },
+        {
+          "path": "device/xiaomi/gold/power/RequestManagerTest.cpp",
+          "before": "675d19dfe84a9795c492dcec780f8eb857e3351991c511ba02317c173cb07292",
+          "after": "037ac830683929d68b0538bf0a45acbcb945b75c1755053cc0d0ca20fe945404"
+        },
+        {
+          "path": "device/xiaomi/gold/power/service.cpp",
+          "before": "c1085ce40e6a5904a273902b6070344f2aeac2c3484815d1a45615e83fd49e6e",
+          "after": "04dbf14b9f6d5a61524fe4e56691beccc7362cfbcaf5fa0c35353c5d3c5fc612"
+        },
+        {
+          "path": "device/xiaomi/gold/sepolicy/vendor/power.te",
+          "before": "52512ea9a4935fe6b88adc2b89b0266fe922ec244058948af2baa941b491b9a1",
+          "after": "a7b82b9e9104decd6d2fd782a6b0cdf3bbe18e03ffa6cc95cff40e1724ac123c"
+        },
+        {
+          "path": "hardware/mediatek/libmtkperf_client/mtkperf_client.cpp",
+          "before": "f2b76295a6219a240371ee2c43d65d9f491aca6931991621387a15cdfed0a184",
+          "after": "a461d90b7b4ff70a4d9290901436d6b37cb10d838f2ccc423a41edc1e7380047"
+        }
       ],
-      "unchanged_android_bp_mtime_preserved": true,
-      "merged_files_verified": 158,
-      "failures": []
-    }
+      "at": 1789933663.816763
+    },
+    "changes": [
+      "drop unsafe shared-display ownership",
+      "verify unchanged real votes and repair drift",
+      "keep framework boot independent of optional performance backend",
+      "debug-only process identity permission from observed AVC",
+      "bounded media decode and C ABI owner-exit/restart probes"
+    ],
+    "android_build_and_device_tests": "2cca323 Android and Linux 27+32 tests passed; c36757a remains installed until the newly frozen candidate is installed",
+    "next_sync": "Build ended; remote project/source still 2cca323; docs-only local update can wait until next needed code sync"
   },
   "failed_builds": [
     {
@@ -1998,144 +2402,102 @@
       "fix_revision": "c36757a561fe563181e41b8b857c3e8460486ed8"
     }
   ],
-  "latest_android_source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
+  "latest_android_source_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
   "latest_candidate_validation": {
-    "build_result": {
-      "build_exit_code": 0,
-      "artifact_contract_verified": true,
-      "android_validators_passed": true,
-      "release_signing_verified": false,
-      "device_accepted": false,
-      "target_files_sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
-      "ota_sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
-      "partitions": [
-        "boot",
-        "dtbo",
-        "odm_dlkm",
-        "product",
-        "scp",
-        "system",
-        "system_dlkm",
-        "system_ext",
-        "vbmeta",
-        "vbmeta_system",
-        "vbmeta_vendor",
-        "vendor",
-        "vendor_boot",
-        "vendor_dlkm"
-      ],
-      "dynamic_partitions": [
-        "odm_dlkm",
-        "product",
-        "system",
-        "system_dlkm",
-        "system_ext",
-        "vendor",
-        "vendor_dlkm"
-      ],
-      "post_timestamp": 1789925665,
-      "signing_tag": "test-keys",
-      "payload_images_verified": true,
-      "payload_images": [
-        {
-          "partition": "boot",
-          "entry": "IMAGES/boot.img",
-          "bytes": 67108864,
-          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f"
-        },
-        {
-          "partition": "dtbo",
-          "entry": "IMAGES/dtbo.img",
-          "bytes": 8388608,
-          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01"
-        },
-        {
-          "partition": "odm_dlkm",
-          "entry": "IMAGES/odm_dlkm.img",
-          "bytes": 348160,
-          "sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391"
-        },
-        {
-          "partition": "product",
-          "entry": "IMAGES/product.img",
-          "bytes": 510750720,
-          "sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8"
-        },
-        {
-          "partition": "scp",
-          "entry": "RADIO/scp.img",
-          "bytes": 1200128,
-          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
-        },
-        {
-          "partition": "system",
-          "entry": "IMAGES/system.img",
-          "bytes": 1048506368,
-          "sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26"
-        },
-        {
-          "partition": "system_dlkm",
-          "entry": "IMAGES/system_dlkm.img",
-          "bytes": 7303168,
-          "sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd"
-        },
-        {
-          "partition": "system_ext",
-          "entry": "IMAGES/system_ext.img",
-          "bytes": 461287424,
-          "sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4"
-        },
-        {
-          "partition": "vbmeta",
-          "entry": "IMAGES/vbmeta.img",
-          "bytes": 8192,
-          "sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1"
-        },
-        {
-          "partition": "vbmeta_system",
-          "entry": "IMAGES/vbmeta_system.img",
-          "bytes": 4096,
-          "sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5"
-        },
-        {
-          "partition": "vbmeta_vendor",
-          "entry": "IMAGES/vbmeta_vendor.img",
-          "bytes": 4096,
-          "sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b"
-        },
-        {
-          "partition": "vendor",
-          "entry": "IMAGES/vendor.img",
-          "bytes": 483639296,
-          "sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911"
-        },
-        {
-          "partition": "vendor_boot",
-          "entry": "IMAGES/vendor_boot.img",
-          "bytes": 67108864,
-          "sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573"
-        },
-        {
-          "partition": "vendor_dlkm",
-          "entry": "IMAGES/vendor_dlkm.img",
-          "bytes": 13967360,
-          "sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d"
-        }
-      ],
-      "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
-      "packaged_policy_sha256": "f457aa9737ce3ca42435920a15fe169c73f5441bf0b5f449bbe824efff7e8344",
-      "permissive_domains": [
-        "su",
-        "osi",
-        "backuptool"
-      ],
-      "ota_and_payload_signatures_verified": true,
-      "target_files": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
-      "ota": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
-      "error": "Command '['python3', '/srv/build/migration/gold-architecture-20260914/project/tools/check-gold-package.py', '--target-files', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip', '--aapt2', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/bin/aapt2', '--image-tools', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/host/linux-x86/bin', '--scratch-parent', '/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655']' returned non-zero exit status 1."
+    "source_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "validator_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789933740204304290",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323",
+    "validation_completed": true,
+    "device_accepted": false,
+    "ota": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+      "sha256": "08e6744536c973a10e4dfa6c4cefff56167d2c16265045f3d9c4af452640adbf",
+      "bytes": 1174888614
     },
-    "corrected_validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
-    "original_result_preserved": true,
+    "target_files": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323/lineage_gold-target_files.zip",
+      "sha256": "b2f9e564bde9f9834da8f66e53a52443320e87dfc7cb9b97b4ebcfa0202f1ef3",
+      "bytes": 2903014936
+    },
+    "frozen_source_hashes": {
+      "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
+      "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
+      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
+      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
+    },
+    "host_tool_hashes": {
+      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
+      "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
+      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+      "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
+      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
+      "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
+      "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
+      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
+    },
+    "system_tool_hashes": {
+      "readelf": "64c58e15274bbbb5153f31078e455e9e77ee5f51489e709bba5bb788ce9df2b0",
+      "debugfs": "1e83118cc9582afcad2711fbb7f40f56668adccb386d988cb6d9ad5c2d001049"
+    },
+    "test_binary_hashes": {
+      "arm/gold_power_requests_test": "664971f2e8d1fa6563cc74f452741d952bb5a66245d37663fd5afa80fcee5225",
+      "arm/gold_power_nodes_test": "b89532dd825addd27386958b206320b493a3668299d23aeffd7a47a285465c6d",
+      "arm64/gold_power_requests_test": "a3eb83896583cf84572c7d018ee30a5704c8072c14cf9962cdf90b67ffb6c2ca",
+      "arm64/gold_power_nodes_test": "342714469661a39f6cb8b8ba0ec71d582ad5b7e09dee122e69fd2ff0aafffdc9"
+    },
+    "linux_native_tests_observed": {
+      "requests_passed": 27,
+      "nodes_engine_passed": 32
+    },
+    "actual_image_files": 29,
+    "payload_partitions": 14,
+    "guard_restored_live": true,
+    "completed_at": "2026-09-20T20:10:20.474028+00:00"
+  },
+  "latest_completed_candidate_build_c36757a": {
+    "unit": "gold-power-ims-r2-20260921.service",
+    "commit": "c36757a561fe563181e41b8b857c3e8460486ed8",
+    "build_datetime": 1789925665,
+    "source": "/srv/build/migration/gold-architecture-20260914/source",
+    "out": "out-gold-standard",
+    "log": "/srv/build/logs/gold-power-ims-r2-20260921.log",
+    "records_before": [
+      "1789870972867912990",
+      "1789442945709903724",
+      "1789438870571140872",
+      "1789436071622690739",
+      "1789404209822755068",
+      "1789894178297235723",
+      "1789893347560759279",
+      "1789401150371178312",
+      "1789355968059835540",
+      "1789403686745335883",
+      "1789911389192271607",
+      "1789894861622125711",
+      "1789870292199957320",
+      "1789356597523890222",
+      "1789397823611175488",
+      "1789353186009140661",
+      "1789914079640672965",
+      "1789918353346734747"
+    ],
+    "phase": "Authorized standard update_engine OTA writing inactive A slot; terminal install result pending",
+    "device_accepted": false,
+    "terminal_result": "Android compilation succeeded; original wrapper failed on VINTF XML byte comparison; corrected package revalidation passed",
+    "guard_unit": "gold-power-ims-r2-vm-guard-20260921.service",
+    "resource_limits_verified": true,
+    "build_exit_code": 0,
+    "original_wrapper_exit_code": 1,
+    "android_elapsed": "01:15:15",
+    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789925665663472655",
     "candidate": {
       "source_revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
       "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
@@ -2182,346 +2544,191 @@
       "payload_partitions": 14,
       "completed_at": "2026-09-20T19:01:06.136929+00:00"
     },
-    "gold_package": {
-      "gold_package_contents_verified": true,
-      "graphics_32bit": {
-        "VENDOR/lib/hw/mapper.mediatek.so": {
-          "sha256": "1b960188125e6a5b3531e91d26883f9c4881e30e8038247f9a146598c1e0f99e",
-          "needed": [
-            "arm.graphics-V5-ndk.so",
-            "android.hardware.graphics.common-V7-ndk.so",
-            "libhidlbase.so",
-            "libdrm.so",
-            "android.hardware.graphics.mapper@4.0.so",
-            "libgralloctypes.so",
-            "libutils.so",
-            "libsync.so",
-            "libcutils.so",
-            "libgralloc_extra.so",
-            "libgralloc_metadata.so",
-            "libgralloctypes_mtk.so",
-            "libged.so",
-            "libgpud.so",
-            "libdmabufheap.so",
-            "libnativewindow.so",
-            "libhardware.so",
-            "libutilscallstack.so",
-            "android.hardware.graphics.common@1.2.so",
-            "liblog.so",
-            "libbase.so",
-            "libc++.so",
-            "libc.so",
-            "libm.so",
-            "libdl.so"
-          ]
-        },
-        "VENDOR/lib/libgpud.so": {
-          "sha256": "967b9dad0c0db2f14ae0852466c662783c84574f14be7b8c5ae30ea1f2d531a1",
-          "needed": [
-            "android.hardware.graphics.common-V7-ndk.so",
-            "android.hardware.graphics.allocator-V2-ndk.so",
-            "libcutils.so",
-            "libutils.so",
-            "libutilscallstack.so",
-            "liblog.so",
-            "libsync.so",
-            "libhardware.so",
-            "libnativewindow.so",
-            "libgralloc_extra.so",
-            "libhidlbase.so",
-            "libgralloctypes.so",
-            "libc++.so",
-            "libc.so",
-            "libm.so",
-            "libdl.so"
-          ]
-        },
-        "VENDOR/lib/libgralloc_metadata.so": {
-          "sha256": "f35f05400da4cfbd2f177749fbc234169361dfe326cbed9cf8c5672171d7bb4e",
-          "needed": [
-            "android.hardware.graphics.mapper@4.0.so",
-            "libhidlbase.so",
-            "libcutils.so",
-            "libutils.so",
-            "liblog.so",
-            "libion.so",
-            "libc.so",
-            "libc++.so",
-            "libm.so",
-            "libdl.so"
-          ]
-        },
-        "VENDOR/lib/libgralloctypes_mtk.so": {
-          "sha256": "380b79f6f3476f8255f4fa7698a7c131b3aa6247e1f7adaafef3c87ddde3e25e",
-          "needed": [
-            "android.hardware.graphics.mapper@4.0.so",
-            "libhidlbase.so",
-            "libhardware.so",
-            "libcutils.so",
-            "libutils.so",
-            "liblog.so",
-            "libion.so",
-            "libc.so",
-            "libc++.so",
-            "libm.so",
-            "libdl.so"
-          ]
-        },
-        "VENDOR/lib/arm.graphics-V5-ndk.so": {
-          "sha256": "8151a875f8b0a71194d7d56c63e04bac95502be42adb02b19cb078c8f1612f4b",
-          "needed": [
-            "libbinder_ndk.so",
-            "libc++.so",
-            "libc.so",
-            "libm.so",
-            "libdl.so"
-          ]
-        }
-      },
-      "health": {
-        "VENDOR/bin/hw/android.hardware.health-service.gold": {
-          "sha256": "a7fb548dc36749f3abbbe358c03bc2a86e3c43c04162c27557821de3999f11c5",
-          "init": "VENDOR/etc/init/android.hardware.health-service.gold.rc"
-        },
-        "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/bin/hw/android.hardware.health-service.gold-recovery": {
-          "sha256": "80f899240fba23edbbfdce41ef3148569000698aa5908c3cfdafee7b40e90a48",
-          "init": "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/android.hardware.health-service.gold-recovery.rc"
-        }
-      },
-      "health_vintf": {
-        "android": [
-          "VENDOR/etc/vintf/manifest/android.hardware.health-service.gold.xml"
-        ],
-        "recovery": [
-          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/vintf/manifest/android.hardware.health-service.gold.xml"
-        ]
-      },
-      "charger_definitions": {
-        "android": [
-          {
-            "file": "VENDOR/etc/init/gold-charger.rc",
-            "service": "service vendor.charger /vendor/bin/hw/android.hardware.health-service.gold --charger"
-          }
-        ],
-        "recovery": [
-          {
-            "file": "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/hw/init.rc",
-            "service": "service charger /system/bin/charger"
-          }
-        ]
-      },
-      "ims": {
-        "feature_permission": "VENDOR/etc/permissions/android.hardware.telephony.ims.xml",
-        "feature_declared": true,
-        "input_sha256": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
-        "packaged_sha256": "990ccde5fce4f4a437d6f325d8d0e34b283820b577ab56f930ceccef332af950",
-        "dependency_payload_matches": true,
-        "payload_entries": 47,
-        "platform_signing_selected": true,
-        "privileged_permissions_match": true,
-        "startup_properties": {
-          "persist.vendor.ims_support": "1",
-          "persist.vendor.volte_support": "1",
-          "ro.vendor.md_auto_setup_ims": "1"
-        },
-        "startup_property_labels_verified": true,
-        "registration_verified": false
-      },
-      "settings": {
-        "sha256": "2bf77b9e8aaf17831f6b57c425928a562e6eed398c9a4a17c189252fa63b7ae4",
-        "maintainer_page_verified": true,
-        "languages": [
-          "default",
-          "zh-rCN",
-          "zh-rTW"
-        ],
-        "peak_refresh_overlay": true
-      },
-      "power_profile": {
-        "named_entries": 38,
-        "matches_source": true,
-        "source_sha256": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
-        "big_core_key_corrected": true
-      },
-      "sustained_performance_advertised": false,
-      "zygote": "zygote64",
-      "standard_module_links_verified": true,
-      "wifi_pmf_default": 1,
-      "wifi_pmf_upgrade_overlay": true,
-      "recovery_debug_adb_config_verified": true,
-      "power": {
-        "single_resource_owner": true,
-        "native_clients": {
-          "VENDOR/lib/libmtkperf_client_vendor.so": "2fbbc0b08777b2c292adbfacb08b59330ca722d6faa0ef39e80dd868d3c0398c",
-          "VENDOR/lib64/libmtkperf_client_vendor.so": "02e9de3056331d3ae6ae7f57e2a84a1f6466d016afed4667e09c912609e0f729"
-        },
-        "runtime_verified": false,
-        "performance_benefit_verified": false
-      },
-      "wifi_association_verified": false,
-      "limitations": [
-        "Checks target-files members; Android validators check image/AVB contracts.",
-        "Does not prove runtime overlay activation or hardware behavior."
-      ],
-      "actual_images": {
-        "verified": true,
-        "matched_files": 29,
-        "members": {
-          "VENDOR/build.prop": "e02941a3f2d12383ac879d1146da6a422def6b826f6c451bfedd4bc691b59ce3",
-          "VENDOR/etc/selinux/vendor_property_contexts": "484e918715a9424855cd6b36bacf6134038271e8387124db95cfb8d7359a2eaf",
-          "VENDOR/lib/hw/mapper.mediatek.so": "1b960188125e6a5b3531e91d26883f9c4881e30e8038247f9a146598c1e0f99e",
-          "VENDOR/lib/libgpud.so": "967b9dad0c0db2f14ae0852466c662783c84574f14be7b8c5ae30ea1f2d531a1",
-          "VENDOR/lib/libgralloc_metadata.so": "f35f05400da4cfbd2f177749fbc234169361dfe326cbed9cf8c5672171d7bb4e",
-          "VENDOR/lib/libgralloctypes_mtk.so": "380b79f6f3476f8255f4fa7698a7c131b3aa6247e1f7adaafef3c87ddde3e25e",
-          "VENDOR/lib/arm.graphics-V5-ndk.so": "8151a875f8b0a71194d7d56c63e04bac95502be42adb02b19cb078c8f1612f4b",
-          "VENDOR/bin/hw/android.hardware.health-service.gold": "a7fb548dc36749f3abbbe358c03bc2a86e3c43c04162c27557821de3999f11c5",
-          "VENDOR/etc/init/android.hardware.health-service.gold.rc": "f59d6de0348facee3dc778daf1634466caa0981c70c77be9b92eed80b1cfd3a1",
-          "VENDOR/etc/init/gold-charger.rc": "6d6080e2a412228fde3a729f31a4a677b6320db22d27afb21a233b40a7818ee0",
-          "VENDOR/etc/vintf/manifest/android.hardware.health-service.gold.xml": "cafcca4609fae1ed6e065d017907e49a9efcd23e6b69a6d77aac3f04cd0c984d",
-          "VENDOR/etc/selinux/vendor_file_contexts": "2b8a91d7c4384f2b0b58ca2056a08bf92f9c0d10740e2434b5851c576ad40897",
-          "VENDOR/etc/permissions/android.hardware.telephony.ims.xml": "6f0d8f1e1dc0657e39ff63129b1633fdd9971417dcc9982271f089024666dadd",
-          "VENDOR/etc/wifi/wpa_supplicant.conf": "a5b5dd6c3fd02a0dbbe62d6e58d3c3157a94a2ed9ec98191cc57a3908dbba6ae",
-          "VENDOR/etc/wifi/wpa_supplicant_overlay.conf": "2c24549d233cc613a65f788df8a5ab82314f5cdf3f3a773d513df3790145d6d8",
-          "VENDOR/bin/hw/android.hardware.power-service.gold": "fcabec09523a159792c1cfd5929f37d64434b12bcb82bb53f1cd095c910cf138",
-          "VENDOR/etc/init/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
-          "VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml": "1df915c5b3bbbfed0ae68687b6b804b7d9860e8f08655ae39c6e9b162f2ab571",
-          "VENDOR/lib/libmtkperf_client_vendor.so": "2fbbc0b08777b2c292adbfacb08b59330ca722d6faa0ef39e80dd868d3c0398c",
-          "VENDOR/lib64/libmtkperf_client_vendor.so": "02e9de3056331d3ae6ae7f57e2a84a1f6466d016afed4667e09c912609e0f729",
-          "VENDOR/overlay/FrameworkResOverlayGold.apk": "392bcda38c459fd8b849416d5fe564aee0edfd6f70785948a6184309ff0f509e",
-          "VENDOR/overlay/SettingsResOverlayGold.apk": "c37915dc27dae6d9992af3c73bfb843c6a397d2601d323b37cea07f3aa687911",
-          "SYSTEM_EXT/priv-app/Settings/Settings.apk": "2bf77b9e8aaf17831f6b57c425928a562e6eed398c9a4a17c189252fa63b7ae4",
-          "SYSTEM_EXT/priv-app/ImsService/ImsService.apk": "990ccde5fce4f4a437d6f325d8d0e34b283820b577ab56f930ceccef332af950",
-          "SYSTEM_EXT/etc/permissions/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
-          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/bin/hw/android.hardware.health-service.gold-recovery": "80f899240fba23edbbfdce41ef3148569000698aa5908c3cfdafee7b40e90a48",
-          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/android.hardware.health-service.gold-recovery.rc": "0f162e3fecca557d3877193d13f27c26922221884235d6412ccf9fd52ff415ed",
-          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
-          "VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/system/etc/vintf/manifest/android.hardware.health-service.gold.xml": "cafcca4609fae1ed6e065d017907e49a9efcd23e6b69a6d77aac3f04cd0c984d"
-        }
-      }
+    "guard_restored_live": {
+      "swappiness": "0",
+      "zpool": "zbud",
+      "zswap": "N",
+      "shrinker_enabled": "Y"
+    }
+  },
+  "source_audit_latest": {
+    "project_commit": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "tree": "/srv/build/migration/gold-architecture-20260914/source",
+    "projects": {
+      "bootable/recovery": "d4ef5569dda1c5066f90efd25455b589ced6073e",
+      "build/soong": "9aa045a2aef10b8089e32e847fed26d9aa3d61be",
+      "device/xiaomi/gold": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
+      "frameworks/base": "35ad1f68539dce0857d25154dacb1116100737e9",
+      "packages/apps/DeviceDiagnostics": "6a93abdc96f0e553bac7efd5b41f0e549f4746be",
+      "packages/modules/Connectivity": "c9f3e7795256bd4a3f99d02e604e24fd1552c2b3",
+      "external/openeuicc": "9a537a25163c5159899260fb6191a5da35a692bd",
+      "external/openeuicc-deps": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
+      "hardware/mediatek": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
+      "packages/apps/Settings": "9a102220cb80941628685585b6818e5715271cf0"
     },
-    "artifact_recheck": {
-      "artifact_contract_verified": true,
-      "target_files_sha256": "5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39",
-      "ota_sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
-      "partitions": [
-        "boot",
-        "dtbo",
-        "odm_dlkm",
-        "product",
-        "scp",
-        "system",
-        "system_dlkm",
-        "system_ext",
-        "vbmeta",
-        "vbmeta_system",
-        "vbmeta_vendor",
-        "vendor",
-        "vendor_boot",
-        "vendor_dlkm"
-      ],
-      "dynamic_partitions": [
-        "odm_dlkm",
-        "product",
-        "system",
-        "system_dlkm",
-        "system_ext",
-        "vendor",
-        "vendor_dlkm"
-      ],
-      "post_timestamp": 1789925665,
-      "signing_tag": "test-keys",
-      "payload_images_verified": true,
-      "payload_images": [
-        {
-          "partition": "boot",
-          "entry": "IMAGES/boot.img",
-          "bytes": 67108864,
-          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f"
-        },
-        {
-          "partition": "dtbo",
-          "entry": "IMAGES/dtbo.img",
-          "bytes": 8388608,
-          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01"
-        },
-        {
-          "partition": "odm_dlkm",
-          "entry": "IMAGES/odm_dlkm.img",
-          "bytes": 348160,
-          "sha256": "e0dd5522605c3e82f9477c7ae890cdd33d0703e60afac0c4895902a78b32b391"
-        },
-        {
-          "partition": "product",
-          "entry": "IMAGES/product.img",
-          "bytes": 510750720,
-          "sha256": "4357a5c8901d269d567f2fda81ef1b674194562e13a5838005891ea745f8b6a8"
-        },
-        {
-          "partition": "scp",
-          "entry": "RADIO/scp.img",
-          "bytes": 1200128,
-          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
-        },
-        {
-          "partition": "system",
-          "entry": "IMAGES/system.img",
-          "bytes": 1048506368,
-          "sha256": "90a47df34bd6976158009c616c66951bb859f808924f3376fd908771eac5fd26"
-        },
-        {
-          "partition": "system_dlkm",
-          "entry": "IMAGES/system_dlkm.img",
-          "bytes": 7303168,
-          "sha256": "8f35a377c104e767284cc1967a79ed77bbf20d6105fc25d681a5218e9c60badd"
-        },
-        {
-          "partition": "system_ext",
-          "entry": "IMAGES/system_ext.img",
-          "bytes": 461287424,
-          "sha256": "be208b94659eb70bc567fa2b551c5f6e6503c56f7e0b79d4ecfff96d4ff3a6e4"
-        },
-        {
-          "partition": "vbmeta",
-          "entry": "IMAGES/vbmeta.img",
-          "bytes": 8192,
-          "sha256": "638b9ce9f2f84a11d6c98565cd3e4fb690e98e35fdfd565ad9f2def593a0f5a1"
-        },
-        {
-          "partition": "vbmeta_system",
-          "entry": "IMAGES/vbmeta_system.img",
-          "bytes": 4096,
-          "sha256": "32f5cbcfeb621f1daceca2723278b3d692628cd09312c0a91ad50a1a2fbc90b5"
-        },
-        {
-          "partition": "vbmeta_vendor",
-          "entry": "IMAGES/vbmeta_vendor.img",
-          "bytes": 4096,
-          "sha256": "246b44659e8c11721290f5d2e3624654b3ee554edfff425579b7d0088c27b13b"
-        },
-        {
-          "partition": "vendor",
-          "entry": "IMAGES/vendor.img",
-          "bytes": 483639296,
-          "sha256": "26bf1ff5e36ab5d891f9c5714ec52eb3b88f3ac7e145ad79a12d95fb5bfeb911"
-        },
-        {
-          "partition": "vendor_boot",
-          "entry": "IMAGES/vendor_boot.img",
-          "bytes": 67108864,
-          "sha256": "942a5880f28e6976ee537bc3807a69f8025ccc5a79d798c77f291bae45ec2573"
-        },
-        {
-          "partition": "vendor_dlkm",
-          "entry": "IMAGES/vendor_dlkm.img",
-          "bytes": 13967360,
-          "sha256": "428630c2918efc07eeebd5d1d8b3e62423a44abdb30a67bc2b8e4a343017ef6d"
-        }
-      ],
-      "device_accepted": false
+    "files": {
+      "bootable/recovery/fuse_sideload/fuse_sideload.cpp": "4726cef7537ffeb67d607e71a8a6afc65ea2efc8a74c7b4619ad73eae5bf5043",
+      "bootable/recovery/otautil/package.cpp": "83d61d3f49c530eff569e7ec6f57d58d14cbdca0e2b61a4f0e5dbd98bcf85c8c",
+      "build/soong/fsgen/boot_imgs.go": "35e1d112f9cb0e115e3593eabd11de5e60d3524d09ffcad876614d7a00cfc0ef",
+      "build/soong/fsgen/filesystem_creator.go": "fb9cfa03f9b90e84a7757fddf70ea71134ff279ff468bb0947cac9d4978b0495",
+      "build/soong/fsgen/boot_imgs_test.go": "6bb0f1050fc22a8946217e539ea97fa69ef48d97e5e4cf373cd77a31cc834667",
+      "build/soong/ui/build/soong.go": "069812aab9b059dae6ef65baa39e535f9400f34bbedc2f9dfd3693568062cff7",
+      "build/soong/fsgen/Android.bp": "4367d3cc9de8175a661700b42eeef1c030783770ffd2ec335155b87db98a9b7a",
+      "device/xiaomi/gold/Android.bp": "53e8af6b3e2f7f0d2d7827248a17147f4df6a0be9b59015d45d670c4e9bd8e8a",
+      "device/xiaomi/gold/AndroidProducts.mk": "f7a72b5efc090ea840c59d9469db240d67c79dcbc389a95267ee404359bb1d19",
+      "device/xiaomi/gold/BoardConfig.mk": "ff2b1fef27d319b0cea1c78b788f9067d5ba4624518c24510b167dc88e452ea4",
+      "device/xiaomi/gold/README.md": "8fbcf2d66afba9af4c03d73f955e1deecceb8844a5429e7d800c0d86e5d01519",
+      "device/xiaomi/gold/compatibility_matrix.xml": "553ce915c89431f25840bb47b894abefba4b1ba15d95e98e304017afc2d4179a",
+      "device/xiaomi/gold/configs/audio/audio_device.xml": "ab05ff3efd2fadf99ee4aa771d587f9e27cb8638e07139a212f75f9c9122e8c2",
+      "device/xiaomi/gold/configs/audio/audio_effects.xml": "86cf00f977316224b4b2eda6743b71742dcfcfe0892ae8df1f6688422b106f36",
+      "device/xiaomi/gold/configs/audio/audio_em.xml": "aa0042f140100d9f859f1366bfbc2b02edb0c58b4ecc2175f52bfc75430bc6a3",
+      "device/xiaomi/gold/configs/audio/audio_policy_configuration.xml": "4f15c36329c7986aec744d4aa7b04c9db1b5365ca2bf046797259e2a96d34a27",
+      "device/xiaomi/gold/configs/audio/aurisys_config.xml": "59faa83bcfa4c6f6684713f2788ee3ebff5d47e3024ec7e10f7176dd96730eb3",
+      "device/xiaomi/gold/configs/audio/aurisys_config_rv.xml": "b7a5c89f56577c33b07641c83b9f7d60cdfccb9f814dc241edc704e989835b07",
+      "device/xiaomi/gold/configs/audio/usbv2_audio_policy_configuration.xml": "b75b694742d79d295f80a5bb949e34f9c50b7fba604ed2797bdce820f0f2efe6",
+      "device/xiaomi/gold/configs/hals.conf": "dd001b9c91bc2454c0f9226b252fa6d6338568990a11d8eea1190823087a1736",
+      "device/xiaomi/gold/configs/linker.config.json": "83bf3b11b2fb756136edb971fbc409e124ef23d4b09e9837e1229f3866ccdda2",
+      "device/xiaomi/gold/configs/media/media_codecs_c2.xml": "86caa80060e5cbce4e7f5e2960fd046afbf83d145c112dd79c5f3274a4b23aa4",
+      "device/xiaomi/gold/configs/media/media_codecs_performance.xml": "47cd5fb884d5aef7bee1e7a287ebbd98c14ddffacf3e20327ebad5805a23483e",
+      "device/xiaomi/gold/configs/media/media_profiles_V1_0.xml": "c080adf548a6c47613ed86381ffc8e6c2e60541e3753dcd116b47bb1211b0dd6",
+      "device/xiaomi/gold/configs/media/mtk_platform_codecs_config.xml": "3ee6934bac4f71992e58869c1d6cca9a08385272e6dcfb971d51ca1016832b93",
+      "device/xiaomi/gold/configs/powerhint.json": "1b464e54945c42ef4d3080d706be2d7d7a29bb298e35d19cc8f6b623816485bf",
+      "device/xiaomi/gold/configs/thermal_info_config.json": "a50865a838c1a954123eadcb3de31517250460d4c65da6a7d09b6530aeb65a49",
+      "device/xiaomi/gold/configs/wifi/p2p_supplicant_overlay.conf": "6277fa4421bee905fb74f2d6a3f561a43c7b3a922cfa8a5e82beb217461e1cab",
+      "device/xiaomi/gold/configs/wifi/wpa_supplicant.conf": "a5b5dd6c3fd02a0dbbe62d6e58d3c3157a94a2ed9ec98191cc57a3908dbba6ae",
+      "device/xiaomi/gold/configs/wifi/wpa_supplicant_overlay.conf": "2c24549d233cc613a65f788df8a5ab82314f5cdf3f3a773d513df3790145d6d8",
+      "device/xiaomi/gold/device.mk": "13e048eb2857065c35c0cabf140ca52088d7e2310e90fb8004ca87c282591ef2",
+      "device/xiaomi/gold/extract-files.py": "e7261525b11b8b5a8dc160ecf14041f373588828c75ecbec67238e4e0797092f",
+      "device/xiaomi/gold/health/Android.bp": "a1b42125d5524655bb9fc528409e4bd1e72a39a9bcb247479855d59513d01813",
+      "device/xiaomi/gold/health/ChargeCounter.h": "9c4c4a3fcfbaa3015e67620a271266d985b220bc6fdf1d82bf03eaf7cb2f98f9",
+      "device/xiaomi/gold/health/ChargeCounterTest.cpp": "0842cc347aacccf6d4d548aea71c63be793276d8922902a0e1329d4c1a2a1e29",
+      "device/xiaomi/gold/health/Health.cpp": "9686b94ff71ff65b6a4557f210fde52b0b1d426010adf27f17004789f5f1f5ae",
+      "device/xiaomi/gold/health/android.hardware.health-service.gold-recovery.rc": "0f162e3fecca557d3877193d13f27c26922221884235d6412ccf9fd52ff415ed",
+      "device/xiaomi/gold/health/android.hardware.health-service.gold.rc": "f59d6de0348facee3dc778daf1634466caa0981c70c77be9b92eed80b1cfd3a1",
+      "device/xiaomi/gold/health/android.hardware.health-service.gold.xml": "2ec7b6603d5386a300790a198118d5bb40aab2f77195cf89403f4aac9cbd1aee",
+      "device/xiaomi/gold/init/Android.bp": "e2c60197ee3392215321e796d97dd7593c6874dfdbb19bfa3cdf4aee4fdc042a",
+      "device/xiaomi/gold/init/fstab.mt6833": "3cc415878a46fb5b7947fe1b684063533a09b29c40d6444cdcbd4a60d2a977ca",
+      "device/xiaomi/gold/init/gold-charger.rc": "6d6080e2a412228fde3a729f31a4a677b6320db22d27afb21a233b40a7818ee0",
+      "device/xiaomi/gold/init/init.connectivity.rc": "3ed663cfb475e803a7d868b1e05c56b9858c0d3a1295b33a3df54dcc99a386dc",
+      "device/xiaomi/gold/init/init.mt6833.power.rc": "99f04bd4c5a6b5b55b5d9ebafca35c128201a6bca75dcedb52083ee754fe3116",
+      "device/xiaomi/gold/init/init.mt6833.rc": "077de30bf504e48670b679f8f21ce7c59bc0add308bc7e7e21ce68c018f3d207",
+      "device/xiaomi/gold/init/init.mt6833.thermal.rc": "fab91b8f1f0a08c28bd6aad140a6dc7df38d0b9dc3cd721fb2658c29bedc63e6",
+      "device/xiaomi/gold/init/init.mt6833.usb.rc": "ac262ea41d0e74e3c9eea1aee88920c6de109464753710263fdb67f55434a4a6",
+      "device/xiaomi/gold/init/init.project.rc": "5b32aed6423ecfc0944ad807a80745999a9e3303e10146372eda1aab1c4626a0",
+      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
+      "device/xiaomi/gold/init/init.sensor_2_0.rc": "0ad73dc3c455557d2a8002c23651e0d064bc2b94d6d64aeebe4e44dd5a28f8aa",
+      "device/xiaomi/gold/init/ueventd.rc": "a774291f8913b69930727d30005144681e89594744e74ac3d0748e0952255ef6",
+      "device/xiaomi/gold/lineage_gold.mk": "cd8be24ec96c2ddf392d51fda381297a0521ab0655e792fd54ce438743fcee5c",
+      "device/xiaomi/gold/manifest.xml": "693153d34a8bfd91a1ba3ec30732531edde70c8048721b2d206b4a225b05ce62",
+      "device/xiaomi/gold/modules/Android.bp": "579257f0e832a64c86b5698e37d560603468bde787f4167eaead38248a4ecbb1",
+      "device/xiaomi/gold/modules/init.insmod.mt6833.cfg": "2006c72e4b08281dae8126f17a9e8a69547fed2b2f5ad814677d2f8f4a0097fa",
+      "device/xiaomi/gold/modules/init.insmod.rc": "36e88f398f6f110a6be1110e3557cae14fe8f7f7b42354f5544675f3205d18a7",
+      "device/xiaomi/gold/modules/init.insmod.sh": "5387f5fd0d571ad70576bad14ad07f4d59cd0cd6bd7487967cab5afca46e5838",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/Android.bp": "d83754ce96359ed4cbb94d1d9d5ccee474ed0467483000120e596ad9a01479f2",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/AndroidManifest.xml": "3673358e440b4fb755782f834f7ff58367c0d99f432537baae90c9daf4e8db73",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/values/config.xml": "1ca24ac652d52c731871e7c03384dda317d3587a7e364a3a4d1e899dfa6bf131",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+      "device/xiaomi/gold/overlay/GoldAlphaFrameworkOverlay/Android.bp": "48a91c73e4e17d9baf3f82d670b0da67f03a278330a383fdf35eba0da41613bb",
+      "device/xiaomi/gold/overlay/GoldAlphaFrameworkOverlay/AndroidManifest.xml": "df70bef39288bbce56d0b68fe8923e0bd2b95f0188529a47b697caf2d2130de7",
+      "device/xiaomi/gold/overlay/GoldAlphaFrameworkOverlay/res/values/config.xml": "036e334ebe12254f70fe22c0ca443156013e74dba9237ed116a442d30220ddd6",
+      "device/xiaomi/gold/overlay/GoldAlphaSettingsOverlay/Android.bp": "3f02fbbec3a163a60677347c4492f9b47c8147fa8a43a5e48872dccfc4c557d7",
+      "device/xiaomi/gold/overlay/GoldAlphaSettingsOverlay/AndroidManifest.xml": "aa27edf404e95d710266717a9353ea762b48afd44abcf4672b2fa75db5819249",
+      "device/xiaomi/gold/overlay/GoldAlphaSettingsOverlay/res/values/config.xml": "80d6c417246455d2f97aef63829b96aab1a6ecaf85cd29f4c2476d7e3d0078de",
+      "device/xiaomi/gold/overlay/GoldImsCarrierOverlay/Android.bp": "4b895ee72f83eabf4f00e04cbed8d7787dddf202aadfd18acd8aa6e21af19568",
+      "device/xiaomi/gold/overlay/GoldImsCarrierOverlay/AndroidManifest.xml": "8dc330e265df52c0b8177c0bf2e1ab0cba6a82ad0ab026d8b76ef493bd67b0ea",
+      "device/xiaomi/gold/overlay/GoldImsCarrierOverlay/res/xml/vendor.xml": "27f16a7b6d75cc7b13a3be1c451a29d2f887f87271083ac10fb202b0bdffd5a0",
+      "device/xiaomi/gold/overlay/GoldImsFrameworkOverlay/Android.bp": "9c6888bd9b2caaa8e52bfe5cd15249ce18098ad8874acc391f398b5b60d91b8b",
+      "device/xiaomi/gold/overlay/GoldImsFrameworkOverlay/AndroidManifest.xml": "0a29deba840ac67bba5cb8c9d5d127efb6365eef5a988add63e559e91cd127f8",
+      "device/xiaomi/gold/overlay/GoldImsFrameworkOverlay/res/values/config.xml": "96715e776c616239729b1b99661740d8e85977412fdd0c792cfeb9ac9b5cb796",
+      "device/xiaomi/gold/overlay/GoldImsTelephonyOverlay/Android.bp": "e9633778cd9d75bc83fc2b98bc2f67480182171e157f8df655313dc57f5c6ad9",
+      "device/xiaomi/gold/overlay/GoldImsTelephonyOverlay/AndroidManifest.xml": "3a20477a17d063e49c9fe6ca19656fa97c757eb6796165bc7524f46547c87f08",
+      "device/xiaomi/gold/overlay/GoldImsTelephonyOverlay/res/values/config.xml": "130f2cdf17abdaf45b24a242e8dc982286a2dbf35cebbcf7dfe03e9a464c7e74",
+      "device/xiaomi/gold/overlay/GoldStatusBarOverlay/Android.bp": "3a903fd82a0a67ad5ae28b4120e8c82fb2eebaf31c460c66927a5089a153478f",
+      "device/xiaomi/gold/overlay/GoldStatusBarOverlay/AndroidManifest.xml": "cb3076575c6a1ca456baf76b23785b169f97b72366181f80ef13792d8dfff464",
+      "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml": "275bfc28d6b453e5ce4d2374f0a5b4a665db5724f4cbf9d7a5c53c4e86a40092",
+      "device/xiaomi/gold/overlay/SettingsResOverlayGold/Android.bp": "ffe4da4bd41b1a27b8ce1662085bee38941556d6db074ac24cad3dae8823e7eb",
+      "device/xiaomi/gold/overlay/SettingsResOverlayGold/AndroidManifest.xml": "a34bbaa5f10dd97415f07b8a8bb914e6e325c1265e27ccd4edfecc7ba324b59b",
+      "device/xiaomi/gold/overlay/SettingsResOverlayGold/res/values/config.xml": "a6fc6e69281f592d57e530f3696e3ce7f1fe8b6cd028de759e5b0e5c78bc8a39",
+      "device/xiaomi/gold/overlay/TetheringOverlay/Android.bp": "17e97322224fa4ce77fbb9a0ac9b610dd7e0e2b00f4a8aaeb41ba1ace60854ce",
+      "device/xiaomi/gold/overlay/TetheringOverlay/AndroidManifest.xml": "6c40b8d75f9a56742697f60f616b6bdb4e8a6e552c83922acb794e6bb1614fe2",
+      "device/xiaomi/gold/overlay/TetheringOverlay/res/values/config.xml": "6e42764a2bd955cc43b97ba6dc826d67cea08ecca45daf965c01d88995594416",
+      "device/xiaomi/gold/overlay/WifiOverlay/Android.bp": "39251344dff2e747ef7ea4a5d95ebac558ddfafd30efe1fd435373fd66bef7e8",
+      "device/xiaomi/gold/overlay/WifiOverlay/AndroidManifest.xml": "237725fef89a48272ef2a911734e9470b53ccd0ebf4dedd422af0e6950962651",
+      "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml": "922850fb1cfa10c4731376b084c79983a87548dacd75e4573313d9f83b5aa46f",
+      "device/xiaomi/gold/power/Android.bp": "74e9b42dceaa6d3ef7fc277e0898af416779acdc2543ed6afb5e3c2a4cd2fdfb",
+      "device/xiaomi/gold/power/NodeBackend.cpp": "ea368123e7654b165dd95e9175a350b43ac9e88ea725f1fd6241610bb71e9c79",
+      "device/xiaomi/gold/power/NodeBackend.h": "44a8c7204fec85ffc6953a542aa9f65b2af0012102569bad3aeb3ac5731567eb",
+      "device/xiaomi/gold/power/NodeBackendTest.cpp": "7277667be925196d2d861c0ca5067f076d9b5e90b0d920c6e8abf66bc278578b",
+      "device/xiaomi/gold/power/PowerEngine.cpp": "e2707af5eeb58a98c7b8498daa51fbf4c18edb4aba9ad0a81c1c578251ec8a8d",
+      "device/xiaomi/gold/power/PowerEngine.h": "5a1a4114de00d9ea36bbca9afd343ab0a3c8ec2eea5b07461de299bd90ad353b",
+      "device/xiaomi/gold/power/RequestManager.cpp": "5cddd80765cf17876d59452e8c3cad222a3f019c24ac1572d926616d84dba464",
+      "device/xiaomi/gold/power/RequestManager.h": "b5b4b9acd8fd238a19ca4dd2796ef5bbaca717c1f546b028223d296ba5344425",
+      "device/xiaomi/gold/power/RequestManagerTest.cpp": "037ac830683929d68b0538bf0a45acbcb945b75c1755053cc0d0ca20fe945404",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+      "device/xiaomi/gold/power/service.cpp": "04dbf14b9f6d5a61524fe4e56691beccc7362cfbcaf5fa0c35353c5d3c5fc612",
+      "device/xiaomi/gold/prepare-vendor.py": "694e9b90d358f43a75c77412a0e18c65a5dcc219f7eaae7928964b2e4c5b2daf",
+      "device/xiaomi/gold/proprietary-files.txt": "60f074c507e21152b85f660beb7f9413207c48cc007930115ea57385325a586f",
+      "device/xiaomi/gold/proprietary-firmware.txt": "acdf8dd7bc619af8b67ee354b9b9b19480c2af534b9712f7e236f15cb4384576",
+      "device/xiaomi/gold/proprietary-source.json": "c4e0c545c417047e59e2a035ff376d2f1c4455a3f6754a7a55e37d5b8c439438",
+      "device/xiaomi/gold/sepolicy/vendor/charger.te": "7d9d1eefa63df2385f541b704f7aa7b019ca632c4e9eba9dbb40ef0e4e06cf39",
+      "device/xiaomi/gold/sepolicy/vendor/egl_config.te": "3ca5e4d7bc609e4109ba84bb9b5b91625d72d4d80cb1ba9c5565c0fe8e38fc3b",
+      "device/xiaomi/gold/sepolicy/vendor/file_contexts": "b5c19f3c607971fc03c9fa40cb51f801e0ed7352d2a2d8c6fc9a44d8f40466a3",
+      "device/xiaomi/gold/sepolicy/vendor/genfs_contexts": "2d25ebff65ab40f0831d0252d144328c7847a43e27e9355fbe83b024986ac27d",
+      "device/xiaomi/gold/sepolicy/vendor/hal_fingerprint_default.te": "5cbe90c24b46af0484f8110b14f61daa8030e26e1c7e58bb956b4e9008dac35a",
+      "device/xiaomi/gold/sepolicy/vendor/hal_keymint_default.te": "4a824675b2867ec9086522c4a0cf06c04349357b8c8559c459811eb17668be11",
+      "device/xiaomi/gold/sepolicy/vendor/hardware_compat.te": "d2fcb745bc948db6a6f867096032e4683182e5eb953fe172a85d47a33be235d7",
+      "device/xiaomi/gold/sepolicy/vendor/init_insmod_sh.te": "8e42d49211fa2eecd38614d0e2e79b27ce260da8e31f818c5af0f70707316981",
+      "device/xiaomi/gold/sepolicy/vendor/mtk_hal_power.te": "0796132f0b214b684874cad0794995980d07fa002574be988209d3f9665d20bd",
+      "device/xiaomi/gold/sepolicy/vendor/power.te": "a7b82b9e9104decd6d2fd782a6b0cdf3bbe18e03ffa6cc95cff40e1724ac123c",
+      "device/xiaomi/gold/sepolicy/vendor/property.te": "7b3d8486bd4c04610db48d1729e3fdb9cc67b5d708a87781e0d80fa3d8a8ccd7",
+      "device/xiaomi/gold/sepolicy/vendor/property_contexts": "b876197ae6486c6cec8b48e5246620808009365cdf56bdcff0a8fcc1d7c36ffc",
+      "device/xiaomi/gold/sepolicy/vendor/sysfs.te": "8dcf984279126096512e3fa4aee1dbc1a7951763d539fb38132fffeb654f0989",
+      "device/xiaomi/gold/sepolicy/vendor/thermal_boost_compat.te": "ecbce3c0ebe646661623dc59315b79bcae3a08c12adf779d53c04773b03e4939",
+      "device/xiaomi/gold/setup-makefiles.py": "f444b6c787e66a0f92806a44e31bf7f3496b3593d1e38c4328af591d27a24667",
+      "device/xiaomi/gold/vendor.prop": "837bf20bf4937dea9a4d019f2b9f5a74b6e368801428b649f5aab328e62b5142",
+      "device/xiaomi/gold/vibrator/Android.bp": "f69652f589ff83a76bb4bf6525af6d249d9da9d37ff983ce5990c63c8a2bacaf",
+      "device/xiaomi/gold/vibrator/Vibrator.cpp": "b7101cbcd05b42e5d048e776ceb5261ab5ea893fba168abb3353a7274904cf9c",
+      "device/xiaomi/gold/vibrator/Vibrator.h": "02d813454d3afcd79370e26c51d7abbb255165c49687af531e2c1711aa5e852b",
+      "device/xiaomi/gold/vibrator/VibratorTest.cpp": "ead40b89a566ec157c2ba9c6918102ef61d131c2a597fb134fadf75d14e7ebc3",
+      "device/xiaomi/gold/vibrator/excluded-input-devices.xml": "4f1e9616d4dcebba26c36b1a58c6fa1af39da1214b5d90263bb547ab8dfa3b1a",
+      "device/xiaomi/gold/vibrator/service.cpp": "8dc47182f43ef467670b4e4e0faa83a9bb43e5ca5577b28ce775a4f29829c4e0",
+      "device/xiaomi/gold/vibrator/vendor.qti.hardware.vibrator.service.gold.rc": "aaea63de627fa110301b9d130dab70152148459111d5bd4aa0c731730bc37ce8",
+      "device/xiaomi/gold/vibrator/vendor.qti.hardware.vibrator.service.gold.xml": "5cf94ad6bd7b78b2020874fd6fc74764447f2cd9fddb8ef5288eb13619d42aba",
+      "frameworks/base/packages/SystemUI/res/layout/system_icons.xml": "89e07a26043d530856b4dc83bd30c8e366d130aa360acddb58731daadfc87dd7",
+      "frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone/SystemIconsLayout.java": "7a936fe3133023d8b51e0c92b60aea428021371b54cc21cb89080915233f71fa",
+      "frameworks/base/packages/SystemUI/tests/src/com/android/systemui/statusbar/phone/StatusIconContainerTest.java": "1516ff459ac0474f721ed2af3cb77820e22e1b3632c4ecab297c0777321e6668",
+      "frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconContainer.java": "f54f182f869b23ec94f318c367897005c32f30e481ba0fe37d781f0f99179437",
+      "frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusIconPacking.java": "3b8566488e0ddfd9e6af8579ed0af8b8a98821d58748a3b8911287149bc5c46a",
+      "packages/apps/DeviceDiagnostics/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt": "53f5287256175da415cea261b8f737d9f8b50b5201312102e53fbd640c0aabf2",
+      "packages/modules/Connectivity/staticlibs/tests/unit/src/com/android/net/module/util/ip/ConntrackMonitorTest.java": "5ecd2b7a5847a2c533afae1c71176f11ef4b90c347ff361233c2a29a8a8a26d0",
+      "packages/modules/Connectivity/Tethering/src/com/android/networkstack/tethering/BpfCoordinator.java": "273cee42d4df9d797b70125ed444b1cb27b62eacb1e1bb4786943135afbdbf43",
+      "packages/modules/Connectivity/Tethering/tests/unit/src/com/android/networkstack/tethering/BpfCoordinatorTest.java": "fa15a8cd56369d2ace00c5ec636e48b39d3d37cf94e8de09bd557487835a7330",
+      "packages/modules/Connectivity/staticlibs/device/com/android/net/module/util/netlink/ConntrackMessage.java": "5675783f6027d6c6110ac63306aeb5507d82e485debd5338e3f19b768d8c1a5f",
+      "packages/modules/Connectivity/staticlibs/tests/unit/src/com/android/net/module/util/netlink/ConntrackMessageTest.java": "16405eb5b42bc4a5a19dd56e54a1774345f5f327a9bcc8bfac98b78f78a7088e",
+      "packages/modules/Connectivity/staticlibs/device/com/android/net/module/util/ip/ConntrackMonitor.java": "0ab22499c2fb36bb4dc4ec85b3bd3dd0b294232dfafd26e9951621477e4fbcf5",
+      "external/openeuicc/app/src/main/java/im/angry/openeuicc/service/OpenEuiccService.kt": "d648de51f39e7abadb113daef547daa5c71857d4f076b976bb5391538a45a4a0",
+      "external/openeuicc/app/src/main/AndroidManifest.xml": "90f338725790ac8bb35c8adcff841e3c614cfab9b29c282d3a1e5f37111f1f39",
+      "hardware/mediatek/libmtkperf_client/Android.bp": "93f668604ba16febe3f7383b00b41d148f81b67bc70be44a16057d68f9b4a2a6",
+      "hardware/mediatek/libmtkperf_client/mtkperf_client.cpp": "a461d90b7b4ff70a4d9290901436d6b37cb10d838f2ccc423a41edc1e7380047",
+      "hardware/mediatek/aidl/thermal/thermal-helper.cpp": "4417a705c40e2428e8cd84b2483359741c6a9ec699920a7da373415c776ccd44",
+      "packages/apps/Settings/res/values/gold_maintainer.xml": "4b2c8208f6650b977fddcb512beef2f643f7e665e58cf5cd5471b20981db1058",
+      "packages/apps/Settings/res/values-zh-rCN/gold_maintainer.xml": "d0703e7f65bab501f243a42d70ffa884325c3d14ccfacdef3bf70269592cfbd3",
+      "packages/apps/Settings/res/values-zh-rTW/gold_maintainer.xml": "29e990cfe51ab3dc27153a1afda7731da2ded2c321ab4fdc91e23c065d2c579c",
+      "packages/apps/Settings/res/xml/my_device_info.xml": "b5c880b943e4cfc9f051c948b4518f8d3070a335a80201e18a97d8de3e3ca2c1",
+      "vendor/xiaomi/gold/ims/Android.bp": "d71708900437fe8e46390e58b0d6493356c6ca40aee07e34d0d226727432ea31",
+      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "vendor/xiaomi/gold/ims/README.md": "6ff744749c76d8be3d4aa97b816f1549c6dab77f411dd8195f37fa69fc5e5405",
+      "vendor/xiaomi/gold/ims/compat/TelephonyMetrics.java": "c68e1d2342dfa96dd5823ba8eca106efe94fcfac4a96964e978e36c63cedd128",
+      "vendor/xiaomi/gold/ims/compat/provenance.json": "9d09cb91d5d737e626d55e97808017178766f09f9c2ec3cb347959a35bbe4b27",
+      "vendor/xiaomi/gold/ims/compat/rebuild.py": "28c70aff811f637c6a48c19530b0fd2539a04cb2790187d929eb4839e171b3ea",
+      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+      "vendor/xiaomi/gold/ims/patches/receiver-and-video-guard.patch": "a0ea83efeea72f7c617ef2784a45ece44d10bad123cf37f145f6a56ac4704d69",
+      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626"
     },
-    "vintf_verbose_compatible": true,
-    "vintf_kernel_level_warning": "Tool uses kernel level 202404 reported by kernel instead of manifest level 6; full compatibility check returned COMPATIBLE",
-    "release_signing_verified": false,
+    "failures": [],
+    "merged_inputs_match_mainline": true,
+    "archive_hybrid_executed": false,
     "device_accepted": false
   }
 }
