@@ -1,13 +1,15 @@
-更新于 2026-09-21 00:05（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
+更新于 2026-09-21 00:17（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
 **尚不可删除旧 hybrid Python 流程。** 完整对照及条件删除清单见 [ADAPTATION](ADAPTATION.md)。当前必须闭合的是最新候选构建与上机、IMS 后端／注册、Wi-Fi 关联和 Power 实际请求及收益验证；本轮未删除归档、历史镜像或唯一输入。
+
+本机最新源码 `f17a75a` 另补 C 句柄跨 HAL 重启隔离、有界调用记录及实际 C ABI 设备探针；71 项主线测试（含真实适配器源码的传输替身测试）和 28 项节点／引擎主机测试通过。它尚未同步活动编译机，也未在 Android 上运行。
 
 当前构建源码 `3ee80e9` 包含共享 Power HAL／C ABI 转发、IMS 启动配置、保数据 Wi-Fi PMF overlay 和 userdebug Recovery 自动 ADB。158 个实际合并源码文件逐项匹配，没有旧 upper 覆盖。科研机 `gold-power-ims-20260920.service` 正在唯一的 `out-gold-standard` 增量构建，BUILD_DATETIME=1789918353。保留原 OverlayFS、缓存、24 GiB swap 和资源限制，未 clean、未创建第二份输出。
 
 | 验证层次 | 本轮实际结果 |
 |---|---|
-| 主机工具 | 70 项 Python 测试通过；3ee80e9 无 archive 导出仍通过 70 项并含可验证 IMS 输入 |
-| Power 单元测试 | 请求核心 Mac arm64／Soong Linux x86_64 各 26 项通过；节点和引擎 Mac arm64 另 26 项通过；Android HAL/客户端和性能收益未验证 |
+| 主机工具 | 71 项 Python 测试通过；f17a75a 无 archive 导出仍通过 71 项并含可验证 IMS 输入 |
+| Power 单元测试 | 请求核心 Mac arm64／Soong Linux x86_64 各 26 项通过；节点和引擎 Mac arm64 另 28 项通过；Android HAL/客户端和性能收益未验证 |
 | 97969dc 构建 | Android 11:44，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 20 个实际镜像文件匹配 |
 | 2cd2675 构建 | Android 59:21，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 21 个实际镜像文件匹配；未安装 |
 | 3ee80e9 构建 | 正在构建；尚无编译终态、产物或安装结论 |

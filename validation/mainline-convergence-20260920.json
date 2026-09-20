@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T00:00:42.946165+08:00",
+  "updated_at": "2026-09-21T00:17:12.986368+08:00",
   "task_state": "in_progress",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
-  "latest_source_revision": "3ee80e9da54585f54e8e6a92741b9331fd3ff52b",
+  "latest_source_revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
   "latest_candidate_build": {
     "unit": "gold-power-ims-20260920.service",
     "commit": "3ee80e9da54585f54e8e6a92741b9331fd3ff52b",
@@ -33,7 +33,21 @@
     ],
     "phase": "Compile and validate integrated Power, IMS initialization and debug Recovery; extra framework boosts remain disabled pending measurement",
     "device_accepted": false,
-    "terminal_result": "pending"
+    "terminal_result": "pending",
+    "last_observation": {
+      "at": "2026-09-21T00:12:32+08:00",
+      "state": "active/running; soong graph",
+      "soong_read_bytes": 32799862784,
+      "soong_write_bytes": 1639182336,
+      "memory_pressure_some_avg10": 11.48,
+      "host_io_wait_percent_samples": [
+        85,
+        86
+      ],
+      "oom_count": 0,
+      "oom_kill_count": 0,
+      "interpretation": "Swap and block-I/O heavy; process remains active. No restart or resource-limit relaxation."
+    }
   },
   "legacy_platform_patch_comparison": [
     {
@@ -504,9 +518,10 @@
   },
   "tests": {
     "python": {
-      "revision": "3ee80e9",
-      "passed": 70,
-      "failed": 0
+      "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
+      "passed": 71,
+      "failed": 0,
+      "includes_native_c_adapter_transport_double": true
     },
     "power_lifecycle_macos_arm64": {
       "revision": "42ea362",
@@ -525,17 +540,34 @@
       "failed": 0
     },
     "power_nodes_and_engine_macos_arm64": {
-      "revision": "3ee80e9",
-      "passed": 26,
-      "failed": 0
+      "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
+      "passed": 28,
+      "failed": 0,
+      "hardware_probe_executed": false,
+      "client_probe_executed": false
     },
     "without_archive_export": {
-      "commit": "3ee80e9da54585f54e8e6a92741b9331fd3ff52b",
+      "commit": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
       "archive_directory_absent": true,
       "python_tests_exit_code": 0,
-      "python_tests_passed": 70,
+      "python_tests_passed": 71,
       "managed_ims_input_matches": true,
-      "full_clean_android_build_claimed": false
+      "full_clean_android_build_claimed": false,
+      "native_compiler_test_included": true
+    },
+    "native_c_adapter": {
+      "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
+      "actual_patch_source_compiled": true,
+      "platform": "macOS native arm64",
+      "transport": "deterministic HIDL test double; not real device Binder",
+      "passed_cases": [
+        "C ABI validation, distinct handles, update and release",
+        "server restart and reused remote IDs cannot let stale C handles affect new leases; no ambiguous acquire replay",
+        "expired local handles cannot target later leases",
+        "eight concurrent callers; private hint unsupported status preserved"
+      ],
+      "patch_applies_to_actual_pinned_base": true,
+      "runtime_android_abi_tested": false
     }
   },
   "ims_input": {
@@ -1114,6 +1146,15 @@
       "window": "last 15000 logcat lines at 2026-09-20T23:54:00+08:00",
       "matching_avc_or_fatal_lines": 0,
       "meaning": "Limited log window only; does not establish full hardware or IMS acceptance"
+    },
+    "next_ota_preflight": {
+      "update_engine_client_available": true,
+      "help_reviewed": true,
+      "ota_package_directory_exists": true,
+      "ota_package_selinux_type": "ota_package_file",
+      "data_available_gib": 106,
+      "update_started": false,
+      "note": "Normal-system standard payload installation can be evaluated for the next signed candidate; no update command was executed."
     }
   },
   "retirement": {
@@ -1523,7 +1564,7 @@
     "post_fix_device_accepted": false
   },
   "power_implementation": {
-    "revision": "3ee80e9",
+    "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
     "android_compilation": "pending",
     "single_service": "android.hardware.power-service.gold",
     "clients": "Native ARM and ARM64 C ABI forwards to synchronous HIDL 1.2; one shared engine with framework AIDL V6",
@@ -1541,7 +1582,8 @@
       "aggregate floor/max and cap/min",
       "readback and failed-write rollback",
       "timeout and owner-death cleanup",
-      "screen, idle, low-power and thermal gates"
+      "screen, idle, low-power and thermal gates",
+      "C client handles never reused and stay bound to the original HAL instance"
     ],
     "untimed_resources": [
       "reviewed display idle time only"
@@ -1559,6 +1601,19 @@
       "Android compile and enforced-SELinux binder/native-caller validation",
       "unknown live vendor resource contracts and core constraints",
       "matched-temperature launch/frame/energy trials and restoration evidence"
-    ]
+    ],
+    "diagnostics": "64 in-memory caller/resource records, at most 64 words each; no package/activity/media strings; bounded private protocol warnings"
+  },
+  "local_followup": {
+    "revision": "f17a75a739c8f0455fd249a8a08ae952eb13a948",
+    "synced_to_research_host": false,
+    "reason": "Remote 3ee80e9 build is active; preserve its frozen project and merged source",
+    "changes": [
+      "process-local non-reused C ABI handles pinned to their original Binder instance across HAL restart",
+      "bounded in-memory native request records and bounded unsupported caller diagnostics",
+      "device --client lifecycle probe using installed C ABI and enforcing HAL"
+    ],
+    "android_build_and_device_tests": "pending",
+    "next_sync": "After current build terminal, compare actual merged inputs to frozen 3ee80e9; only write changed reviewed bytes. Keep byte-identical Android.bp and SELinux files untouched to avoid unnecessary Soong regeneration."
   }
 }

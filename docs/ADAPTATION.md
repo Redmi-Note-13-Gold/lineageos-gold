@@ -1,6 +1,6 @@
 # 适配来源与取舍
 
-本轮接手基线 `462fab1`；`97969dc` 已安装并在 B 槽启动；`2cd2675` 已完成构建和包验证但未安装；IMS 初始化、Power 接入及调试 Recovery 的集成版本 `3ee80e9` 正在增量构建；参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`。v1 对照重构前 `e14a7fa` 和 `archive/hybrid/`。迁移报告只用于寻找材料；下面的取舍依据实际源码、构建输入、接口实现与已保留证据。
+本轮接手基线 `462fab1`；`97969dc` 已安装并在 B 槽启动；`2cd2675` 已完成构建和包验证但未安装；IMS 初始化、Power 接入及调试 Recovery 的集成版本 `3ee80e9` 正在增量构建；本机 `f17a75a` 追加客户端句柄隔离和验收探针，待该构建终态后同步；参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`。v1 对照重构前 `e14a7fa` 和 `archive/hybrid/`。迁移报告只用于寻找材料；下面的取舍依据实际源码、构建输入、接口实现与已保留证据。
 
 ## 旧版到主线的完整收敛对照
 
@@ -18,7 +18,7 @@
 | IMS 框架发现和 modem 初始化 | 首次标准候选漏 feature；97969dc 补 feature 后实际绑定，但现场属性缺 IMS 启动开关，APK 提前退出后端初始化 | `device.mk` 标准 feature；`vendor.prop` 补匹配 Global 的 ims_support、volte_support、md_auto_setup_ims；包检查覆盖 47 个 APK 载荷、权限、属性和标签 | 主线修复，待上机 | 绑定已在 97969dc 证明；3ee80e9 尚需 modem 后端和真实注册／能力，不强制所有运营商 | 不需要旧流程 |
 | TelephonyMetrics 兼容 dex | 固定旧 v5 加 `classes2.dex` 的配方 | 主线 `ims/compat/rebuild.py` 从受管 APK 重编兼容 Java；实际 dex 和全载荷一致 | 保留，移除对旧 v5 目录的必需依赖 | ZIP 字节因宿主压缩元数据不同；新 APK 如要采用必须重新评审 pin | 不需要；闭源主 dex 明确保留 |
 | 框架启动／交互 boost 与原厂写权限 | 旧 restorecon/CIL、原厂动作可查；没有持续性能与功耗对照 | `power/` 统一 AIDL/HIDL 管理器、实际 PPM/uclamp/display 节点和源码 SELinux；LAUNCH/INTERACTION 策略默认关闭供同二进制对照 | 主线实现，尚未运行验收 | Android 编译、SELinux 下动作／复位、同温度启动耗时／帧时间／能耗 | 不调用旧流程；未达到性能验收 |
-| 厂商性能锁 | 旧原厂 HAL 有实际实现；2 个 OAL 直接导入者及 16 个动态查找者来自匹配 Global；尚无运行调用轨迹 | `0002-perf-client-forwarding.patch` 修正 ARM/ARM64 C ABI，并通过 HIDL 1.2 转入同一 PowerEngine；所有者、超时、并发、温控、省电和回读失败处理有主机测试 | 替代空实现，待编译与实测 | 实际调用参数／未支持 core 约束、进程退出、重连、媒体行为；不把错误返回或虚构句柄当成功 | 不依赖旧拼装；功能验收仍阻塞退出 |
+| 厂商性能锁 | 旧原厂 HAL 有实际实现；2 个 OAL 直接导入者及 16 个动态查找者来自匹配 Global；尚无运行调用轨迹 | `0002-perf-client-forwarding.patch` 修正 ARM/ARM64 C ABI，并通过 HIDL 1.2 转入同一 PowerEngine；所有者、超时、并发、温控、省电和回读失败处理有主机测试；f17a75a 防止重启后的远端句柄复用误伤新请求，并提供实际 C ABI 探针及有界调用记录 | 替代空实现，待编译与实测 | 实际调用参数／未支持 core 约束、进程退出、重连、媒体行为；不把错误返回或虚构句柄当成功 | 不依赖旧拼装；功能验收仍阻塞退出 |
 | 32 位应用／双 zygote | 旧工具可修 zygote64_32 闭包，但不是本轮保留目标 | `ro.zygote=zygote64`；包检查验证选中 RC | 按用户要求明确放弃 | 检查无第二 zygote；不做 32 位 APK 兼容 | 不需要旧 zygote 工具 |
 | 底层 ARM 库、媒体与图形 ABI | 固定 Global ROM 存在 ARM 文件；首次主线曾缺五个图形库 | BoardConfig 保留 native ARM ABI；提取清单及 graphics-common V7 修正；包检查验证五库与 AIDL 依赖 | 保留 | 新候选媒体／图形实际路径与所有依赖 | 从固定官方镜像提取，不从旧 hybrid 镜像取 |
 | 显示模式／刷新率／轮廓 | 旧版与当前基线观察到 60/90/120 Hz；不是新候选省电验证 | Settings 读取实际 supported modes；显示形状来自固定 Global overlay | 保留、标准 overlay 替代 | 新候选切换、熄屏、热控、帧时间 | 不需要 |
@@ -33,7 +33,7 @@
 | mi_ext OEM APK mask／渠道 init | 旧 hybrid 需清理 overlay 分区内空 APK 与渠道 init | 当前标准 OTA 分区集合不包含 mi_ext，fstab 不把旧 mi_ext 作为上层应用覆盖 | 有依据取消 | 新候选 mount／软件包路径，确认旧物理内容未参与系统 | 不需要重新打包 mi_ext |
 | AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 97969dc 的 14 分区／20 文件、2cd2675 的 14 分区／21 文件检查通过；3ee80e9 待终态；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
 | Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | 新候选 Recovery 安装、往返、分区读回 | 不需要旧 Recovery 脚本 |
-| 只读启动观察／槽位判定 | 旧 capture_boot 有 36 项客户端／时钟模拟测试 | `tools/capture_boot.py` 与 `tests/test_capture_boot.py`；主线无 archive 导出 70 项测试通过 | 归入主线保留 | 97969dc B 槽 9 个稳定样本、21.47 秒观察通过；3ee80e9 尚未安装 | 不需要归档路径 |
+| 只读启动观察／槽位判定 | 旧 capture_boot 有 36 项客户端／时钟模拟测试 | `tools/capture_boot.py` 与 `tests/test_capture_boot.py`；f17a75a 主线无 archive 导出 71 项测试通过 | 归入主线保留 | 97969dc B 槽 9 个稳定样本、21.47 秒观察通过；3ee80e9 尚未安装 | 不需要归档路径 |
 | MDDP WH／全运营商 IMS／持续性能 | 旧记录没有 WH modem 能力位，也未完成这些完整验收 | 不伪造 WH、不全局强制 carrier override；性能按测量决定 | MDDP 无依据功能不导入；其余如实保留未完成状态 | 实际能力与测试条件 | 不作为旧版已通过的遗失能力 |
 
 **当前结论：尚不可删除。** 源码运行入口已不调用旧拼装脚本，但 Power 的 Android 构建与真实调用／性能实测、IMS 后端初始化修复后的注册与恢复，以及 Wi-Fi 关联故障仍未闭合。以下路径是满足退出条件后的精确代码删除候选，不是本轮已删除项：
