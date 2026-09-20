@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: Apache-2.0
+cc_library_static {
+    name: "libgold_power_requests",
+    host_supported: true,
+    vendor_available: true,
+    srcs: ["RequestManager.cpp"],
+    export_include_dirs: ["."],
+    cpp_std: "c++17",
+    cppflags: ["-fexceptions"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
+cc_test {
+    name: "gold_power_requests_test",
+    host_supported: true,
+    vendor: true,
+    gtest: false,
+    srcs: ["RequestManagerTest.cpp"],
+    static_libs: ["libgold_power_requests"],
+    cpp_std: "c++17",
+    cppflags: ["-fexceptions"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+    test_suites: ["device-tests"],
+}
