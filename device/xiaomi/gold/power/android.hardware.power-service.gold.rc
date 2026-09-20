@@ -13,7 +13,3 @@ on charger
 # Framework restart invalidates its controller and every outstanding vote.
 on property:init.svc.zygote=restarting
     restart vendor.power-hal-gold
-
-# Transient, debug-build-only reload for measurements with the same binary.
-on property:ro.debuggable=1 && property:vendor.gold.power.reload=*
-    restart vendor.power-hal-gold

@@ -5,6 +5,6 @@ hal_client_domain(mtk_hal_power, hal_thermal)
 # Non-secret, bounded, transient strategy controls for matched-device trials.
 vendor_public_prop(vendor_gold_power_prop)
 get_prop(mtk_hal_power, vendor_gold_power_prop)
-userdebug_or_eng(`
-    set_prop(shell, vendor_gold_power_prop)
-')
+# The vendor service owns its strategy properties. Debug trials enter through
+# its root-only Binder diagnostic command, not a coredomain property writer.
+set_prop(mtk_hal_power, vendor_gold_power_prop)

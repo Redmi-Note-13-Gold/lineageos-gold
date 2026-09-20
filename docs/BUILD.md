@@ -77,6 +77,8 @@ out-gold-standard/host/linux-x86/nativetest64/gold_health_units_test/gold_health
 
 Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数运行是主机／设备上的确定性测试，不驱动硬件。`gold_power_nodes_test --hardware` 是短时写入探针：只能在确认没有其他节点写入者、已受控停止 Power HAL 并核对基线后运行，结束后必须恢复服务并读取复位状态。不能把 root 探针当作 HAL 的 SELinux 权限验收。
 
+框架策略对照通过 userdebug、UID 0 专用的 `dumpsys android.hardware.power.IPower/default --set-strategy LAUNCH INTERACTION` 设置，两个参数均为 0..60，默认 0。由拥有属性的 vendor HAL 写入，不能给 shell/su 新增跨分区属性写权限或把属性加入 neverallow 豁免。受控重启 Power HAL 后核对框架能力重新发现、参数和真实动作；对照结束同样设回 `0 0`、重启并验证复位。此调试命令不放宽普通资源请求的温控／省电／屏幕状态限制。
+
 `gold_power_nodes_test --client` 通过已安装的 `libmtkperf_client_vendor.so` 发起请求，不直接写节点；它检查两个 uclamp 请求的聚合、更新、独立释放、超时，显示 idle 的持有／释放，以及未知资源和越界时长拒绝。只在屏幕亮起、温控正常、关闭实验框架 boost、无媒体等竞争负载时运行；基线被占用则退出。此探针要在对应候选上执行，再核对 HAL 域、AVC、`dumpsys android.hardware.power.IPower/default` 的有界调用记录和节点复位。仍须单独覆盖真实媒体调用、进程退出、服务恢复及可比的启动／帧时间／能耗；生成探针或通过主机测试不表示这些项目已通过。
 
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。

@@ -6,6 +6,7 @@
 #include <aidl/android/hardware/power/BnPower.h>
 #include <aidl/android/hardware/thermal/IThermal.h>
 #include <android-base/logging.h>
+#include <android-base/parseint.h>
 #include <android-base/properties.h>
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
@@ -114,9 +115,31 @@ class Power final : public p::BnPower {
     ndk::ScopedAStatus getGpuHeadroom(const p::GpuHeadroomParams&, p::GpuHeadroomResult*) override { return unsupported(); }
     ndk::ScopedAStatus sendCompositionData(const std::vector<p::CompositionData>&) override { return unsupported(); }
     ndk::ScopedAStatus sendCompositionUpdate(const p::CompositionUpdate&) override { return unsupported(); }
-    binder_status_t dump(int fd, const char**, uint32_t) override {
+    binder_status_t dump(int fd, const char** args, uint32_t count) override {
         auto uid = AIBinder_getCallingUid();
         if (uid != 0 && uid != 1000 && uid != 2000) return STATUS_PERMISSION_DENIED;
+        if (count && std::string(args[0]) == "--set-strategy") {
+            // Keep vendor configuration writes in the owning vendor domain.
+            // This diagnostic operation is unavailable to shell/apps and user
+            // builds. Resource requests still pass every normal policy gate.
+            if (uid != 0 || !android::base::GetBoolProperty("ro.debuggable", false)) return STATUS_PERMISSION_DENIED;
+            int launch, interaction;
+            if (count != 3 || !android::base::ParseInt(args[1], &launch, 0, 60) ||
+                    !android::base::ParseInt(args[2], &interaction, 0, 60)) {
+                dprintf(fd, "usage: --set-strategy <launch 0..60> <interaction 0..60>\n");
+                return STATUS_BAD_VALUE;
+            }
+            std::lock_guard<std::mutex> lock(strategyMutex_);
+            const char* launchProperty = "vendor.gold.power.launch_uclamp";
+            const char* interactionProperty = "vendor.gold.power.interaction_uclamp";
+            const auto previous = android::base::GetProperty(launchProperty, "");
+            if (!android::base::SetProperty(launchProperty, std::to_string(launch))) return STATUS_UNKNOWN_ERROR;
+            if (!android::base::SetProperty(interactionProperty, std::to_string(interaction))) {
+                if (!android::base::SetProperty(launchProperty, previous)) LOG(ERROR) << "strategy rollback failed";
+                return STATUS_UNKNOWN_ERROR;
+            }
+            dprintf(fd, "Strategy stored; restart the Power HAL to refresh framework support discovery.\n");
+        }
         const auto status = engine_.status();
         dprintf(fd, "ready=%d enabled=%d dirty=%d requests=%zu accepted=%llu rejected=%llu next_expiry_ms=%lld\n",
                 status.ready, status.requests.enabled, status.requests.dirty, status.requests.requests,
@@ -136,6 +159,7 @@ class Power final : public p::BnPower {
     }
   private:
     PowerEngine& engine_;
+    std::mutex strategyMutex_;
 };
 
 class Perf final : public mt::V1_2::IMtkPerf {
