@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-20T15:36:11.167208+00:00",
+  "updated_at": "2026-09-21T00:00:42.946165+08:00",
   "task_state": "in_progress",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
@@ -765,7 +765,7 @@
     "installed_ota_certificate_matches": true,
     "root_diagnostics_executed": true,
     "global_selinux": "Enforcing",
-    "transition": "97969dc sideload host exited 0; user manually rebooted; normal B boot confirmed. USB later disconnected and is not enumerated on Mac despite user reporting desktop.",
+    "transition": "97969dc sideload host exited 0; user manually rebooted; normal B boot confirmed. Reconnected USB; final Recovery status 0 and all 14 independent active-slot image-range hashes match the candidate.",
     "network_adb_enabled": false,
     "sim_readonly": {
       "loaded_slot": 2,
@@ -776,17 +776,17 @@
     },
     "hardware_results_apply_to_new_candidate": false,
     "last_installed_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
-    "latest_connection": "no USB enumeration or ADB transport at 2026-09-20T23:33:10+08:00",
+    "latest_connection": "USB ADB connected at 2026-09-20T23:59:08+08:00; gold, B slot, incremental 1789911389, boot_completed=1, SELinux Enforcing",
     "sideload": {
       "start": "2026-09-20T14:31:49.700413+00:00",
       "ota_sha256": "30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6",
       "source_commit": "97969dc34cdc15cc339d91938441d6ff3331c965",
-      "host_result_only": true,
+      "host_result_only": false,
       "exit_code": 0,
       "end": "2026-09-20T14:44:29.679501+00:00"
     },
-    "recovery_final_status_verified": false,
-    "partition_readback_verified": false,
+    "recovery_final_status_verified": true,
+    "partition_readback_verified": true,
     "after_install_snapshot_state": "none; metadata OTA state zero bytes and snapshots directory empty",
     "data_persist_mounted": true,
     "retained_canaries_verified": 2,
@@ -830,7 +830,9 @@
       },
       "registration_passed": false,
       "voice_sms_tested": false,
-      "post_fix_runtime_tested": false
+      "post_fix_runtime_tested": false,
+      "mtkIms_binder_present": false,
+      "latest_checked_at": "2026-09-20T23:54:00+08:00"
     },
     "wifi_97969dc": {
       "association_passed": false,
@@ -839,6 +841,279 @@
       "vendor_overlay_pmf": null,
       "upgrade_fix_revision": "2cd2675",
       "upgrade_fix_installed": false
+    },
+    "recovery_verification": {
+      "revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
+      "read_method": "rescue ext4 mounted read-only ro,noload; own mount removed",
+      "target_build": "1789911389",
+      "recovery_status": 0,
+      "update_engine_success": true,
+      "installer_verified_partitions": [
+        {
+          "partition": "boot",
+          "expected_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "installer_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "matches": true
+        },
+        {
+          "partition": "dtbo",
+          "expected_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "installer_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "matches": true
+        },
+        {
+          "partition": "odm_dlkm",
+          "expected_sha256": "72b9480d385aa1117d3cb311d9b60f4b166ffcb503b0cf1d4f597216ed5a5830",
+          "installer_sha256": "72b9480d385aa1117d3cb311d9b60f4b166ffcb503b0cf1d4f597216ed5a5830",
+          "matches": true
+        },
+        {
+          "partition": "product",
+          "expected_sha256": "ee22a4c6a3026cbbca083edf6737c28aa3d6c8fc5c9162d596ea39282f8a43cf",
+          "installer_sha256": "ee22a4c6a3026cbbca083edf6737c28aa3d6c8fc5c9162d596ea39282f8a43cf",
+          "matches": true
+        },
+        {
+          "partition": "scp",
+          "expected_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "installer_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "matches": true
+        },
+        {
+          "partition": "system",
+          "expected_sha256": "fe2b0dd9da32876cee9f45f5d20412651d156dd036b63ebead27a243e5089b41",
+          "installer_sha256": "fe2b0dd9da32876cee9f45f5d20412651d156dd036b63ebead27a243e5089b41",
+          "matches": true
+        },
+        {
+          "partition": "system_dlkm",
+          "expected_sha256": "68fddf78d90ab813f453ffeeb93ed4ad53b4a831b7aa5e5515ac5b31cf8cbac0",
+          "installer_sha256": "68fddf78d90ab813f453ffeeb93ed4ad53b4a831b7aa5e5515ac5b31cf8cbac0",
+          "matches": true
+        },
+        {
+          "partition": "system_ext",
+          "expected_sha256": "4c749dd79c748589d82c545ac46f5176e5d2c6e8d05bf3051abac6a191581b5f",
+          "installer_sha256": "4c749dd79c748589d82c545ac46f5176e5d2c6e8d05bf3051abac6a191581b5f",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta",
+          "expected_sha256": "63268ea15fbaf03544fdc2a844e71cdda4ae92bec4ebd7bcf0ab1670c4afc18d",
+          "installer_sha256": "63268ea15fbaf03544fdc2a844e71cdda4ae92bec4ebd7bcf0ab1670c4afc18d",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta_system",
+          "expected_sha256": "c50bebd5ef308286c415e654f0b8469328abc691b91d4ff98858db2ac1175f19",
+          "installer_sha256": "c50bebd5ef308286c415e654f0b8469328abc691b91d4ff98858db2ac1175f19",
+          "matches": true
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "expected_sha256": "90dc7e0a375fc1a77bbf7a42a6ba3ac8d8c1f43b25264e31b07cd14f3ec9bf41",
+          "installer_sha256": "90dc7e0a375fc1a77bbf7a42a6ba3ac8d8c1f43b25264e31b07cd14f3ec9bf41",
+          "matches": true
+        },
+        {
+          "partition": "vendor",
+          "expected_sha256": "497541d12484d61b136b0b16c23a83c716cbeebe0a1d24091e7712b9c42fffb0",
+          "installer_sha256": "497541d12484d61b136b0b16c23a83c716cbeebe0a1d24091e7712b9c42fffb0",
+          "matches": true
+        },
+        {
+          "partition": "vendor_boot",
+          "expected_sha256": "a0bd641000fded389e33b50d975baa9dbc03952f19f88e2eba5728ae61df269e",
+          "installer_sha256": "a0bd641000fded389e33b50d975baa9dbc03952f19f88e2eba5728ae61df269e",
+          "matches": true
+        },
+        {
+          "partition": "vendor_dlkm",
+          "expected_sha256": "0e381f66237dea5a5223862fad99f9cb0b51ba2a86d77a18804d97f9a9c8ddb1",
+          "installer_sha256": "0e381f66237dea5a5223862fad99f9cb0b51ba2a86d77a18804d97f9a9c8ddb1",
+          "matches": true
+        }
+      ],
+      "recovery_log_sha256": "59996f803a3537dd57221e1037d404ccb0ee708af7aebf53c64352d5f1fd8b88",
+      "last_install_sha256": "c9fe078c4fd8fde39955c857a72e1b3d2c204b6787ba287782ea0245949cbb42",
+      "ota_preopt": "otapreopt skipped in Recovery because system boot was not complete; PostinstallRunnerAction succeeded",
+      "temperature_millicelsius": {
+        "start": 36900,
+        "end": 39100,
+        "max": 39100
+      }
+    },
+    "partition_readback": {
+      "revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
+      "incremental": "1789911389",
+      "slot": "b",
+      "started_at": "2026-09-20T15:52:35.148393+00:00",
+      "snapshot_state_before": "none",
+      "method": "read-only SHA-256 of the exact final image byte range on active B slot block devices",
+      "partitions": [
+        {
+          "partition": "boot",
+          "path": "/dev/block/by-name/boot_b",
+          "block_device_bytes": 67108864,
+          "hashed_bytes": 67108864,
+          "expected_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "actual_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.599
+        },
+        {
+          "partition": "dtbo",
+          "path": "/dev/block/by-name/dtbo_b",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 8388608,
+          "expected_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "actual_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.242
+        },
+        {
+          "partition": "odm_dlkm",
+          "path": "/dev/block/mapper/odm_dlkm_b",
+          "block_device_bytes": 348160,
+          "hashed_bytes": 348160,
+          "expected_sha256": "72b9480d385aa1117d3cb311d9b60f4b166ffcb503b0cf1d4f597216ed5a5830",
+          "actual_sha256": "72b9480d385aa1117d3cb311d9b60f4b166ffcb503b0cf1d4f597216ed5a5830",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.195
+        },
+        {
+          "partition": "product",
+          "path": "/dev/block/mapper/product_b",
+          "block_device_bytes": 510750720,
+          "hashed_bytes": 510750720,
+          "expected_sha256": "ee22a4c6a3026cbbca083edf6737c28aa3d6c8fc5c9162d596ea39282f8a43cf",
+          "actual_sha256": "ee22a4c6a3026cbbca083edf6737c28aa3d6c8fc5c9162d596ea39282f8a43cf",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 2.968
+        },
+        {
+          "partition": "scp",
+          "path": "/dev/block/by-name/scp_b",
+          "block_device_bytes": 6291456,
+          "hashed_bytes": 1200128,
+          "expected_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "actual_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.211
+        },
+        {
+          "partition": "system",
+          "path": "/dev/block/mapper/system_b",
+          "block_device_bytes": 1048506368,
+          "hashed_bytes": 1048506368,
+          "expected_sha256": "fe2b0dd9da32876cee9f45f5d20412651d156dd036b63ebead27a243e5089b41",
+          "actual_sha256": "fe2b0dd9da32876cee9f45f5d20412651d156dd036b63ebead27a243e5089b41",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 5.304
+        },
+        {
+          "partition": "system_dlkm",
+          "path": "/dev/block/mapper/system_dlkm_b",
+          "block_device_bytes": 7303168,
+          "hashed_bytes": 7303168,
+          "expected_sha256": "68fddf78d90ab813f453ffeeb93ed4ad53b4a831b7aa5e5515ac5b31cf8cbac0",
+          "actual_sha256": "68fddf78d90ab813f453ffeeb93ed4ad53b4a831b7aa5e5515ac5b31cf8cbac0",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.236
+        },
+        {
+          "partition": "system_ext",
+          "path": "/dev/block/mapper/system_ext_b",
+          "block_device_bytes": 461287424,
+          "hashed_bytes": 461287424,
+          "expected_sha256": "4c749dd79c748589d82c545ac46f5176e5d2c6e8d05bf3051abac6a191581b5f",
+          "actual_sha256": "4c749dd79c748589d82c545ac46f5176e5d2c6e8d05bf3051abac6a191581b5f",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 2.608
+        },
+        {
+          "partition": "vbmeta",
+          "path": "/dev/block/by-name/vbmeta_b",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 8192,
+          "expected_sha256": "63268ea15fbaf03544fdc2a844e71cdda4ae92bec4ebd7bcf0ab1670c4afc18d",
+          "actual_sha256": "63268ea15fbaf03544fdc2a844e71cdda4ae92bec4ebd7bcf0ab1670c4afc18d",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.211
+        },
+        {
+          "partition": "vbmeta_system",
+          "path": "/dev/block/by-name/vbmeta_system_b",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 4096,
+          "expected_sha256": "c50bebd5ef308286c415e654f0b8469328abc691b91d4ff98858db2ac1175f19",
+          "actual_sha256": "c50bebd5ef308286c415e654f0b8469328abc691b91d4ff98858db2ac1175f19",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.21
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "path": "/dev/block/by-name/vbmeta_vendor_b",
+          "block_device_bytes": 8388608,
+          "hashed_bytes": 4096,
+          "expected_sha256": "90dc7e0a375fc1a77bbf7a42a6ba3ac8d8c1f43b25264e31b07cd14f3ec9bf41",
+          "actual_sha256": "90dc7e0a375fc1a77bbf7a42a6ba3ac8d8c1f43b25264e31b07cd14f3ec9bf41",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.196
+        },
+        {
+          "partition": "vendor",
+          "path": "/dev/block/mapper/vendor_b",
+          "block_device_bytes": 483979264,
+          "hashed_bytes": 483979264,
+          "expected_sha256": "497541d12484d61b136b0b16c23a83c716cbeebe0a1d24091e7712b9c42fffb0",
+          "actual_sha256": "497541d12484d61b136b0b16c23a83c716cbeebe0a1d24091e7712b9c42fffb0",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 2.812
+        },
+        {
+          "partition": "vendor_boot",
+          "path": "/dev/block/by-name/vendor_boot_b",
+          "block_device_bytes": 67108864,
+          "hashed_bytes": 67108864,
+          "expected_sha256": "a0bd641000fded389e33b50d975baa9dbc03952f19f88e2eba5728ae61df269e",
+          "actual_sha256": "a0bd641000fded389e33b50d975baa9dbc03952f19f88e2eba5728ae61df269e",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.572
+        },
+        {
+          "partition": "vendor_dlkm",
+          "path": "/dev/block/mapper/vendor_dlkm_b",
+          "block_device_bytes": 13967360,
+          "hashed_bytes": 13967360,
+          "expected_sha256": "0e381f66237dea5a5223862fad99f9cb0b51ba2a86d77a18804d97f9a9c8ddb1",
+          "actual_sha256": "0e381f66237dea5a5223862fad99f9cb0b51ba2a86d77a18804d97f9a9c8ddb1",
+          "exit_code": 0,
+          "matches": true,
+          "elapsed_seconds": 0.287
+        }
+      ],
+      "completed_at": "2026-09-20T15:52:51.821128+00:00",
+      "all_match": true
+    },
+    "limited_log_check": {
+      "candidate": "97969dc",
+      "window": "last 15000 logcat lines at 2026-09-20T23:54:00+08:00",
+      "matching_avc_or_fatal_lines": 0,
+      "meaning": "Limited log window only; does not establish full hardware or IMS acceptance"
     }
   },
   "retirement": {
@@ -852,7 +1127,7 @@
       "IMS startup fix must be installed and validated through real modem backend, capabilities, registration and recovery; carrier limits must be separated from defects",
       "Power Android service and actual caller/resource lifecycles need device validation; framework strategy adoption requires reproducible latency/frame/energy evidence",
       "Wi-Fi PMF upgrade fix must pass association, DHCP, connectivity and reconnect",
-      "97969dc final Recovery status/readback missing; newest candidate installation/Recovery and affected hardware acceptance pending"
+      "Newest candidate installation/Recovery/independent readback and affected hardware acceptance pending; 97969dc Recovery status and 14 partition readbacks now verified"
     ],
     "conditional_delete_paths": [
       "archive/hybrid/README.md",

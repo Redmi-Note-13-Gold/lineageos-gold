@@ -1,4 +1,4 @@
-更新于 2026-09-20 23:38（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
+更新于 2026-09-21 00:05（UTC+8）。主线采用 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
 **尚不可删除旧 hybrid Python 流程。** 完整对照及条件删除清单见 [ADAPTATION](ADAPTATION.md)。当前必须闭合的是最新候选构建与上机、IMS 后端／注册、Wi-Fi 关联和 Power 实际请求及收益验证；本轮未删除归档、历史镜像或唯一输入。
 
@@ -11,7 +11,7 @@
 | 97969dc 构建 | Android 11:44，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 20 个实际镜像文件匹配 |
 | 2cd2675 构建 | Android 59:21，包／签名／VINTF／SELinux 通过；14 个 payload 分区和 21 个实际镜像文件匹配；未安装 |
 | 3ee80e9 构建 | 正在构建；尚无编译终态、产物或安装结论 |
-| 97969dc 安装／启动 | 侧载 host exit 0；用户手动重启后 B 槽 incremental 1789911389、boot_completed=1、Enforcing；稳定启动观察通过，data/persist 正常、两个 canary 一致、快照 state none；最终 Recovery status 和独立分区回读尚缺 |
+| 97969dc 安装／启动 | 侧载 host exit 0；用户手动重启后 B 槽 incremental 1789911389、boot_completed=1、Enforcing；稳定启动观察通过，data/persist 正常、两个 canary 一致、快照 state none；Recovery 最终 status 0、安装器 14 项哈希和独立回读 14 个分区的最终镜像字节范围全部匹配 |
 | IMS | 97969dc feature、框架初始化及 MTK 服务实际绑定通过；MMTEL UNAVAILABLE，后端被缺失 ims_support 阻断；3ee80e9 修复待验证。未通过注册／通话／短信 |
 | Wi-Fi | 97969dc data pmf=0、vendor 模板=1，证实升级漏覆盖；2cd2675 overlay 修复未上机，当前尚未关联 |
 | 性能／能耗 | 真实节点、匹配内核协议和调用者静态证据已核对；尚无同机可重复收益，新增框架 boost 默认关闭 |
@@ -19,7 +19,7 @@
 
 IMS APK SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1`，为主线普通 Git blob。47 个载荷条目和重编兼容 dex 已核验；原厂完整依赖打包配方不完整，但当前输入可独立取得，不依赖旧 Python 环境。
 
-用户已授权本会话同基线保数据 OTA、正常系统／Recovery 重启、分区回读、临时 adb root、安装并清理测试程序、Wi-Fi 重连和网络调试；不清数据、不改 SIM、不拨号或发短信。最后现场卡为第二槽漫游 eSIM。用户报告已进桌面，但 23:33 本机 USB 未枚举到手机；网络 ADB 尚未启用。
+用户已授权本会话同基线保数据 OTA、正常系统／Recovery 重启、分区回读、临时 adb root、安装并清理测试程序、Wi-Fi 重连和网络调试；不清数据、不改 SIM、不拨号或发短信。最后现场卡为第二槽漫游 eSIM。23:59 已重新连接 USB ADB，仍为 97969dc 的 B 槽正常系统；网络 ADB 尚未启用。
 
 原始证据和后续检查路径在 [mainline-convergence-20260920.json](../validation/mainline-convergence-20260920.json)。2cd2675 构建记录 `source/out-gold-standard/gold-build-records/1789914079640672965/`；保留产物 `verified-candidates/20260920-222119-2cd2675/`，OTA SHA-256 `a908222f5162bdc01c18b87634d18f9c433d258199e5292cb7fd3269f55a290d`，target-files SHA-256 `efbc1306c820fe83b38031aa8de3444584be136864c2bf59401acba04ab125e1`。97969dc 保留路径仍为 `verified-candidates/20260920-213629-97969dc/`，OTA SHA-256 `30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6`。不得用可变平铺路径代替候选身份。
 
