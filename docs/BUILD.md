@@ -69,6 +69,8 @@ out-gold-standard/host/linux-x86/nativetest64/gold_health_units_test/gold_health
 
 以上命令在 Android 源码根执行。Health 测试需构建时附加 `--extra-target gold_health_units_test`；它在 Linux 主机执行，不访问手机。振动契约测试生成在 `data/nativetest64/vendor/gold_vibrator_contract_test/`（以及对应 ARM 目录），仅生成测试程序不能记作运行通过。包内容检查也不能代替 overlay 生效和硬件验收。
 
+运行振动契约测试时，普通 shell 可能无权读取 vendor 的 AIDL 库。将同次构建、对应 ABI 的测试 ELF 和 `vendor/lib64/android.hardware.vibrator-V1-ndk.so`（ARM 对应 `vendor/lib/`）临时放到独立的 `/data/local/tmp/` 子目录，以该目录作为 `LD_LIBRARY_PATH` 运行，随后删除。这四项契约测试不驱动马达，无需改变系统库、文件标签或 SELinux；仍需另验实际振动。包内容检查现在也要求标准 IMS feature XML，避免 APK 已打包但框架跳过 IMS 初始化。
+
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
 源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。

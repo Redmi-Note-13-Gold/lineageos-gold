@@ -2,6 +2,8 @@
 
 更新于 2026-09-20。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，开发目标 `lineage_gold-bp4a-userdebug`。
 
+首次候选已完成保数据 OTA、A 槽启动及部分实机检查。验收发现 IMS feature 声明缺失，导致框架跳过 IMS 初始化；主线已补齐声明并增加包内容检查，修正版需要重新构建和验收。漫游 eSIM 的 LTE 注册不能作为 IMS / VoLTE 通过的依据。
+
 ## 本轮源码候选
 
 已修改：补齐 32 位 mapper 的五个厂商库及对应 AIDL 依赖修正；恢复原厂功耗统计资源并纠正大核字段名；启用按实际屏幕模式生成的刷新率选择；补齐显示轮廓；按当前内核实际单位修复电量计数器；撤下未有效调校的持续性能能力声明；修复振动 HAL 虚报能力和文件描述符泄漏；收窄相机数据/标定目录权限；清理重复及无读取方的属性；将实际编译树中的 Betterr 设置条目纳入恢复补丁。
@@ -10,9 +12,9 @@
 |---|---|
 | 主机工具 | 26 项 Python 测试通过；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
 | 本轮 Android 构建 | 源码 `4cdee4a` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过 |
-| 振动契约测试 | ARM64 / ARM 测试程序已编译，未在手机执行 |
-| 本轮安装、分区回读、开机 | 尚未执行 |
-| 本轮硬件 | 本轮候选未安装；已读取现有系统基线，见下文 |
+| 振动契约测试 | ARM64 / ARM 已在手机 shell 下各通过 4 项；同次构建的 AIDL 测试依赖临时部署后清理，未修改系统库或 SELinux |
+| 本轮安装、分区回读、开机 | 首次候选 Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽开机完成，Enforcing，data/persist 正常 |
+| 本轮硬件 | Health 单位修复生效，显示 overlay 生效；eSIM 漫游 LTE 注册正常。IMS 缺失声明待修正版验收；其他硬件仍未全面验收 |
 
 具体采用与暂缓理由见 [ADAPTATION](ADAPTATION.md)。新增振动契约测试需要 Android 目标构建和运行，不把编译测试程序计作测试通过。
 
@@ -33,7 +35,7 @@ SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已�
 
 这是 **userdebug / test-keys** 候选，签名完整性通过不等于正式发行密钥验收。包内策略的 permissive 域为上游调试域 `su`、`osi`、`backuptool`；没有把新 Health/Vibrator 域设为 permissive，也未关闭全局 SELinux。VINTF 详细检查返回 `COMPATIBLE`，保留了路径回退、空 boot ramdisk及 kernel level 提示的原始日志，详见验证记录。
 
-构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。本轮未安装候选，不将原手机系统的运行状态计入新包验收。
+构建期间的四项 VM 临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。该构建记录是安装前的包验证快照，后续实机结果单独保留在 [device-acceptance-20260920.json](../validation/device-acceptance-20260920.json)。
 
 构建验证完成后，按用户新要求迁移了宿主布局：swap 移到 `/srv/build/gold-build-swapfile`，缓存实际移到 `/root/ccache`，统一入口直接以 root 执行。先启用并持久化替代 swap，再停用旧文件；缓存校验通过后才移除旧目录。候选产物未重建，原构建记录中的旧路径是历史事实。当前配置及入口验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
@@ -50,8 +52,8 @@ SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已�
 
 ## 尚需完成
 
-完成新完整包及安装验证后，依次验收相机、指纹、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、振动、USB、关机充电和温控功耗。再验证同基线保数据 OTA、Virtual A/B 合并和回退。
+先构建并安装 IMS feature 修正版，确认框架确实绑定 IMS 服务，再按可用测试条件验收相机、指纹、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、振动、USB、关机充电和温控功耗。首次同基线保数据 OTA 已完成，Virtual A/B 合并、再次进入 Recovery 和回退仍需单独验证。
 
-当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位问题已有实机证据并已修源码，但新 HAL 的安装后验收与持续性能调校仍未完成，详见 ADAPTATION。
+当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位修复已在首次候选正常系统生效；关机充电完整循环与持续性能调校仍未完成，详见 ADAPTATION。
 
 IMS 仍依赖指定哈希的兼容 APK，从原厂 APK 独立重建完整依赖的流程尚未闭合。未用关闭 SELinux、跳过 neverallow、伪造硬件能力或强行声明 MDDP WH 支持来代替验证。

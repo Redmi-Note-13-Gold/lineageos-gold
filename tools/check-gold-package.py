@@ -100,6 +100,15 @@ def verify(target, aapt2, readelf, profile):
                 'service': 'service vendor.charger /vendor/bin/hw/android.hardware.health-service.gold --charger'}],
                 'Expected exactly one normal-system charger definition')
 
+        ims_feature = 'VENDOR/etc/permissions/android.hardware.telephony.ims.xml'
+        require(ims_feature in members,
+                'Missing IMS feature: the framework would skip ImsResolver and ImsPhone initialization')
+        permissions = ET.fromstring(archive.read(ims_feature))
+        require(permissions.tag == 'permissions' and any(
+            feature.get('name') == 'android.hardware.telephony.ims'
+            for feature in permissions.findall('feature')),
+            'Missing IMS feature: the framework would skip ImsResolver and ImsPhone initialization')
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -139,6 +148,8 @@ def verify(target, aapt2, readelf, profile):
                 'Incorrect big-core power key')
         return {'gold_package_contents_verified': True, 'graphics_32bit': graphics,
                 'health': health, 'health_vintf': declarations, 'charger_definitions': chargers,
+                'ims': {'feature_permission': ims_feature, 'feature_declared': True,
+                        'registration_verified': False},
                 'settings': {'sha256': sha256(archive.read(settings_name)), 'maintainer_page_verified': True,
                              'languages': ['default', 'zh-rCN', 'zh-rTW'], 'peak_refresh_overlay': True},
                 'power_profile': {'named_entries': len(actual), 'matches_source': True,
