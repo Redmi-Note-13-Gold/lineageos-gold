@@ -132,6 +132,20 @@ def verify(target, aapt2, readelf, profile):
         require(archive.read(ims_permissions_name) == (ims_root / Path(ims_permissions_name).name).read_bytes(),
                 'Packaged IMS privileged permission allowlist differs from mainline')
 
+        vendor_properties = archive.read('VENDOR/build.prop').decode().splitlines()
+        zygote = [line.split('=', 1)[1].strip() for line in vendor_properties if line.startswith('ro.zygote=')]
+        require(zygote == ['zygote64'], 'Gold supports 64-bit applications only')
+        require('service zygote /system/bin/app_process64 ' in archive.read(
+            'SYSTEM/etc/init/hw/init.zygote64.rc').decode(), 'Missing selected zygote RC')
+        for name, destination in [('SYSTEM/lib/modules', b'/system_dlkm/lib/modules'),
+                                  ('VENDOR/lib/modules', b'/vendor_dlkm/lib/modules')]:
+            require((archive.getinfo(name).external_attr >> 16) & 0o170000 == 0o120000
+                    and archive.read(name) == destination, 'Wrong standard kernel module link: ' + name)
+        wifi_name = 'VENDOR/etc/wifi/wpa_supplicant.conf'
+        wifi_pmf = [line.strip() for line in archive.read(wifi_name).decode().splitlines()
+                    if line.startswith('pmf=')]
+        require(wifi_pmf == ['pmf=1'], 'Wi-Fi PMF default differs from locked Global firmware')
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -181,6 +195,8 @@ def verify(target, aapt2, readelf, profile):
                 'power_profile': {'named_entries': len(actual), 'matches_source': True,
                                   'source_sha256': sha256(profile.read_bytes()), 'big_core_key_corrected': True},
                 'sustained_performance_advertised': False,
+                'zygote': 'zygote64', 'standard_module_links_verified': True,
+                'wifi_pmf_default': 1, 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}
 
