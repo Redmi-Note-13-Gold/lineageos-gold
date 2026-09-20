@@ -24,7 +24,9 @@ python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-sour
 
 迁入的源码仍由原账户拥有。当前 root 的 Git 配置通过 `include.path` 加载 `/srv/build/gold-git-safe-directories.config`，只信任本源码树 `repo list -p` 枚举的 1158 个项目和 3 个 Repo 元数据仓库的确切路径。没有设置 `safe.directory=*`，也没有递归更改 overlay 所有权。新增项目或迁到新路径时，应核对后更新清单；对单个已核对仓库可执行 `git config --global --add safe.directory /exact/repository/path`。科研机 Git 2.43 的 `source/*` 未通过实际检查，不能用它替代确切路径。
 
-先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建通过 root systemd 服务启动，保留资源上限：
+原有 `out-gold-standard` 的目录和文件也必须归实际构建 UID 所有：nsjail 内的映射用户不能依靠宿主 root 的权限覆盖旧 UID 的写权限。科研机已确认该输出全部位于 overlay upper，再只调整这个受管输出的所有权；未复制输出、改写文件内容或关闭沙箱。
+
+先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、输出目录归属、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建通过 root systemd 服务启动，保留资源上限：
 
 ```sh
 unit=gold-build-$(date +%Y%m%d-%H%M%S)

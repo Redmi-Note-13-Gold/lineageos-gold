@@ -203,5 +203,24 @@
     "manifest_sha256": "b6d72b7309abb932cef0d2a6570c64b229b89172e88f9d18eb5ad3371d9ff5e0",
     "reproduction_script": "/srv/build/build-jobs/gold-ims-feature-20260920/configure-research-git-trust.py",
     "host_tool_tests_passed": 27
+  },
+  "root_output_ownership_followup": {
+    "started_at": "2026-09-20T08:54:21.574597+00:00",
+    "scope": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard",
+    "lower_output_absent": true,
+    "follow_symlinks": false,
+    "source_ownership_changed": false,
+    "file_contents_rewritten": false,
+    "nsjail_write_open_before_exit_code": 1,
+    "probe_sha256_before": "2f6bc11fde86709734431e084f297a092e9bdb168dba086a4ce2b833a4008a87",
+    "owners_before": {
+      "1000:1000": 843150,
+      "0:0": 24
+    },
+    "changed_entries": 843148,
+    "nsjail_write_open_after_exit_code": 0,
+    "probe_sha256_after": "2f6bc11fde86709734431e084f297a092e9bdb168dba086a4ce2b833a4008a87",
+    "finished_at": "2026-09-20T08:57:29.198490+00:00",
+    "reproduction_script": "/srv/build/build-jobs/gold-ims-feature-20260920/migrate-root-output-ownership.py"
   }
 }

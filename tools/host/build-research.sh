@@ -31,6 +31,9 @@ import tempfile
 
 cache = Path(os.environ['CCACHE_DIR'])
 tree = Path(sys.argv[1]).resolve()
+out = tree / 'out-gold-standard'
+if out.exists() and out.stat().st_uid != os.geteuid():
+    raise SystemExit('Managed output must belong to the actual build UID for nsjail: ' + str(out))
 subprocess.run([str(tree / '.repo/repo/repo'), 'manifest', '-r'],
                cwd=tree, stdout=subprocess.DEVNULL, check=True)
 if not cache.is_dir() or cache.is_symlink():
@@ -45,6 +48,7 @@ print(json.dumps({'uid': os.getuid(), 'euid': os.geteuid(),
                   'home': os.environ['HOME'], 'ccache_dir': str(cache),
                   'cache_read_write_verified': True,
                   'pinned_manifest_export_verified': True,
+                  'output_owner_verified': True,
                   'build_username': os.environ['BUILD_USERNAME'],
                   'source_tree': str(tree)}, indent=2))
 PY

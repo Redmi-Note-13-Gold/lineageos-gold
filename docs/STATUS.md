@@ -13,7 +13,7 @@
 | 主机工具 | 27 项 Python 测试通过，包括清单导出失败仍保存失败记录；原生 arm64 C++ 和本轮生成的 Linux x86_64 Health 测试均通过 8 个电量单位/边界用例 |
 | 本轮 Android 构建 | 源码 `4cdee4a` 完整构建成功；target-files、AVB、VINTF、OTA/payload 签名及 Gold 包内容检查通过 |
 | 振动契约测试 | ARM64 / ARM 已在手机 shell 下各通过 4 项；同次构建的 AIDL 测试依赖临时部署后清理，未修改系统库或 SELinux |
-| 本轮安装、分区回读、开机 | 首次候选 Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽开机完成，Enforcing，data/persist 正常 |
+| 本轮安装、分区回读、开机 | 首次候选 Recovery status 0；14 项安装器写后校验及 7 项独立物理分区回读匹配；A 槽及新版 Recovery 往返启动完成，Enforcing，data/persist 正常；Virtual A/B 合并已完成 |
 | 本轮硬件 | Health 单位修复生效，显示 overlay 生效；eSIM 漫游 LTE 注册正常。IMS 缺失声明待修正版验收；其他硬件仍未全面验收 |
 
 具体采用与暂缓理由见 [ADAPTATION](ADAPTATION.md)。新增振动契约测试需要 Android 目标构建和运行，不把编译测试程序计作测试通过。
@@ -26,10 +26,10 @@
 
 | 产物 | 相对路径 | 字节数 |
 |---|---|---|
-| 完整 OTA | `lineage-23.2-20260920-UNOFFICIAL-gold.zip` | 1174542977 |
+| 首次候选 OTA（保留） | `verified-candidates/20260920-102252-4cdee4a/lineage-23.2-20260920-UNOFFICIAL-gold.zip` | 1174542977 |
 | target-files | `obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip` | 2903486079 |
 
-SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已再次确认 9 月 19 日 OTA 哈希不变，且与本轮可变 OTA 文件分离。
+SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。首次 OTA 已另保留硬链接；target-files 路径会随后续增量更新，此处大小和哈希属于首次构建记录。已再次确认 9 月 19 日 OTA 哈希不变，且与本轮可变 OTA 文件分离。
 
 五个 ARM 图形库及 graphics-common V7 依赖、Gold Health 正常/Recovery 服务、标签与各自唯一的 VINTF 声明、正常系统唯一 charger、Settings 维护者资源和刷新率 overlay、38 项功耗配置均已核验。`tools/check-gold-package.py` 可复查这些包内容。
 
@@ -39,7 +39,9 @@ SHA-256 见 [校验清单](../validation/final-build-20260920-SHA256SUMS)。已�
 
 构建验证完成后，按用户新要求迁移了宿主布局：swap 移到 `/srv/build/gold-build-swapfile`，缓存实际移到 `/root/ccache`，统一入口直接以 root 执行。先启用并持久化替代 swap，再停用旧文件；缓存校验通过后才移除旧目录。候选产物未重建，原构建记录中的旧路径是历史事实。当前配置及入口验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
-root 首次实际构建在导出清单时触发 Git 所有权检查。已针对当前源码配置确切路径的信任清单，并以 root 成功导出全部 Repo 项目的固定清单；入口环境检查也已覆盖此步骤。未更改整棵源码所有权或加入全局通配信任。IMS 修正版仍须以新的构建终态与产物验证记录判定完成。
+root 首次实际构建暴露 Git 信任和旧输出所有权两个问题。已配置源码确切仓库路径的信任清单，并将全部位于 overlay upper 的受管输出移交给 root；同一 nsjail 写入探针从权限拒绝变为成功，原文件哈希不变。入口环境检查覆盖输出目录归属和完整清单导出。源码所有权和构建沙箱保持原状。IMS 修正版仍须以新的构建终态与产物验证记录判定完成。
+
+首次候选已完成正常系统 → 新版 A 槽 Recovery → 正常系统的往返：Recovery 中 Gold Health 位于 `hal_health_default`，VINTF 仅一个 Health 实例；misc 的合并状态为 `NONE`，metadata 的 OTA state 为空且快照目录为空。再次开机、解锁后两份验收文件哈希一致，临时文件已清理。Recovery 内核上报电量 100% / Charging，但 charge_counter 与 charge_full 为零，因此未把 Recovery 的计数换算记作实测通过。
 
 ## 本轮读取的原有系统
 
@@ -54,7 +56,7 @@ root 首次实际构建在导出清单时触发 Git 所有权检查。已针对�
 
 ## 尚需完成
 
-先构建并安装 IMS feature 修正版，确认框架确实绑定 IMS 服务，再按可用测试条件验收相机、指纹、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、振动、USB、关机充电和温控功耗。首次同基线保数据 OTA 已完成，Virtual A/B 合并、再次进入 Recovery 和回退仍需单独验证。
+先构建并安装 IMS feature 修正版，确认框架确实绑定 IMS 服务，再按可用测试条件验收相机、指纹、双卡与 IMS、Wi-Fi/热点、蓝牙音频、GNSS、传感器、振动、USB、关机充电和温控功耗。首次同基线保数据 OTA、Virtual A/B 合并及新版 Recovery 往返已完成；回退尚未测试。
 
 当前 Power HAL 缺少 launch/interaction 动作，不能宣称 v1 boost 已完整继承。Health 单位修复已在首次候选正常系统生效；关机充电完整循环与持续性能调校仍未完成，详见 ADAPTATION。
 

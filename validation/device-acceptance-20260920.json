@@ -1,6 +1,6 @@
 {
   "date": "2026-09-20",
-  "recorded_at": "2026-09-20T08:30:04.469558+00:00",
+  "recorded_at": "2026-09-20T08:58:35.436558+00:00",
   "candidate_source_revision": "4cdee4a4bc782aa70fb978eb0cd7a7a5898d17e9",
   "candidate_incremental": "1789870972",
   "ota_sha256": "e35824385ab2e6e915f6ea33be37ac2aa58296de1d9a877cd407f922cbc8f0a4",
@@ -188,8 +188,9 @@
     "task_owned_userdata_and_shared_storage_canaries_match": true,
     "canary_count": 2,
     "user_provisioning_retained": true,
-    "canaries_cleanup_pending": true,
-    "no_claim_about_unread_personal_file_contents": true
+    "canaries_cleanup_pending": false,
+    "no_claim_about_unread_personal_file_contents": true,
+    "canaries_removed_after_recovery_roundtrip": true
   },
   "runtime": {
     "health": {
@@ -270,9 +271,56 @@
   },
   "remaining": [
     "Build and install IMS feature correction; verify actual service binding, then carrier registration where supported.",
-    "Independently inspect Virtual A/B merge completion and boot updated Recovery.",
     "Physical camera, fingerprint, audio, Wi-Fi/hotspot, Bluetooth audio, GNSS, sensors, vibration, offline charging and sustained thermal/power acceptance.",
     "No full hardware, carrier IMS call, or long-duration stability claim."
   ],
-  "privacy": "Raw device logs, SIM identifiers, boot IDs, process IDs and user data are not included in this record."
+  "privacy": "Raw device logs, SIM identifiers, boot IDs, process IDs and user data are not included in this record.",
+  "updated_recovery": {
+    "checked_at": "2026-09-20T08:52:48.753214+00:00",
+    "candidate_incremental": "1789870972",
+    "slot": "a",
+    "booted": true,
+    "selinux": "Enforcing",
+    "health_service_running": true,
+    "health_service_domain": "hal_health_default",
+    "health_instance": "android.hardware.health.IHealth/default",
+    "legacy_mediatek_health_running": false,
+    "health_battery_status": "Charging",
+    "health_battery_capacity_percent": 100,
+    "kernel_charge_counter_and_full_zero_in_recovery": true,
+    "charge_counter_recovery_conversion_not_physically_verified": true,
+    "raw_recovery_log_sha256": "dd1bf20dfdc5a292efc671f1ee87658e28cab571a48c66929ea6b1c0bc26fccb",
+    "adb_enabled_by_user": true,
+    "adb_root_command_used": false
+  },
+  "virtual_ab_merge": {
+    "checked_at": "2026-09-20T08:52:48.753214+00:00",
+    "misc_merge_status": 0,
+    "misc_merge_status_name": "NONE",
+    "misc_source_slot": 0,
+    "metadata_ota_state_bytes": 0,
+    "metadata_snapshot_directory_empty": true,
+    "metadata_mounted_read_only_noload_then_unmounted": true,
+    "merge_complete_verified": true
+  },
+  "after_recovery_return": {
+    "slot": "a",
+    "candidate_incremental": "1789870972",
+    "boot_completed": true,
+    "selinux": "Enforcing",
+    "data_mounted": true,
+    "persist_mounted": true,
+    "normal_adb_uid": 2000,
+    "first_collected_uptime_seconds": 84.46,
+    "health_charge_counter_uah": 4957000,
+    "credential_encrypted_shared_storage": "unlocked; canary hash matched",
+    "critical_error_counts_in_captured_windows": {
+      "java_fatal": 0,
+      "native_fatal_signal": 0,
+      "application_anr": 0,
+      "system_watchdog_kill": 0
+    },
+    "shared_storage_canary_matches": true,
+    "checked_after_unlock_at": "2026-09-20T08:58:35.436558+00:00"
+  }
 }
