@@ -1,10 +1,10 @@
 # 适配来源与取舍
 
-本轮接手基线 `462fab1`；`97969dc` 已安装并在 B 槽启动；`2cd2675` 已完成构建和包验证但未安装；IMS 初始化、Power 接入及调试 Recovery 的集成版本 `3ee80e9` 正在增量构建；本机 `f17a75a` 追加客户端句柄隔离和验收探针，待该构建终态后同步；参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`。v1 对照重构前 `e14a7fa` 和 `archive/hybrid/`。迁移报告只用于寻找材料；下面的取舍依据实际源码、构建输入、接口实现与已保留证据。
+本轮接手基线 `462fab1`；`97969dc` 已安装并在 B 槽启动；`2cd2675` 已完成构建和包验证但未安装；IMS 初始化、Power 接入及调试 Recovery 的集成版本 `3ee80e9` 因性能属性写权限违反 neverallow 构建失败；`f17a75a` 的客户端句柄隔离／探针和 `c36757a` 的 vendor 自有配置入口已同步，正在增量构建；参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`。v1 对照重构前 `e14a7fa` 和 `archive/hybrid/`。迁移报告只用于寻找材料；下面的取舍依据实际源码、构建输入、接口实现与已保留证据。
 
 ## 旧版到主线的完整收敛对照
 
-对照 Git `e14a7fa` 与 `archive/hybrid/`，并检查实际合并源码。下表的旧证据只属于旧版；当前候选尚需独立实机验收。2026-09-20 本轮再次确认五份平台补丁逐字一致；`97969dc` 的 143 个输入文件核对通过；当前 `3ee80e9` 的 158 个合并源码文件与受管输入一致。Power 已接入待编译候选，尚未上机；额外启动／交互 boost 默认关闭。
+对照 Git `e14a7fa` 与 `archive/hybrid/`，并检查实际合并源码。下表的旧证据只属于旧版；当前候选尚需独立实机验收。2026-09-20 本轮再次确认五份平台补丁逐字一致；`97969dc` 的 143 个输入文件核对通过；当前 `c36757a` 的 158 个合并源码文件与受管输入一致。Power 已接入待编译候选，尚未上机；额外启动／交互 boost 默认关闭。
 
 | 旧版项目／解决的问题 | 旧版实际证据及边界 | 主线实现与位置 | 决定 | 仍缺的验证 | 是否依赖旧流程／旧产物 |
 |---|---|---|---|---|---|
@@ -31,9 +31,9 @@
 | KeyMint 与 Android 16 ABI | 旧新底包启动记录有限；不能代表全部密钥功能 | `extract-files.py` 使用固定 KeyMint V3 prebuilt ABI；源码 SELinux/init 启动配置 | 标准提取与源码策略替代 | 新候选加密 data 解锁、keystore／证明能力；不伪造硬件安全级别 | 固定官方输入，无旧镜像依赖 |
 | Codec2 AIDL 服务 | 旧归档 patch 包含手写 AIDL/HIDL 包装器；并非完整编解码验收 | 固定 Global `android.hardware.media.c2-mediatek-64b` 提取为标准服务，AIDL IComponentStore/default；保留需要的 ARM 库 | 厂商匹配服务替代旧包装器 | 新候选编解码、相机视频、DRM／媒体性能锁 | 不需要归档 Codec2 patch |
 | mi_ext OEM APK mask／渠道 init | 旧 hybrid 需清理 overlay 分区内空 APK 与渠道 init | 当前标准 OTA 分区集合不包含 mi_ext，fstab 不把旧 mi_ext 作为上层应用覆盖 | 有依据取消 | 新候选 mount／软件包路径，确认旧物理内容未参与系统 | 不需要重新打包 mi_ext |
-| AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 97969dc 的 14 分区／20 文件、2cd2675 的 14 分区／21 文件检查通过；3ee80e9 待终态；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
+| AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 97969dc 的 14 分区／20 文件、2cd2675 的 14 分区／21 文件检查通过；c36757a 待终态；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
 | Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | 新候选 Recovery 安装、往返、分区读回 | 不需要旧 Recovery 脚本 |
-| 只读启动观察／槽位判定 | 旧 capture_boot 有 36 项客户端／时钟模拟测试 | `tools/capture_boot.py` 与 `tests/test_capture_boot.py`；f17a75a 主线无 archive 导出 71 项测试通过 | 归入主线保留 | 97969dc B 槽 9 个稳定样本、21.47 秒观察通过；3ee80e9 尚未安装 | 不需要归档路径 |
+| 只读启动观察／槽位判定 | 旧 capture_boot 有 36 项客户端／时钟模拟测试 | `tools/capture_boot.py` 与 `tests/test_capture_boot.py`；f17a75a 主线无 archive 导出 71 项测试通过 | 归入主线保留 | 97969dc B 槽 9 个稳定样本、21.47 秒观察通过；c36757a 尚未安装 | 不需要归档路径 |
 | MDDP WH／全运营商 IMS／持续性能 | 旧记录没有 WH modem 能力位，也未完成这些完整验收 | 不伪造 WH、不全局强制 carrier override；性能按测量决定 | MDDP 无依据功能不导入；其余如实保留未完成状态 | 实际能力与测试条件 | 不作为旧版已通过的遗失能力 |
 
 **当前结论：尚不可删除。** 源码运行入口已不调用旧拼装脚本，但 Power 的 Android 构建与真实调用／性能实测、IMS 后端初始化修复后的注册与恢复，以及 Wi-Fi 关联故障仍未闭合。以下路径是满足退出条件后的精确代码删除候选，不是本轮已删除项：
