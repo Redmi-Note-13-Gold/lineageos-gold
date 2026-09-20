@@ -1,31 +1,33 @@
-更新于 2026-09-21 04:01（UTC+8）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
+更新于 2026-09-21 05:12（UTC+8）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
-**尚不可删除旧 hybrid Python 流程。** 完整迁移对照与 15 项条件删除清单见 [ADAPTATION](ADAPTATION.md)；本轮没有删除归档、历史镜像或唯一输入，没有公开推送。
+**尚不可删除旧 hybrid Python 流程。** 完整迁移对照与 15 项条件删除清单见 [ADAPTATION](ADAPTATION.md)；本轮未删除归档、历史镜像或唯一输入，未公开推送。
 
-最新源码 `2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb` 已受控同步科研机，158 项合并输入匹配，仅更新 10 个内容改变的文件，Android.bp 时间戳保留。`gold-power-runtime-r3-20260921.service` 于 03:49 启动并已完成，Android 耗时 13:34、入口 exit 0，BUILD_DATETIME=1789933740；日志 `/srv/build/logs/gold-power-runtime-r3-20260921.log`。仍复用唯一 `source/out-gold-standard`，jobs=2、原内存／swap 上限、OverlayFS、缓存和独立 VM 恢复 guard；未 clean。
+最新源码 `bd50b19ef82575790eb455c6cb1d712a482d62b7` 已同步科研机，161 项实际合并输入完全匹配。新增 Codec2 主线入口后，仅重新生成 vendor 构建定义，差异只有旧可执行文件模块及产品条目的移除；未重提取或删除原输入。`gold-codec-r5-20260921.service` 于 05:06 启动，BUILD_DATETIME=1789938387，日志 `/srv/build/logs/gold-codec-r5-20260921.log`，**尚在构建**。独立 guard 为 `gold-codec-r5-vm-guard-20260921.service`。复用唯一 `source/out-gold-standard`、jobs=2、原内存／swap 上限、OverlayFS 和缓存；构建活动期间不修改远端源码。
 
-c36757a 已完成 Android 编译 01:15:15，原入口的 VINTF XML 格式字节比较误报由 05f156a 修正；同一不可变候选重验 14 个 payload 分区／29 个实际镜像文件、签名、VINTF、SELinux 均通过。03:09 标准 update_engine 安装到 A 槽以 kSuccess(0) 结束，14 项安装器哈希及独立 A 槽回读全部匹配。
+手机当前为 **2cca323 原镜像、B 槽、incremental 1789933740**，boot_completed=1、Enforcing。标准 update_engine 保数据安装以 kSuccess(0) 结束，安装器与独立分区回读各 14 项全部匹配；原镜像正常启动、正常系统→Recovery→正常系统往返均通过。Recovery 自动 ADB 已实测，无需菜单；正常系统 ADB 仍鉴权。共享 display idle 节点保持原 root:root 0440，没有沿用 c36757a 的临时 DAC 改动。data/persist 挂载和内部 canary 通过，snapshot none；共享存储 canary 仍待用户首次解锁。
 
-**c36757a 原始启动未通过。** Power 对 root:root 0440 的显示 idle 节点写入失败，并在 Binder 注册前退出，导致框架等待。临时只把该节点改成 system:system 0660 后才 boot_completed=1，全局保持 Enforcing。内核反汇编和实际 34／50 值变化进一步证明它是共享全局 interval，不能由 Power 以固定 50 复位。2cca323 不接管该节点，明确拒绝相应资源；后端不可用时保持控制接口、拒绝 boost／票值并限速恢复，缓存省电／显示状态，要求新鲜温控。它也修复相同聚合跳过硬件回读的问题，以及仅调试 root 探针的进程身份读取 AVC。
+**Codec2 稳定性未通过。** 2cca323 首次创建 MTK AVC 编码器时发生 SIGSEGV，客户端重试后完成编码／41 帧解码并不能算无崩溃通过。LLDB、匹配库哈希和 DWARF 确认：原厂入口为 ComponentStore 只分配 336 字节，当前主线对象需要 352 字节，崩溃落在组件表插入。bd50b19 将当前平台头文件编译的 AIDL 入口纳入 `device/xiaomi/gold/codec2/`，保留匹配 MTK 库、原服务身份和沙箱；仅为实测崩溃报告的二次 SIGSYS 增加 `uname`。新入口尚未完成 Android 构建及实机冷启动／反复创建验证，旧版源码入口的价值不能再判为已被原厂二进制等价替代。
 
 | 验证层次 | 当前实际结果 |
 |---|---|
-| 2cca323 主机测试 | Python 75、Mac arm64 请求 27、节点／引擎 32 项通过；不含 archive 的 Git 导出再次通过 75 项且 IMS 哈希正确 |
-| 2cca323 Android | **编译及全部包门禁通过**：14 payload／29 实际文件、签名、VINTF、SELinux；Linux 27+32 项通过；尚未安装 |
-| c36757a 安装／回读 | 标准 update_engine 成功、14 项安装器与独立回读均匹配；data/persist 挂载、内部 canary 一致、snapshot none；共享存储 canary 等首次解锁 |
-| c36757a 原镜像启动 | **失败**；临时 DAC 后进入系统仅是诊断条件，不能作为候选通过 |
-| c36757a 确定性 Power 测试 | Linux、设备 ARM64、ARM 各 26+28 项通过；不是实际 HAL 动作／收益验收 |
-| IMS 条件运行 | 三项启动属性=1、MTK 服务绑定、mtkIms Binder 存在、双槽 MMTEL READY；未注册，Voice/Video/UT/SMS 未就绪；有效配置已应用但 carrier VoLTE=false，套餐条件未知；未改 SIM／强制运营商，也未拨号或发短信 |
-| Wi-Fi 条件运行 | vendor PMF overlay=1 已安装，保存的测试热点未在刷新扫描出现；关联／DHCP／联网／重连与网络 ADB 未完成 |
-| Codec2 条件运行 | MTK AVC 编码与 29 帧硬件解码/EOS 通过；捕获 vpud_native/v3avpud 的真实性能请求；不等于渲染性能／能耗验收 |
-| Power 实际探针 | c36757a root C ABI 因读取 su 进程身份的 AVC 返回 EPERM；2cca323 修复待验。私有 0x01468000 明确不支持；默认额外 LAUNCH/INTERACTION 均为 0 |
-| 新候选 Recovery／硬件 | 尚未完成；不把 97969dc 的 Recovery status 0、14 项 B 槽回读及启动结果挪用 |
+| 主线工具 | bd50b19 的 75 项 Python 测试通过；无 archive 导出 75 项与 IMS 哈希证明属于 2cca323，不充当新 Android 构建证明 |
+| 2cca323 构建／安装 | Android 13:34、入口 exit 0；14 payload／29 实际文件、签名、VINTF、SELinux 通过；保数据 OTA、B 槽 14 分区独立回读通过 |
+| 2cca323 原镜像启动／Recovery | 两次启动观察 exit 0、各稳定约 20 秒；Recovery 自动 ADB 和往返通过，Recovery 全局 Enforcing、Health 位于 hal_health_default；不是全部 Recovery 硬件验收 |
+| 2cca323 Power 实机 | ARM64／ARM 各 27+32 确定性测试；两 ABI 实际 C 接口的申请、聚合、更新、独立释放和超时通过；所有者退出后小于 340 ms 回收，早于 2 秒期限；HAL 重启后旧句柄不能释放新票值 |
+| 2cca323 Power 节点 | 受控停止／恢复 HAL 的 150 ms 探针完成 uclamp=10、1048000 kHz 频率下限写入／读回／到期复位；另行通过运行中 Enforcing HAL 的 C ABI 探针，未用 root 节点探针代替权限验收 |
+| Power 诊断与收益 | 普通 shell dump 的 FIFO AVC 和 Lineage userdebug 的 ro.debuggable=0 导致调试门拒绝，已在 3cb28c3 修复并编译；尚未上机。额外 LAUNCH／INTERACTION 默认 0，可比启动／帧时间／能耗未测试 |
+| IMS | 2cca323 正常启动及 Recovery 往返后均绑定、mtkIms Binder 存在、双槽 MMTEL READY；**未注册、能力未就绪**。有效 carrier config 已应用但 VoLTE=false，漫游 eSIM 语音资格未知；未改 SIM／强制运营商，未拨号或发短信 |
+| Wi-Fi／网络 ADB | PMF vendor overlay=1 已安装；新扫描未见保存的测试热点，关联／DHCP／联网／重连未完成，网络 ADB 未启用 |
+| Codec2 | **2cca323 稳定性失败，bd50b19 修复构建中**；仍需服务冷启动首次编码、多次创建／销毁、解码及相应硬件验证 |
+| 3cb28c3 候选 | Android 13:14、入口 exit 0；14 payload／29 实际文件及全部签名／VINTF／SELinux 门禁通过，Linux 27+32 通过；冻结保存但未安装，等待包含 Codec2 修复的下一候选 |
 
-手机当前 c36757a、A 槽、incremental1789925665、Enforcing，依赖上述临时运行改动，暂不再次重启。首次解锁、原测试热点可见以及漫游 eSIM 是否有语音／VoLTE 套餐已询问用户，尚待答复；不索取密码，不更改 SIM。现有授权继续覆盖同基线保数据 OTA、正常／Recovery 重启、回读、临时 adb root、安装／清理测试程序和 Wi-Fi／网络调试。
+2cca323 不可变候选：`verified-candidates/20260921-040925-2cca323/`，OTA SHA-256 `08e6744536c973a10e4dfa6c4cefff56167d2c16265045f3d9c4af452640adbf`，target-files `b2f9e564bde9f9834da8f66e53a52443320e87dfc7cb9b97b4ebcfa0202f1ef3`。3cb28c3 为 `verified-candidates/20260921-045747-3cb28c3/`，OTA `2b4840d4bdc7bc358ebb87ce2fbdd21da04c75bdcce6b4f69a96a9fcf3b38228`、target-files `e32739f2532f3c7fa8cdd5e85828642b48eae950f80ed3d51f5edbd8b5c25e1e`；同次工具、检查输入与测试 ELF 均已冻结。r3、r4 guard 都已退出且实读恢复 0/zbud/N/Y；r5 guard 当前随构建活动。
 
-不可变 c36757a 位于 `verified-candidates/20260921-025828-c36757a/`，OTA SHA-256 `a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5`，target-files `5e6ce8367d20feb2f977935a567b29051f323b4f515e143bfa2b45ea53858e39`。固定 IMS APK 为主线 Git blob，SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1`；47 个载荷和兼容 dex 已核验，完整原厂依赖打包配方不完整作为 prebuilt 限制明示，不要求旧 Python 工作目录。
+固定 IMS APK 是主线普通 Git blob，SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1`。47 个载荷和兼容 dex 已核验；完整原厂依赖打包配方不完整是明确的 prebuilt 限制，本身不要求保留旧 Python 工作目录。IMS 实际可用性仍未闭合。
 
-3ee80e9 因 shell 写 vendor 属性违反 neverallow 的失败、c36757a 原入口 XML 比较误报和原始启动失败分别保留，不混淆构建／验证／安装／启动。旧 guard 已恢复 0/zbud/N/Y；r3 guard 也已退出并实读恢复 0/zbud/N/Y。当前仍是 userdebug/test-keys，不冒充正式发行签名。详情见 [聚合证据](../validation/mainline-convergence-20260920.json)。
+c36757a 的原始启动失败、临时 DAC 定位，以及 3ee80e9 neverallow 失败都保留为历史证据，不挪给 2cca323 或新候选。当前是 userdebug/test-keys，不冒充正式发行签名。首次解锁、测试热点可见和 eSIM 语音套餐条件已询问，等待用户答复；现有设备授权持续有效，不重复请求。2cca323 的临时测试 ELF、LLDB server、自建媒体、dex 和端口转发已清理，调试进程已退出。
+
+详情见 [聚合证据](../validation/mainline-convergence-20260920.json)。
 
 以下内容仅保留为历史验收记录，不表示当前待装候选已经通过。
 
@@ -70,5 +72,3 @@ SHA-256 见 [IMS 修正版校验清单](../validation/ims-build-20260920-SHA256S
 - 9 月 16 日已有最终增量镜像的 [设备记录](../validation/device-fixes-20260916.json)：记录包含 B 槽 14 项回读一致、短时正常开机、加密 data/persist 正常和 Enforcing。这是历史记录，本轮没有重现实机检查。
 - 该记录只证明服务就绪和有限日志窗口；没有完成相机拍照、指纹录入、Wi-Fi 联网、蓝牙音频、通话/蜂窝数据和长时稳定性测试。
 - 关机充电图案曾由用户在包含相同永久修复的诊断版确认；最终清理版的完整插电循环及熄屏唤醒仍需测试。
-
-2cca323 的不可变候选：`verified-candidates/20260921-040925-2cca323/`；OTA SHA-256 `08e6744536c973a10e4dfa6c4cefff56167d2c16265045f3d9c4af452640adbf`、target-files `b2f9e564bde9f9834da8f66e53a52443320e87dfc7cb9b97b4ebcfa0202f1ef3`。验证源码、同次 host 工具及依赖、记录和设备测试 ELF 均已冻结；主线专项验证对冻结内容再次通过。
