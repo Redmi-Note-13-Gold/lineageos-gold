@@ -137,3 +137,5 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 顺序打包的r2仍在OTA zip2zip临时副本阶段ENOSPC，证明先前峰值估算不足。新增最小build/make补丁：设置 `GOLD_OTA_TMPDIR` 时仅OTA命令的TMPDIR改用该私有目录，未设置则保留Soong默认值。主机入口核对目录归属/0700/非链接并记录输入；Gold实际镜像检查也使用同一临时盘。当前科研机通过本次job在既有系统盘/tmp下创建专属目录，独立guard在所有构建进程退出后校验marker并清理；不改OUT、不改Soong源码、不挂载第二输出。nsjail源码本来就以读写方式绑定/tmp，无需放宽沙箱。实际合并Make宏的默认、显式路径和含空格引用已定向验证。
 
 移除版r3的Android两阶段及标准产物校验成功，但最终Gold门禁正确拒绝实际system_ext中的旧JNI悬空链接。固定Soong的普通旧文件清理使用os.Stat，可能跳过宿主不存在的Android绝对链接目标。`device/xiaomi/gold/CleanSpec.mk` 以标准一次性步骤仅迁移Gold旧eSIM安装产物，并失效system_ext镜像/清单和target-files构建清单，让原生规则重建；不修改平台clean版本，不执行全局clean或installclean，不删除完整输出。新增文件已纳入167项输入审计，包内六个退役路径必须继续全部缺席。
+
+移除版r4补充覆盖了target-files图片生成阶段：`add_img_to_target_files`也使用可选`GOLD_OTA_TMPDIR`。前版只覆盖OTA与最后镜像检查，漏算build_image合并root/system时约1GB临时副本；本轮以原输入、原容量和inode参数在既有系统盘实测成功后修复。该变量现用于target-files镜像构造、OTA打包及最终镜像检查，保持唯一OUT；未设置时保留原生Soong临时目录。真实Make命令的默认、空值和带空格私有目录共六项通过，所有临时内容仍由独立guard在构建终态后清理。

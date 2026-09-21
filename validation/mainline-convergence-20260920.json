@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T20:09:52.588073+00:00",
+  "updated_at": "2026-09-21T21:43:39.217131+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6100,7 +6100,7 @@
     "merged_input_count": 167,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r4"
+    "build_job_prefix": "no-euicc-r5"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6452,6 +6452,245 @@
       "source_input_count": 167,
       "prior_166_inputs_byte_identical": true,
       "candidate_accepted": false
+    },
+    "fourth_build_terminal": {
+      "checked_at": "2026-09-21T21:40:50.737479+00:00",
+      "service": {
+        "exit_code": 0,
+        "stdout": "Result=exit-code\nExecMainExitTimestamp=Tue 2026-09-22 05:19:32 CST\nExecMainStatus=1\nCPUUsageNSec=8356571553000\nActiveState=failed\nSubState=failed\n",
+        "stderr": ""
+      },
+      "result": {
+        "status": "failed",
+        "started_at": 1790021457.2411234,
+        "source_revision": "5ae08145047828e3c41d18365d6c350988ea335f",
+        "build_datetime": 1790008554,
+        "device_accepted": false,
+        "entry_exit_code": 1,
+        "build_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790021457320304125",
+        "android_result": {
+          "build_exit_code": 1,
+          "artifact_contract_verified": false,
+          "android_validators_passed": false,
+          "release_signing_verified": false,
+          "device_accepted": false,
+          "build_stages": [
+            {
+              "targets": [
+                "bacon"
+              ],
+              "exit_code": 1
+            }
+          ],
+          "error": "Android product build failed: 1"
+        },
+        "error": "1",
+        "finished_at": 1790025572.6409774
+      },
+      "guard_terminal_events": [
+        {
+          "UNIT": "gold-no-euicc-vm-guard-20260922-r4.service",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-no-euicc-vm-guard-20260922-r4.service: Deactivated successfully.",
+          "__REALTIME_TIMESTAMP": "1790025577838369"
+        }
+      ],
+      "vm_live": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "temporary_directories_live_absent": true,
+      "temporary_records": {
+        "host-tools": {
+          "runtime": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r4-host-tools",
+          "owner_unit": "gold-no-euicc-20260922-r4.service",
+          "status": "cleaned",
+          "packages": [
+            {
+              "package": "unzip",
+              "version": "6.0-28ubuntu4.1",
+              "architecture": "amd64",
+              "package_sha256": "a505b9d491386167bd8e14e3383315a4a7d6539e4406745901ccf009a7988271",
+              "repository_filename": "pool/main/u/unzip/unzip_6.0-28ubuntu4.1_amd64.deb",
+              "binary": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r4-host-tools/root/usr/bin/unzip",
+              "binary_sha256": "b582f2d782989a4d0105284b8032b076222eb29a6c141b5c53b792c864199396"
+            },
+            {
+              "package": "zip",
+              "version": "3.0-13ubuntu0.2",
+              "architecture": "amd64",
+              "package_sha256": "30b325b542ef8e9a22a5e1e1cfce8c4f4b75db73e339e76bf405b635861f1f76",
+              "repository_filename": "pool/main/z/zip/zip_3.0-13ubuntu0.2_amd64.deb",
+              "binary": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r4-host-tools/root/usr/bin/zip",
+              "binary_sha256": "7e79c60c3d1e182664a1bce9a70a13462e5da4a087ae5aa75950695ce7431b0a"
+            }
+          ],
+          "zip_and_exact_unzip_qoDD_roundtrip": true,
+          "dpkg_install_performed": false,
+          "cleanup_owner": "gold-no-euicc-vm-guard-20260922-r4.service",
+          "cleaned_at": "2026-09-21T21:19:37.723342+00:00",
+          "runtime_absent": true,
+          "packages_still_not_installed": {
+            "zip": true,
+            "unzip": true
+          }
+        },
+        "ota-scratch": {
+          "owner_unit": "gold-no-euicc-20260922-r4.service",
+          "path": "/tmp/gold-no-euicc-r4-ota",
+          "status": "cleaned",
+          "created_at": "2026-09-21T20:09:52.592079+00:00",
+          "root_disk_free_bytes": 26131038208,
+          "data_disk_free_bytes": 1963495424,
+          "purpose": "OTA temporary ZIPs and final actual-image checks, not Android output",
+          "cleanup_owner": "gold-no-euicc-vm-guard-20260922-r4.service",
+          "cleanup_requires": "All build cgroup processes stopped; exact path/owner/mode/marker",
+          "cleaned_at": "2026-09-21T21:19:37.772153+00:00",
+          "path_absent": true
+        }
+      },
+      "zip_unzip_not_installed": true,
+      "kernel_oom_observed": false,
+      "native_clean_steps_executed": [
+        "Clean step: rm -rf \"out-gold-standard/target/product/gold/system_ext/priv-app/OpenEUICC\"",
+        "Clean step: rm -f \"out-gold-standard/target/product/gold/system_ext/etc/permissions/android.hardware.telephony.euicc.xml\" \"out-gold-standard/target/product/gold/system_ext/etc/permissions/android.hardware.telephony.euicc.mep.xml\" \"out-gold-standard/target/product/gold/system_ext/etc/permissions/privapp_whitelist_im.angry.openeuicc.xml\" \"out-gold-standard/target/product/gold/system_ext/lib/liblpac-jni.so\" \"out-gold-standard/target/product/gold/system_ext/lib64/liblpac-jni.so\"",
+        "Clean step: rm -f \"out-gold-standard/target/product/gold/system_ext.img\" \"out-gold-standard/target/product/gold/installed-files-system_ext.txt\" \"out-gold-standard/target/product/gold/installed-files-system_ext.json\" \"out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip.list\""
+      ],
+      "product_openeuicc_path_absent": true,
+      "target_system_ext_openeuicc_path_absent": true,
+      "output_inode": 9437191,
+      "phone_operated": false,
+      "build_stage_duration": "01:07:20",
+      "error": "target-files add_img_to_target_files system.img e2fsdroid ENOSPC",
+      "data_free_bytes_after_failure": 1839906816
+    },
+    "target_image_temporary_storage_fix": {
+      "patch": "patches/build__make/0001-ota-temporary-directory.patch",
+      "variable": "GOLD_OTA_TMPDIR",
+      "covered_command": "ADD_IMG_TO_TARGET_FILES",
+      "same_sizing_diagnostic": {
+        "started_at": "2026-09-21T21:40:50.742807+00:00",
+        "phone_operated": false,
+        "source_system_input": "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files/SYSTEM",
+        "same_image_bytes": 1146617856,
+        "same_requested_inodes": 3473,
+        "original_command": [
+          "mkuserimg_mke2fs",
+          "/srv/build/gold/source/out-gold-standard/soong/.temp/tmp_domuw70",
+          "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files/IMAGES/system.img",
+          "ext4",
+          "/",
+          "1146617856",
+          "-j",
+          "0",
+          "-T",
+          "1230768000",
+          "-C",
+          "/srv/build/gold/source/out-gold-standard/soong/.temp/merged_fs_config89gz8w8t.txt",
+          "-B",
+          "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files/IMAGES/system.map",
+          "-L",
+          "/",
+          "-i",
+          "3473",
+          "-M",
+          "0",
+          "-U",
+          "58da27dc-363d-58b5-b338-e4ce6066b59d",
+          "-S",
+          "c3b1cf91-8739-5cb7-9392-aeee37abca14",
+          "--inode_size",
+          "256",
+          "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files/META/file_contexts.bin"
+        ],
+        "temporary_copy_location": "existing host system disk /tmp",
+        "changes_to_device_partition_configuration": false,
+        "diagnostic_exit_code": 0,
+        "filesystem_stats": {
+          "exit_code": 0,
+          "stdout": "tune2fs 1.47.2 (1-Jan-2025)\nFilesystem volume name:   /\nLast mounted on:          /\nFilesystem UUID:          58da27dc-363d-58b5-b338-e4ce6066b59d\nFilesystem magic number:  0xEF53\nFilesystem revision #:    1 (dynamic)\nFilesystem features:      ext_attr dir_index filetype extent sparse_super large_file huge_file uninit_bg dir_nlink extra_isize\nFilesystem flags:         signed_directory_hash \nDefault mount options:    user_xattr acl\nFilesystem state:         clean\nErrors behavior:          Continue\nFilesystem OS type:       Linux\nInode count:              3600\nBlock count:              279936\nReserved block count:     0\nOverhead clusters:        253\nFree blocks:              28766\nFree inodes:              313\nFirst block:              0\nBlock size:               4096\nFragment size:            4096\nBlocks per group:         32768\nFragments per group:      32768\nInodes per group:         400\nInode blocks per group:   25\nFilesystem created:       Thu Jan  1 08:00:00 2009\nLast mount time:          n/a\nLast write time:          Thu Jan  1 08:00:00 2009\nMount count:              0\nMaximum mount count:      -1\nLast checked:             Thu Jan  1 08:00:00 2009\nCheck interval:           0 (<none>)\nLifetime writes:          989 MB\nReserved blocks uid:      0 (user root)\nReserved blocks gid:      0 (group root)\nFirst inode:              11\nInode size:               256\nRequired extra isize:     32\nDesired extra isize:      32\nDefault directory hash:   half_md4\nDirectory Hash Seed:      c3b1cf91-8739-5cb7-9392-aeee37abca14\n",
+          "stderr": ""
+        },
+        "same_sizing_succeeded_on_host_system_disk": true,
+        "own_temporary_files_cleaned": true,
+        "finished_at": "2026-09-21T21:41:08.093657+00:00",
+        "diagnostic_command": [
+          "mkuserimg_mke2fs",
+          "/tmp/gold-no-euicc-r4-image-diagnostic-qi4z3es5/root",
+          "/tmp/gold-no-euicc-r4-image-diagnostic-qi4z3es5/system.img",
+          "ext4",
+          "/",
+          "1146617856",
+          "-j",
+          "0",
+          "-T",
+          "1230768000",
+          "-C",
+          "/tmp/gold-no-euicc-r4-image-diagnostic-qi4z3es5/merged_fs_config.txt",
+          "-B",
+          "/tmp/gold-no-euicc-r4-image-diagnostic-qi4z3es5/system.map",
+          "-L",
+          "/",
+          "-i",
+          "3473",
+          "-M",
+          "0",
+          "-U",
+          "58da27dc-363d-58b5-b338-e4ce6066b59d",
+          "-S",
+          "c3b1cf91-8739-5cb7-9392-aeee37abca14",
+          "--inode_size",
+          "256",
+          "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files/META/file_contexts.bin"
+        ]
+      },
+      "actual_make_command_tests": {
+        "actual_merged_make_commands_tested": true,
+        "cases": [
+          {
+            "target": "ota",
+            "case": "default",
+            "passed": true
+          },
+          {
+            "target": "ota",
+            "case": "empty",
+            "passed": true
+          },
+          {
+            "target": "ota",
+            "case": "private_path_with_spaces",
+            "passed": true
+          },
+          {
+            "target": "images",
+            "case": "default",
+            "passed": true
+          },
+          {
+            "target": "images",
+            "case": "empty",
+            "passed": true
+          },
+          {
+            "target": "images",
+            "case": "private_path_with_spaces",
+            "passed": true
+          }
+        ],
+        "default_preserved": true,
+        "explicit_private_tmpdir_honored": true,
+        "quoted_path_with_spaces": true,
+        "nsjail_already_binds_host_tmp_read_write": true,
+        "phone_operated": false
+      },
+      "source_input_count": 167,
+      "changed_input": "build/make/core/Makefile",
+      "other_166_inputs_unchanged": true,
+      "partition_capacity_changed": false,
+      "final_package_accepted": false
     }
   }
 }

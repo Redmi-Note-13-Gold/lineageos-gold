@@ -1,6 +1,14 @@
 --- a/core/Makefile
 +++ b/core/Makefile
-@@ -7215,6 +7215,7 @@
+@@ -7134,6 +7134,7 @@
+ 	$(call dump-dynamic-partitions-info, $(zip_root)/META/dynamic_partitions_info.txt)
+ endif
+ 	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
++	    $(if $(GOLD_OTA_TMPDIR),TMPDIR="$(GOLD_OTA_TMPDIR)") \
+ 	    $(ADD_IMG_TO_TARGET_FILES) -a -v -p $(HOST_OUT) $(zip_root)
+ ifeq ($(BUILD_QEMU_IMAGES),true)
+ 	$(hide) AVBTOOL=$(AVBTOOL) $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH) $(zip_root)/IMAGES/vbmeta.img \
+@@ -7215,6 +7216,7 @@
  # $(2): additional args
  define build-ota-package-target
  PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$(dir $(ZIP2ZIP)):$$PATH \

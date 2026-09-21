@@ -1,6 +1,6 @@
 更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r3两个构建阶段已成功，空间问题解决，但eSIM残留门禁发现真实JNI悬空链接而拒绝；现补标准CleanSpec一次性迁移，准备原输出r4续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r4已执行CleanSpec并清除旧JNI链接，但target-files生成system镜像时因数据盘临时副本峰值失败；同输入、容量和inode参数在系统盘定向生成成功，已将该步骤纳入既有私有临时目录，准备原输出r5续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -107,3 +107,5 @@ WPA3 下一轮任务记录使用 `jobs/gold-mainline-20260920/wpa3-r1-build-requ
 2026-09-22续编r2于02:34:26入口exit1，bacon阶段12:05；OTA zip2zip自身临时副本仍触发ENOSPC，target-files阶段未启动。guard02:34:37恢复VM并清理工具；旧峰值估算不足。新增可选OTA系统盘临时目录补丁并准备r3：98项主机测试、实际Make宏默认/覆盖/含空格路径检查通过；合并输入166项/9个受管项目，原165项字节不变，只增加build/make主机打包规则。最终包尚未验收；手机和网络未动。
 
 2026-09-22移除版r3：bacon12:40、target-files48:59均exit0；签名/VINTF/SELinux与14payload哈希通过，但03:55:41最终Gold门禁exit1。target-files和实际system_ext仍含OpenEUICC目录及32字节JNI链接，目标库已不存在，不能标完成。guard03:55:43退出，VM实读0/zbud/N/Y，临时ZIP工具与OTA目录均清理、无OOM。标准Gold CleanSpec迁移仅移除退役eSIM安装路径并使system_ext及target-files列表失效，由原生规则重建，保留缓存和其他中间结果；不放宽门禁。100项主机测试通过，新增真实文件系统回归覆盖悬空/外部链接、其他应用保护、重复执行和非Gold不动。当前167项合并输入/9受管项目，原166项字节不变；r4终态和实机均待完成。
+
+2026-09-22移除版r4于05:19:32入口exit1，bacon耗时01:07:20；三条Gold CleanSpec迁移已真实执行，产品与target-files树中的OpenEUICC路径缺席。失败位于add_img_to_target_files生成system.img，其合并root/system的临时副本仍在数据盘。相同输入、1146617856字节镜像和3473请求inode在系统盘定向生成exit0，仍余28766块/313 inode，排除了镜像容量不足；原空间预检遗漏这一临时副本。guard05:19:37成功退出，VM实读0/zbud/N/Y、工具和OTA目录已清理，无OOM。原打包补丁扩展到add_img_to_target_files，默认路径不变，六项实际Make调用验证通过；未改设备分区大小或放宽产物门禁。当前167项输入中仅主机Makefile改变，其余166项一致。新候选仍待构建与冻结，手机未操作。
