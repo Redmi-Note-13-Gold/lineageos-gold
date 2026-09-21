@@ -26,6 +26,8 @@ python3 /srv/build/migration/gold-architecture-20260914/project/tools/build-sour
 
 原有 `out-gold-standard` 的目录和文件也必须归实际构建 UID 所有：nsjail 内的映射用户不能依靠宿主 root 的权限覆盖旧 UID 的写权限。科研机已确认该输出全部位于 overlay upper，再只调整这个受管输出的所有权；未复制输出、改写文件内容或关闭沙箱。
 
+日常导航入口是 `/srv/build/gold`，物理源码和输出路径保持不变。每次进入构建脚本都先运行 `tools/host/check-research-layout.py`，核对数据盘 UUID、准确的 overlay 挂载和三层路径；缺失或不匹配则在写输出前退出。宿主路径由 `tools/host/research-layout.json` 维护。
+
 先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、输出目录归属、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建通过 root systemd 服务启动，保留资源上限：
 
 ```sh
@@ -34,6 +36,7 @@ systemd-run --unit="$unit" -p User=root -p Group=root \
   -p WorkingDirectory=/srv/build/migration/gold-architecture-20260914/source \
   -p Environment=HOME=/root \
   -p MemoryHigh=12800M -p MemoryMax=13G -p MemorySwapMax=20G \
+  -p OOMPolicy=stop -p Nice=5 \
   -p StandardOutput=append:/srv/build/logs/"$unit".log -p StandardError=inherit \
   /srv/build/build-gold.sh gold_health_units_test gold_vibrator_contract_test
 ```
@@ -61,6 +64,8 @@ IMS 固定输入现作为 `vendor/xiaomi/gold/ims/ImsService.apk` 普通 Git blo
 当前配置为 14 个 OTA 分区；唯一随包底层固件是 `scp`，以 `proprietary-firmware.txt` 和最终 target-files 为准。其他基带、LK、TEE 等固件不由当前系统包替换。vendor_boot 由本次源码构建，包含 generic init 与 Recovery 片段。
 
 构建入口不扫描或重验 vendor receipt；它在构建后校验最终 target-files/OTA 分区、时间戳、VINTF、OTA/payload 签名和包内 SELinux 策略。默认输出 `out-gold-standard/gold-build-records/<id>/result.json`，以终态和验证日志为准。没有单独安装的 repo 命令时使用源码自带官方 Repo 启动器。重写可变 OTA 前会保留已有日期硬链接的内容，避免覆盖历史候选。
+
+冻结候选入口为 `/srv/build/releases/gold`（也可从 `/srv/build/gold/releases` 进入），当前 8 项只建立导航链接，包与冻结工具保留在原位置。后续完整冻结目录直接写入此入口下新的 `<时间-提交>`，不改活动 OUT_DIR；包不能与会被覆盖的输出建立硬链接。用 `tools/index-candidates.py <候选根> --verify-hashes` 更新清单，索引不代替原有验证器与实机验收。路径与归档规则见 [LAYOUT](LAYOUT.md)。
 
 Android 验证通过后，在科研机用同次构建的 `aapt2` 复查 Gold 组件和已编译资源：
 

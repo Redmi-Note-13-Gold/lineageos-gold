@@ -11,6 +11,9 @@ fi
 project_root="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/../.." && pwd)"
 source_tree="${GOLD_SOURCE_TREE:-$(dirname -- "$project_root")/source}"
 
+# Fail before touching output if the data disk or source overlay is missing/mismatched.
+python3 -B "$project_root/tools/host/check-research-layout.py" --source-tree "$source_tree" >/dev/null
+
 # These names preserve artifact identity; the actual process UID is root.
 export USER=builder LOGNAME=builder BUILD_USERNAME=builder
 export HOME=/root
@@ -49,6 +52,7 @@ print(json.dumps({'uid': os.getuid(), 'euid': os.geteuid(),
                   'cache_read_write_verified': True,
                   'pinned_manifest_export_verified': True,
                   'output_owner_verified': True,
+                  'research_layout_verified': True,
                   'build_username': os.environ['BUILD_USERNAME'],
                   'source_tree': str(tree)}, indent=2))
 PY

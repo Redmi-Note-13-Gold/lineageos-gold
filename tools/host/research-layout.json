@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "build_mount": "/srv/build",
+  "build_mount_uuid": "e297aaf1-889d-4694-ac18-2015a0cd2d10",
+  "workspace": "/srv/build/migration/gold-architecture-20260914",
+  "project": "/srv/build/migration/gold-architecture-20260914/project",
+  "source": "/srv/build/migration/gold-architecture-20260914/source",
+  "lower": "/srv/build/lineage-23.2-gold",
+  "upper": "/srv/build/migration/gold-architecture-20260914/source-upper",
+  "work": "/srv/build/migration/gold-architecture-20260914/source-work",
+  "output": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard",
+  "cache": "/root/ccache",
+  "swap": "/srv/build/gold-build-swapfile",
+  "releases": "/srv/build/releases/gold",
+  "aliases": {
+    "/srv/build/gold": "/srv/build/migration/gold-architecture-20260914",
+    "/srv/build/migration/gold-architecture-20260914/inputs": "/srv/build/stock-rom",
+    "/srv/build/migration/gold-architecture-20260914/releases": "/srv/build/releases/gold",
+    "/srv/build/migration/gold-architecture-20260914/jobs": "/srv/build/build-jobs",
+    "/srv/build/migration/gold-architecture-20260914/logs": "/srv/build/logs"
+  }
+}

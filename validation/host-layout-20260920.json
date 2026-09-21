@@ -232,5 +232,92 @@
     "android_validators_passed": true,
     "final_record": "ims-build-20260920.json",
     "temporary_vm_restored": true
+  },
+  "structure_refactor_20260921": {
+    "source_commit": "27ea7648de4e57984dcbcd0ee7e8f521936f3025",
+    "started_at": "2026-09-21T05:10:24.233134+00:00",
+    "verified_at": "2026-09-21T05:22:12.971830+00:00",
+    "aliases": {
+      "/srv/build/gold": "/srv/build/migration/gold-architecture-20260914",
+      "/srv/build/migration/gold-architecture-20260914/inputs": "/srv/build/stock-rom",
+      "/srv/build/migration/gold-architecture-20260914/releases": "/srv/build/releases/gold",
+      "/srv/build/migration/gold-architecture-20260914/jobs": "/srv/build/build-jobs",
+      "/srv/build/migration/gold-architecture-20260914/logs": "/srv/build/logs"
+    },
+    "moves_verified": 141,
+    "candidate_links_verified": 8,
+    "candidate_packages_read": 14,
+    "candidate_index_sha256": "7e903c4993ce4b46b65c3fde84b4b32cf9addbc8dec54c403d0de5c2d526f70e",
+    "mount_unit": {
+      "name": "srv-build-migration-gold\\x2darchitecture\\x2d20260914-source.mount",
+      "installed_path": "/etc/systemd/system/srv-build-migration-gold\\x2darchitecture\\x2d20260914-source.mount",
+      "sha256": "144e6a6a3349cc203a060fc7120c51733df6e66f55947f78612c5c43b3c48872",
+      "systemd_analyze_verify_exit": 0,
+      "active_state": "Where=/srv/build/migration/gold-architecture-20260914/source\nWhat=overlay\nOptions=rw,relatime,lowerdir=/srv/build/lineage-23.2-gold,upperdir=/srv/build/migration/gold-architecture-20260914/source-upper,workdir=/srv/build/migration/gold-architecture-20260914/source-work,nouserxattr\nActiveState=active\nSubState=mounted\nFragmentPath=/etc/systemd/system/srv-build-migration-gold\\x2darchitecture\\x2d20260914-source.mount\nSourcePath=\nUnitFileState=enabled\n",
+      "enabled": true,
+      "existing_mount_unchanged": true,
+      "reboot_tested": false
+    },
+    "android_input_files_unchanged": 161,
+    "android_projects_unchanged": 10,
+    "unit_tests_passed": 84,
+    "android_build_started": false,
+    "device_actions": [],
+    "public_push": false,
+    "vm_settings": {
+      "swappiness": "0",
+      "zpool": "zbud",
+      "zswap": "N",
+      "shrinker": "Y"
+    },
+    "status": "verified",
+    "record": "/srv/build/build-jobs/gold-mainline-20260920/structure-refactor-20260921.json",
+    "path_mapping": "/srv/build/migration/gold-architecture-20260914/history/layout-moves-20260921.json",
+    "current_entry": "/srv/build/gold",
+    "history_groups": {
+      "migration-20260912-14": 56,
+      "source-experiments-20260914-19": 51,
+      "vendor-preparation": 32,
+      "initial-build-records-20260914": 1,
+      "vendor-preparation/last-workspace": 1
+    },
+    "candidate_index": "/srv/build/releases/gold/index.json",
+    "candidate_storage_moved": false,
+    "payload_deleted": false,
+    "old_firmware_links": {
+      "count": 9,
+      "already_broken_before_refactor": true,
+      "disposition": "Archived with obsolete preparation cache, no active build graph references"
+    },
+    "graph_files_inspected": 18,
+    "active_output": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard",
+    "tests_log": "/srv/build/build-jobs/gold-mainline-20260920/structure-tests-final.stderr",
+    "package_hashes_matched_original_records": 14,
+    "early_package_provenance": [
+      {
+        "candidate": "20260920-102252-4cdee4a",
+        "sha256": "e35824385ab2e6e915f6ea33be37ac2aa58296de1d9a877cd407f922cbc8f0a4",
+        "matched_prior_validation": [
+          "validation/final-build-20260920.json",
+          "validation/ims-build-20260920.json",
+          "validation/device-acceptance-20260920.json",
+          "validation/final-build-20260920-SHA256SUMS"
+        ]
+      },
+      {
+        "candidate": "20260920-170101-5b8b9ab",
+        "sha256": "de9e26cf247da49d5ee421b3a3d4f7d1f3a560aec9fd574a12737ef5a3fed3de",
+        "matched_prior_validation": [
+          "validation/ims-build-20260920-SHA256SUMS",
+          "validation/ims-build-20260920.json"
+        ]
+      }
+    ],
+    "limitations": [
+      "No host reboot or unmount/remount; enabled mount definition and current live mount were verified.",
+      "No Android rebuild or phone operation; this is host layout and tooling verification.",
+      "Archived materials are unmaintained evidence, and may contain unique inputs; classification is not deletion authorization."
+    ],
+    "wrong_source_entry_rejected_exit_code": 1
   }
 }

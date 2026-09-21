@@ -32,3 +32,27 @@ python3 /path/to/lineageos-gold/tools/apply-patches.py /path/to/android --apply
 预编译内核与固件是有来源、版本和校验值的输入；它们与设备树来源分别记录。厂商修改应维护在提取规则中。构建入口已移除额外的源码比对和 vendor receipt 检查。
 
 恢复工具不安装依赖、不刷机、不公开发布。构建是否实际完成，以本次生成的构建记录为准。
+
+## 科研机挂载与导航恢复
+
+仅适用于当前科研机的同一数据盘和物理目录。先核对 `tools/host/research-layout.json`：其中固定数据盘 UUID、现有 source/lower/upper/work 和导航链接；它不负责从空盘恢复源码或厂商输入。`/srv/build/gold` 及 inputs/releases/jobs/logs 均只是导航，不能用复制整个源码的方式修复链接。
+
+系统已启用主线生成的 OverlayFS mount 单元。重启后先运行 `/srv/build/build-gold.sh --check-environment`；它不会尝试自动修复错误挂载。如果需要重新安装丢失的单元定义，在确认没有构建、盘已正确挂载、配置路径存在后执行：
+
+```sh
+set -e
+project=/srv/build/migration/gold-architecture-20260914/project
+source_tree=/srv/build/migration/gold-architecture-20260914/source
+mount_unit=$(systemd-escape --path --suffix=mount "$source_tree")
+unit_dir=$(mktemp -d)
+python3 -B "$project/tools/host/check-research-layout.py" --print-mount-unit > "$unit_dir/$mount_unit"
+systemd-analyze verify "$unit_dir/$mount_unit"
+test ! -e "/etc/systemd/system/$mount_unit"
+install -m 0644 "$unit_dir/$mount_unit" "/etc/systemd/system/$mount_unit"
+systemctl daemon-reload
+systemctl enable "$mount_unit"
+```
+
+仅当 source 当前未挂载时，再用 `systemctl start "$mount_unit"` 恢复；若已经挂载且与配置不符，应先排查，不能直接 stop/restart 或 remount。确认后删除本次临时单元文件和空目录，运行 `python3 -B "$project/tools/host/check-research-layout.py"` 与 `/srv/build/build-gold.sh --check-environment` 验证。2026-09-21 的安装没有重启或重挂，重启恢复仍是未实测项。
+
+历史归档原路径通过 `/srv/build/gold/history/layout-moves-20260921.json` 定位。恢复只使用主线工具、固定原厂输入和当前提取配方，不运行历史迁移目录里的旧 Python 流程。

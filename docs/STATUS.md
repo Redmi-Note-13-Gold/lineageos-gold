@@ -1,6 +1,8 @@
-更新于 2026-09-21（归档清理同步）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
+更新于 2026-09-21（服务器结构整理同步）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
 **旧 hybrid 运行代码已按用户后续明确授权清理；完整功能验收仍未完成。** 原 15 个受管归档文件（含此前已删除的 Codec2 补丁）均退出主线工作树，删除依据与历史定位见 [ADAPTATION](ADAPTATION.md)。此次清理不代表 IMS 注册、Recovery 侧载峰值、BPF 回收或其余待验项目通过；不删除历史镜像、唯一输入或当前主线 Python 工具。科研机为执行与核验依据，本地同步同一提交。
+
+宿主目录整理已建立 `/srv/build/gold` 稳定入口，141 项历史材料原地归类，8 个候选从 `/srv/build/releases/gold` 统一索引；源码、唯一输出和镜像物理路径未变。构建入口新增挂载检查，OverlayFS 持久化单元已启用且现有挂载未重挂。结构验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)；此次没有 Android 重编译或设备操作，下面 ROM 验收的版本边界保持不变。
 
 **bd50b19 原镜像已保数据安装到 A 槽，incremental 1789938387。** 用户明确授权 15% 电量即可写入，实际在 16%、Charging、USB 在线时开始；标准 update_engine 于 09:21:56–09:25:27 以 kSuccess(0) 结束。安装器与独立 A 槽读回各 14 项最终镜像哈希全部匹配。首次启动观察 exit 0，稳定 20.76 秒；正常系统→Recovery→正常系统往返通过，返回后稳定 21.17 秒。两次均 Enforcing，data/persist 挂载、snapshot none、首次解锁和内部／共享存储两份 canary 均核验通过。没有临时修改显示节点权限。
 
