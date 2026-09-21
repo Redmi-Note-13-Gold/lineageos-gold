@@ -11,6 +11,6 @@
 - [CN R1 最终安装说明](docs/releases/CN-R1.md)：仅适用于已发布旧版。
 - [来源与许可](NOTICE.md)
 
-科研机为唯一执行与核验依据，本地同步同一提交。日常入口 `/srv/build/gold/project`，统一构建命令 `/srv/build/build-gold.sh`；输入、候选、任务与历史均从 `/srv/build/gold` 导航。当前仅使用科研机 8 vCPU / 16 GiB 的迁移源码、`out-gold-standard` 和 ccache 做增量。旧编译机已释放。固定 IMS APK 是主线明确管理的闭源输入；仓库不包含官方完整镜像、签名私钥、原始设备日志或用户数据。
+科研机为唯一执行与核验依据，本地同步同一提交。日常入口 `/srv/build/gold/project`，统一构建命令 `/srv/build/build-gold.sh`；源码、输入、候选、任务与历史均实际存放于 `/srv/build/gold`。当前仅使用科研机 8 vCPU / 16 GiB 的迁移源码、`out-gold-standard` 和 ccache 做增量。旧编译机已释放。固定 IMS APK 是主线明确管理的闭源输入；仓库不包含官方完整镜像、签名私钥、原始设备日志或用户数据。
 
 设备树继承 [mt6833-devs/android_device_xiaomi_gold](https://github.com/mt6833-devs/android_device_xiaomi_gold)，固定起点 `d3d941c29395ce770b95b735b27bd28e6a8c6946`。参考 [Dhterech/android_device_xiaomi_gold](https://github.com/Dhterech/android_device_xiaomi_gold) 的改动按实际输入和接口契约审查，保留原版权。与 Xiaomi、MediaTek、LineageOS 官方无隶属关系。

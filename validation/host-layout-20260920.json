@@ -319,5 +319,161 @@
       "Archived materials are unmaintained evidence, and may contain unique inputs; classification is not deletion authorization."
     ],
     "wrong_source_entry_rejected_exit_code": 1
+  },
+  "physical_layout_20260921": {
+    "status": "physical_layout_verified_graph_check_pending",
+    "base_commit": "a806a49a79ac71276625d6c366bb6647ccf2be1b",
+    "verified_at": "2026-09-21T05:51:11.862197+00:00",
+    "workspace": "/srv/build/gold",
+    "workspace_is_real_directory": true,
+    "root_items": [
+      "build-gold.sh",
+      "gold",
+      "lost+found"
+    ],
+    "path_map": [
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+        "/srv/build/gold/releases/20260921-090452-bd50b19"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+        "/srv/build/gold/releases/20260921-090452-bd50b19"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3",
+        "/srv/build/gold/releases/20260921-045747-3cb28c3"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3",
+        "/srv/build/gold/releases/20260921-045747-3cb28c3"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323",
+        "/srv/build/gold/releases/20260921-040925-2cca323"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-040925-2cca323",
+        "/srv/build/gold/releases/20260921-040925-2cca323"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a",
+        "/srv/build/gold/releases/20260921-025828-c36757a"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-025828-c36757a",
+        "/srv/build/gold/releases/20260921-025828-c36757a"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260920-222119-2cd2675",
+        "/srv/build/gold/releases/20260920-222119-2cd2675"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260920-222119-2cd2675",
+        "/srv/build/gold/releases/20260920-222119-2cd2675"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260920-213629-97969dc",
+        "/srv/build/gold/releases/20260920-213629-97969dc"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260920-213629-97969dc",
+        "/srv/build/gold/releases/20260920-213629-97969dc"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260920-170101-5b8b9ab",
+        "/srv/build/gold/releases/20260920-170101-5b8b9ab"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260920-170101-5b8b9ab",
+        "/srv/build/gold/releases/20260920-170101-5b8b9ab"
+      ],
+      [
+        "/srv/build/gold/source/out-gold-standard/target/product/gold/verified-candidates/20260920-102252-4cdee4a",
+        "/srv/build/gold/releases/20260920-102252-4cdee4a"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260920-102252-4cdee4a",
+        "/srv/build/gold/releases/20260920-102252-4cdee4a"
+      ],
+      [
+        "/srv/build/migration/gold-architecture-20260914",
+        "/srv/build/gold"
+      ],
+      [
+        "/srv/build/lineage-23.2-gold",
+        "/srv/build/gold/source-base"
+      ],
+      [
+        "/srv/build/manifest",
+        "/srv/build/gold/host/manifest"
+      ],
+      [
+        "/srv/build/gold-git-safe-directories.config",
+        "/srv/build/gold/host/git-safe-directories.config"
+      ],
+      [
+        "/srv/build/gold-build-swapfile",
+        "/srv/build/gold/host/build.swap"
+      ],
+      [
+        "/srv/build/stock-rom",
+        "/srv/build/gold/inputs"
+      ],
+      [
+        "/srv/build/releases/gold",
+        "/srv/build/gold/releases"
+      ],
+      [
+        "/srv/build/build-jobs",
+        "/srv/build/gold/jobs"
+      ],
+      [
+        "/srv/build/logs",
+        "/srv/build/gold/logs"
+      ],
+      [
+        "/srv/build/home",
+        "/srv/build/gold/history/retired-build-home"
+      ]
+    ],
+    "root_moves_with_inode_preserved": 10,
+    "candidate_directories_real": 8,
+    "package_hashes_matched_original_records": 14,
+    "source_files_unchanged": 161,
+    "repo_projects_unchanged": 1158,
+    "existing_output_claimed_without_clean": true,
+    "environment_check_passed": true,
+    "mount_unit": "srv-build-gold-source.mount",
+    "swap_unit": "srv-build-gold-host-build.swap.swap",
+    "mount_unit_sha256": "3523912b27262a03adf2b85a4d4847f0f7ea8aa0f32d878d2a6bc718eb0fd27d",
+    "overlay_unmounted_and_remounted": true,
+    "forced_or_lazy_unmount": false,
+    "swap_same_file_reactivated": true,
+    "ccache": "/root/ccache",
+    "fstab_updated": true,
+    "exact_git_trust_paths_updated": true,
+    "repo_manifest_urls_updated": 2,
+    "host_reboot_tested": false,
+    "payload_deleted": false,
+    "new_complete_output": false,
+    "android_input_changes": false,
+    "rom_rebuilt": false,
+    "device_actions": [],
+    "unit_tests_passed": 84,
+    "graph_check": {
+      "status": "pending"
+    },
+    "record": "/srv/build/gold/jobs/gold-mainline-20260920/physical-layout-20260921.json",
+    "package_verification": "/srv/build/gold/jobs/gold-mainline-20260920/physical-package-verification.json",
+    "candidate_index": "/srv/build/gold/releases/index.json",
+    "path_mapping": "/srv/build/gold/history/layout-moves-20260921.json",
+    "graph_shared_lock_rejection_verified": true,
+    "paused_automations_path_updates": [
+      "gold-3",
+      "betterr"
+    ],
+    "automations_still_paused": true,
+    "tools_tests_log": "/srv/build/gold/jobs/gold-mainline-20260920/physical-tools-tests.stderr"
   }
 }

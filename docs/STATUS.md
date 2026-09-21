@@ -2,7 +2,7 @@
 
 **旧 hybrid 运行代码已按用户后续明确授权清理；完整功能验收仍未完成。** 原 15 个受管归档文件（含此前已删除的 Codec2 补丁）均退出主线工作树，删除依据与历史定位见 [ADAPTATION](ADAPTATION.md)。此次清理不代表 IMS 注册、Recovery 侧载峰值、BPF 回收或其余待验项目通过；不删除历史镜像、唯一输入或当前主线 Python 工具。科研机为执行与核验依据，本地同步同一提交。
 
-宿主目录整理已建立 `/srv/build/gold` 稳定入口，141 项历史材料原地归类，8 个候选从 `/srv/build/releases/gold` 统一索引；源码、唯一输出和镜像物理路径未变。构建入口新增挂载检查，OverlayFS 持久化单元已启用且现有挂载未重挂。结构验证见 [host-layout-20260920.json](../validation/host-layout-20260920.json)；此次没有 Android 重编译或设备操作，下面 ROM 验收的版本边界保持不变。
+宿主物理目录已收拢到 `/srv/build/gold`，外层只留该实目录、`build-gold.sh` 入口链接及 `lost+found`。源码、唯一输出、输入、宿主配置与历史以同盘重命名迁移；8 个冻结候选已移出活动输出，14 个包哈希仍匹配原始记录。新 OverlayFS 与原 swap 文件已在新路径启用，161 项合并输入和 1158 个 Repo 项目提交保持一致。迁移后的构建图验证待终态；整机重启未测试。见 [LAYOUT](LAYOUT.md) 和 [host-layout-20260920.json](../validation/host-layout-20260920.json)。此次没有新 ROM 包或设备操作，下面验收的版本边界保持不变。
 
 **bd50b19 原镜像已保数据安装到 A 槽，incremental 1789938387。** 用户明确授权 15% 电量即可写入，实际在 16%、Charging、USB 在线时开始；标准 update_engine 于 09:21:56–09:25:27 以 kSuccess(0) 结束。安装器与独立 A 槽读回各 14 项最终镜像哈希全部匹配。首次启动观察 exit 0，稳定 20.76 秒；正常系统→Recovery→正常系统往返通过，返回后稳定 21.17 秒。两次均 Enforcing，data/persist 挂载、snapshot none、首次解锁和内部／共享存储两份 canary 均核验通过。没有临时修改显示节点权限。
 
@@ -35,7 +35,7 @@
 
 科研机以实际 UID 0 构建，Android 构建耗时 1:28:17。复用原 `out-gold-standard`、overlay 和缓存，未 clean 或创建另一完整输出。最终证据见 [ims-build-20260920.json](../validation/ims-build-20260920.json)，官方记录为 `source/out-gold-standard/gold-build-records/1789894861622125711/result.json`。`artifact_contract_verified` 和 `android_validators_passed` 均为 true。
 
-产物根目录为 `/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/`：
+产物根目录为 `/srv/build/gold/source/out-gold-standard/target/product/gold/`：
 
 | 产物 | 相对路径 | 字节数 |
 |---|---|---|
@@ -52,7 +52,7 @@ SHA-256 见 [IMS 修正版校验清单](../validation/ims-build-20260920-SHA256S
 
 构建及 VM 恢复服务均已成功退出。四项临时参数已经自动恢复并与实时值核对：swappiness=0、zswap=N、zpool=zbud、shrinker_enabled=Y。保留现有 24 GiB swap。此记录仅为 IMS 修正版的构建和包验证，尚无该版本的安装或实机通过结论。
 
-宿主布局已按用户要求调整：swap 位于 `/srv/build/gold-build-swapfile`，缓存实际位于 `/root/ccache`，统一入口以 root 执行。root 构建暴露的 Git 信任与旧输出所有权问题已修复；只信任源码确切仓库路径，只把全部位于 overlay upper 的受管输出移交 root，源码所有权和沙箱保持原状。此次实际完整构建及验证通过，补齐了迁移时只有入口和缓存验证的证据。见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
+宿主布局已按用户要求调整：swap 位于 `/srv/build/gold/host/build.swap`，缓存实际位于 `/root/ccache`，统一入口以 root 执行。root 构建暴露的 Git 信任与旧输出所有权问题已修复；只信任源码确切仓库路径，只把全部位于 overlay upper 的受管输出移交 root，源码所有权和沙箱保持原状。此次实际完整构建及验证通过，补齐了迁移时只有入口和缓存验证的证据。见 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
 ## 首次候选的保留产物与实机结果
 

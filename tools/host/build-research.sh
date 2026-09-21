@@ -59,6 +59,37 @@ PY
     exit 0
 fi
 
+# Regenerate the build graph in the existing output, including Soong's native
+# relocation of absolute output symlinks. This is not a ROM/package acceptance.
+if [ "${1:-}" = --check-build-graph ]; then
+    if [ "$#" != 1 ]; then
+        echo '--check-build-graph takes no extra targets.' >&2
+        exit 1
+    fi
+    # Match build-source.py's advisory lock before touching the managed output.
+    exec 9>"$source_tree/.repo/gold-source-build.lock"
+    flock -n 9 || { echo 'Another Gold build holds this source-tree lock.' >&2; exit 1; }
+    python3 - "$source_tree" <<'PY_MARKER'
+import json
+from pathlib import Path
+import sys
+
+tree = Path(sys.argv[1]).resolve()
+marker = tree / 'out-gold-standard/.gold-source-build.json'
+if json.loads(marker.read_text()).get('source_tree') != str(tree):
+    raise SystemExit('Existing output is not owned by this source entry')
+PY_MARKER
+    cd -- "$source_tree"
+    unset OUT_DIR_COMMON_BASE
+    export OUT_DIR=out-gold-standard
+    export BUILD_DATETIME="${BUILD_DATETIME:-$(cat "$OUT_DIR/build_date.txt")}"
+    export SOURCE_DATE_EPOCH="$BUILD_DATETIME"
+    source build/envsetup.sh
+    lunch lineage_gold-bp4a-userdebug
+    m -j"${JOBS:-2}" nothing
+    exit 0
+fi
+
 extra_targets=()
 for target in "$@"; do
     extra_targets+=(--extra-target "$target")

@@ -47,7 +47,7 @@
 - 同一旧 tools 目录的 `capture_boot.py`、`test_capture_boot.py`：观察工具与主线逐字一致，测试差异仅为主线导入路径，当前工具及测试继续维护。
 - 同一旧 tools 目录的 `test_hybrid_modules.py`、`test_hybrid_properties.py`：只验证已退役的镜像修补实现，与对应旧实现一起退出。
 
-科研机执行与验证记录：`/srv/build/build-jobs/gold-mainline-20260920/archive-retirement-20260921.json`。核验包括归档外运行引用、当前主机工具测试、固定 IMS 输入及 161 项实际合并输入；设备 README 只更新历史定位，编译配置、服务源码、输出、OverlayFS 和缓存保持原状。历史镜像、官方输入、Git 历史及所有许可证继续保留。若交互终端仍位于原目录，可暂留空目录；它不包含可运行旧流程。
+科研机执行与验证记录：`/srv/build/gold/jobs/gold-mainline-20260920/archive-retirement-20260921.json`。核验包括归档外运行引用、当前主机工具测试、固定 IMS 输入及 161 项实际合并输入；设备 README 只更新历史定位，编译配置、服务源码、输出、OverlayFS 和缓存保持原状。历史镜像、官方输入、Git 历史及所有许可证继续保留。若交互终端仍位于原目录，可暂留空目录；它不包含可运行旧流程。
 
 主线继续维护 `prepare-stock.py`、`prepare-vendor.py`、`extract-files.py`、`setup-makefiles.py`、`apply-patches.py`、`build-source.py`、各 `check-*.py`、`capture_boot.py`、IMS 兼容工具和测试。Python 语言不是删除依据。
 

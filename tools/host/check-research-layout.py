@@ -34,7 +34,7 @@ def validate_mounts(layout, mounts):
 def check_paths(layout, source_tree):
     if source_tree.resolve() != Path(layout['source']):
         raise ValueError('The research entry only uses its recorded source; use build-source.py for another host')
-    for key in ['workspace', 'project', 'source', 'lower', 'upper', 'work', 'output', 'cache', 'releases']:
+    for key in ['workspace', 'project', 'source', 'lower', 'upper', 'work', 'output', 'cache', 'releases', 'inputs', 'jobs', 'logs', 'host', 'manifest']:
         path = Path(layout[key])
         if not path.is_dir() or path.is_symlink():
             raise ValueError('Expected a real directory for ' + key + ': ' + str(path))
