@@ -82,3 +82,6 @@ project/
 旧局部输出 `source/out-gold-betterr-20260917` 和空诊断输出仍保留，不用作日常输出。本次未删除历史镜像或唯一输入，没有复制大目录或释放大文件空间。现场硬件为 8 vCPU、约 14 GiB 可见 RAM、23 GiB 可见 swap，数据盘 344 GiB；剩余容量以实时检查为准。
 
 执行明细在 `/srv/build/gold/jobs/gold-mainline-20260920/physical-layout-20260921.json`；脱敏结论统一更新 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
+
+
+2026-09-21夜间，releases/index.json含9个冻结候选，最新6e7c418已安装B槽。完成独立冻结包的SHA-256重读后，清理活动输出中同次OTA两硬链接路径及target-files一个路径，释放约3.80GiB，output inode9437191保留。原路径到现存冻结包的映射在 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json`；不修改冻结candidate.json，不删除历史候选或官方输入。后续完成构建的包允许同盘移动入新的实际releases目录并解除所有活动输出硬链接，以免再占一份完整包空间；工具、输入、结果与哈希仍完整冻结和独立复验。

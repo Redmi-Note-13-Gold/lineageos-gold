@@ -111,6 +111,7 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'etc/seccomp_policy/gold-codec2-crash.policy',
                    'overlay/FrameworkResOverlayGold.apk',
                    'overlay/GoldNetworkStackOverlay.apk',
+                   'overlay/WifiOverlay/WifiOverlay.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
                        'priv-app/OpenEUICC/OpenEUICC.apk', 'priv-app/SystemUI/SystemUI.apk',
@@ -422,6 +423,9 @@ def verify(target, aapt2, readelf, profile):
         for name, value in attestation.items():
             require([x.split('=', 1)[1] for x in vendor_properties if x.startswith(name + '=')] == [value],
                     'Original vendor attestation identity missing or duplicated: ' + name)
+        wifi_overlay = dump('VENDOR/overlay/WifiOverlay/WifiOverlay.apk', 'resources')
+        require('() true' in resource(wifi_overlay, 'bool/config_wifi_softap_sae_supported')[1],
+                'WPA3-SAE SoftAP capability absent from Gold Wi-Fi overlay')
         network_name = 'VENDOR/overlay/GoldNetworkStackOverlay.apk'
         network = dump(network_name, 'resources')
         urls = ['https://www.google.com/generate_204',
@@ -462,6 +466,7 @@ def verify(target, aapt2, readelf, profile):
                 'sustained_performance_advertised': False,
                 'zygote': 'zygote64', 'standard_module_links_verified': True,
                 'wifi_pmf_default': 1, 'wifi_pmf_upgrade_overlay': True,
+                'wifi_softap_sae_overlay': True, 'wifi_softap_runtime_verified': False,
                 'recovery_debug_adb_config_verified': True,
                 'power': {'single_resource_owner': True, 'native_clients': clients,
                           'runtime_verified': False, 'performance_benefit_verified': False},

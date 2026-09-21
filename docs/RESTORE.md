@@ -58,4 +58,7 @@ systemctl enable "$mount_unit"
 历史归档原路径通过 `/srv/build/gold/history/layout-moves-20260921.json` 定位。恢复只使用主线工具、固定原厂输入和当前提取配方，不运行历史迁移目录里的旧 Python 流程。
 
 
-后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；OpenEUICC 和状态栏修复由当前 patches/series.json 恢复。证明身份来自 firmware 锁定并核验的原厂 vendor/build.prop，不用未核验的市场型号猜测。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
+后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；OpenEUICC 和状态栏修复由当前 patches/series.json 恢复。证明专用属性曾按 firmware 锁定的原厂 vendor/build.prop 设置，但 6e7c418 实机仍报 -66；该通用 vendor 身份不能当作 TEE 实际预置身份已获验证，需继续核对 gold_cn 变体，不用猜测值或 keybox 掩盖失败。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
+
+
+Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。当前用户禁止进一步设备重启，恢复/安装操作不得沿用此前重启授权越过这一最新限制。

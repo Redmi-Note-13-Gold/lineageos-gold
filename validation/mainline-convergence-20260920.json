@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T07:48:59.508927+00:00",
-  "task_state": "implementation_and_validation_in_progress_NOT_READY",
+  "updated_at": "2026-09-21T15:52:22.151680+00:00",
+  "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
   "latest_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -5658,6 +5658,246 @@
         "functional-r2-revalidation-result.json",
         "functional-r2-frozen-hash-verification.json"
       ]
+    },
+    "functional_candidate_6e7c418_device": {
+      "recorded_at": "2026-09-21T15:52:22.151680+00:00",
+      "rom_revision": "6e7c4186bd1bb264dd1db24c96589aa1b0d802a8",
+      "incremental": "1789977174",
+      "slot": "b",
+      "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
+      "ota_sha256": "22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb",
+      "target_files_sha256": "7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c",
+      "installation": {
+        "status": "passed",
+        "method": "Standard signed full A/B update_engine OTA, preserving data",
+        "from_slot": "a",
+        "to_slot": "b",
+        "installer_exit": "kSuccess(0)",
+        "installer_final_partition_hashes_matched": 14,
+        "independent_active_partition_hashes_matched": 14,
+        "first_boot_stable_seconds": 25.8,
+        "second_normal_boot_stable_seconds": 20.34,
+        "selinux": "Enforcing",
+        "data_persist_mounted": true,
+        "snapshot": "none",
+        "canaries_matched": 2,
+        "recovery_roundtrip": "not run on this candidate; user now forbids further device reboots"
+      },
+      "double_tap_wake": {
+        "settings_ui_toggle_off_on": true,
+        "framework_driver_off_on": true,
+        "post_normal_reboot_setting_retained": true,
+        "formal_physical_wake_two_rounds_user_confirmed": true,
+        "selinux": "Enforcing",
+        "final_enabled": true,
+        "test_script_note": "First assertion expected an extra space in driver text; raw Off/0 evidence passed and UI restored to On/1.",
+        "power_hal_restart_recovered": true
+      },
+      "systemui": {
+        "revision": "6e7c418",
+        "incremental": "1789977174",
+        "landscape_rotations": [
+          1,
+          3
+        ],
+        "locales": [
+          "zh-CN",
+          "ar-SA"
+        ],
+        "left_padding_px": 55,
+        "right_padding_px": 55,
+        "synthetic_status_icons": 10,
+        "overflow_dot_observed": true,
+        "cutout_does_not_intersect_status_strip": true,
+        "screenshot_review": "All four cases reviewed; no status icon overlap visible. RTL USB debug heads-up is unrelated to status-bar geometry.",
+        "settings_restored_exactly": true,
+        "all_possible_combinations_tested": false,
+        "provider_cache_rows": [
+          {
+            "rotation": 3,
+            "left": 55,
+            "right": 55,
+            "bar_height": 111
+          },
+          {
+            "rotation": 1,
+            "left": 55,
+            "right": 55,
+            "bar_height": 111
+          },
+          {
+            "rotation": 3,
+            "left": 55,
+            "right": 55,
+            "bar_height": 111
+          },
+          {
+            "rotation": 1,
+            "left": 55,
+            "right": 55,
+            "bar_height": 111
+          },
+          {
+            "rotation": 3,
+            "left": 55,
+            "right": 55,
+            "bar_height": 111
+          }
+        ]
+      },
+      "openeuicc": {
+        "revision": "6e7c418",
+        "incremental": "1789977174",
+        "settings_sim_list_visible": true,
+        "management_action": "android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS",
+        "resolved_activity": "im.angry.openeuicc/.ui.PrivilegedMainActivity",
+        "management_profiles_visible": true,
+        "profiles_count": 4,
+        "enabled_profiles_visible": 1,
+        "no_shortcut_crash_observed": true,
+        "provisioning_screen_not_opened": true,
+        "sim_changes_performed": false,
+        "physical_slot_mapping": "pending explicit runtime readback"
+      },
+      "keymint": {
+        "status": "failed_device_property_attestation",
+        "error_code": -66,
+        "error_name": "CANNOT_ATTEST_IDS",
+        "requested_product": "vnd_gold",
+        "requested_model": "gold",
+        "hardware_sku": "gold_cn",
+        "boot_state": "orange",
+        "vendor_property_hypothesis_confirmed_by_tee": false,
+        "global_product_image_checked": true,
+        "global_product_image_sha256": "9bfdc26f1c13fc0c7a8e2f3b15ce4b614c8a89bf2ba3b68c61aa057fca99ddb0",
+        "global_product_properties_are_generic_not_final_provisioning_evidence": true,
+        "keybox_imported": false,
+        "user_app_removed": false,
+        "authentication_bound_keys": "not tested; current lockscreen is not secure"
+      },
+      "wifi_station": {
+        "formal_overlay_runtime_validation": "pending; previously approved saved AP is absent from current scans",
+        "credentials_changed": false,
+        "validation_forced": false
+      },
+      "wpa3_softap": {
+        "status": "runtime_failure_reproduced_source_fix_pending_build",
+        "failed_before_native_start": true,
+        "framework_error": "Error, SAE requires HAL support",
+        "feature_mask_before": 123,
+        "missing_capability_bit": 4,
+        "missing_resource": "config_wifi_softap_sae_supported",
+        "aosp_resource_default": false,
+        "matching_global_stock_resource": true,
+        "stock_vendor_sha256": "9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f",
+        "matching_stock_overlay_sha256": [
+          "876eb632d5a814d3c9f48ae70626f3e040803182ccc604008d767b2cd2e95470",
+          "d4dbb99be168afd2d7ffd5316243568473532d016d80a4f0eff39c028cbac477"
+        ],
+        "changed_android_inputs": [
+          "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml"
+        ],
+        "native_hostapd_CONFIG_SAE": true,
+        "temporary_frro_persisted": false,
+        "temporary_static_apk_update": "rejected by platform; original vendor APK unchanged",
+        "stock_derived_images_cleaned": true,
+        "compiled_source_resource_verified": true,
+        "old_candidate_rejected_by_new_requirement": true,
+        "python_tests_passed": 91,
+        "runtime_start_client_and_security_validation": "not yet passed"
+      },
+      "handoff": {
+        "at": "2026-09-21T15:50:11.101883+00:00",
+        "revision": "6e7c418",
+        "incremental": "1789977174",
+        "slot": "_b",
+        "canaries_match": true,
+        "owned_files_removed": 5,
+        "owned_directories_removed": 2,
+        "root_uid": "0",
+        "selinux": "Enforcing",
+        "mobile_data": "0",
+        "dt2w_enabled": "1",
+        "locale": "zh-CN",
+        "rotation": "lock 0",
+        "demo_allowed": "0",
+        "demo_on": "0",
+        "usb_functions": "adb",
+        "user_requested_no_further_reboots": true,
+        "wifi_usb_hotspot_left_unchanged_after_user_instruction": true,
+        "temporary_root_restore_pending": true,
+        "root_restore_reason": "Keep current ADB/USB connection uninterrupted after user requested no connection disruption; adb unroot restarts adbd.",
+        "recovery_roundtrip_this_candidate": "deferred_by_no_reboot_instruction",
+        "keyattestation_user_package_retained": true
+      },
+      "restrictions": {
+        "no_further_device_reboots": true,
+        "preserve_current_connectivity": true,
+        "mobile_data_must_remain_disabled": true,
+        "ims_deferred_by_user": true,
+        "no_sim_changes_calls_sms": true
+      },
+      "raw_evidence": "Private local directory only, mode 0600; no hardware identifiers, endpoints or wireless logs committed."
+    },
+    "wpa3_softap_followup": {
+      "status": "runtime_failure_reproduced_source_fix_pending_build",
+      "failed_before_native_start": true,
+      "framework_error": "Error, SAE requires HAL support",
+      "feature_mask_before": 123,
+      "missing_capability_bit": 4,
+      "missing_resource": "config_wifi_softap_sae_supported",
+      "aosp_resource_default": false,
+      "matching_global_stock_resource": true,
+      "stock_vendor_sha256": "9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f",
+      "matching_stock_overlay_sha256": [
+        "876eb632d5a814d3c9f48ae70626f3e040803182ccc604008d767b2cd2e95470",
+        "d4dbb99be168afd2d7ffd5316243568473532d016d80a4f0eff39c028cbac477"
+      ],
+      "changed_android_inputs": [
+        "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml"
+      ],
+      "native_hostapd_CONFIG_SAE": true,
+      "temporary_frro_persisted": false,
+      "temporary_static_apk_update": "rejected by platform; original vendor APK unchanged",
+      "stock_derived_images_cleaned": true,
+      "compiled_source_resource_verified": true,
+      "old_candidate_rejected_by_new_requirement": true,
+      "python_tests_passed": 91,
+      "runtime_start_client_and_security_validation": "not yet passed"
+    },
+    "current_user_constraints": {
+      "no_further_device_reboots": true,
+      "preserve_current_connectivity": true,
+      "mobile_data_must_remain_disabled": true,
+      "ims_deferred_by_user": true,
+      "no_sim_changes_calls_sms": true
+    },
+    "mutable_package_duplicates_retired": {
+      "record": "/srv/build/gold/jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json",
+      "completed": true,
+      "generated_paths_removed": 3,
+      "distinct_package_contents": 2,
+      "frozen_copies_verified": true,
+      "reclaimed_bytes": 4077928448,
+      "source_output_inode_preserved": true
     }
+  },
+  "current_installed_candidate": {
+    "rom_revision": "6e7c4186bd1bb264dd1db24c96589aa1b0d802a8",
+    "incremental": "1789977174",
+    "slot": "b",
+    "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
+    "ota_sha256": "22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb",
+    "target_files_sha256": "7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c",
+    "evidence_key": "non_ims_followup_20260921.functional_candidate_6e7c418_device"
+  },
+  "current_pending_android_delta": {
+    "files": [
+      "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml"
+    ],
+    "reason": "Stock-backed WPA3 SoftAP SAE capability",
+    "merged_input_count": 168,
+    "device_accepted": false,
+    "build_job_prefix": "wpa3-r1"
   }
 }

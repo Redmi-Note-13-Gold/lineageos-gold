@@ -147,3 +147,12 @@ KeyMint 的 -66 目前仅证实为设备属性证明失败。重新从锁定 Glo
 Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完整验签后在产品名检查明确拒绝，未安装 ROM；32 MiB 缓存，minadbd HWM 43,436 KiB、Recovery HWM 99,284 KiB，返回正常系统、两份 canary 和原槽位／版本保持。未见 Scudo abort，不等于做过设备分配失败注入。USB NCM 的真连接状态已从 ESTABLISHED 变为 TIME_WAIT；Wi-Fi 上行未建 IPv4 BPF 规则，用户拒绝开启移动数据，所以双向规则回收仍缺允许的 raw-IP 条件。用户确认相机、麦克风、扬声器和震动实际体验正常。完整脱敏结果见 mainline-convergence validation 的 non_ims_followup_20260921。
 
 本轮五项运行修复已随 6e7c418 完整 ROM 构建并冻结到 `releases/20260921-224022-6e7c418`，尚未安装。原入口因 Gold 检查器的固定缩进误判 exit 1；00be34a 修正清单子树解析，原包和冻结工具复验通过（14 payload／38 实际镜像文件，91 项 Python 测试）。Android 输入与包哈希未变；保留原失败记录，以上包级通过不改变各功能的实机待验边界。
+
+
+## 6e7c418 实机后续与 WPA3 热点
+
+6e7c418 / B / 1789977174 已完成保数据安装、安装器和独立各14分区回读、正常启动及 canary。正式双击物理两轮、设置 Off/On、Power HAL 重启和既有正常重启保持通过；横屏 LTR/RTL 两方向实际左右55px，OpenEUICC 管理路由和无 launcher 快捷方式崩溃修复通过只读列表测试，明确槽位映射仍待补。设备属性证明仍报 -66，vendor 的 vnd_gold/gold 假说未通过 TEE；Global product镜像核验只证明其通用属性，不能替代 gold_cn 实机预置身份。以上与旧版已验收分开，详见 STATUS 和聚合 JSON。
+
+用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和WPA3启动/客户端认证仍待进行。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
+
+用户最新要求不再重启手机以保持网络连接；Recovery往返及后续安装暂不执行，移动数据仍保持关闭，IMS仍最后处理。
