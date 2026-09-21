@@ -53,6 +53,6 @@ systemctl daemon-reload
 systemctl enable "$mount_unit"
 ```
 
-仅当 source 当前未挂载时，再用 `systemctl start "$mount_unit"` 恢复；若已经挂载且与配置不符，应先排查，不能直接 stop/restart 或 remount。确认后删除本次临时单元文件和空目录，运行 `python3 -B "$project/tools/host/check-research-layout.py"` 与 `/srv/build/build-gold.sh --check-environment` 验证。2026-09-21 物理搬迁已正常卸载并重新挂载，挂载与同一 swap 文件在新位置已实测；整机重启恢复仍未实测。同步检查 fstab 中的 `/srv/build/gold/host/build.swap`、root Git include 的 `host/git-safe-directories.config` 与 Repo 本地 manifest URL 的 `host/manifest`，不得重新引入旧物理路径。
+仅当 source 当前未挂载时，再用 `systemctl start "$mount_unit"` 恢复；若已经挂载且与配置不符，应先排查，不能直接 stop/restart 或 remount。确认后删除本次临时单元文件和空目录，运行 `python3 -B "$project/tools/host/check-research-layout.py"` 与 `/srv/build/build-gold.sh --check-environment` 验证。2026-09-21 物理搬迁已正常卸载并重新挂载，挂载与同一 swap 文件在新位置已实测；随后 m nothing 构图与环境检查通过，输出及输入核对未变；整机重启恢复仍未实测。同步检查 fstab 中的 `/srv/build/gold/host/build.swap`、root Git include 的 `host/git-safe-directories.config` 与 Repo 本地 manifest URL 的 `host/manifest`，不得重新引入旧物理路径。
 
 历史归档原路径通过 `/srv/build/gold/history/layout-moves-20260921.json` 定位。恢复只使用主线工具、固定原厂输入和当前提取配方，不运行历史迁移目录里的旧 Python 流程。

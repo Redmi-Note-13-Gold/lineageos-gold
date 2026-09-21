@@ -321,7 +321,7 @@
     "wrong_source_entry_rejected_exit_code": 1
   },
   "physical_layout_20260921": {
-    "status": "physical_layout_verified_graph_check_pending",
+    "status": "physical_layout_and_build_graph_verified",
     "base_commit": "a806a49a79ac71276625d6c366bb6647ccf2be1b",
     "verified_at": "2026-09-21T05:51:11.862197+00:00",
     "workspace": "/srv/build/gold",
@@ -462,7 +462,42 @@
     "device_actions": [],
     "unit_tests_passed": 84,
     "graph_check": {
-      "status": "pending"
+      "status": "passed",
+      "checked_at": 1789975041.4296541,
+      "graph_result": {
+        "status": "passed",
+        "started_at": 1789970043.1629262,
+        "top_before": "/srv/build/migration/gold-architecture-20260914/source",
+        "output_inode_before": 9437191,
+        "exit_code": 0,
+        "finished_at": 1789973815.8349504,
+        "top_after": "/srv/build/gold/source",
+        "output_inode_after": 9437191
+      },
+      "vm_actual": {
+        "/proc/sys/vm/swappiness": "0",
+        "/sys/module/zswap/parameters/zpool": "zbud",
+        "/sys/module/zswap/parameters/enabled": "N",
+        "/sys/module/zswap/parameters/shrinker_enabled": "Y"
+      },
+      "vm_restored": true,
+      "guard_terminal": true,
+      "source_files_unchanged": 161,
+      "integration_projects_unchanged": 10,
+      "repo_project_commits_unchanged": 1158,
+      "environment_exit_code": 0,
+      "kernel_oom_events": 0,
+      "output_inode": 9437191,
+      "top": "/srv/build/gold/source",
+      "top_level_output_symlinks": {},
+      "full_rom_build": false,
+      "device_acceptance_added": false,
+      "host_reboot_tested": false,
+      "record": "/srv/build/gold/jobs/gold-mainline-20260920/layout-graph-closure.json",
+      "service": "gold-layout-graph-20260921.service",
+      "terminal_at": "2026-09-21T14:56:55+08:00",
+      "guard_terminal_at": "2026-09-21T14:57:03+08:00",
+      "android_elapsed": "01:01:37"
     },
     "record": "/srv/build/gold/jobs/gold-mainline-20260920/physical-layout-20260921.json",
     "package_verification": "/srv/build/gold/jobs/gold-mainline-20260920/physical-package-verification.json",

@@ -43,7 +43,7 @@ systemd-run --unit="$unit" -p User=root -p Group=root \
 
 swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`。原 `goldbuild` 账户仅保留历史用途，其 HOME 已更新为 `/srv/build/gold/history/retired-build-home`；日常构建仍由 root 执行，HOME 为 `/root`。迁移完成后的 IMS 修正版已以实际 UID 0 完成完整构建及验证，见 [最终记录](../validation/ims-build-20260920.json)。迁移前已安装的首次候选按其原构建身份和独立 OTA 路径保留。
 
-路径迁移后的定向验证使用 `/srv/build/build-gold.sh --check-build-graph`：在原输出内以原 build_date 执行 `m nothing`，由 Soong 迁移输出绝对链接并重生成构建图。它与正式构建共用源码锁，仍须使用下述同等 systemd 内存保护与独立 VM guard；不 clean、不生成第二份完整输出，也不等于新 ROM 验收。
+路径迁移后的定向验证使用 `/srv/build/build-gold.sh --check-build-graph`：在原输出内以原 build_date 执行 `m nothing`，由 Soong 迁移输出绝对链接并重生成构建图。它与正式构建共用源码锁，仍须使用下述同等 systemd 内存保护与独立 VM guard；不 clean、不生成第二份完整输出，也不等于新 ROM 验收。2026-09-21 的迁移构图已成功结束（01:01:37、exit 0），guard 和实读 VM 恢复通过；详见 host-layout validation。
 
 内存环境转发补丁位于 `tools/host/soong-memory-env.patch`；当前科研机已经有此变化。恢复其他机器时先检查 `git -C build/soong diff`，只对未应用的对应基线使用 `git apply`，不要重复套用。它不改变 ROM 运行参数。长时间任务应有独立日志与明确进程/退出状态，不能靠日志文件存在判断成功。
 
