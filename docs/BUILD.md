@@ -83,11 +83,21 @@ Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数�
 
 `--client-exit` 申请 2000 ms 的 uclamp=10 后主动退出且不调用 release；协调者应记录进程退出时间，并确认 HAL 在超时之前恢复 0，区分所有者回收和普通超时。`--client-restart` 输出 READY 后最多等 10 秒；协调者受控重启 `vendor.power-hal-gold`，确认新 PID、屏幕／温控许可及节点复位后向探针标准输入写 `G`。探针要求旧 Binder 返回传输错误，然后用独立新请求验证旧 C 句柄不能释放新 HAL 的票值。两种探针仍须没有竞争负载，完成后确认 0 票值和服务恢复。探针退出码不替代协调者对条件和动作的记录。
 
+`tools/build-device-probe.py --probe performance --android-root <源码根> --android-out <唯一输出> --output <新的专属测试目录>` 在科研机用已有 JDK／SDK／aapt2／d8／apksigner 编译 `tests/android/GoldPerfProbe/`，只生成临时测试 APK，不修改产品源码或镜像。`--probe hardware` 同样生成 `GoldHardwareProbe`，验证自己创建的 EC／RSA／AES 密钥运算、安全级别及删除，逐项请求实际支持的显示模式，读取有效状态栏尺寸并展示横竖屏合成画面；不请求用户认证密钥、远程证明、相机或网络权限。两个包的 `testOnly=true`，安装前确认同名包不存在，核对源文件和 APK 哈希；保留安装后 APK 读回哈希，结束时卸载本次包。
+
+性能对照入口是 `tools/measure-power-strategies.py`，参数明确指定 `--adb`、`--serial`（可为网络 transport）、`--hardware-serial`、`--incremental`、`--apk-sha256` 和新的 `--output`。先取得设备操作许可、完成网络 ADB 并确认 USB／其他充电均断开；入口再次核验身份、Enforcing、温控 0、省电关闭和默认策略。默认采集 12 组冷进程启动与 4 组各 60 秒滚动，0／20 策略按 AB／BA 交替；只 force-stop 自有合成应用，保留文件缓存、固定窗口亮度 0.35、记录真实滑动次数。首先实读框架启动造成的 uclamp 投票与释放，退出路径经 HAL 的 root Binder 入口恢复 0／0 并重启核验；异常时必须另核对恢复结果，不把进程退出当作恢复成功。
+
+用 `tools/analyze-power-strategies.py <采样目录> --output <结果.json>` 验证样本哈希，排除起始温度差超过 0.5°C 或刷新率不一致的配对。帧统计去掉前后各 2 秒，以每次运行而非每帧作为比较单位；电流／电压积分是电池侧估算，设备电量计可能延迟跳变，不能用短时 charge_counter 差或单次跑分证明节能。帧与电池使用不同单调时钟，分析不能混减时间戳。原始样本和截图留私有目录，Git 记录脱敏统计及方法。一个合成应用和少量配对只能支持有边界的策略选择；未证明收益时保持默认 0，不据此宣称所有应用等效或整机续航通过。
+
 `tests/android/GoldMediaDecodeProbe.java` 是有 20 秒期限的硬件解码调用者探针，仅读取明确提供的本地测试片段，不读用户媒体或联网。可在科研机以现有 JDK 的 `javac --release 8 -cp prebuilts/sdk/current/public/android.jar` 编译，用同树 `d8 --min-api 35 --lib prebuilts/sdk/current/public/android.jar --output <独立测试目录> <classes.jar>` 生成 dex（PATH 包含该 JDK 的 bin）；临时推送到专属 `/data/local/tmp/` 后，`CLASSPATH=<classes.dex> app_process /system/bin GoldMediaDecodeProbe <测试片段>` 执行。要求实际组件为 `c2.mtk.*`、至少一帧且收到 EOS，退出后删除自己的 dex／测试片段。保存同期 HAL 调用记录及 AVC，不能把无渲染解码耗时作为播放帧率或能耗成绩。
 
 同一探针支持 `--roundtrip <专属测试目录> <1..20轮>`：每轮用 MTK AVC 编码器生成 24 帧 640×360 的合成 YUV，使用实际 plane stride 写入，封装到独占临时文件后再硬件解码，要求编码／解码帧数和 EOS 一致。每段排队循环限 20 秒；协调者还应使用外层进程超时，覆盖组件创建／释放可能阻塞的情况。它不读取用户媒体，每轮清理自己的片段；异常中止后由协调者清理专属目录。服务冷启动后的第一轮和同进程多轮分别验收，并监测 Codec2 服务 PID、原始故障日志和 AVC；客户端内部重试导致 PID 变化，即使探针返回成功也不能通过稳定性验收。
 
 已授权的 Wi-Fi 重连可使用 `tests/android/GoldWifiReconnect.java`，沿用上述 javac／d8 准备方法。先用 `cmd wifi list-networks` 核实目标是用户指定的已保存网络，再以临时 adb root 执行 `CLASSPATH=<dex> app_process /system/bin GoldWifiReconnect <network-id>`。它按方法名调用当前框架的网络选择接口，不读取或替换凭据，不强制网络验证结果。`SELECTION_REQUEST_ACCEPTED` 仅表示请求已受理，必须另验关联、DHCP、联网、自动重连和网络 ADB。若框架因互联网探测失败禁止自动连接，要把显式重选与自动恢复分开记录，不能用前者冒充后者；结束后删除自己的 dex。
+
+`tests/android/GoldConntrackProbe.java` 沿用相同 javac／d8 方法，参数必须是 `pm path com.android.networkstack.tethering` 返回的已安装 APEX APK 路径。它加载该包的实际 conntrack parser 和 event 类，用合成 netlink 数据覆盖 TCP 状态传递、缺字段和畸形属性；不打开网络 socket、不改配置或 BPF map。记录 APK／DEX 哈希与退出码。解析测试不能替代 BPF 双向规则删除、真实连接回收或热点验收。
+
+`tests/native/RecoveryCacheProbe.cpp` 是 Linux 主机专项测试，链接**实际合并**的 `bootable/recovery/fuse_sideload/fuse_sideload.cpp`、`system/libbase/stringprintf.cpp` 和宿主 SHA-256 库。科研机现有 `g++ -std=c++17 -O2 -pthread -Wno-attributes`，include 为 Recovery 的 `fuse_sideload/include`、`otautil/include`、`system/libbase/include` 和 BoringSSL 头目录，链接 `/usr/lib/x86_64-linux-gnu/libcrypto.so.3` 及 `-Wl,--wrap=malloc,--wrap=free`。显式传入专属测试目录，以 root 运行；每轮只在该目录新建随机 FUSE 挂载点，退出时清理。测试完整 OTA 大小的合成文件、32 MiB 缓存上限、O_DIRECT 强制的淘汰后重读、篡改拒绝及一次可控 malloc 失败。记录编译命令、源码哈希、实际缓存分配峰值、宿主 RSS 和剩余挂载；宿主 glibc 结果不能冒充 Android Scudo 或手机实际侧载峰值。
 
 Codec2 的 AIDL 服务入口由 `device/xiaomi/gold/codec2/` 编译，继续调用匹配 Global 的 MTK codec store／编解码库，保留原有服务路径、身份和唯一 AIDL 声明。固定原厂入口在 0x3c2c 只分配 336 字节，当前 `libcodec2_aidl` 的 `ComponentStore` 实际需要 352 字节；实机首次编码已在组件表插入处崩溃。因此不能再把原厂可执行文件直接当作当前平台 ABI 兼容输入，也不能手工改一个分配常数替代源码编译。原 seccomp 规则继续生效，仅按实际崩溃报告被二次 SIGSYS 中断的证据追加只读 `uname`。验收需覆盖服务冷启动后的首次编码、多次创建／销毁及解码，核对 PID、信号与日志；客户端自动重试后成功不算无崩溃通过。
 
