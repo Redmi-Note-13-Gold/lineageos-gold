@@ -4,6 +4,8 @@
 
 ## 日常增量
 
+Android hiddenapi 编码与 OTA 打包需要 PATH 中真实可执行的 `unzip` 和 `zip`。统一入口在配置/构图前预检，直接 build-source.py 也在创建输出前预检，并把选中工具的路径和 SHA-256 存入同次 inputs.json。缺失时退出，不跳过编码或包校验。需要临时依赖时，可按 jobs 中执行记录，用 APT 下载当前 Ubuntu 的已认证包、核对包 SHA-256 后 dpkg-deb 解包，仅为本次服务加入 PATH；不持久安装，终态后由独立 guard 清理本次目录。
+
 科研机复用 `/srv/build/gold/source` 和其中的 `out-gold-standard`，不 clean，不创建第二份完整输出。先确认 source 是正确 overlay 挂载且没有另一构建，再以 **root（实际 UID 0）** 执行。
 
 科研机 `/srv/build/build-gold.sh [extra_targets...]` 统一指向本仓库 `tools/host/build-research.sh`：直接由 root 执行，不再切换专用编译账户。HOME 固定为 `/root`，ccache 实际目录为 `/root/ccache`，24 GiB swap 位于数据盘 `/srv/build/gold/host/build.swap`。额外参数用于同时编译模块或测试，不省略完整 OTA。底层入口也可直接调用：

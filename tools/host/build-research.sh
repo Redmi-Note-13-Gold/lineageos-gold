@@ -11,6 +11,15 @@ fi
 project_root="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/../.." && pwd)"
 source_tree="${GOLD_SOURCE_TREE:-$(dirname -- "$project_root")/source}"
 
+# Hidden-API encoding and packaging use these allowed, non-hermetic host tools.
+# Check before graph/configuration work; temporary job-local tools may be on PATH.
+for host_tool in unzip zip; do
+    command -v "$host_tool" >/dev/null 2>&1 || {
+        echo "Required Android host tool is missing from PATH: $host_tool" >&2
+        exit 1
+    }
+done
+
 # Fail before touching output if the data disk or source overlay is missing/mismatched.
 python3 -B "$project_root/tools/host/check-research-layout.py" --source-tree "$source_tree" >/dev/null
 

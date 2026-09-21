@@ -179,6 +179,32 @@ class OutputContractTest(unittest.TestCase):
         self.assertFalse(BUILD.detach_shared_output(missing))
         self.assertFalse(missing.exists())
 
+    def test_missing_host_tool_fails_before_creating_build_output(self):
+        tree = self.root / 'android'
+        (tree / '.repo').mkdir(parents=True)
+        argv = ['build-source', '--tree', str(tree), '--lunch',
+                'lineage_gold-bp4a-userdebug', '--execute', '--build-datetime', '123']
+        with patch.object(sys, 'argv', argv), \
+                patch.object(BUILD.platform, 'system', return_value='Linux'), \
+                patch.object(BUILD.platform, 'machine', return_value='x86_64'), \
+                patch.object(BUILD.shutil, 'which', return_value=None), \
+                contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'missing from PATH: unzip'):
+                BUILD.main()
+        self.assertFalse((tree / 'out-gold-standard').exists())
+        self.assertFalse((tree / '.repo/gold-source-build.lock').exists())
+
+    def test_host_tool_records_follow_selected_path_and_reject_missing_zip(self):
+        tool = self.root / 'unzip'
+        tool.write_bytes(b'host executable fixture')
+        with patch.object(BUILD.shutil, 'which', return_value=str(tool)):
+            record = BUILD.host_zip_tools()
+        self.assertEqual(record['unzip']['path'], str(tool))
+        self.assertEqual(record['zip']['sha256'], hashlib.sha256(tool.read_bytes()).hexdigest())
+        with patch.object(BUILD.shutil, 'which', side_effect=[str(tool), None]):
+            with self.assertRaisesRegex(ValueError, 'missing from PATH: zip'):
+                BUILD.host_zip_tools()
+
     def test_manifest_failure_leaves_unsuccessful_build_record(self):
         tree = self.root / 'android'
         (tree / '.repo').mkdir(parents=True)
@@ -188,6 +214,7 @@ class OutputContractTest(unittest.TestCase):
         with patch.object(sys, 'argv', argv), \
                 patch.object(BUILD.platform, 'system', return_value='Linux'), \
                 patch.object(BUILD.platform, 'machine', return_value='x86_64'), \
+                patch.object(BUILD, 'host_zip_tools', return_value={}), \
                 patch.object(BUILD.subprocess, 'run', side_effect=failure), \
                 contextlib.redirect_stdout(io.StringIO()):
             with self.assertRaises(subprocess.CalledProcessError):

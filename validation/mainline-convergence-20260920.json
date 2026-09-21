@@ -5572,6 +5572,30 @@
       "BPF rule lifecycle requires an allowed raw-IP upstream/client scenario; mobile data remains off",
       "IMS is deferred by user; no calls/SMS authorization",
       "Scudo allocation-failure injection, invalid battery boundary injection, authenticated keys and sustained thermal/charging remain untested"
-    ]
+    ],
+    "functional_build_r1_terminal": {
+      "revision": "47b34c3fc56eed923a536440a7ef35ae015dcc4f",
+      "status": "failed",
+      "finished_at": "2026-09-21T18:09:27+08:00",
+      "entry_exit_code": 1,
+      "android_duration": "02:15:19",
+      "error": "/bin/sh: 1: unzip: not found",
+      "kernel_oom_observed": false,
+      "vm_guard_restored_at": "2026-09-21T18:09:34+08:00",
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "device_accepted": false,
+      "host_fix": "Preflight ZIP tools before output changes; record executable hashes; temporary authenticated Ubuntu packages for retry, cleaned by independent guard.",
+      "host_fix_validation": {
+        "python_tests_passed": 86,
+        "real_entry_rejected_missing_tool": true,
+        "temporary_tools_environment_check_passed": true,
+        "same_android_inputs": 168
+      }
+    }
   }
 }

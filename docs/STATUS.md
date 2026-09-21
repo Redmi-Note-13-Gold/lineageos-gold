@@ -1,5 +1,7 @@
 更新于 2026-09-21（构图收尾与非 IMS 定向适配）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
+本轮 47b34c3 构建于 18:09:27 +08 以 exit 1 结束（Android 02:15:19），直接错误为 hiddenapi 编码命令 `unzip: not found`；宿主 zip/unzip 均未安装，非旧路径失效。内核日志无 OOM，独立 guard 于 18:09:34 恢复 VM，终态后实读为 0/zbud/N/Y。没有生成本轮可验收候选。新增入口依赖预检及宿主工具路径/哈希记录；使用经 APT 元数据 SHA-256 校验的 Ubuntu zip/unzip 临时解包到本次 job，不写 dpkg 安装状态，独立 guard 在续编结束后清理。ROM 的 168 项合并输入不因宿主修复而改变。
+
 **旧 hybrid 运行代码已按用户后续明确授权清理；完整功能验收仍未完成。** 原 15 个受管归档文件（含此前已删除的 Codec2 补丁）均退出主线工作树，删除依据与历史定位见 [ADAPTATION](ADAPTATION.md)。退役本身不授予任何功能通过结论；后续主线定向验收按下表记录，不删除历史镜像、唯一输入或当前主线 Python 工具。科研机为执行与核验依据，本地同步同一提交。
 
 宿主物理目录已收拢到 `/srv/build/gold`，外层只留该实目录、`build-gold.sh` 入口链接及 `lost+found`。源码、唯一输出、输入、宿主配置与历史以同盘重命名迁移；8 个冻结候选已移出活动输出，14 个包哈希仍匹配原始记录。新 OverlayFS 与原 swap 文件已在新路径启用，161 项合并输入和 1158 个 Repo 项目提交保持一致。迁移后的构建图于 14:56:55 +08 真正结束、入口 exit 0，Android m nothing 耗时 01:01:37；独立 guard 于 14:57:03 退出，实读 VM 已恢复 0/zbud/N/Y。无 OOM；输出 inode 9437191 保持，.top 为 /srv/build/gold/source，161 项合并输入和 1158 项 Repo 提交复核未变，环境检查 exit 0。整机重启未测试。见 [LAYOUT](LAYOUT.md) 和 [host-layout-20260920.json](../validation/host-layout-20260920.json)。这次目录迁移构图没有生成新 ROM，也不增加设备验收结论；下列验收仍属于各自版本。

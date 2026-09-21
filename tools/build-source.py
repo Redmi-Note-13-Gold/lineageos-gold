@@ -53,6 +53,18 @@ def verify_config(config, variant):
         raise ValueError('No A/B OTA partitions in resolved product')
 
 
+
+def host_zip_tools():
+    """Fail before touching output when non-hermetic Android ZIP tools are absent."""
+    tools = {}
+    for name in ('unzip', 'zip'):
+        executable = shutil.which(name)
+        if executable is None:
+            raise ValueError('Required Android host tool is missing from PATH: ' + name)
+        tools[name] = {'path': executable, 'sha256': CHECK.digest(Path(executable))}
+    return tools
+
+
 def output_path(tree, requested=None):
     # This pinned Soong tree feeds host output paths into module-relative data
     # paths. Keep OUT_DIR inside the source tree and pass its relative spelling.
@@ -140,6 +152,7 @@ def main():
     for name in ('SELINUX_IGNORE_NEVERALLOWS', 'ALLOW_MISSING_DEPENDENCIES', 'BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES'):
         if enabled(os.environ.get(name, '')):
             parser.error('Remove build bypass environment flag: ' + name)
+    plan['host_zip_tools'] = host_zip_tools()
     with (tree / '.repo/gold-source-build.lock').open('a') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
