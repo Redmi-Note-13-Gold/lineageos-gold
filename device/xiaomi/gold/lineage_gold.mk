@@ -19,4 +19,9 @@ PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_BRAND := Redmi
 PRODUCT_MODEL := 2312DRAABG
 
+# Original OS3.0.5.0.VNQMIXM vendor/build.prop, verified against its pinned image.
+# Keep user-visible identity above; KeyMint must receive the original TEE identity.
+PRODUCT_NAME_FOR_ATTESTATION := vnd_gold
+PRODUCT_MODEL_FOR_ATTESTATION := gold
+
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi

@@ -205,6 +205,7 @@ PRODUCT_PACKAGES += \
     GoldAlphaFrameworkOverlay \
     GoldAlphaSettingsOverlay \
     FrameworkResOverlayGold \
+    GoldNetworkStackOverlay \
     TetheringConfigOverlay \
     SettingsResOverlayGold \
     WifiOverlay

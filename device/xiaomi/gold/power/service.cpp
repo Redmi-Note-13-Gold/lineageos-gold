@@ -2,6 +2,7 @@
 #define LOG_TAG "gold-power"
 
 #include "PowerEngine.h"
+#include "TouchWake.h"
 
 #include <aidl/android/hardware/power/BnPower.h>
 #include <aidl/android/hardware/thermal/IThermal.h>
@@ -63,6 +64,14 @@ class Power final : public p::BnPower {
     ndk::ScopedAStatus setMode(p::Mode mode, bool enabled) override {
         if (!frameworkCaller()) return ndk::ScopedAStatus::fromExceptionCode(EX_SECURITY);
         switch (mode) {
+            case p::Mode::DOUBLE_TAP_TO_WAKE: {
+                const int error = gold::power::setDoubleTapWake(enabled);
+                if (error) {
+                    LOG(ERROR) << "double-tap wake request failed: " << error;
+                    return ndk::ScopedAStatus::fromServiceSpecificError(-error);
+                }
+                break;
+            }
             case p::Mode::LOW_POWER: engine_.lowPower(enabled, now()); break;
             case p::Mode::INTERACTIVE: engine_.interactive(enabled, now()); break;
             case p::Mode::DEVICE_IDLE: engine_.deviceIdle(enabled, now()); break;
@@ -76,7 +85,8 @@ class Power final : public p::BnPower {
         return ndk::ScopedAStatus::ok();
     }
     ndk::ScopedAStatus isModeSupported(p::Mode mode, bool* result) override {
-        *result = mode == p::Mode::LOW_POWER || mode == p::Mode::INTERACTIVE ||
+        *result = mode == p::Mode::DOUBLE_TAP_TO_WAKE ||
+                mode == p::Mode::LOW_POWER || mode == p::Mode::INTERACTIVE ||
                 mode == p::Mode::DEVICE_IDLE || mode == p::Mode::DISPLAY_INACTIVE ||
                 (mode == p::Mode::LAUNCH && launchClamp() > 0 && engine_.status().ready);
         return ndk::ScopedAStatus::ok();
@@ -93,7 +103,8 @@ class Power final : public p::BnPower {
     }
     ndk::ScopedAStatus getSupportInfo(p::SupportInfo* result) override {
         *result = {};
-        for (p::Mode mode : {p::Mode::LOW_POWER, p::Mode::INTERACTIVE, p::Mode::DEVICE_IDLE,
+        for (p::Mode mode : {p::Mode::DOUBLE_TAP_TO_WAKE, p::Mode::LOW_POWER,
+                             p::Mode::INTERACTIVE, p::Mode::DEVICE_IDLE,
                              p::Mode::DISPLAY_INACTIVE, p::Mode::LAUNCH}) {
             bool supported;
             isModeSupported(mode, &supported);

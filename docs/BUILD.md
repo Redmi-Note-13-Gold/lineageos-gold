@@ -117,3 +117,8 @@ Codec2 的 AIDL 服务入口由 `device/xiaomi/gold/codec2/` 编译，继续调�
 userdebug 允许上游调试域；不能等同于全局 permissive。正式 user 包需要无 permissive 域；不允许跳过 neverallow、缺依赖/ELF 校验或关闭 AVB。测试证书不构成正式发行签名验收。
 
 源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。
+
+
+当前非 IMS 修复的包检查同时核验双击唤醒资源／Power 路径／设备标签、NetworkStack 的真实 HTTPS 地址、原厂 attestation 专用属性和 OpenEUICC 管理／下载 action 分离；实际镜像读取覆盖新增 RRO、OpenEUICC 和 SystemUI。包内存在不等于运行通过。双击协议的 Linux 主机定向测试为 `g++ -std=c++17 -Wall -Wextra -Werror -I device/xiaomi/gold/power tests/native/TouchWakeTest.cpp -o <专属目录>/touch-test`，执行该程序只调用系统调用替身，不访问手机。安装后仍需通过正式 Settings→Power Binder→Enforcing 域测试开关、物理双击、服务与设备重启恢复，不能用 root 直接 ioctl 代替。
+
+设备 Recovery 缓存测试可用 test-key 签名、OTA 大小的无 payload／updater fixture，令 pre-device 为专用不匹配标识；要求完整签名验证通过，再在元数据检查被拒绝且从未启动 updater。ADB transfer exit 0 只证明传输。RSS 观察者须在 sideload 切换停止 adbd 后仍存活且有边界；只分离自己的观察进程，不改 Recovery／minadbd 控制组或 SELinux。结束核对原槽位／版本、挂载、快照与 canary。这是缓存／验签的定向证据，不能记作完整 Recovery OTA 安装通过。

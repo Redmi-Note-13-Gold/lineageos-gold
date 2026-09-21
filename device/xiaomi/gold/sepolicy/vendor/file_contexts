@@ -59,3 +59,5 @@
 
 # One process serves the standard Power HAL and MediaTek performance locks.
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power-service\.gold    u:object_r:mtk_hal_power_exec:s0
+
+/dev/xiaomi-touch    u:object_r:vendor_gold_touch_device:s0

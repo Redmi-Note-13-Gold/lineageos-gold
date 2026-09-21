@@ -4,16 +4,16 @@
 
 ## 旧版到主线的完整收敛对照
 
-对照 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。五份平台补丁逐字一致，97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
+对照 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。在 bd50b19 对照阶段，五份迁入平台补丁逐字一致；本轮 OpenEUICC 和 SystemUI 后续修复仍在这些主线入口维护。97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
 
 | 旧版项目／解决的问题 | 旧版实际证据及边界 | 主线实现与位置 | 决定 | 仍缺的验证 | 是否依赖旧流程／旧产物 |
 |---|---|---|---|---|---|
-| Recovery 侧载缓存，避免缓存随大 OTA 无界增长 | `e14a7fa` 补丁和旧 Recovery 安装记录；不是新 Recovery 内存实测 | `patches/bootable__recovery/0001-sideload-memory.patch`；字节及合并源码一致；实际源码 Linux FUSE 3 项通过，32 MiB 上限、重读校验与 malloc 失败降级有效 | 保留 | Android Recovery 实际侧载和 RSS 峰值；宿主 glibc 不当作设备 Scudo | 不需要旧拼装 |
-| SystemUI 状态图标排列 | 旧平台补丁及旧版显示记录 | `patches/frameworks__base/0001-status-icon-packing-r2.patch`；字节一致；bd50b19 横竖屏现有时钟／网络／电量图标未见重叠裁切 | 保留 | 多图标溢出／RTL，不能由基础截图替代 | 不需要 |
-| 状态栏 20dp 边距 | 旧 device 集成 overlay | `device/xiaomi/gold/overlay/GoldStatusBarOverlay`；bd50b19 实际资源 55px／density 2.75=20dp，横竖屏已目视 | 保留且定向验证通过 | 多图标／RTL 组合单列 | 不需要 |
+| Recovery 侧载缓存，避免缓存随大 OTA 无界增长 | `e14a7fa` 补丁和旧 Recovery 安装记录；不是新 Recovery 内存实测 | `patches/bootable__recovery/0001-sideload-memory.patch`；字节及合并源码一致；实际源码 Linux FUSE 3 项通过，32 MiB 上限、重读校验与 malloc 失败降级有效 | 保留 | 设备签名侧载／32 MiB 缓存／RSS 已定向通过；尚未做设备分配失败注入或完整 Recovery OTA | 不需要旧拼装 |
+| SystemUI 状态图标排列 | 旧平台补丁及旧版显示记录 | `patches/frameworks__base/0001-status-icon-packing-r2.patch`；字节一致；bd50b19 横竖屏现有时钟／网络／电量图标未见重叠裁切 | 保留 | 本轮溢出／RTL 已补验，发现横屏 111px／55px 不对称；新修复待镜像 | 不需要 |
+| 状态栏 20dp 边距 | 旧 device 集成 overlay | `device/xiaomi/gold/overlay/GoldStatusBarOverlay`；bd50b19 实际资源 55px／density 2.75=20dp，横竖屏已目视 | 保留且定向验证通过 | 横屏非对称边距已复现，修复后需再验 LTR／RTL | 不需要 |
 | TCP conntrack／BPF 回收 | 旧实现和测试差异；没有所有热点场景验收 | `patches/packages__modules__Connectivity/0001-tcp-conntrack-recycling.patch`；字节一致；实际已装 TetheringNext 解析器与事件类 13 项通过，缺失／非法字段返回 UNKNOWN | 保留 | 实机 BPF 双向规则删除、连接回收／热点；当前探针不写 BPF | 不需要 |
-| DeviceDiagnostics 电池信息有效值 | 旧补丁；错误值过滤逻辑可查 | `patches/packages__apps__DeviceDiagnostics/0001-battery-information.patch`；字节一致 | 保留 | 新候选界面和异常值路径 | 不需要 |
-| OpenEUICC 物理槽位／设置入口 | 旧补丁、固定子模块；未证明所有 eUICC 场景或本机号码 | `patches/external__openeuicc/0001-service-slot-integration.patch` 与两个固定子模块；字节一致 | 保留 | 当前 eSIM 槽位、入口、运营商配置；不修改用户配置 | 不需要 |
+| DeviceDiagnostics 电池信息有效值 | 旧补丁；错误值过滤逻辑可查 | `patches/packages__apps__DeviceDiagnostics/0001-battery-information.patch`；字节一致 | 保留 | bd50b19 界面与实际不可用值隐藏通过；非法边界注入未做 | 不需要 |
+| OpenEUICC 物理槽位／设置入口 | 旧补丁、固定子模块；未证明所有 eUICC 场景或本机号码 | `patches/external__openeuicc/0001-service-slot-integration.patch` 与两个固定子模块；字节一致 | 保留 | 已发现管理入口和快捷方式崩溃；主线修复后需只读管理页验收，不修改 SIM | 不需要 |
 | IMS 动态广播及视频 guard | 旧版有注册与 voice/SMS/UT 能力记录；无完整通话／全运营商验收 | `vendor/xiaomi/gold/ims/` 管理 APK、权限、兼容 Java 和限定 MCC/MNC overlay | 保留受管 prebuilt | bd50b19 原镜像及 Recovery 往返后已绑定且 MMTEL READY；尚未注册，需核对有效配置、套餐与漫游条件；无通话／短信授权 | APK 是主线 Git blob；完整原厂依赖打包不可重建是已声明 prebuilt 限制，不要求旧目录 |
 | IMS 框架发现和 modem 初始化 | 首次标准候选漏 feature；97969dc 已绑定但缺启动属性，APK 提前退出 | `device.mk` feature、`vendor.prop` 三项匹配 Global 启动配置及包／标签检查 | 主线修复，初始化及重启恢复已验证 | bd50b19 原镜像的 mtkIms Binder、双槽 MMTEL READY 和 Recovery 往返恢复通过；有效 carrier VoLTE=false，注册／能力仍未通过，不能直接归因运营商 | 不需要旧流程 |
 | TelephonyMetrics 兼容 dex | 固定旧 v5 加 `classes2.dex` 的配方 | 主线 `ims/compat/rebuild.py` 从受管 APK 重编兼容 Java；实际 dex 和全载荷一致 | 保留，移除对旧 v5 目录的必需依赖 | ZIP 字节因宿主压缩元数据不同；新 APK 如要采用必须重新评审 pin | 不需要；闭源主 dex 明确保留 |
@@ -29,14 +29,14 @@
 | CIL 版本映射／错误 Binder 规则／neverallow 冲突 | 旧脚本只针对混合 stock vendor 与上层的特定 CIL 语句 | 同一源码策略构建、neverallow 检查；不导入旧版本的手工 CIL | 有依据取消镜像修补 | 新包策略验证；userdebug 调试域与全局 Enforcing 分开记录 | 不需要手工 CIL |
 | 内核模块路径／链接／加载闭包 | 旧工具修链接、fs_config 和 labels；旧读回不证明新模块启动 | 匹配 Global kernel/modules；标准 system_dlkm/vendor_dlkm，bd50b19 两模块链接与 421 个已加载模块条目实读 | 等价替代 | 各模块对应硬件的完整工作负载仍单列 | 不需要旧模块修补 |
 | KeyMint 与 Android 16 ABI | 旧新底包启动记录有限；不代表全部密钥功能 | 固定 KeyMint V3 prebuilt ABI＋源码策略；bd50b19 普通应用经 Enforcing HAL 的 TEE EC／RSA／AES-GCM 正常操作与篡改拒绝通过，3 把自建密钥清理 | 标准提取与源码策略替代 | 硬件证明、认证绑定密钥未测；不伪造硬件安全级别 | 固定官方输入，无旧镜像依赖 |
-| Codec2 AIDL 服务 | 旧源码入口有价值，但旧 AIDL/HIDL 包装器不等于完整媒体验收；2cca323 原厂入口首次编码崩溃推翻其等价替代判断 | `device/xiaomi/gold/codec2/` 按当前平台头文件编译 AIDL 入口，保留 Global store／编解码库、原服务与沙箱；不硬改二进制 malloc 常数 | 归入主线源码，替代旧包装器与失配原厂入口 | bd50b19 编译及包门禁、3 次冷启动／11 轮 AVC 编解码通过，实际日志 352 字节且 PID 稳定无相关崩溃；相机录像／全部格式／画质仍未测 | 不调用 archive patch；旧入口源码替代已完成针对性构建／运行验证 |
+| Codec2 AIDL 服务 | 旧源码入口有价值，但旧 AIDL/HIDL 包装器不等于完整媒体验收；2cca323 原厂入口首次编码崩溃推翻其等价替代判断 | `device/xiaomi/gold/codec2/` 按当前平台头文件编译 AIDL 入口，保留 Global store／编解码库、原服务与沙箱；不硬改二进制 malloc 常数 | 归入主线源码，替代旧包装器与失配原厂入口 | bd50b19 编译及包门禁、3 次冷启动／11 轮 AVC 编解码通过，实际日志 352 字节且 PID 稳定无相关崩溃；实际 1080p 录像及 216 帧 MTK 解码已通过；全部格式／画质／长时仍未测 | 不调用 archive patch；旧入口源码替代已完成针对性构建／运行验证 |
 | mi_ext OEM APK mask／渠道 init | 旧 hybrid 需清理 overlay 分区内空 APK 与渠道 init | 当前标准 OTA 分区集合不包含 mi_ext，fstab 不把旧 mi_ext 作为上层应用覆盖 | 有依据取消 | 新候选 mount／软件包路径，确认旧物理内容未参与系统 | 不需要重新打包 mi_ext |
 | AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 2cca323／3cb28c3 各 14 分区／29 实际文件门禁通过；bd50b19 的 35 文件／14 分区、安装器与独立 A14 回读通过；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
-| Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | bd50b19 vendor_boot 回读、Recovery 自动 ADB、Enforcing 与往返独立通过，侧载缓存内存峰值仍未测 | 不需要旧 Recovery 脚本 |
+| Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | bd50b19 vendor_boot 回读、Recovery 自动 ADB、Enforcing 与往返独立通过，侧载签名验证的缓存内存峰值已补验；完整 Recovery OTA 安装未重复 | 不需要旧 Recovery 脚本 |
 | 只读启动观察／槽位判定 | 旧观察工具有 36 项模拟测试 | 主线 `tools/capture_boot.py` 与测试；无 archive 的 3dcd922 新导出通过 75 项且 IMS 哈希匹配 | 归入主线保留 | bd50b19 两次 A 槽启动观察 exit 0、各稳定超过 20 秒；c36757a 原始启动失败仍保留，不把临时 DAC 当成功 | 不需要归档路径 |
 | MDDP WH／全运营商 IMS／持续性能 | 旧记录没有 WH modem 能力位，也未完成这些完整验收 | 不伪造 WH、不全局强制 carrier override；性能按测量决定 | MDDP 无依据功能不导入；其余如实保留未完成状态 | 实际能力与测试条件 | 不作为旧版已通过的遗失能力 |
 
-**当前结论：旧 hybrid 运行代码已按用户后续明确授权退出工作树，完整功能验收仍未完成。** 当前维护、构建和验证入口不调用旧拼装。bd50b19 的构建、安装、回读、启动、Codec2 和 Power 等通过范围保持不变；IMS 注册／实际能力、Android Recovery 侧载峰值、实际 BPF 回收和部分界面／媒体验收仍按上表跟进。删除不将这些项目改记为通过，也不宣称完成从零 Android 全量重建。
+**当前结论：旧 hybrid 运行代码已按用户后续明确授权退出工作树，完整功能验收仍未完成。** 当前维护、构建和验证入口不调用旧拼装。bd50b19 的构建、安装、回读、启动、Codec2 和 Power 等通过范围保持不变；IMS 注册／能力按用户要求延后；Recovery 峰值已补验，实际 BPF 回收和界面缺陷继续在主线跟进。删除不将这些项目改记为通过，也不宣称完成从零 Android 全量重建。
 
 2026-09-21 用户在区分运行依赖与功能验收后明确要求删除不再需要的旧实现。下列 15 个受管文件已成组移除（旧 Codec2 补丁此前已局部删除）；原内容可从 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 的同名路径读取，不复制另一套可运行工程：
 
@@ -97,7 +97,7 @@
 
 媒体实际调用者为 `vpud_native` 域 `v3avpud`，零时长请求 `0x0240c000=100` 和私有 `0x01468000=0` 均明确不支持。2cca323 的 3 秒 MTK AVC 编码与 41 帧硬件解码/EOS 能在自动重试后完成，但首次组件创建发生 SIGSEGV，不能据此认定 Codec2 稳定性通过。匹配 `libcodec2_aidl` 哈希、LLDB 崩溃位置和 DWARF 证明原厂入口少分配 16 字节。bd50b19 的主线 AIDL 入口按当前 352 字节类型编译，继续用原厂 codec store／库，Android 编译通过，bd50b19 已独立通过 3 次冷服务启动和总计 11 轮编解码，相关 PID 稳定无崩溃；其余媒体场景仍单列。
 
-bd50b19 的 75 项主线 Python 测试通过；2cca323 无 archive 导出 75 项与 IMS pin 核验、Mac／Linux／两种 Android ABI 的 27+32 项分别保留版本。LAUNCH／INTERACTION 额外 uclamp 默认均为 0，尚无可比温度与设置的启动／帧时间／能耗收益数据。不能把资源探针通过当作策略有收益。
+bd50b19 的 75 项主线 Python 测试通过；2cca323 无 archive 导出 75 项与 IMS pin 核验、Mac／Linux／两种 Android ABI 的 27+32 项分别保留版本。LAUNCH／INTERACTION 额外 uclamp 默认均为 0，已有下文同机无外部电源的可比温度／设置对照，但未证明可靠、可重复收益。不能把资源探针通过当作策略有收益。
 
 ## IMS 初始化缺口
 
@@ -130,8 +130,18 @@ IMS 初始化／恢复通过，注册与 Voice/Video/UT/SMS 仍为 false，实�
 
 这是单个合成应用、小样本对照；文件缓存未清，实际滑动 105–110 次／轮，网络输入开销并非严格相同工作量。电流估算不是外接功耗仪；charge_counter 更新粗糙且滞后，未用它声称精细功耗精度。帧时间不等于完整触摸到显示延迟，不把数千帧当数千个独立样本，也不推导长期续航或所有应用等价。启动投票及 LAUNCH=0 时的独立交互投票均实读达到 20 后归零；最后经同一 HAL 入口恢复 0／0，活动请求 0。
 
-普通应用测试了 TEE EC-256／RSA-2048 签名及篡改拒绝、AES-256-GCM 加解密及坏标签拒绝，三把自建密钥均清理；未读取或导出用户密钥，未验证硬件证明。60／90／120 Hz 窗口模式实际接受，横竖屏既有状态图标与 20dp 边距已查看；多图标溢出／RTL 未测。
+普通应用测试了 TEE EC-256／RSA-2048 签名及篡改拒绝、AES-256-GCM 加解密及坏标签拒绝，三把自建密钥均清理；未读取或导出用户密钥，当时未验证硬件证明；本轮设备属性证明 -66 失败及修复输入另见下文。60／90／120 Hz 窗口模式实际接受，横竖屏既有状态图标与 20dp 边距已查看；本轮补验多图标溢出／RTL 后发现横屏非对称边距，修复仍待新候选。
 
 Recovery 主机探针链接实际合并的 fuse_sideload.cpp：读取 1,174,891,230 字节合成文件，缓存峰值 32 MiB、进程 RSS 38,648 KiB，淘汰重读成功；篡改返回 EIO；单次分配失败后降级到 2 MiB，三轮无遗留分配／挂载。这是 Linux glibc FUSE 证据，不是手机 Android Scudo 或真实侧载峰值。安装中的 TetheringNext 类加载来源已核验，真实 TCP 解析器到事件传递的 13 项状态／非法输入通过；未写 BPF，真实双向规则删除和热点未测。
 
 两款自建探针 APK 和专属目录内 8 个文件已清理，临时 adb root 恢复 UID 2000 且鉴权网络 ADB 实测保持，用户请求的 Key Attestation 1.8.4 保留。11:06 经网络 ADB 再验解锁状态、两份 canary 和策略复位；用户正在使用该应用，DeviceDiagnostics／OpenEUICC 界面验收待设备空闲时继续，未把注册服务或包存在记作界面通过。
+
+## 9 月 21 日非 IMS 后续修复
+
+本轮实机仍为 bd50b19，源码改动待新候选验收：Wi-Fi 用 GoldNetworkStackOverlay 保留 Google HTTPS 并增加实测 TLS/204 成功的 gstatic 地址；OpenEUICC 把系统管理 action 接到受 BIND_EUICC_SERVICE 保护的配置列表，缺 launcher 时不注册动态快捷方式；SystemUI 只对真正与状态栏区域相交的挖孔及相机保护区留边，避免横屏中心挖孔引入多余单侧空白。原代码在同一用例失败，修改后的实际纯 Kotlin 函数 40 项通过；主机 Rect 类型替身不冒充 Android 界面验收。
+
+KeyMint 的 -66 目前仅证实为设备属性证明失败。重新从锁定 Global OTA 提取 vendor，SHA-256 与 firmware/gold-global.json 相符，实际 build.prop 的 product/model 为 vnd_gold/gold；只用 PRODUCT_NAME_FOR_ATTESTATION／PRODUCT_MODEL_FOR_ATTESTATION 提供这些原值，不改变显示型号、TEE 安全级别或 orange 引导状态，不导入 keybox。是否解决真实 TEE 拒绝必须安装后重测。
+
+双击唤醒的 Lineage 设置和 Power AIDL DOUBLE_TAP_TO_WAKE 原本未在 Gold 接通。匹配内核模块反汇编及 Xiaomi gold-s-oss 原始接口确认 /dev/xiaomi-touch 的 SET_CUR_VALUE payload 是 256 个 int32、[mode, value]，没有 touch-id 前缀；mode 14 只更新双击位，保留 AOD 位。临时 root 探针成功进入手势模式并观察到两组触摸 KEY_POWER、gesture ID 0x24，用户确认两次亮屏，之后恢复 Off。主线用实际 ioctl 返回值和内核回传错误，不空报成功；只给 Power 域特定设备类型和 0x5400 ioctl，保留 DAC 与 Enforcing。9 项协议／错误测试通过，正式系统开关、HAL 权限及重启后状态待安装验证。当前硬件证据来自 FT3683G，其他面板不冒充已测。
+
+Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完整验签后在产品名检查明确拒绝，未安装 ROM；32 MiB 缓存，minadbd HWM 43,436 KiB、Recovery HWM 99,284 KiB，返回正常系统、两份 canary 和原槽位／版本保持。未见 Scudo abort，不等于做过设备分配失败注入。USB NCM 的真连接状态已从 ESTABLISHED 变为 TIME_WAIT；Wi-Fi 上行未建 IPv4 BPF 规则，用户拒绝开启移动数据，所以双向规则回收仍缺允许的 raw-IP 条件。用户确认相机、麦克风、扬声器和震动实际体验正常。完整脱敏结果见 mainline-convergence validation 的 non_ims_followup_20260921。

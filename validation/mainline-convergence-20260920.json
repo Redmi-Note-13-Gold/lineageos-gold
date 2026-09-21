@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T03:39:34.134670+00:00",
+  "updated_at": "2026-09-21T07:48:59.508927+00:00",
   "task_state": "implementation_and_validation_in_progress_NOT_READY",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -5384,5 +5384,194 @@
     "remote_archive_untouched": true,
     "android_build_started": false,
     "new_output_created": false
+  },
+  "non_ims_followup_20260921": {
+    "recorded_at": "2026-09-21T07:48:59.508927+00:00",
+    "rom_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "incremental": "1789938387",
+    "slot": "A",
+    "selinux": "Enforcing",
+    "scope": "New directed evidence on the existing candidate; fixes are not yet built or installed",
+    "raw_device_evidence": "Retained privately on the current Mac with mode 0600; not in source Git or on the build host",
+    "ims": {
+      "status": "deferred_by_user",
+      "sim_changes": false,
+      "calls_or_sms": false
+    },
+    "recovery_cache": {
+      "status": "directed_device_verification_passed",
+      "fixture_bytes": 1174408317,
+      "fixture_sha256": "b7b26367602e427540538d7fd5ceff5526649670d0791b0b09172b702f9d34ca",
+      "full_signature_verified": true,
+      "expected_wrong_product_rejection_before_updater": true,
+      "rom_installed": false,
+      "cache_blocks": 512,
+      "cache_bytes": 33554432,
+      "minadbd_samples": 92,
+      "minadbd_rss_peak_kib": 43084,
+      "minadbd_hwm_kib": 43436,
+      "recovery_main_hwm_kib": 99284,
+      "scudo_abort_in_log": false,
+      "allocation_failure_injection": false,
+      "full_recovery_ota_install_tested": false,
+      "first_observer_interrupted_by_adbd_stop": true,
+      "second_bounded_observer_complete": true,
+      "normal_boot_returned": true,
+      "same_slot_and_version": true,
+      "data_persist_mounted": true,
+      "snapshot_none": true,
+      "both_canaries_match": true,
+      "generated_server_fixture_removed_after_verified_private_copy": true
+    },
+    "wifi": {
+      "status": "baseline_probe_failure_reproduced_fix_pending",
+      "wpa3_5ghz_dhcp_tls_https_passed": true,
+      "google_https_probe_timed_out": true,
+      "gstatic_https_204_tls_verified": true,
+      "temporary_deviceconfig_validated_seconds": [
+        2.767,
+        21.574,
+        1.448
+      ],
+      "automatic_reconnect_validated_seconds": [
+        21.574,
+        1.448
+      ],
+      "restored_baseline_partial_connectivity_after_seconds": 24.257,
+      "deviceconfig_restored_to_null": true,
+      "credentials_changed": false,
+      "fix": "GoldNetworkStackOverlay retains Google HTTPS and adds verified gstatic HTTPS 204"
+    },
+    "openeuicc": {
+      "status": "baseline_management_crash_reproduced_fix_pending",
+      "system_sim_list_read_only": true,
+      "manage_action_incorrectly_opened_provisioning": true,
+      "direct_profile_ui_crash": "ShortcutService requires a launcher activity",
+      "fix": "Permission-protected management route to PrivilegedMainActivity; skip shortcuts when no launcher",
+      "sim_modified": false,
+      "new_profile_ui_acceptance": false
+    },
+    "systemui": {
+      "status": "landscape_asymmetry_reproduced_fix_pending",
+      "synthetic_status_icons": 10,
+      "ltr_rtl_portrait_landscape_observed": true,
+      "overflow_dot_observed": true,
+      "icon_overlap_observed": false,
+      "landscape_padding_px": {
+        "left": 111,
+        "right": 55
+      },
+      "left_cutout_rect": [
+        0,
+        512,
+        111,
+        568
+      ],
+      "statusbar_rect": [
+        0,
+        0,
+        2400,
+        111
+      ],
+      "fix": "Only intersecting cutout/camera protection insets with cutout mode ALWAYS",
+      "geometry_cases_passed": 40,
+      "same_geometry_regression_failed_on_baseline": true,
+      "android_instrumentation_tests_run": false,
+      "exact_locale_rotation_demo_settings_restored": true
+    },
+    "keymint": {
+      "status": "device_property_attestation_minus_66_reproduced_fix_pending",
+      "error": "CANNOT_ATTEST_IDS",
+      "boot_state": "orange",
+      "stock_vendor_image_sha256": "9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f",
+      "stock_attestation_identity": {
+        "product": "vnd_gold",
+        "model": "gold"
+      },
+      "fix": "Dedicated attestation product/model from the actual pinned vendor build.prop",
+      "new_tee_attestation_passed": false,
+      "authentication_bound_keys_tested": false,
+      "keybox_imported": false,
+      "security_level_or_boot_state_faked": false,
+      "user_keyattestation_app_preserved": true
+    },
+    "double_tap_wake": {
+      "status": "temporary_driver_probe_passed_mainline_integration_pending_build",
+      "lineage_framework_support_exists": true,
+      "gold_resource_and_hal_path_missing_in_baseline": true,
+      "driver": "FocalTech FT3683G",
+      "ioctl": "SET_CUR_VALUE, mode 14, 256 int32 values [mode, value]",
+      "sleep_register_0xd0": 1,
+      "gesture_id": 36,
+      "physical_input_key_power_pairs": 2,
+      "user_confirmed_two_double_tap_wakes": true,
+      "first_trial_no_response_timing_uncertain": true,
+      "temporary_driver_state_restored_off": true,
+      "protocol_and_error_cases_passed": 9,
+      "production_hal_enforcing_acceptance": false,
+      "settings_and_reboot_persistence_acceptance": false
+    },
+    "tcp_bpf": {
+      "status": "true_connection_observed_bpf_recycling_not_tested",
+      "downstream": "USB NCM",
+      "upstream": "Wi-Fi",
+      "observed_states": [
+        "ESTABLISHED",
+        "TIME_WAIT"
+      ],
+      "upstream_ipv4_rules": 0,
+      "downstream_ipv4_rules": 0,
+      "limitation": "Current IPv4 offload path requires raw-IP upstream; user declined cellular data",
+      "mobile_data_kept_off": true,
+      "usb_tether_restored_off": true
+    },
+    "device_diagnostics": {
+      "status": "actual_battery_ui_passed",
+      "cycle_count": 1649,
+      "unavailable_dates_and_health_percent_hidden": true,
+      "invalid_value_injection_tested": false
+    },
+    "camera_media": {
+      "status": "directed_camera_media_path_passed",
+      "owned_clip_duration_ms": 7218,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "decoded_frames": 216,
+      "decoder": "c2.mtk.avc.decoder",
+      "eos": true,
+      "owned_clip_deleted": true,
+      "all_formats_quality_or_sustained_use_tested": false
+    },
+    "user_hardware_confirmation": {
+      "camera": true,
+      "microphone": true,
+      "speaker": true,
+      "vibration": true,
+      "scope": "User actual experience, not exhaustive automated coverage"
+    },
+    "host_tests": {
+      "mainline_python": 84,
+      "touch_protocol": 9,
+      "pure_kotlin_geometry": 40
+    },
+    "implementation": {
+      "status": "integrated_pending_build",
+      "merged_inputs": 168,
+      "new_complete_output": false,
+      "overlay_lower_modified": false,
+      "stock_inputs_replaced": false,
+      "power_launch_interaction_defaults": [
+        0,
+        0
+      ]
+    },
+    "remaining_conditions": [
+      "New candidate build, package verification, installation and affected runtime acceptance",
+      "BPF rule lifecycle requires an allowed raw-IP upstream/client scenario; mobile data remains off",
+      "IMS is deferred by user; no calls/SMS authorization",
+      "Scudo allocation-failure injection, invalid battery boundary injection, authenticated keys and sustained thermal/charging remain untested"
+    ]
   }
 }

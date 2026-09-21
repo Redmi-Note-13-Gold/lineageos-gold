@@ -387,4 +387,6 @@
 
     <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
+    <!-- Power HAL forwards the user's setting to the original touch driver. -->
+    <bool name="config_supportDoubleTapWake">true</bool>
 </resources>

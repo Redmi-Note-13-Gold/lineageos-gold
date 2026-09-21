@@ -79,8 +79,10 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'etc/seccomp_policy/android.hardware.media.c2@1.2-extended-seccomp-policy',
                    'etc/seccomp_policy/gold-codec2-crash.policy',
                    'overlay/FrameworkResOverlayGold.apk',
+                   'overlay/GoldNetworkStackOverlay.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
+                       'priv-app/OpenEUICC/OpenEUICC.apk', 'priv-app/SystemUI/SystemUI.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
     }
     recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
@@ -377,6 +379,40 @@ def verify(target, aapt2, readelf, profile):
         framework = dump(framework_name, 'resources')
         require('() false' in resource(framework, 'bool/config_sustainedPerformanceModeSupported')[1],
                 'Untuned sustained-performance capability still advertised')
+        require('() true' in resource(framework, 'bool/config_supportDoubleTapWake')[1],
+                'Double-tap wake not exposed by the Gold framework overlay')
+        require(b'double-tap wake request failed' in archive.read(
+                'VENDOR/bin/hw/android.hardware.power-service.gold'), 'Missing touch wake Power HAL path')
+        require(any(len(parts := line.split()) >= 2 and parts[0] == '/dev/xiaomi-touch'
+                    and parts[-1] == 'u:object_r:vendor_gold_touch_device:s0' for line in contexts),
+                'Missing narrowly typed touch control device')
+        attestation = {'ro.product.name_for_attestation': 'vnd_gold',
+                       'ro.product.model_for_attestation': 'gold'}
+        for name, value in attestation.items():
+            require([x.split('=', 1)[1] for x in vendor_properties if x.startswith(name + '=')] == [value],
+                    'Original vendor attestation identity missing or duplicated: ' + name)
+        network_name = 'VENDOR/overlay/GoldNetworkStackOverlay.apk'
+        network = dump(network_name, 'resources')
+        urls = ['https://www.google.com/generate_204',
+                'https://connectivitycheck.gstatic.com/generate_204']
+        actual_urls = re.findall(r'"(https?://[^"\s]+)"',
+                                resource(network, 'array/config_captive_portal_https_urls')[1])
+        require(actual_urls == urls, 'Unexpected captive-portal HTTPS probe configuration')
+        network_manifest = dump(network_name, 'xmltree', '--file', 'AndroidManifest.xml')
+        require('"com.android.networkstack"' in network_manifest and
+                '"NetworkStackConfig"' in network_manifest, 'Incorrect NetworkStack overlay target')
+        euicc_manifest = dump('SYSTEM_EXT/priv-app/OpenEUICC/OpenEUICC.apk',
+                              'xmltree', '--file', 'AndroidManifest.xml')
+        activities = re.findall(r'^    E: activity .*?(?=^    E: |\Z)', euicc_manifest, re.M | re.S)
+        main = [x for x in activities if '.ui.PrivilegedMainActivity"' in x]
+        lui = [x for x in activities if '.ui.LuiActivity"' in x]
+        require(len(main) == len(lui) == 1 and
+                'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' in main[0] and
+                'android.permission.BIND_EUICC_SERVICE' in main[0] and
+                'android.intent.category.LAUNCHER' not in main[0] and
+                'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' not in lui[0] and
+                'android.service.euicc.action.PROVISION_EMBEDDED_SUBSCRIPTION' in lui[0],
+                'OpenEUICC management/provisioning entry points do not match the system integration')
         compiled_profile = dump(framework_name, 'xmltree', '--file', 'res/xml/power_profile.xml')
         actual = {}
         for block in re.split(r'^    E: (?:item|array) .*\n', compiled_profile, flags=re.M)[1:]:
@@ -410,6 +446,11 @@ def verify(target, aapt2, readelf, profile):
                 'codec2': {'source_frontend_marker_verified': True, 'sha256': sha256(codec),
                            'single_vendor_service': True, 'matched_vendor_store_retained': True,
                            'runtime_verified': False},
+                'touch_wake': {'framework_switch': True, 'power_path': True,
+                               'typed_control_device': True, 'runtime_verified': False},
+                'attestation_identity': {'properties': attestation, 'tee_acceptance_verified': False},
+                'network_probes': {'https_urls': urls, 'runtime_validated': False},
+                'openeuicc': {'system_management_route': True, 'runtime_verified': False},
                 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}
