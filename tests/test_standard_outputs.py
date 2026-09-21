@@ -228,5 +228,42 @@ class OutputContractTest(unittest.TestCase):
         self.assertIn('manifest', result['error'])
 
 
+class ProductPackagingOrderTest(unittest.TestCase):
+    def run_build(self, fail_target='', extra_targets=()):
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Path(temporary)
+            (tree / 'build').mkdir()
+            # Exercise the actual Bash calls with a minimal Android entry.
+            (tree / 'build/envsetup.sh').write_text(
+                'lunch() { return 0; }\n'
+                'm() { printf "%s\\n" "$*" >> "$GOLD_TEST_LOG"; '
+                'if [ "$2" = "$GOLD_TEST_FAIL_TARGET" ]; then return 23; fi; }\n')
+            log = tree / 'calls'
+            env = dict(os.environ, GOLD_TEST_LOG=str(log), GOLD_TEST_FAIL_TARGET=fail_target)
+            stages = []
+            code = BUILD.run_product_build(tree, env, 'lineage_gold-bp4a-userdebug', 2,
+                                           BUILD.product_build_batches(extra_targets), stages)
+            return code, log.read_text().splitlines(), stages
+
+    def test_ota_finishes_before_archive_without_reducing_parallel_jobs(self):
+        code, calls, stages = self.run_build(extra_targets=['probe', 'bacon', 'target-files-package', 'probe'])
+        self.assertEqual(code, 0)
+        self.assertEqual(calls, ['-j2 bacon probe', '-j2 target-files-package'])
+        self.assertEqual(stages, [{'targets': ['bacon', 'probe'], 'exit_code': 0},
+                                  {'targets': ['target-files-package'], 'exit_code': 0}])
+
+    def test_ota_failure_stops_before_target_files(self):
+        code, calls, stages = self.run_build(fail_target='bacon')
+        self.assertEqual(code, 23)
+        self.assertEqual(calls, ['-j2 bacon'])
+        self.assertEqual(stages, [{'targets': ['bacon'], 'exit_code': 23}])
+
+    def test_target_files_failure_cannot_be_reported_as_complete(self):
+        code, calls, stages = self.run_build(fail_target='target-files-package')
+        self.assertEqual(code, 23)
+        self.assertEqual(calls, ['-j2 bacon', '-j2 target-files-package'])
+        self.assertEqual(stages[-1]['exit_code'], 23)
+
+
 if __name__ == '__main__':
     unittest.main()

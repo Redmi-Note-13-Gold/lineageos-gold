@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T16:32:33.510895+00:00",
+  "updated_at": "2026-09-21T18:18:46.583110+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6100,7 +6100,7 @@
     "merged_input_count": 165,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r1"
+    "build_job_prefix": "no-euicc-r2"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6150,6 +6150,85 @@
     },
     "next_build_pending": true,
     "runtime_removal_not_applied": true,
-    "host_tests_passed": 92
+    "host_tests_passed": 92,
+    "first_build_terminal": {
+      "recorded_at": "2026-09-21T18:17:00.542662+00:00",
+      "source_revision": "e05aac342871de1ec041ad9a8b8ff304f46a35f3",
+      "entry_exit_code": 1,
+      "android_build_exit_code": 1,
+      "android_elapsed": "01:34:45",
+      "direct_error": "target-files soong_zip: no space left on device",
+      "failed_target": "obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+      "failed_target_absent_after_ninja": true,
+      "service_manager_events": {
+        "gold-no-euicc-20260922-r1.service": [
+          {
+            "UNIT": "gold-no-euicc-20260922-r1.service",
+            "MESSAGE": "Started gold-no-euicc-20260922-r1.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r1.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "__REALTIME_TIMESTAMP": "1790008554045376"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r1.service",
+            "MESSAGE": "gold-no-euicc-20260922-r1.service: Main process exited, code=exited, status=1/FAILURE",
+            "MESSAGE_ID": "98e322203f7a4ed290d09fe03c09fe15",
+            "__REALTIME_TIMESTAMP": "1790014300337916"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r1.service",
+            "MESSAGE": "gold-no-euicc-20260922-r1.service: Failed with result 'exit-code'.",
+            "MESSAGE_ID": "d9b373ed55a64feb8242e02dbe79a49c",
+            "__REALTIME_TIMESTAMP": "1790014300341042"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r1.service",
+            "MESSAGE": "gold-no-euicc-20260922-r1.service: Consumed 2h 51min 31.142s CPU time, 12.5G memory peak, 15.2G memory swap peak.",
+            "MESSAGE_ID": "ae8f7b866b0347b9af31fe1c80b127c0",
+            "__REALTIME_TIMESTAMP": "1790014300341089"
+          }
+        ],
+        "gold-no-euicc-vm-guard-20260922-r1.service": [
+          {
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r1.service",
+            "MESSAGE": "Started gold-no-euicc-vm-guard-20260922-r1.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r1.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "__REALTIME_TIMESTAMP": "1790008554052177"
+          },
+          {
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r1.service",
+            "MESSAGE": "gold-no-euicc-vm-guard-20260922-r1.service: Deactivated successfully.",
+            "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+            "__REALTIME_TIMESTAMP": "1790014314263663"
+          }
+        ]
+      },
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "temporary_host_tools_absent": true,
+      "kernel_oom_lines": [],
+      "device_operated": false,
+      "candidate_created": false
+    },
+    "packaging_fix": {
+      "cause": "Concurrent OTA temporary ZIPs and target-files compression exhausted the data disk",
+      "batches": [
+        [
+          "bacon"
+        ],
+        [
+          "target-files-package"
+        ]
+      ],
+      "jobs_per_batch": 2,
+      "same_source_lock_output_and_build_datetime": true,
+      "android_inputs_changed": false,
+      "all_artifact_validators_retained": true,
+      "host_tests_passed": 95,
+      "merged_android_inputs_unchanged": 165
+    }
   }
 }

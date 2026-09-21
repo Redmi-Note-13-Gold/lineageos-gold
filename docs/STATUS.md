@@ -1,6 +1,6 @@
 更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，下一轮增量 ROM 待构建。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版首轮在 target-files 打包时因空间不足失败，现修复打包顺序后准备原输出续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -46,7 +46,7 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 ## 构建与工程证据
 
-本轮移除后，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。
+本轮移除后，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
 
 本次已装候选的 Android r2 构建成功，02:36:40；原入口于 22:14:26 +08 exit 1，因检查器固定四空格缩进误拒绝正确 OpenEUICC 路由。`00be34a` 修正层级解析，91 项测试、原 ZIP 和冻结工具独立复验均通过，未改 Android 输入或 ZIP，也未改写原失败结果。168 项输入一致，签名/VINTF/SELinux、14 payload / 38 实际镜像文件通过。OTA SHA-256 `22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb`；target-files `7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c`。
 

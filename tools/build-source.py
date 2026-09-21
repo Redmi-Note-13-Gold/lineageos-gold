@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Plan or run the pinned standard Android product and full OTA build.
 
-Default is a plan. Execution builds bacon and target-files-package together,
+Default is a plan. Execution builds bacon, then target-files-package,
 then validates their final partition contract. No post-build image rewriting,
 release signing, publishing or device operations. Linux x86_64 host only.
 """
@@ -119,6 +119,25 @@ def detach_shared_output(path):
     return True
 
 
+def product_build_batches(extra_targets):
+    # OTA uses the extracted target-files directory, not target-files.zip.
+    # Finish its temporary payload/signing ZIPs before compressing that archive.
+    extra = list(dict.fromkeys(target for target in extra_targets
+                               if target not in ('bacon', 'target-files-package')))
+    return [['bacon', *extra], ['target-files-package']]
+
+
+def run_product_build(tree, env, lunch, jobs, batches, stages):
+    command = 'set -e; source build/envsetup.sh; lunch "$1"; jobs="$2"; shift 2; m -j"$jobs" "$@"'
+    for targets in batches:
+        result = subprocess.run(['bash', '-c', command, 'gold-build', lunch, str(jobs), *targets],
+                                cwd=tree, env=env)
+        stages.append({'targets': targets, 'exit_code': result.returncode})
+        if result.returncode:
+            return result.returncode
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--tree', required=True, type=Path)
@@ -138,6 +157,7 @@ def main():
     plan = {'source_tree': str(tree), 'out_dir': str(out), 'out_dir_env': out.relative_to(tree).as_posix(), 'lunch': args.lunch, 'jobs': args.jobs,
             'build_datetime': args.build_datetime,
             'targets': ['bacon', 'target-files-package', *args.extra_target], 'execute': args.execute,
+            'target_batches': product_build_batches(args.extra_target),
             'output_role': 'standard Android target-files and full A/B OTA',
             'release_signing_verified': False, 'device_accepted': False}
     print(json.dumps(plan, indent=2), flush=True)
@@ -182,11 +202,12 @@ def main():
             plan['preserved_previous_ota_links'] = detach_shared_output(
                 out / 'target/product/gold/lineage_gold-ota.zip')
             (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
-            command = 'set -e; source build/envsetup.sh; lunch "$1"; jobs="$2"; shift 2; m -j"$jobs" "$@"'
-            result = subprocess.run(['bash', '-c', command, 'gold-build', args.lunch, str(args.jobs), *plan['targets']], cwd=tree, env=env)
-            result_record['build_exit_code'] = result.returncode
-            if result.returncode:
-                raise ValueError('Android product build failed: ' + str(result.returncode))
+            result_record['build_stages'] = []
+            code = run_product_build(tree, env, args.lunch, args.jobs,
+                                     plan['target_batches'], result_record['build_stages'])
+            result_record['build_exit_code'] = code
+            if code:
+                raise ValueError('Android product build failed: ' + str(code))
             product = out / 'target/product/gold'
             target = single((product / 'obj/PACKAGING/target_files_intermediates').glob('*-target_files.zip'), 'target-files archive')
             ota = single(product.glob('lineage_gold*-ota.zip'), 'standard OTA archive')

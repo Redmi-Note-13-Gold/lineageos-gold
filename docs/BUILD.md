@@ -131,3 +131,5 @@ userdebug 允许上游调试域；不能等同于全局 permissive。正式 user
 WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay/WifiOverlay.apk` 中 `config_wifi_softap_sae_supported=true`，并从最终vendor镜像读取同一APK比较字节；新增后预期关键文件39项。其能力值有同基线原厂RRO依据；包通过不等于热点真实启动或客户端SAE认证通过。
 
 空间受限时，只能在源码锁空闲、构建停止且独立冻结包重读哈希一致后移除同次可变输出包副本，保留精确路径映射；不得清理唯一输入、缓存、swap或历史候选。2026-09-21的两种包/三个可变路径见jobs/wpa3-active-package-duplicates.json（实际位于gold-mainline-20260920下）。OverlayFS合并视图到releases直接rename已实测EXDEV。后续逐包复制到同一冻结staging，重读SHA-256并fsync后才移除该包在可变输出下的全部硬链接，记录来源/去向并独立重验；不能保留会被重写的硬链接或链接回旧外层路径。冻结JSON保持当时事实，后来的安装/实机证据另存聚合validation。
+
+2026-09-22 eSIM移除首轮在 target-files ZIP 压缩时因 ENOSPC 失败，Android耗时01:34:45，入口exit1；同时运行的OTA任务随后结束并清理临时ZIP。主线入口现将打包分为先 `m -j2 bacon`、再 `m -j2 target-files-package`，避免两个压缩/签名高峰重叠；每阶段仍jobs2，第二阶段失败或任一产物门禁失败均不得记完成。两阶段共用同一源码锁、OUT、lunch和BUILD_DATETIME，最终仍校验全量OTA/target-files的签名、分区、VINTF、SELinux和Gold内容，不修改Android源码或关闭检查。
