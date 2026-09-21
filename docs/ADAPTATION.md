@@ -1,6 +1,6 @@
 # 适配来源与取舍
 
-本轮接手基线 `462fab1`，未回退。当前手机为 2cca323 原镜像 B 槽：标准保数据 OTA、安装器与独立回读各 14 项、正常启动及 Recovery 自动 ADB 往返通过。3cb28c3 诊断修正版构建及全部包门禁通过，未安装；最新 bd50b19 正在修复实机证明的 Codec2 336／352 字节 ABI 失配并增量构建。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 `e14a7fa` 和 `archive/hybrid/`。下述结论以源码、实际合并输入、产物及分版本运行证据为准。
+本轮接手基线 `462fab1`，未回退。当前手机为 bd50b19 原镜像 A 槽、incremental 1789938387：保数据 OTA、安装器与独立回读各 14 项、正常启动、两份 canary 和 Recovery 自动 ADB 往返通过。Codec2 的 336／352 字节 ABI 修复已独立通过 3 次冷服务启动与 11 轮编解码；Power 生命周期、节点和诊断入口复验通过。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 `e14a7fa` 与 `archive/hybrid/`。
 
 ## 旧版到主线的完整收敛对照
 
@@ -8,35 +8,35 @@
 
 | 旧版项目／解决的问题 | 旧版实际证据及边界 | 主线实现与位置 | 决定 | 仍缺的验证 | 是否依赖旧流程／旧产物 |
 |---|---|---|---|---|---|
-| Recovery 侧载缓存，避免缓存随大 OTA 无界增长 | `e14a7fa` 补丁和旧 Recovery 安装记录；不是新 Recovery 内存实测 | `patches/bootable__recovery/0001-sideload-memory.patch`；字节一致，合并源码一致 | 保留 | 新候选侧载、最终 status、内存峰值 | 不需要旧拼装 |
-| SystemUI 状态图标排列 | 旧平台补丁及旧版显示记录 | `patches/frameworks__base/0001-status-icon-packing-r2.patch`；字节一致 | 保留 | 新候选多图标／缺口／旋转截图与溢出行为 | 不需要 |
-| 状态栏 20dp 边距 | 旧 device 集成 overlay | `device/xiaomi/gold/overlay/GoldStatusBarOverlay` | 保留 | 新候选实际 overlay 生效与横竖屏 | 不需要 |
-| TCP conntrack／BPF 回收 | 旧实现和测试差异；没有所有热点场景验收 | `patches/packages__modules__Connectivity/0001-tcp-conntrack-recycling.patch`；字节一致 | 保留 | 定向平台测试和实机连接回收／热点 | 不需要 |
+| Recovery 侧载缓存，避免缓存随大 OTA 无界增长 | `e14a7fa` 补丁和旧 Recovery 安装记录；不是新 Recovery 内存实测 | `patches/bootable__recovery/0001-sideload-memory.patch`；字节及合并源码一致；实际源码 Linux FUSE 3 项通过，32 MiB 上限、重读校验与 malloc 失败降级有效 | 保留 | Android Recovery 实际侧载和 RSS 峰值；宿主 glibc 不当作设备 Scudo | 不需要旧拼装 |
+| SystemUI 状态图标排列 | 旧平台补丁及旧版显示记录 | `patches/frameworks__base/0001-status-icon-packing-r2.patch`；字节一致；bd50b19 横竖屏现有时钟／网络／电量图标未见重叠裁切 | 保留 | 多图标溢出／RTL，不能由基础截图替代 | 不需要 |
+| 状态栏 20dp 边距 | 旧 device 集成 overlay | `device/xiaomi/gold/overlay/GoldStatusBarOverlay`；bd50b19 实际资源 55px／density 2.75=20dp，横竖屏已目视 | 保留且定向验证通过 | 多图标／RTL 组合单列 | 不需要 |
+| TCP conntrack／BPF 回收 | 旧实现和测试差异；没有所有热点场景验收 | `patches/packages__modules__Connectivity/0001-tcp-conntrack-recycling.patch`；字节一致；实际已装 TetheringNext 解析器与事件类 13 项通过，缺失／非法字段返回 UNKNOWN | 保留 | 实机 BPF 双向规则删除、连接回收／热点；当前探针不写 BPF | 不需要 |
 | DeviceDiagnostics 电池信息有效值 | 旧补丁；错误值过滤逻辑可查 | `patches/packages__apps__DeviceDiagnostics/0001-battery-information.patch`；字节一致 | 保留 | 新候选界面和异常值路径 | 不需要 |
 | OpenEUICC 物理槽位／设置入口 | 旧补丁、固定子模块；未证明所有 eUICC 场景或本机号码 | `patches/external__openeuicc/0001-service-slot-integration.patch` 与两个固定子模块；字节一致 | 保留 | 当前 eSIM 槽位、入口、运营商配置；不修改用户配置 | 不需要 |
-| IMS 动态广播及视频 guard | 旧版有注册与 voice/SMS/UT 能力记录；无完整通话／全运营商验收 | `vendor/xiaomi/gold/ims/` 管理 APK、权限、兼容 Java 和限定 MCC/MNC overlay | 保留受管 prebuilt | 2cca323 原镜像及 Recovery 往返后已绑定且 MMTEL READY；尚未注册，需核对有效配置、套餐与漫游条件；无通话／短信授权 | APK 是主线 Git blob；完整原厂依赖打包不可重建是已声明 prebuilt 限制，不要求旧目录 |
-| IMS 框架发现和 modem 初始化 | 首次标准候选漏 feature；97969dc 已绑定但缺启动属性，APK 提前退出 | `device.mk` feature、`vendor.prop` 三项匹配 Global 启动配置及包／标签检查 | 主线修复，初始化及重启恢复已验证 | 2cca323 原镜像的 mtkIms Binder、双槽 MMTEL READY 和 Recovery 往返恢复通过；有效 carrier VoLTE=false，注册／能力仍未通过，不能直接归因运营商 | 不需要旧流程 |
+| IMS 动态广播及视频 guard | 旧版有注册与 voice/SMS/UT 能力记录；无完整通话／全运营商验收 | `vendor/xiaomi/gold/ims/` 管理 APK、权限、兼容 Java 和限定 MCC/MNC overlay | 保留受管 prebuilt | bd50b19 原镜像及 Recovery 往返后已绑定且 MMTEL READY；尚未注册，需核对有效配置、套餐与漫游条件；无通话／短信授权 | APK 是主线 Git blob；完整原厂依赖打包不可重建是已声明 prebuilt 限制，不要求旧目录 |
+| IMS 框架发现和 modem 初始化 | 首次标准候选漏 feature；97969dc 已绑定但缺启动属性，APK 提前退出 | `device.mk` feature、`vendor.prop` 三项匹配 Global 启动配置及包／标签检查 | 主线修复，初始化及重启恢复已验证 | bd50b19 原镜像的 mtkIms Binder、双槽 MMTEL READY 和 Recovery 往返恢复通过；有效 carrier VoLTE=false，注册／能力仍未通过，不能直接归因运营商 | 不需要旧流程 |
 | TelephonyMetrics 兼容 dex | 固定旧 v5 加 `classes2.dex` 的配方 | 主线 `ims/compat/rebuild.py` 从受管 APK 重编兼容 Java；实际 dex 和全载荷一致 | 保留，移除对旧 v5 目录的必需依赖 | ZIP 字节因宿主压缩元数据不同；新 APK 如要采用必须重新评审 pin | 不需要；闭源主 dex 明确保留 |
-| 框架启动／交互 boost 与原厂写权限 | 旧原厂动作与权限可查；无持续收益和功耗对照 | `power/` 统一 AIDL/HIDL、PPM/uclamp；2cca323 不让可选后端阻塞开机，不接管共享 display idle | 主线修复，实际资源生命周期通过，默认策略待测 | 2cca323 原镜像启动及 HAL／节点动作通过；3cb28c3 调试门修复待上机，同温度启动／帧时间／能耗未测，LAUNCH／INTERACTION 默认 0 | 不调用旧流程；收益验收未完成 |
-| 厂商性能锁 | 旧原厂 HAL 有实际实现；Global 有 2 个直接导入者和 16 个动态查找者；已捕获 vpud_native/v3avpud 的实际请求 | ARM/ARM64 C ABI→同步 HIDL 1.2；统一身份、更新／超时／并发、门控、读回／回滚；句柄绑定原 Binder | 替代空实现；未支持请求明确报错 | 2cca323 两 ABI 实际申请／更新／释放／超时通过，退出小于 340 ms 回收、HAL 重启旧句柄隔离通过；实际媒体的共享 display idle 和私有 0x01468000 明确不支持，仍需资源需求与收益评估 | 无旧拼装依赖；不把未支持请求返回成功 |
+| 框架启动／交互 boost 与原厂写权限 | 旧原厂动作与权限可查；无持续收益和功耗对照 | `power/` 统一 AIDL/HIDL、PPM/uclamp，框架启动与独立交互请求实读动作及释放通过；不接管共享 display idle | 主线资源管理保留，额外 20 策略无可靠收益不采用 | 同机无外部电源 11 组启动／4 组滚动对照已完成；默认 0／0。未证明所有应用或长期续航等价 | 不调用旧流程 |
+| 厂商性能锁 | 旧原厂 HAL 有实际实现；Global 有 2 个直接导入者和 16 个动态查找者；已捕获 vpud_native/v3avpud 的实际请求 | ARM/ARM64 C ABI→同步 HIDL 1.2；统一身份、生命周期、门控及回滚；句柄绑定原 Binder | 替代空实现；未支持请求明确报错 | bd50b19 两 ABI 生命周期、退出及重启通过；实际媒体 0x0240c000 为无独占释放语义的共享显示节点，0x01468000 不在匹配底包 180 项配置表中，未支持仍需限定需求；不声称闭源代码也无该资源 | 无旧拼装依赖；不把未支持请求返回成功 |
 | 32 位应用／双 zygote | 旧工具可修 zygote64_32 闭包，但不是本轮保留目标 | `ro.zygote=zygote64`；包检查验证选中 RC | 按用户要求明确放弃 | 检查无第二 zygote；不做 32 位 APK 兼容 | 不需要旧 zygote 工具 |
 | 底层 ARM 库、媒体与图形 ABI | 固定 Global ROM 存在 ARM 文件；首次主线曾缺五个图形库 | BoardConfig 保留 native ARM ABI；提取清单及 graphics-common V7 修正；包检查验证五库与 AIDL 依赖 | 保留 | 新候选媒体／图形实际路径与所有依赖 | 从固定官方镜像提取，不从旧 hybrid 镜像取 |
-| 显示模式／刷新率／轮廓 | 旧版与当前基线观察到 60/90/120 Hz；不是新候选省电验证 | Settings 读取实际 supported modes；显示形状来自固定 Global overlay | 保留、标准 overlay 替代 | 新候选切换、熄屏、热控、帧时间 | 不需要 |
-| Wi-Fi PMF 与保数据升级 | 97969dc SAE 后关联拒绝 12；data pmf=0 而 vendor 基础模板=1 | 每次加载的 vendor PMF overlay 已随 2cca323 原镜像安装，不改网络凭据 | 修复已安装，关联未验收 | 新扫描未见保存的热点；需热点可见及首次解锁后验关联、DHCP、联网、重连、网络 ADB | 不依赖旧流程或清数据 |
+| 显示模式／刷新率／轮廓 | 旧版与基线有 60/90/120 Hz；不是新候选省电验证 | Settings 读取实际 supported modes；固定 Global 轮廓；bd50b19 三种窗口请求均实际切换并采样 vsync | 保留、标准 overlay 替代 | Settings 各入口及长期热控；Choreographer 采样不冒充面板精密测量 | 不需要 |
+| Wi-Fi PMF 与保数据升级 | 97969dc SAE 后关联拒绝 12；data pmf=0 而 vendor 基础模板=1 | 每次加载的 vendor PMF overlay 已随 2cca323 原镜像安装，不改网络凭据 | bd50b19 关联与联网通过 | WPA3／DHCP／HTTPS 和网络 ADB 通过；两次重连一次显式、一次自动。部分连接探测与恢复后一致自动重连仍需区分验证 | 不依赖旧流程或清数据 |
 | 电量统计与 Health | 旧模板功耗 XML 路径有误，首次候选 Health 单位修复已实测 | `res/xml/power_profile.xml`、Gold Health；完整包检查与 8 项单位测试 | 标准源码实现 | 新候选正常系统和关机充电；不挪用旧候选结果 | 不需要 |
 | 热控缺失节点诊断 | 旧错误节点诊断有源码依据；权限不能创造控制节点 | `patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch`，保留实际温控 | 保留 | 新候选持续负载／热控恢复 | 不需要 |
-| property contexts 重复归属 | 旧脚本修 `persist.vendor.pco5.radio.ctrl` 和 `vendor.camera.aux.packagelist` 的镜像标签 | 标准源码 SELinux 生成最终 contexts，不再修镜像 | 等价替代 | `97969dc` 正常系统和 Recovery 各有唯一正确标签；仍需新候选运行 AVC | 不需要旧上下层镜像 |
+| property contexts 重复归属 | 旧脚本修 `persist.vendor.pco5.radio.ctrl` 和 `vendor.camera.aux.packagelist` 的镜像标签 | 标准源码 SELinux 生成最终 contexts；bd50b19 实读对应 system_mtk_pco_prop／vendor_persist_camera_prop，IMS 为 vendor_mtk_ims_prop | 等价替代 | 持续实际工作负载 AVC，不以短窗口冒充全部场景 | 不需要旧上下层镜像 |
 | CIL 版本映射／错误 Binder 规则／neverallow 冲突 | 旧脚本只针对混合 stock vendor 与上层的特定 CIL 语句 | 同一源码策略构建、neverallow 检查；不导入旧版本的手工 CIL | 有依据取消镜像修补 | 新包策略验证；userdebug 调试域与全局 Enforcing 分开记录 | 不需要手工 CIL |
-| 内核模块路径／链接／加载闭包 | 旧工具修链接、fs_config 和 labels；旧安装读回不证明新模块启动 | 匹配 Global kernel/modules；标准 system_dlkm/vendor_dlkm，包检查 `/system/lib/modules` 和 `/vendor/lib/modules` | 等价替代 | 同次包签名／模块依赖与启动日志 | 不需要旧模块修补 |
-| KeyMint 与 Android 16 ABI | 旧新底包启动记录有限；不能代表全部密钥功能 | `extract-files.py` 使用固定 KeyMint V3 prebuilt ABI；源码 SELinux/init 启动配置 | 标准提取与源码策略替代 | 新候选加密 data 解锁、keystore／证明能力；不伪造硬件安全级别 | 固定官方输入，无旧镜像依赖 |
-| Codec2 AIDL 服务 | 旧源码入口有价值，但旧 AIDL/HIDL 包装器不等于完整媒体验收；2cca323 原厂入口首次编码崩溃推翻其等价替代判断 | `device/xiaomi/gold/codec2/` 按当前平台头文件编译 AIDL 入口，保留 Global store／编解码库、原服务与沙箱；不硬改二进制 malloc 常数 | 归入主线源码，替代旧包装器与失配原厂入口 | 已实证原厂分配 336 字节、当前类 352 字节；bd50b19 构建中，待冷启动首次编码／反复创建销毁／解码和相机录像等；自动重试后成功不算稳定性通过 | 新实现不调用 archive patch；完成构建／运行验证前不能判可删除 |
+| 内核模块路径／链接／加载闭包 | 旧工具修链接、fs_config 和 labels；旧读回不证明新模块启动 | 匹配 Global kernel/modules；标准 system_dlkm/vendor_dlkm，bd50b19 两模块链接与 421 个已加载模块条目实读 | 等价替代 | 各模块对应硬件的完整工作负载仍单列 | 不需要旧模块修补 |
+| KeyMint 与 Android 16 ABI | 旧新底包启动记录有限；不代表全部密钥功能 | 固定 KeyMint V3 prebuilt ABI＋源码策略；bd50b19 普通应用经 Enforcing HAL 的 TEE EC／RSA／AES-GCM 正常操作与篡改拒绝通过，3 把自建密钥清理 | 标准提取与源码策略替代 | 硬件证明、认证绑定密钥未测；不伪造硬件安全级别 | 固定官方输入，无旧镜像依赖 |
+| Codec2 AIDL 服务 | 旧源码入口有价值，但旧 AIDL/HIDL 包装器不等于完整媒体验收；2cca323 原厂入口首次编码崩溃推翻其等价替代判断 | `device/xiaomi/gold/codec2/` 按当前平台头文件编译 AIDL 入口，保留 Global store／编解码库、原服务与沙箱；不硬改二进制 malloc 常数 | 归入主线源码，替代旧包装器与失配原厂入口 | bd50b19 编译及包门禁、3 次冷启动／11 轮 AVC 编解码通过，实际日志 352 字节且 PID 稳定无相关崩溃；相机录像／全部格式／画质仍未测 | 不调用 archive patch；旧入口源码替代已完成针对性构建／运行验证 |
 | mi_ext OEM APK mask／渠道 init | 旧 hybrid 需清理 overlay 分区内空 APK 与渠道 init | 当前标准 OTA 分区集合不包含 mi_ext，fstab 不把旧 mi_ext 作为上层应用覆盖 | 有依据取消 | 新候选 mount／软件包路径，确认旧物理内容未参与系统 | 不需要重新打包 mi_ext |
-| AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 2cca323／3cb28c3 各 14 分区／29 实际文件门禁通过；bd50b19 新入口预期扩到 35 文件，待构建终态；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
-| Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | 2cca323 vendor_boot 回读、Recovery 自动 ADB、Enforcing 与往返通过；新候选需独立复验，侧载缓存内存峰值仍未测 | 不需要旧 Recovery 脚本 |
-| 只读启动观察／槽位判定 | 旧观察工具有 36 项模拟测试 | 主线 `tools/capture_boot.py` 与测试；无 archive 的 2cca323 导出通过 75 项且 IMS 哈希匹配 | 归入主线保留 | 2cca323 两次 B 槽启动观察 exit 0、各稳定约 20 秒；c36757a 原始启动失败仍保留，不把临时 DAC 当成功 | 不需要归档路径 |
+| AVB／FEC／父 vbmeta／OTA 二次签名 | 旧脚本重建 hash tree、FEC、vbmeta；旧签名记录独立 | 标准 `bacon target-files-package`、AOSP 签名/VINTF/SELinux/分区校验；`build-source.py` 是唯一产品构建入口 | 标准构建等价替代 | 2cca323／3cb28c3 各 14 分区／29 实际文件门禁通过；bd50b19 的 35 文件／14 分区、安装器与独立 A14 回读通过；正式发行密钥未验收 | 不需要旧签名或旧加工镜像 |
+| Recovery 镜像碎片再拼装 | 旧 `build-recovery.py` 用已生成片段重装 vendor_boot | BoardConfig 与标准 vendor_boot init_boot/recovery 片段生成 | 标准构建等价替代 | bd50b19 vendor_boot 回读、Recovery 自动 ADB、Enforcing 与往返独立通过，侧载缓存内存峰值仍未测 | 不需要旧 Recovery 脚本 |
+| 只读启动观察／槽位判定 | 旧观察工具有 36 项模拟测试 | 主线 `tools/capture_boot.py` 与测试；无 archive 的 3dcd922 新导出通过 75 项且 IMS 哈希匹配 | 归入主线保留 | bd50b19 两次 A 槽启动观察 exit 0、各稳定超过 20 秒；c36757a 原始启动失败仍保留，不把临时 DAC 当成功 | 不需要归档路径 |
 | MDDP WH／全运营商 IMS／持续性能 | 旧记录没有 WH modem 能力位，也未完成这些完整验收 | 不伪造 WH、不全局强制 carrier override；性能按测量决定 | MDDP 无依据功能不导入；其余如实保留未完成状态 | 实际能力与测试条件 | 不作为旧版已通过的遗失能力 |
 
-**当前结论：尚不可删除。** 主线入口已不调用旧拼装。2cca323 原镜像启动、Recovery 与实际 Power 生命周期已通过；仍阻塞的是 Codec2 首次创建崩溃的源码修复构建／实测、IMS 注册与能力、Wi-Fi 关联、Power 默认策略收益及未解锁条件下的界面／保留文件验收。以下路径只是全部退出条件满足后的代码删除候选，本轮没有删除。
+**当前结论：尚不可删除。** 主线入口不调用旧拼装。bd50b19 的安装／A14 回读、两次启动、两份保留文件、Recovery、Codec2 冷启动／反复创建、实际 Power 生命周期与诊断、Wi-Fi 关联／HTTPS 和网络 ADB 已通过相应层次。仍缺 IMS 注册／实际能力、Android Recovery 侧载峰值、实际 BPF 回收与部分界面／媒体验收；已测的额外 boost 无可靠收益，保留默认 0／0；Wi-Fi 完整网络验证及一致自动恢复不能由一次手动重选代替。以下路径是条件删除清单。本验收未执行删除；本机另有未提交的归档 README 修改与旧 Codec2 patch 工作树删除，未纳入本验收提交或同步，远端仍保留。
 
 - 本机仓库 `archive/hybrid/`：`README.md`、`stock/vendor-compat.patch`、`patches/hardware__mediatek/0001-aidl-codec2-service.patch`，以及 `tools/` 下 `build-recovery.py`、`build-stock-base.py`、`verify-stock-base.py`、`hybrid_policy.py`、`hybrid_properties.py`、`hybrid_modules.py`、`hybrid_zygote.py`、`capture_boot.py` 和四份测试 `test_capture_boot.py`、`test_hybrid_modules.py`、`test_hybrid_properties.py`、`test_hybrid_zygote.py`。镜像修补功能由上表标准源码／构建替代，唯一需保留的观察工具和测试已经归入主线。
 - 科研机集成仓库同名 `project/archive/hybrid/`：与本机受管代码相同；实际合并源码没有此处运行依赖。已盘点科研机任务、systemd、project、history、vendor 中 211 份脚本；相关运行引用只在归档自身，未发现指向 history/hybrid 的符号链接。本机脚本及自动化也未发现归档运行引用。盘点排除原始 dump、proprietary 和镜像目录；其中的历史镜像／唯一输入仍须保留，不能把整个 `history/`、`vendor/` 或 OverlayFS 层当作删除候选。
@@ -84,9 +84,9 @@
 
 2cca323 的 ARM64／ARM 各 27 项请求、32 项节点／引擎确定性测试通过，两 ABI 经已安装 C 库和运行中的 Enforcing HAL 完成申请、并发聚合、更新、独立释放、超时及明确拒绝测试。2000 ms 请求不 release 而退出后，按采样窗口的保守上界 339.39 ms 已归零；真实 HAL 重启后旧 Binder 不自动重放申请，旧句柄不能释放新票值。另在确认无竞争票值并受控停 HAL 后，用 150 ms 探针写入 uclamp=10 和 1048000 kHz 下限，读回、到期复位与 HAL 恢复通过。硬件探针不替代前述运行 HAL 权限测试。
 
-2cca323 的普通 shell dump 因 HAL 写 shell FIFO 的 AVC 失败，root 策略命令因上游 Lineage userdebug 固定 ro.debuggable=0 被错误拒绝。3cb28c3 仅补实际 FIFO 写权限，并以不可变 ro.build.type 的 userdebug/eng 加 UID 0 作为调试入口；不扩大 shell/su 的 vendor 属性权限。该修正 Android 13:14 与全部包门禁通过，尚未安装，已纳入新 Codec2 候选。
+2cca323 的普通 shell dump 因 HAL 写 shell FIFO 的 AVC 失败，root 策略命令因上游 Lineage userdebug 固定 ro.debuggable=0 被错误拒绝。3cb28c3 仅补实际 FIFO 写权限，并以不可变 ro.build.type 的 userdebug/eng 加 UID 0 作为调试入口；不扩大 shell/su 的 vendor 属性权限。该修正的独立 3cb28c3 包未安装；随 bd50b19 原镜像已验证普通 shell dump、UID 0 设置／拒绝越界／重启生效／复位，普通 shell 设置被拒绝。
 
-媒体实际调用者为 `vpud_native` 域 `v3avpud`，零时长请求 `0x0240c000=100` 和私有 `0x01468000=0` 均明确不支持。2cca323 的 3 秒 MTK AVC 编码与 41 帧硬件解码/EOS 能在自动重试后完成，但首次组件创建发生 SIGSEGV，不能据此认定 Codec2 稳定性通过。匹配 `libcodec2_aidl` 哈希、LLDB 崩溃位置和 DWARF 证明原厂入口少分配 16 字节。bd50b19 的主线 AIDL 入口按当前 352 字节类型编译，继续用原厂 codec store／库，待实际 Android 编译与冷启动反复创建验收。
+媒体实际调用者为 `vpud_native` 域 `v3avpud`，零时长请求 `0x0240c000=100` 和私有 `0x01468000=0` 均明确不支持。2cca323 的 3 秒 MTK AVC 编码与 41 帧硬件解码/EOS 能在自动重试后完成，但首次组件创建发生 SIGSEGV，不能据此认定 Codec2 稳定性通过。匹配 `libcodec2_aidl` 哈希、LLDB 崩溃位置和 DWARF 证明原厂入口少分配 16 字节。bd50b19 的主线 AIDL 入口按当前 352 字节类型编译，继续用原厂 codec store／库，Android 编译通过，bd50b19 已独立通过 3 次冷服务启动和总计 11 轮编解码，相关 PID 稳定无崩溃；其余媒体场景仍单列。
 
 bd50b19 的 75 项主线 Python 测试通过；2cca323 无 archive 导出 75 项与 IMS pin 核验、Mac／Linux／两种 Android ABI 的 27+32 项分别保留版本。LAUNCH／INTERACTION 额外 uclamp 默认均为 0，尚无可比温度与设置的启动／帧时间／能耗收益数据。不能把资源探针通过当作策略有收益。
 
@@ -107,3 +107,22 @@ bd50b19 的 75 项主线 Python 测试通过；2cca323 无 archive 导出 75 项
 97969dc 的 Recovery status 0、安装器及独立 B 槽 14 项回读已齐备，只作为历史版本。c36757a 的标准安装和 A 槽回读通过，原始启动失败、临时 DAC 诊断条件单独保留。2cca323 标准保数据 OTA 到 B 以 kSuccess(0) 结束，安装器与独立 B 槽各 14 项匹配，原镜像两次稳定启动及 Recovery 自动 ADB 往返通过。Recovery Enforcing、Health 域正确，但未完整测试 Recovery 电量功能或侧载峰值。data/persist 和内部 canary 通过；用户 0 仍 RUNNING_LOCKED，共享存储 canary 待首次解锁，不能记作丢失。
 
 2cca323 运行中 IMS 已独立验证初始化和 Recovery 往返恢复，尚未注册；CLI 读取所用卡的有效配置 carrier_config_applied=true、carrier_volte_available=false，未混用框架默认值。Wi-Fi 新扫描未见保存的测试热点，关联／联网与网络 ADB 未完成。首次解锁、热点和语音套餐条件已询问，不重复索取。原始无线和调试日志留在私有目录，Git 只记录脱敏结论；本次设备测试程序、LLDB server、自建片段／dex 和端口转发已清理。详见 [本轮汇总证据](../validation/mainline-convergence-20260920.json)。
+
+
+## bd50b19 当前独立验收
+
+上述 2cca323 段落保留历史边界。bd50b19 已于 09:25 完成 A 槽保数据 OTA，安装器与独立 14 项读回均匹配；正常／Recovery 往返后稳定启动、Enforcing、data/persist、snapshot none、两份 canary 全部通过。Power 的两 ABI 27+32、C ABI 生命周期、所有者退出、HAL 重启隔离、短时硬件节点及 root 策略设置／复位已在此次原镜像上重做；相关 AVC 为 0。Codec2 的 5 轮初始探针加 3 次冷启动各 2 轮均成功且服务 PID 稳定。
+
+IMS 初始化／恢复通过，注册与 Voice/Video/UT/SMS 仍为 false，实际 carrier VoLTE=false。Wi-Fi 已获得 DHCP 并通过 HTTPS，保存配置的无互联网禁用状态导致一次重连需显式选择，下一次自动恢复；Mac ADB server 重启后已用鉴权网络 ADB 操作同一手机。首次解锁和保留文件不再是当前阻塞；性能、TEE／显示、基础 SystemUI、Recovery 缓存主机测试及实际 conntrack 解析器已补测，详情见下文与聚合 JSON；其余界面／硬件仍单列。
+
+## bd50b19 定向补验与性能决定
+
+测试代码提交 `3dcd922` 不改变 ROM。手机无外部电源、温控状态 0、省电关闭、窗口亮度 0.35、相同初始 120 Hz；策略 0／20 按 AB／BA 交替。12 组启动中一组温差 1°C 超过 0.5°C 协议阈值，被排除；其余 11 组进程冷启动平均 258.3→252.5 ms，配对差值 −5.73 ms，探索性 95% 区间 [−11.64,+1.55] ms。4 组各 60 秒滚动的每次 p95 平均 7.45→7.95 ms；电池侧电流×电压估算 2.718→2.691 W，差值 −0.0266 W，区间 [−0.0965,+0.0433] W。所有差值区间跨 0，未证明额外 boost 有可重复收益，默认 LAUNCH／INTERACTION 保持 0／0。
+
+这是单个合成应用、小样本对照；文件缓存未清，实际滑动 105–110 次／轮，网络输入开销并非严格相同工作量。电流估算不是外接功耗仪；charge_counter 更新粗糙且滞后，未用它声称精细功耗精度。帧时间不等于完整触摸到显示延迟，不把数千帧当数千个独立样本，也不推导长期续航或所有应用等价。启动投票及 LAUNCH=0 时的独立交互投票均实读达到 20 后归零；最后经同一 HAL 入口恢复 0／0，活动请求 0。
+
+普通应用测试了 TEE EC-256／RSA-2048 签名及篡改拒绝、AES-256-GCM 加解密及坏标签拒绝，三把自建密钥均清理；未读取或导出用户密钥，未验证硬件证明。60／90／120 Hz 窗口模式实际接受，横竖屏既有状态图标与 20dp 边距已查看；多图标溢出／RTL 未测。
+
+Recovery 主机探针链接实际合并的 fuse_sideload.cpp：读取 1,174,891,230 字节合成文件，缓存峰值 32 MiB、进程 RSS 38,648 KiB，淘汰重读成功；篡改返回 EIO；单次分配失败后降级到 2 MiB，三轮无遗留分配／挂载。这是 Linux glibc FUSE 证据，不是手机 Android Scudo 或真实侧载峰值。安装中的 TetheringNext 类加载来源已核验，真实 TCP 解析器到事件传递的 13 项状态／非法输入通过；未写 BPF，真实双向规则删除和热点未测。
+
+两款自建探针 APK 和专属目录内 8 个文件已清理，临时 adb root 恢复 UID 2000 且鉴权网络 ADB 实测保持，用户请求的 Key Attestation 1.8.4 保留。11:06 经网络 ADB 再验解锁状态、两份 canary 和策略复位；用户正在使用该应用，DeviceDiagnostics／OpenEUICC 界面验收待设备空闲时继续，未把注册服务或包存在记作界面通过。

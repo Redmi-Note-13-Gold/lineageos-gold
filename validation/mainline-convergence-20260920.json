@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T05:10:27+08:00",
+  "updated_at": "2026-09-21T03:20:29.191041+00:00",
   "task_state": "implementation_and_validation_in_progress_NOT_READY",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
-  "completed_candidate_revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
+  "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
   "latest_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
   "latest_candidate_build": {
     "unit": "gold-codec-r5-20260921.service",
@@ -38,11 +38,18 @@
     ],
     "phase": "Compile current-platform Codec2 AIDL frontend to remove reproduced 336 vs 352 byte allocation mismatch; preserve matched vendor store and policies",
     "device_accepted": false,
-    "terminal_result": "running",
+    "terminal_result": "success",
     "source_audit_inputs": 161,
     "source_audit_matches": true,
     "resource_limits_verified": true,
-    "expected_actual_image_files": 35
+    "expected_actual_image_files": 35,
+    "build_exit_code": 0,
+    "android_elapsed": "01:27:20",
+    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+    "guard_restored_live": true,
+    "actual_image_files": 35,
+    "payload_partitions": 14
   },
   "legacy_platform_patch_comparison": [
     {
@@ -702,7 +709,7 @@
       "failed": 0,
       "built_by_soong": true
     },
-    "android_power_lifecycle": "not yet executed",
+    "android_power_lifecycle": "Executed on bd50b19: ARM64/ARM 27 request + 32 node/engine cases each; real client and hardware tests recorded separately.",
     "linux_health_units": {
       "passed": 8,
       "failed": 0
@@ -735,29 +742,33 @@
         "eight concurrent callers; private hint unsupported status preserved"
       ],
       "patch_applies_to_actual_pinned_base": true,
-      "runtime_android_abi_tested": false
+      "runtime_android_abi_tested": true,
+      "runtime_android_abi_revision": "bd50b19"
     },
     "python_latest": {
-      "revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+      "revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
       "cases": 75,
       "passed": true,
-      "log": "private/mainline-codec-r5-tests.txt"
+      "log": "private/without-archive-3dcd922-tests.txt",
+      "fresh_without_archive_export": true
     },
     "power_latest_linux": {
-      "revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
+      "revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
       "requests": 27,
       "nodes_engine": 32,
       "passed": true
     },
-    "latest_source": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "latest_source": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
     "without_archive_export_latest": {
-      "revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+      "revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "at": "2026-09-21T03:11:12.760152+00:00",
       "archive_directory_present": false,
       "python_tests": 75,
       "test_exit_code": 0,
+      "host_arch": "arm64",
       "ims_apk_sha256": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
       "full_android_rebuild_proved": false,
-      "scope": "fresh Git export excludes archive; current mainline host tests and pinned input availability only"
+      "scope": "Temporary Git export excludes archive entirely; host tests and mainline input availability only; temporary export removed on exit."
     },
     "android_power_c36757a": {
       "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
@@ -806,6 +817,212 @@
           "exit_code": 0
         }
       ]
+    },
+    "media_codec_lifecycle_probe": {
+      "java_source_sha256": "18436f93a1cd158133bf58065f7f9eba77dc46320bb388ad24fdc36fba9ee5a8",
+      "dex_sha256": "f1e4e566a641756dc9b03840395f58ab0ac21b77337ac95191ff109dba1dd876",
+      "compile_passed": true,
+      "device_test_passed": true,
+      "jdk": "prebuilts/jdk/jdk21/linux-x86",
+      "sdk": "prebuilts/sdk/current/public/android.jar",
+      "d8": "out-gold-standard/host/linux-x86/bin/d8",
+      "at": "2026-09-21T01:14:00.103755+00:00",
+      "test_source_commit": "a7bcbba",
+      "cycles_runtime_passed": 11,
+      "reads_user_media": false,
+      "cold_service_starts": 3,
+      "rom_revision": "bd50b19"
+    },
+    "wifi_saved_network_selection": {
+      "test_source_commit": "57b2a51",
+      "compile": {
+        "source_sha256": "984d4552d3fa621694926eed872a07b45792bb2455ff56cc633ba4b721b980d6",
+        "dex_sha256": "2a705d13d39c55e5ba03672bf4e88abbe9db43d970e4adc243162c587a36cf04",
+        "compiled": true,
+        "rom_source": "bd50b19",
+        "test_only": true
+      },
+      "runtime_selection_accepted": true,
+      "separate_connection_observed": true
+    },
+    "android_power_bd50b19": {
+      "deterministic_device_tests": {
+        "arm64-gold_power_requests_test": {
+          "exit_code": 0,
+          "summary": "27 passed, 0 failed"
+        },
+        "arm64-gold_power_nodes_test": {
+          "exit_code": 0,
+          "summary": "32 passed; 0 failed"
+        },
+        "arm-gold_power_requests_test": {
+          "exit_code": 0,
+          "summary": "27 passed, 0 failed"
+        },
+        "arm-gold_power_nodes_test": {
+          "exit_code": 0,
+          "summary": "32 passed; 0 failed"
+        },
+        "arm64-client": {
+          "exit_code": 0,
+          "pass_lines": 4
+        },
+        "arm-client": {
+          "exit_code": 0,
+          "pass_lines": 4
+        },
+        "owner_exit": {
+          "exit_code": 0,
+          "sampled_after_exit": [
+            {
+              "after_host_exit_ms": 66.05929200000027,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 152.2929580000003,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 230.2402500000005,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 317.0112500000002,
+              "value": 0.0
+            }
+          ],
+          "upper_bound_from_before_process_ms": 388.8302499999998,
+          "lease_ms": 2000
+        },
+        "restart": {
+          "old_pid": "632",
+          "new_pid": "5047",
+          "exit_code": 0,
+          "enabled_before_continue": true,
+          "output": "READY_FOR_HAL_RESTART handle=1\nPASS HAL restart rejects stale C handles without releasing the new vote\n",
+          "reset_after": 0.0
+        },
+        "candidate": "bd50b19",
+        "timestamp": "2026-09-21T01:41:05.341403+00:00"
+      },
+      "deterministic_cases_per_abi": {
+        "requests": 27,
+        "nodes_engine": 32
+      },
+      "hal_selinux_domain": "mtk_hal_power",
+      "global_selinux": "Enforcing",
+      "c_abi_lifecycle_passed_both_abis": true,
+      "owner_exit_upper_bound_ms": 388.8302499999998,
+      "hal_restart_stale_handle_isolation": true,
+      "hardware_probe": {
+        "candidate": "bd50b19",
+        "probe_exit": 0,
+        "pass_count": 2,
+        "service_restored": true,
+        "uclamp_restored": true,
+        "no_other_power_process_in_preflight": true,
+        "display_permissions_unchanged": true,
+        "timestamp": "2026-09-21T01:42:33.849894+00:00"
+      },
+      "strategy_root_set_bounds_restart_reset_passed": true,
+      "strategy_shell_rejected": true,
+      "ordinary_shell_dump_passed": true,
+      "relevant_avc_count": 0,
+      "final_framework_boost_defaults": [
+        0,
+        0
+      ],
+      "comparable_launch_frame_energy_trials_passed": true,
+      "trials_passed_scope": "Protocol completed and restored defaults; this does not mean boost improved performance or energy."
+    },
+    "recovery_cache_latest": {
+      "source_hashes": {
+        "/srv/build/build-jobs/gold-mainline-20260920/recovery-cache-test/RecoveryCacheProbe.cpp": "a970adf373f38e6230ac19c10bf9f3b18f173a26f5719d758bc6e484bdc49442",
+        "/srv/build/migration/gold-architecture-20260914/source/bootable/recovery/fuse_sideload/fuse_sideload.cpp": "4726cef7537ffeb67d607e71a8a6afc65ea2efc8a74c7b4619ad73eae5bf5043",
+        "/srv/build/migration/gold-architecture-20260914/source/system/libbase/stringprintf.cpp": "0ac350c5e3223eb714aa6a2a165541710bfd08f018c15e01fe5bbccb72d198ea"
+      },
+      "command": [
+        "g++",
+        "-std=c++17",
+        "-O2",
+        "-pthread",
+        "-Wno-attributes",
+        "/srv/build/build-jobs/gold-mainline-20260920/recovery-cache-test/RecoveryCacheProbe.cpp",
+        "/srv/build/migration/gold-architecture-20260914/source/bootable/recovery/fuse_sideload/fuse_sideload.cpp",
+        "/srv/build/migration/gold-architecture-20260914/source/system/libbase/stringprintf.cpp",
+        "-I",
+        "/srv/build/migration/gold-architecture-20260914/source/bootable/recovery/fuse_sideload/include",
+        "-I",
+        "/srv/build/migration/gold-architecture-20260914/source/bootable/recovery/otautil/include",
+        "-I",
+        "/srv/build/migration/gold-architecture-20260914/source/system/libbase/include",
+        "-I",
+        "/srv/build/migration/gold-architecture-20260914/source/external/boringssl/src/include",
+        "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+        "-Wl,--wrap=malloc,--wrap=free",
+        "-o",
+        "/srv/build/build-jobs/gold-mainline-20260920/recovery-cache-test/RecoveryCacheProbe"
+      ],
+      "compile_exit": 0,
+      "scope": "native Linux FUSE using the actual merged Recovery source; does not install an OTA or replace Android/Scudo acceptance",
+      "run_exit": 0,
+      "elapsed_seconds": 1.4135572239756584,
+      "cases": [
+        {
+          "case": "ota_size_cache_cap_and_refetch",
+          "passed": true,
+          "file_bytes": 1174891230,
+          "blocks_read": 17928,
+          "refetch_requests": 2,
+          "peak_64k_allocations": 514,
+          "peak_cache_bytes": 33554432,
+          "live_block_allocations_at_exit": 0,
+          "injected_allocation_failures": 0,
+          "host_child_max_rss_kib": 38648
+        },
+        {
+          "case": "evicted_block_tamper_rejected",
+          "passed": true,
+          "file_bytes": 1174891230,
+          "blocks_read": 1024,
+          "refetch_requests": 2,
+          "peak_64k_allocations": 514,
+          "peak_cache_bytes": 33554432,
+          "live_block_allocations_at_exit": 0,
+          "injected_allocation_failures": 0,
+          "host_child_max_rss_kib": 38336
+        },
+        {
+          "case": "allocation_failure_fallback",
+          "passed": true,
+          "file_bytes": 1174891230,
+          "blocks_read": 1024,
+          "refetch_requests": 2,
+          "peak_64k_allocations": 34,
+          "peak_cache_bytes": 2097152,
+          "live_block_allocations_at_exit": 0,
+          "injected_allocation_failures": 1,
+          "host_child_max_rss_kib": 7684
+        }
+      ],
+      "remaining_mount_directories": [],
+      "binary_sha256": "96d5dfba7b94f5552055dc0ba2ced69277fa0ad48890b1a9747443fb97a7fe8e",
+      "test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "android_source_revision": "bd50b19",
+      "android_recovery_rss_or_sideload_tested": false
+    },
+    "device_probe_sources": {
+      "revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "production_android_inputs_changed": false,
+      "hardware_apk_source_hashes": {
+        "AndroidManifest.xml": "7ac095eb614a816f906314c4f39d9961c98b3faac1935d2ba1232de6cae222c5",
+        "MainActivity.java": "e3e3a8b07d4d34327f991805253d0ff03582d1c3f38dfcb8135e34d9c2578298"
+      },
+      "performance_apk_source_hashes": {
+        "AndroidManifest.xml": "7deb89d6b02345d33ef60b42ea3ae9fd3f143efdb0dd1c3ee56b7ba211daee0d",
+        "MainActivity.java": "c41f3d146f56713eadaafc0d2f5c5cb13c867bb9d83df449547b2ece5fc3fb50"
+      },
+      "conntrack_java_sha256": "981deda81fab32a21173f01598b70b400176fdc2eeb5779d97cadb25eacb8240"
     }
   },
   "ims_input": {
@@ -1028,15 +1245,15 @@
   ],
   "device": {
     "write_authorization": "User approved current session full scoped OTA and subsequent same-baseline revisions, Recovery/reboot/readback, temporary adb root and test programs, Wi-Fi reconnect/network debugging. No wipe, SIM changes, calls or SMS.",
-    "last_installed_incremental": "1789933740",
-    "last_installed_slot": "b",
-    "latest_candidate_installed": false,
+    "last_installed_incremental": "1789938387",
+    "last_installed_slot": "a",
+    "latest_candidate_installed": true,
     "before_install_snapshot_state": "none; metadata OTA state and snapshots empty",
     "installed_ota_certificate_matches": true,
     "root_diagnostics_executed": true,
     "global_selinux": "Enforcing",
     "transition": "2cca323 standard update_engine A to B succeeded; all 14 installer hashes and independent final-image byte ranges match. Unmodified image booted and completed a normal to Recovery to normal roundtrip. Codec2 stability failed; bd50b19 fix is building.",
-    "network_adb_enabled": false,
+    "network_adb_enabled": true,
     "sim_readonly": {
       "loaded_slot": 2,
       "roaming": true,
@@ -1045,13 +1262,13 @@
       "confirmed_on_97969dc": true
     },
     "hardware_results_apply_to_new_candidate": false,
-    "last_installed_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
-    "latest_connection": "USB ADB connected; gold B 1789933740 boot_completed=1 Enforcing; user 0 RUNNING_LOCKED at 2026-09-21 05:04 UTC+8; original display DAC root:root 0440 unchanged.",
+    "last_installed_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "latest_connection": "Authenticated network ADB; gold A 1789938387 boot_completed=1 Enforcing; user 0 RUNNING_UNLOCKED; both canaries rechecked after Recovery and all tests at 2026-09-21 11:06 UTC+8; USB unplugged by user for measurements.",
     "recovery_final_status_verified": null,
     "partition_readback_verified": true,
     "after_install_snapshot_state": "none",
     "data_persist_mounted": true,
-    "retained_canaries_verified": 1,
+    "retained_canaries_verified": 2,
     "ims_97969dc": {
       "feature_declared": true,
       "framework_initialized": true,
@@ -1090,18 +1307,37 @@
       "note": "Normal-system standard payload installation can be evaluated for the next signed candidate; no update command was executed."
     },
     "current_candidate_preflight": {
-      "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
-      "validator_revision": "05f156aef16a78c315c1ad9636f29d6b602bfc82",
-      "slot": "_b",
-      "incremental": "1789911389",
-      "boot_completed": true,
-      "selinux": "Enforcing",
-      "snapshot_state": "none",
-      "update_engine": "IDLE",
-      "installed_ota_certificate_matches": true,
-      "retained_canaries_verified": 2,
-      "write_started": true,
-      "installation_completed": true
+      "source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+      "validator_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+      "ota_sha256": "dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4",
+      "ota_bytes": 1174891230,
+      "certificate_matches_installed_trust": true,
+      "payload_file_hash_verified": true,
+      "payload_metadata_hash_verified": true,
+      "payload_offset": 4549,
+      "payload_size": 1174883188,
+      "metadata_bytes": 75077,
+      "device_directory": "/data/ota_package/gold-mainline-bd50b19",
+      "expected_before": {
+        "device": "gold",
+        "slot": "_b",
+        "incremental": "1789933740"
+      },
+      "expected_after": {
+        "slot": "_a",
+        "incremental": "1789938387"
+      },
+      "no_wipe": true,
+      "user_storage_validation": "internal canary to recheck; emulated canary pending first unlock",
+      "device_update_started": true,
+      "battery_preflight": {
+        "percent": 16,
+        "charging": true,
+        "minimum_percent": 15,
+        "explicit_user_authorization": true
+      },
+      "prepared_at": "2026-09-21T01:15:21.198511+00:00",
+      "installation_finished": true
     },
     "boot_observer_97969dc": {
       "command_failures": 4,
@@ -1400,10 +1636,10 @@
       "matching_avc_or_fatal_lines": 0,
       "meaning": "Limited log window only; does not establish full hardware or IMS acceptance"
     },
-    "emulated_storage_canary_pending_first_unlock": true,
+    "emulated_storage_canary_pending_first_unlock": false,
     "boot_observer": {
-      "command_failures": 13,
-      "elapsed_seconds": 68.972858583,
+      "command_failures": 8,
+      "elapsed_seconds": 64.896833792,
       "error": null,
       "exit_code": 0,
       "last_observation": {
@@ -1412,35 +1648,35 @@
           "normal",
           "normal"
         ],
-        "elapsed_seconds": 68.97258508300001,
+        "elapsed_seconds": 64.896663833,
         "properties_ok": true,
         "ready": true,
         "recovery": false,
-        "slot": "b",
+        "slot": "a",
         "transport": "device"
       },
       "outcome": "booted",
       "schema_version": 1,
-      "stable_samples": 18,
-      "stable_seconds": 20.53143762500001,
-      "target_slot": "b"
+      "stable_samples": 19,
+      "stable_seconds": 20.75927487500001,
+      "target_slot": "a"
     },
     "whole_candidate_unaided_boot_passed": true,
     "partition_readback": {
-      "revision": "2cca323",
-      "incremental": "1789933740",
-      "slot": "b",
-      "image_byte_ranges_only": true,
-      "rows": [
+      "revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+      "incremental": "1789938387",
+      "slot": "_a",
+      "method": "SHA-256 over final signed OTA image byte range read independently from active slot block device",
+      "started_at": "2026-09-21T01:37:55.249338+00:00",
+      "partitions": [
         {
           "partition": "boot",
           "entry": "IMAGES/boot.img",
           "bytes": 67108864,
           "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
-          "device_path": "/dev/block/by-name/boot_b",
+          "device": "/dev/block/by-name/boot_a",
           "block_bytes": 67108864,
-          "readback_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
-          "exit_code": 0,
+          "actual_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
           "matched": true
         },
         {
@@ -1448,32 +1684,29 @@
           "entry": "IMAGES/dtbo.img",
           "bytes": 8388608,
           "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
-          "device_path": "/dev/block/by-name/dtbo_b",
+          "device": "/dev/block/by-name/dtbo_a",
           "block_bytes": 8388608,
-          "readback_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
-          "exit_code": 0,
+          "actual_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
           "matched": true
         },
         {
           "partition": "odm_dlkm",
           "entry": "IMAGES/odm_dlkm.img",
           "bytes": 348160,
-          "sha256": "85297d6b071dd146398633f5a0d2decade932b2b05b3cd39b50e8076f5cb2ab9",
-          "device_path": "/dev/block/mapper/odm_dlkm_b",
+          "sha256": "49dffd828e31f2bb6db6d36cbc4faa45c47b99099f39606ab39149695142642a",
+          "device": "/dev/block/mapper/odm_dlkm_a",
           "block_bytes": 348160,
-          "readback_sha256": "85297d6b071dd146398633f5a0d2decade932b2b05b3cd39b50e8076f5cb2ab9",
-          "exit_code": 0,
+          "actual_sha256": "49dffd828e31f2bb6db6d36cbc4faa45c47b99099f39606ab39149695142642a",
           "matched": true
         },
         {
           "partition": "product",
           "entry": "IMAGES/product.img",
           "bytes": 510750720,
-          "sha256": "9c3231689e6fe5c6f86eaeae6ed7ea817e6c6ae19465f3992d3dc6e1fc38cee5",
-          "device_path": "/dev/block/mapper/product_b",
+          "sha256": "573d58b4595152fb32309ff43b9b83f9597a190364bec720a96efc3315fdb08f",
+          "device": "/dev/block/mapper/product_a",
           "block_bytes": 510750720,
-          "readback_sha256": "9c3231689e6fe5c6f86eaeae6ed7ea817e6c6ae19465f3992d3dc6e1fc38cee5",
-          "exit_code": 0,
+          "actual_sha256": "573d58b4595152fb32309ff43b9b83f9597a190364bec720a96efc3315fdb08f",
           "matched": true
         },
         {
@@ -1481,113 +1714,104 @@
           "entry": "RADIO/scp.img",
           "bytes": 1200128,
           "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
-          "device_path": "/dev/block/by-name/scp_b",
+          "device": "/dev/block/by-name/scp_a",
           "block_bytes": 6291456,
-          "readback_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
-          "exit_code": 0,
+          "actual_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
           "matched": true
         },
         {
           "partition": "system",
           "entry": "IMAGES/system.img",
           "bytes": 1048506368,
-          "sha256": "830b5ac94bcb3ef6b74dae1376ae72dd8edb1059237a8f5c34f3a60a26f35f5a",
-          "device_path": "/dev/block/mapper/system_b",
+          "sha256": "2fb00b38274aacf1c026dda6d003cf686c717bdd75be86e9efd00824aa0e0931",
+          "device": "/dev/block/mapper/system_a",
           "block_bytes": 1048506368,
-          "readback_sha256": "830b5ac94bcb3ef6b74dae1376ae72dd8edb1059237a8f5c34f3a60a26f35f5a",
-          "exit_code": 0,
+          "actual_sha256": "2fb00b38274aacf1c026dda6d003cf686c717bdd75be86e9efd00824aa0e0931",
           "matched": true
         },
         {
           "partition": "system_dlkm",
           "entry": "IMAGES/system_dlkm.img",
           "bytes": 7303168,
-          "sha256": "ae85e73d58c514b02f406e9397bf036c9859733b3e3fd740e349eb3de0fa48d7",
-          "device_path": "/dev/block/mapper/system_dlkm_b",
+          "sha256": "43b599c48daae7788f02852cfc9332614f8db3104a79a751d3dadd1cd344c342",
+          "device": "/dev/block/mapper/system_dlkm_a",
           "block_bytes": 7303168,
-          "readback_sha256": "ae85e73d58c514b02f406e9397bf036c9859733b3e3fd740e349eb3de0fa48d7",
-          "exit_code": 0,
+          "actual_sha256": "43b599c48daae7788f02852cfc9332614f8db3104a79a751d3dadd1cd344c342",
           "matched": true
         },
         {
           "partition": "system_ext",
           "entry": "IMAGES/system_ext.img",
           "bytes": 461287424,
-          "sha256": "4723404caad91720d2af7c508cf2c2f4d497cc9df0f2add203dd2d232afd988b",
-          "device_path": "/dev/block/mapper/system_ext_b",
+          "sha256": "001f1857d22c91a981b55d2aaaff91b0a393f1764c037685216c63cbf315527b",
+          "device": "/dev/block/mapper/system_ext_a",
           "block_bytes": 461287424,
-          "readback_sha256": "4723404caad91720d2af7c508cf2c2f4d497cc9df0f2add203dd2d232afd988b",
-          "exit_code": 0,
+          "actual_sha256": "001f1857d22c91a981b55d2aaaff91b0a393f1764c037685216c63cbf315527b",
           "matched": true
         },
         {
           "partition": "vbmeta",
           "entry": "IMAGES/vbmeta.img",
           "bytes": 8192,
-          "sha256": "5301a0b95d867f46ccdc27f311f8efa061355e08edcb41988a362bd0034edb12",
-          "device_path": "/dev/block/by-name/vbmeta_b",
+          "sha256": "56704b1ddb92ca1b7bbb944ddd142d4a22b4ad52984e93576b610aa259b147f2",
+          "device": "/dev/block/by-name/vbmeta_a",
           "block_bytes": 8388608,
-          "readback_sha256": "5301a0b95d867f46ccdc27f311f8efa061355e08edcb41988a362bd0034edb12",
-          "exit_code": 0,
+          "actual_sha256": "56704b1ddb92ca1b7bbb944ddd142d4a22b4ad52984e93576b610aa259b147f2",
           "matched": true
         },
         {
           "partition": "vbmeta_system",
           "entry": "IMAGES/vbmeta_system.img",
           "bytes": 4096,
-          "sha256": "e79cff78b8991194ee320149cfaef0929fa08120fe822b4694b9f454d6d02601",
-          "device_path": "/dev/block/by-name/vbmeta_system_b",
+          "sha256": "b2db519ee81314667bdd5ba94e4e579b343055b1848164f08a971f510cb264fc",
+          "device": "/dev/block/by-name/vbmeta_system_a",
           "block_bytes": 8388608,
-          "readback_sha256": "e79cff78b8991194ee320149cfaef0929fa08120fe822b4694b9f454d6d02601",
-          "exit_code": 0,
+          "actual_sha256": "b2db519ee81314667bdd5ba94e4e579b343055b1848164f08a971f510cb264fc",
           "matched": true
         },
         {
           "partition": "vbmeta_vendor",
           "entry": "IMAGES/vbmeta_vendor.img",
           "bytes": 4096,
-          "sha256": "dff48fb3584b134d636d8a96369e4c800670c4d93d9012c34e718a7105797abd",
-          "device_path": "/dev/block/by-name/vbmeta_vendor_b",
+          "sha256": "106f17c51093ac0d8f28e353eb59e6354fcbd4745ed00ef9e49b6966b6f08440",
+          "device": "/dev/block/by-name/vbmeta_vendor_a",
           "block_bytes": 8388608,
-          "readback_sha256": "dff48fb3584b134d636d8a96369e4c800670c4d93d9012c34e718a7105797abd",
-          "exit_code": 0,
+          "actual_sha256": "106f17c51093ac0d8f28e353eb59e6354fcbd4745ed00ef9e49b6966b6f08440",
           "matched": true
         },
         {
           "partition": "vendor",
           "entry": "IMAGES/vendor.img",
           "bytes": 483639296,
-          "sha256": "b539214c6ea7ade8d71941040516608f057991fd2d75a4e6b921392ae3551578",
-          "device_path": "/dev/block/mapper/vendor_b",
+          "sha256": "8a4ac3d22dd8e5b8dcf41fcdeb8a700292847c610ad5bbcc74ed237fb7d5d09b",
+          "device": "/dev/block/mapper/vendor_a",
           "block_bytes": 483639296,
-          "readback_sha256": "b539214c6ea7ade8d71941040516608f057991fd2d75a4e6b921392ae3551578",
-          "exit_code": 0,
+          "actual_sha256": "8a4ac3d22dd8e5b8dcf41fcdeb8a700292847c610ad5bbcc74ed237fb7d5d09b",
           "matched": true
         },
         {
           "partition": "vendor_boot",
           "entry": "IMAGES/vendor_boot.img",
           "bytes": 67108864,
-          "sha256": "5c7cd875c9346c5af55b3ac47d647c524955f3b91f4a10f7e565698e98a6aa26",
-          "device_path": "/dev/block/by-name/vendor_boot_b",
+          "sha256": "80e378e1906bb5c3950ffd96bf573601047bb3df610cfc6bdd53ec0c254a0d36",
+          "device": "/dev/block/by-name/vendor_boot_a",
           "block_bytes": 67108864,
-          "readback_sha256": "5c7cd875c9346c5af55b3ac47d647c524955f3b91f4a10f7e565698e98a6aa26",
-          "exit_code": 0,
+          "actual_sha256": "80e378e1906bb5c3950ffd96bf573601047bb3df610cfc6bdd53ec0c254a0d36",
           "matched": true
         },
         {
           "partition": "vendor_dlkm",
           "entry": "IMAGES/vendor_dlkm.img",
           "bytes": 13967360,
-          "sha256": "780699f9c9c3abf46cbc8a6eb640c812905f0afcde2af58c68c90e415c901e23",
-          "device_path": "/dev/block/mapper/vendor_dlkm_b",
+          "sha256": "28a37cd27aa1907852591c016bc978ffcd31cb29f2905a661155338dab4054c0",
+          "device": "/dev/block/mapper/vendor_dlkm_a",
           "block_bytes": 13967360,
-          "readback_sha256": "780699f9c9c3abf46cbc8a6eb640c812905f0afcde2af58c68c90e415c901e23",
-          "exit_code": 0,
+          "actual_sha256": "28a37cd27aa1907852591c016bc978ffcd31cb29f2905a661155338dab4054c0",
           "matched": true
         }
       ],
-      "all_matched": true
+      "all_matched": true,
+      "completed_at": "2026-09-21T01:38:06.710877+00:00"
     },
     "installation_c36757a": {
       "revision": "c36757a561fe563181e41b8b857c3e8460486ed8",
@@ -1961,9 +2185,9 @@
       "exit_code": 0,
       "end": "2026-09-20T14:44:29.679501+00:00"
     },
-    "latest_source_installed": false,
+    "latest_source_installed": true,
     "recovery_final_status_scope": "2cca323 installed by normal-system update_engine; Recovery status 0 is not an applicable installation claim. Recovery boot/ADB/return tested separately.",
-    "whole_candidate_unaided_boot_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
+    "whole_candidate_unaided_boot_revision": "bd50b19",
     "installation_2cca323": {
       "candidate": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
       "ota_sha256": "08e6744536c973a10e4dfa6c4cefff56167d2c16265045f3d9c4af452640adbf",
@@ -2231,6 +2455,1720 @@
       "stability_passed": false,
       "root_cause": "Stock frontend underallocates current platform private C++ wrapper by 16 bytes",
       "evidence_section": "codec2_implementation"
+    },
+    "staged_candidate_bd50b19": {
+      "device_directory": "/data/ota_package/gold-mainline-bd50b19",
+      "ota_sha256": "dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4",
+      "ota_package_file_label": true,
+      "update_engine_applicability_exit": 0,
+      "device_update_started": true,
+      "prepared_at": "2026-09-21T01:16:31.266126+00:00",
+      "installed": true
+    },
+    "last_power_observation": {
+      "battery_percent": 10,
+      "charging": true,
+      "kernel_current_now_ua": 1971500,
+      "at": "2026-09-21T09:12:58+08:00",
+      "uptime_seconds": 868.08,
+      "boot_reason": "shutdown,battery",
+      "previous_boot_timing_not_assumed": "A reboot occurred after the earlier 2cca323 test session; cause of discharge not established. No long-duration power acceptance claimed.",
+      "installation_battery_gate": "User explicitly authorized 15 percent; actual final preflight 16 percent, Charging and USB online."
+    },
+    "boot_observer_2cca323": {
+      "command_failures": 13,
+      "elapsed_seconds": 68.972858583,
+      "error": null,
+      "exit_code": 0,
+      "last_observation": {
+        "boot_completed": "1",
+        "boot_modes": [
+          "normal",
+          "normal"
+        ],
+        "elapsed_seconds": 68.97258508300001,
+        "properties_ok": true,
+        "ready": true,
+        "recovery": false,
+        "slot": "b",
+        "transport": "device"
+      },
+      "outcome": "booted",
+      "schema_version": 1,
+      "stable_samples": 18,
+      "stable_seconds": 20.53143762500001,
+      "target_slot": "b"
+    },
+    "partition_readback_2cca323": {
+      "revision": "2cca323",
+      "incremental": "1789933740",
+      "slot": "b",
+      "image_byte_ranges_only": true,
+      "rows": [
+        {
+          "partition": "boot",
+          "entry": "IMAGES/boot.img",
+          "bytes": 67108864,
+          "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "device_path": "/dev/block/by-name/boot_b",
+          "block_bytes": 67108864,
+          "readback_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "dtbo",
+          "entry": "IMAGES/dtbo.img",
+          "bytes": 8388608,
+          "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "device_path": "/dev/block/by-name/dtbo_b",
+          "block_bytes": 8388608,
+          "readback_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "odm_dlkm",
+          "entry": "IMAGES/odm_dlkm.img",
+          "bytes": 348160,
+          "sha256": "85297d6b071dd146398633f5a0d2decade932b2b05b3cd39b50e8076f5cb2ab9",
+          "device_path": "/dev/block/mapper/odm_dlkm_b",
+          "block_bytes": 348160,
+          "readback_sha256": "85297d6b071dd146398633f5a0d2decade932b2b05b3cd39b50e8076f5cb2ab9",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "product",
+          "entry": "IMAGES/product.img",
+          "bytes": 510750720,
+          "sha256": "9c3231689e6fe5c6f86eaeae6ed7ea817e6c6ae19465f3992d3dc6e1fc38cee5",
+          "device_path": "/dev/block/mapper/product_b",
+          "block_bytes": 510750720,
+          "readback_sha256": "9c3231689e6fe5c6f86eaeae6ed7ea817e6c6ae19465f3992d3dc6e1fc38cee5",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "scp",
+          "entry": "RADIO/scp.img",
+          "bytes": 1200128,
+          "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "device_path": "/dev/block/by-name/scp_b",
+          "block_bytes": 6291456,
+          "readback_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "system",
+          "entry": "IMAGES/system.img",
+          "bytes": 1048506368,
+          "sha256": "830b5ac94bcb3ef6b74dae1376ae72dd8edb1059237a8f5c34f3a60a26f35f5a",
+          "device_path": "/dev/block/mapper/system_b",
+          "block_bytes": 1048506368,
+          "readback_sha256": "830b5ac94bcb3ef6b74dae1376ae72dd8edb1059237a8f5c34f3a60a26f35f5a",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "system_dlkm",
+          "entry": "IMAGES/system_dlkm.img",
+          "bytes": 7303168,
+          "sha256": "ae85e73d58c514b02f406e9397bf036c9859733b3e3fd740e349eb3de0fa48d7",
+          "device_path": "/dev/block/mapper/system_dlkm_b",
+          "block_bytes": 7303168,
+          "readback_sha256": "ae85e73d58c514b02f406e9397bf036c9859733b3e3fd740e349eb3de0fa48d7",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "system_ext",
+          "entry": "IMAGES/system_ext.img",
+          "bytes": 461287424,
+          "sha256": "4723404caad91720d2af7c508cf2c2f4d497cc9df0f2add203dd2d232afd988b",
+          "device_path": "/dev/block/mapper/system_ext_b",
+          "block_bytes": 461287424,
+          "readback_sha256": "4723404caad91720d2af7c508cf2c2f4d497cc9df0f2add203dd2d232afd988b",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vbmeta",
+          "entry": "IMAGES/vbmeta.img",
+          "bytes": 8192,
+          "sha256": "5301a0b95d867f46ccdc27f311f8efa061355e08edcb41988a362bd0034edb12",
+          "device_path": "/dev/block/by-name/vbmeta_b",
+          "block_bytes": 8388608,
+          "readback_sha256": "5301a0b95d867f46ccdc27f311f8efa061355e08edcb41988a362bd0034edb12",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vbmeta_system",
+          "entry": "IMAGES/vbmeta_system.img",
+          "bytes": 4096,
+          "sha256": "e79cff78b8991194ee320149cfaef0929fa08120fe822b4694b9f454d6d02601",
+          "device_path": "/dev/block/by-name/vbmeta_system_b",
+          "block_bytes": 8388608,
+          "readback_sha256": "e79cff78b8991194ee320149cfaef0929fa08120fe822b4694b9f454d6d02601",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "entry": "IMAGES/vbmeta_vendor.img",
+          "bytes": 4096,
+          "sha256": "dff48fb3584b134d636d8a96369e4c800670c4d93d9012c34e718a7105797abd",
+          "device_path": "/dev/block/by-name/vbmeta_vendor_b",
+          "block_bytes": 8388608,
+          "readback_sha256": "dff48fb3584b134d636d8a96369e4c800670c4d93d9012c34e718a7105797abd",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vendor",
+          "entry": "IMAGES/vendor.img",
+          "bytes": 483639296,
+          "sha256": "b539214c6ea7ade8d71941040516608f057991fd2d75a4e6b921392ae3551578",
+          "device_path": "/dev/block/mapper/vendor_b",
+          "block_bytes": 483639296,
+          "readback_sha256": "b539214c6ea7ade8d71941040516608f057991fd2d75a4e6b921392ae3551578",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vendor_boot",
+          "entry": "IMAGES/vendor_boot.img",
+          "bytes": 67108864,
+          "sha256": "5c7cd875c9346c5af55b3ac47d647c524955f3b91f4a10f7e565698e98a6aa26",
+          "device_path": "/dev/block/by-name/vendor_boot_b",
+          "block_bytes": 67108864,
+          "readback_sha256": "5c7cd875c9346c5af55b3ac47d647c524955f3b91f4a10f7e565698e98a6aa26",
+          "exit_code": 0,
+          "matched": true
+        },
+        {
+          "partition": "vendor_dlkm",
+          "entry": "IMAGES/vendor_dlkm.img",
+          "bytes": 13967360,
+          "sha256": "780699f9c9c3abf46cbc8a6eb640c812905f0afcde2af58c68c90e415c901e23",
+          "device_path": "/dev/block/mapper/vendor_dlkm_b",
+          "block_bytes": 13967360,
+          "readback_sha256": "780699f9c9c3abf46cbc8a6eb640c812905f0afcde2af58c68c90e415c901e23",
+          "exit_code": 0,
+          "matched": true
+        }
+      ],
+      "all_matched": true
+    },
+    "network_adb_connected": true,
+    "installation_bd50b19": {
+      "revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+      "incremental": "1789938387",
+      "target_slot": "_a",
+      "installer": "standard normal-system update_engine",
+      "installation_success": true,
+      "installer_hashes_match_final_images": 14,
+      "installer_partition_hashes": {
+        "boot": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "dtbo": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "odm_dlkm": "49dffd828e31f2bb6db6d36cbc4faa45c47b99099f39606ab39149695142642a",
+        "product": "573d58b4595152fb32309ff43b9b83f9597a190364bec720a96efc3315fdb08f",
+        "scp": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+        "system": "2fb00b38274aacf1c026dda6d003cf686c717bdd75be86e9efd00824aa0e0931",
+        "system_dlkm": "43b599c48daae7788f02852cfc9332614f8db3104a79a751d3dadd1cd344c342",
+        "system_ext": "001f1857d22c91a981b55d2aaaff91b0a393f1764c037685216c63cbf315527b",
+        "vbmeta": "56704b1ddb92ca1b7bbb944ddd142d4a22b4ad52984e93576b610aa259b147f2",
+        "vbmeta_system": "b2db519ee81314667bdd5ba94e4e579b343055b1848164f08a971f510cb264fc",
+        "vbmeta_vendor": "106f17c51093ac0d8f28e353eb59e6354fcbd4745ed00ef9e49b6966b6f08440",
+        "vendor": "8a4ac3d22dd8e5b8dcf41fcdeb8a700292847c610ad5bbcc74ed237fb7d5d09b",
+        "vendor_boot": "80e378e1906bb5c3950ffd96bf573601047bb3df610cfc6bdd53ec0c254a0d36",
+        "vendor_dlkm": "28a37cd27aa1907852591c016bc978ffcd31cb29f2905a661155338dab4054c0"
+      },
+      "independent_partition_readback": true,
+      "data_wiped": false,
+      "timestamp": "2026-09-21T01:26:58.185926+00:00",
+      "independent_partitions_matched": 14
+    },
+    "recovery_bd50b19": {
+      "candidate": "bd50b19",
+      "incremental": "1789938387",
+      "slot": "a",
+      "stage": "normal_return_observed",
+      "started_at": "2026-09-21T01:46:35.966151+00:00",
+      "adb_automatic": true,
+      "manual_menu_required": false,
+      "selinux_recovery": "Enforcing",
+      "health_domain": "hal_health_default",
+      "recovery_elapsed_seconds": 20.029344708,
+      "normal_boot_exit": 0,
+      "boot_observer": {
+        "command_failures": 6,
+        "elapsed_seconds": 61.320541750000004,
+        "error": null,
+        "exit_code": 0,
+        "last_observation": {
+          "boot_completed": "1",
+          "boot_modes": [
+            "normal",
+            "normal"
+          ],
+          "elapsed_seconds": 61.3201215,
+          "properties_ok": true,
+          "ready": true,
+          "recovery": false,
+          "slot": "a",
+          "transport": "device"
+        },
+        "outcome": "booted",
+        "schema_version": 1,
+        "stable_samples": 19,
+        "stable_seconds": 21.173141457999996,
+        "target_slot": "a"
+      },
+      "completed_at": "2026-09-21T01:47:57.479148+00:00"
+    },
+    "network_adb_bd50b19": {
+      "enabled": true,
+      "connected": true,
+      "secure_property": "1",
+      "transport": "authenticated adb TCP over current Wi-Fi",
+      "at": "2026-09-21T01:58:33.897074+00:00",
+      "identity_matches": true,
+      "host_server_restarted": true,
+      "shell_exit": 0
+    },
+    "postinstall_bd50b19": {
+      "data_wiped": false,
+      "data_persist_mounted": true,
+      "both_canaries_matched": true,
+      "normal_system_selinux": "Enforcing",
+      "snapshot_state": "none",
+      "boot_stable_seconds": 20.75927487500001,
+      "recovery_return_stable_seconds": 21.173141457999996,
+      "first_unlock_after_each_boot_confirmed": true,
+      "production_image_unmodified": true,
+      "display_dac_not_changed": true
+    },
+    "codec2_bd50b19": {
+      "initial_repeated_roundtrips": {
+        "candidate": "bd50b19",
+        "test_source": "a7bcbba",
+        "cycles_requested": 5,
+        "cycles_passed": 5,
+        "exit_code": 0,
+        "before_pid": "892",
+        "after_pid": "892",
+        "service_pid_unchanged": true,
+        "runtime_passed": true,
+        "timestamp": "2026-09-21T01:33:53.442140+00:00"
+      },
+      "cold_start_validation": {
+        "candidate": "bd50b19",
+        "test_source": "a7bcbba",
+        "cold_service_starts": 3,
+        "roundtrips": 6,
+        "frames_each_encode_decode": 24,
+        "all_cycles_pass": true,
+        "same_service_pid_during_each": true,
+        "startup_markers": [
+          "09-21 09:39:39.405  4539  4539 I gold-codec2: Gold Codec2 bridge: platform ComponentStore size=352",
+          "09-21 09:39:42.846  4656  4656 I gold-codec2: Gold Codec2 bridge: platform ComponentStore size=352",
+          "09-21 09:39:46.267  4771  4771 I gold-codec2: Gold Codec2 bridge: platform ComponentStore size=352"
+        ],
+        "relevant_fatal_signals": [],
+        "service_running": true,
+        "timestamp": "2026-09-21T01:39:49.902776+00:00"
+      },
+      "total_roundtrips": 11,
+      "total_frames_encoded": 264,
+      "total_frames_decoded": 264,
+      "pixel_quality_and_all_formats_not_assessed": true
+    },
+    "ims_bd50b19": {
+      "properties": {
+        "persist.vendor.ims_support": "1",
+        "persist.vendor.volte_support": "1",
+        "ro.vendor.md_auto_setup_ims": "1"
+      },
+      "framework_binding": "com.mediatek.ims/.MtkDynamicImsService",
+      "mtkIms_binder_present": true,
+      "both_mmtel_slots_ready_observed": true,
+      "initialization_recovers_after_recovery_roundtrip": true,
+      "registered": false,
+      "voice_video_ut_sms_capabilities_ready": false,
+      "carrier_config_applied": true,
+      "effective_carrier_volte_available": false,
+      "voice_plan_confirmed": false,
+      "sim_settings_changed": false,
+      "calls_or_sms_tested": false,
+      "attribution": "Not attributed exclusively to ROM, provisioning or roaming. Provider brand alone does not establish a voice add-on or modem IMS entitlement.",
+      "evidence": "private ims-after-boot.txt, ims-after-recovery.txt, telephony-debug-after-recovery.txt"
+    },
+    "wifi_bd50b19": {
+      "pmf_vendor_overlay": 1,
+      "association": "WPA3 SAE, 5 GHz, 802.11ac, Supplicant COMPLETED",
+      "dhcp_ipv4": true,
+      "https_200_tls_verified_over_wlan0": true,
+      "http_validation_probe_204": true,
+      "google_https_validation_probe_timed_out": true,
+      "framework_partial_connectivity": true,
+      "after_recovery_saved_profile_disabled_reason": "NETWORK_SELECTION_DISABLED_NO_INTERNET_PERMANENT",
+      "credential_read_or_replaced": false,
+      "forced_network_validation": false,
+      "saved_profile_explicit_selection": {
+        "candidate": "bd50b19",
+        "saved_network_id": 0,
+        "credential_read_or_replaced": false,
+        "forced_validation": false,
+        "selection_accepted": true,
+        "associated": true,
+        "elapsed_seconds": 3.3411772499999994,
+        "timestamp": "2026-09-21T01:56:38.172171+00:00",
+        "https": {
+          "exit_code": 0,
+          "output": "200 0.488939 0",
+          "error": ""
+        }
+      },
+      "reconnect_cycles": [
+        {
+          "cycle": 1,
+          "off_observed": true,
+          "automatically_reassociated": false,
+          "explicit_saved_selection_needed": true,
+          "associated_and_ipv4": true,
+          "elapsed_seconds": 24.829638875,
+          "https_exit": 0,
+          "https_output": "200 0.219289 0"
+        },
+        {
+          "cycle": 2,
+          "off_observed": true,
+          "automatically_reassociated": true,
+          "explicit_saved_selection_needed": false,
+          "associated_and_ipv4": true,
+          "elapsed_seconds": 1.5951738330000005,
+          "https_exit": 0,
+          "https_output": "200 0.220584 0"
+        }
+      ],
+      "automatic_reconnect_passed_at_least_once": true,
+      "all_reconnects_automatic": false,
+      "authenticated_network_adb_connected": true,
+      "mac_adb_server_restart_resolved_connection_error": true
+    },
+    "power_bd50b19": {
+      "deterministic_device_tests": {
+        "arm64-gold_power_requests_test": {
+          "exit_code": 0,
+          "summary": "27 passed, 0 failed"
+        },
+        "arm64-gold_power_nodes_test": {
+          "exit_code": 0,
+          "summary": "32 passed; 0 failed"
+        },
+        "arm-gold_power_requests_test": {
+          "exit_code": 0,
+          "summary": "27 passed, 0 failed"
+        },
+        "arm-gold_power_nodes_test": {
+          "exit_code": 0,
+          "summary": "32 passed; 0 failed"
+        },
+        "arm64-client": {
+          "exit_code": 0,
+          "pass_lines": 4
+        },
+        "arm-client": {
+          "exit_code": 0,
+          "pass_lines": 4
+        },
+        "owner_exit": {
+          "exit_code": 0,
+          "sampled_after_exit": [
+            {
+              "after_host_exit_ms": 66.05929200000027,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 152.2929580000003,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 230.2402500000005,
+              "value": 10.0
+            },
+            {
+              "after_host_exit_ms": 317.0112500000002,
+              "value": 0.0
+            }
+          ],
+          "upper_bound_from_before_process_ms": 388.8302499999998,
+          "lease_ms": 2000
+        },
+        "restart": {
+          "old_pid": "632",
+          "new_pid": "5047",
+          "exit_code": 0,
+          "enabled_before_continue": true,
+          "output": "READY_FOR_HAL_RESTART handle=1\nPASS HAL restart rejects stale C handles without releasing the new vote\n",
+          "reset_after": 0.0
+        },
+        "candidate": "bd50b19",
+        "timestamp": "2026-09-21T01:41:05.341403+00:00"
+      },
+      "deterministic_cases_per_abi": {
+        "requests": 27,
+        "nodes_engine": 32
+      },
+      "hal_selinux_domain": "mtk_hal_power",
+      "global_selinux": "Enforcing",
+      "c_abi_lifecycle_passed_both_abis": true,
+      "owner_exit_upper_bound_ms": 388.8302499999998,
+      "hal_restart_stale_handle_isolation": true,
+      "hardware_probe": {
+        "candidate": "bd50b19",
+        "probe_exit": 0,
+        "pass_count": 2,
+        "service_restored": true,
+        "uclamp_restored": true,
+        "no_other_power_process_in_preflight": true,
+        "display_permissions_unchanged": true,
+        "timestamp": "2026-09-21T01:42:33.849894+00:00"
+      },
+      "strategy_root_set_bounds_restart_reset_passed": true,
+      "strategy_shell_rejected": true,
+      "ordinary_shell_dump_passed": true,
+      "relevant_avc_count": 0,
+      "final_framework_boost_defaults": [
+        0,
+        0
+      ],
+      "comparable_launch_frame_energy_trials_passed": true,
+      "framework_extra_boost_adopted": false
+    },
+    "private_bd50b19_evidence_hashes": {
+      "adb-connect-after-ping.txt": "1f2ef0a1db09fea50369f55992ac8cd2e8faf21f9f7c9f8e983fc92ddfd3d90f",
+      "adb-connect.txt": "1f2ef0a1db09fea50369f55992ac8cd2e8faf21f9f7c9f8e983fc92ddfd3d90f",
+      "adb-devices.txt": "2526d82df6810ac4db15866ebab65d312fba18c225ab4886066beb3dde27c162",
+      "adb-host-restart.json": "8a932445cc2100a1071815646e085cf0423cfb453245888ff88d54d46cbf1dc5",
+      "adb-host-server.txt": "bc55945bb5f365e2e01f869e7adf03c0661b551b4a15986c8a3fc1eec6ac72c8",
+      "arm-client.txt": "695c6f8d310f61e1518da380701754895fe3696794877d04c6894c0689a6ff80",
+      "arm-gold_power_nodes_test.txt": "05ceec17a3e3ba9a2c6b9d34057434931f5e06e1b55b11522e5406aa98bfd045",
+      "arm-gold_power_requests_test.txt": "524ec912cf78d7cab8ec66d73e2b87d8889f6f9c634a3be81fd64b5775cc7a84",
+      "arm64-client.txt": "695c6f8d310f61e1518da380701754895fe3696794877d04c6894c0689a6ff80",
+      "arm64-gold_power_nodes_test.txt": "05ceec17a3e3ba9a2c6b9d34057434931f5e06e1b55b11522e5406aa98bfd045",
+      "arm64-gold_power_requests_test.txt": "524ec912cf78d7cab8ec66d73e2b87d8889f6f9c634a3be81fd64b5775cc7a84",
+      "before-reboot.txt": "029ba70b68025dee4c84c9aa405949dc916989aff0ce74f6d5be4e52aeabb65e",
+      "before-update-engine.txt": "f76269d720326a8b85dd897488dc9baa16ac407af2d1e9804a1e3cb22b8f6e76",
+      "before-update.txt": "3ad41d36a7a91448edd7cc59e4019bbfbb47c7984adde5e0e3e91fe505b7ff31",
+      "boot-observer.txt": "94d85168343f4e790214c41174158aeaae86fa78f63e1d62eb9541a8da4e1fdf",
+      "canaries-after.json": "232dbdb24c2bad2031e946dd895bfad27be960c2b55c29f84400db324e21afc0",
+      "canaries-before.json": "4b274f44763d9c814b93b9fd16f5297d0de5862cc6f23d472b706b67594d65f3",
+      "client-owner-exit.json": "94294a3b4584dd7921b901be1891ac551b0ce95a9f59bb8f212f37ceedefb8d6",
+      "client-owner-exit.txt": "bb815c0a107b35f6d6bbd220bbb441f44255d2e4922051c2fd88e79e762c2a1a",
+      "client-restart-coordinator.json": "83f8f09ae76f258932dfc6e7a375fc157237d838fa187755b0b3342b99e2b550",
+      "client-restart.txt": "153f9e5e4fe09694fb53389d654325e61dd1c038df59117d293fc4f778288c23",
+      "codec-cold-0-before-resources.txt": "d4e306170d2a514a4d404845103742406948172aa782c52fc3b8bc2e49a5dcbf",
+      "codec-cold-0.txt": "c7ed9fd70a5ca075d8e5ba246984af5ce094948e515923c523ae378e416a7265",
+      "codec-cold-1-before-resources.txt": "4e752a159c7676a5245235ebb5b3c673aded1ba7862692442689a47220214776",
+      "codec-cold-1.txt": "ecaaa6dea51c6dd5729592a83e5a1558aed604acebe5bdc403efef5099cebc11",
+      "codec-cold-2-before-resources.txt": "c7af157839876adab47eea13795afb3dd195866648df645573c053bc75382e8f",
+      "codec-cold-2.txt": "df8e3f61db2fcf00240f49e6c9de3a66ed757eda3e12e48f024a515c38f992d5",
+      "codec-cold-starts.json": "6bfab303e37025e759a3e3776440e86a7505ccbeabd7eed68b2b2887c314e50a",
+      "codec-log-after-cold.txt": "27be3ecaa75d8d4ed712e54e948720086cd2bf3bce686d405b2ca0c8ebfcb122",
+      "codec-log-initial.txt": "052d790b2207ea12728c418d842a5dc134ed31d5f53c6948564fb1c197f0ce4b",
+      "codec-roundtrip-initial.json": "81f4d5a040f23dac1e12a47c1b38157d50418bf9f35d5ee987b5774487a9c5c5",
+      "codec-roundtrip-initial.txt": "6e0ff1eaa2e60b65449a0f9d78bbd69f638f5439689f923037c3c2e94fb80bc1",
+      "codec-startup.txt": "27a9eef114da0a09aa24211b5f02237f85923ce4bfe3012a90c4bd586b62b55d",
+      "codec-validation.json": "b7527b2d6fa3e78bda4d1a36edbed45fddffb987e549e42958f6835f96f31d0f",
+      "device-tests.json": "72fa7fba97ca6b0eee5477da8c1233abf5059ae898fad3e529a5d8f2391fa737",
+      "dmesg-after-boot.txt": "4226c582a53ca64794487160a9d09677916d311206bf6017b832d976279bd9f4",
+      "hardware-coordinator.json": "fd6109c157a637487108e4707690e5bb8a97214bbd5ec802786da4a3481a108d",
+      "hardware-preflight.txt": "8e204376f276cd16178b083216eb6e883078d225d880483d150c0aa05a6780ef",
+      "hardware-probe.txt": "0c45971ecb205029b5302224b68dbfb446f5ff222ee44dae938960baf4623053",
+      "host-arp.txt": "aef508181953c05cf815773b62800276e33425f082e7f042f76b8df52108f498",
+      "host-ping.txt": "dbc635e77fb1e34c9a554abf9376f0ef071047bb18c8c40ba40173e797bddbbd",
+      "host-route.txt": "dc3f9383d7d706c4f5c3e8cb2949fa61b87b92e849642bb4d67d619f8dfde0ac",
+      "host-wifi-ip.txt": "7aefdbb9c000807768d385f92636992cc9a2423a8b2feabec683ff2e8421fca8",
+      "ims-after-boot.txt": "b3b41efcae9d09fae9724f6a797cf510c6aa53994a56904985e40d7dc4283f41",
+      "ims-after-recovery.txt": "8121ffe5fc72264e8af7dc9d5ad9aed83eada0151be8a1fe8b3bdffae7aada91",
+      "ims-now.txt": "670679c0d7f8b36034486b9308e418ca093eec304663bc75aa86bec856bc456c",
+      "install-result.json": "1f0af2d7644d2b0500c3950cb7dd192798ff6a40409fe91490e859025e754068",
+      "installation-verification.json": "cfeea1577ebe4ee6c16337ec5a40d7e2b37478ccdd169b8bb89cb631ac5b9a7b",
+      "logcat-after-boot.txt": "997e4f4d7cb2f0eb2d3fcf00fac541906cbe81ef70c2b38c491924cdab238298",
+      "mac-sleep-charging-context.txt": "ccca1ddc56f02055ac434da59453a3f599e50fa7ddbe680e730692959a5e2fd2",
+      "media-resource-now.txt": "7625704a8efccbfb5037f11e289d257cd4ad735f681b105759ddff568f6955cd",
+      "media-resources-before.txt": "6bbba0f4f64fbd291d3cd0417ab8d5b29c11a8a3c076e5bf7504d8978fed360f",
+      "network-adb-enable.txt": "539ae7b3a7184e56ca398d591ba1bfe1eab1f1c17661cb63a06c3f8d3c8d1090",
+      "network-adb-first-diagnostics.txt": "10e7879864ca4477456d3aaf23a14bb1e9980a07ac839e7a3f24f439c90661fb",
+      "network-adb-socket-test.json": "8d3318317c8417022e3a27d9ef7089c6f8c51acf09501c73732dd929e26f3197",
+      "network-adb.json": "f15e4b7c9c9f1b51881109e298e2285bacc68854a239d971f0ace6e67a5ab84f",
+      "partition-readback.json": "78e493c3e71e04e0607a6b99b911fd10134afbd91f480c24c80436a3dca23d76",
+      "payload-applicability.txt": "12051d665c4b7a5a55d88de741e99f5c0dd5d4744da32fa5c2ead9723258ec6f",
+      "phone-listener.txt": "a579ecce717ebc6c9e78641a9c551926a433b80acf7a6bcf478ab8b23354ad7e",
+      "phone-peer.txt": "ed8e35d526018b0332bdf5b0c502a62bfe4fe941aced5dc2f1bfff5da31fb2b6",
+      "post-recovery-state.txt": "58f9cf67869784fa920fc04a56d860f60bc5752ce39f745a2ff68a422c34e96c",
+      "postboot-root.txt": "d073d5800f15af3279fad87df61a21a843d1d32fab740cc527d7d40f35a46cdd",
+      "postboot-shell.txt": "ebf9d3b49c3275139fc09b9873ab010e0cb55978bbe1adf0b8785288e6a7055b",
+      "power-after-lifecycle.txt": "696d20b68e48cdc1083785b2b64696c55ff193a813f773dd22ff391e38394293",
+      "power-client-preflight.txt": "74e0681a3e556b82fdcca722462ea0f18098cf0651c10b40e08925e682e975d0",
+      "power-framework.txt": "d71f1268e5f794135ad6a3aac8c14b2dd86ba9fc01ad1dbbcec1a3acea9afa46",
+      "power-hardware-restored.txt": "ac3b8bc4c6904f4eac7c7c5802b590ff156cdc7ff8e134a932938b10f2e1b235",
+      "power-log-after-tests.txt": "98981c5b1ef7eb9ed81ea032c42dd0328e7daba2e9fe7d055613ce7c8b13931a",
+      "power-ready-now.txt": "574275c63f488f2b79c0da55528ade6ebda68b2e2211609f443ec03ca9d78de9",
+      "power-selinux-check.json": "ded6144411a5578c0a713f2ee42693f1b9a1cc6856052c3331471f25e6dcea84",
+      "preinstall-core.txt": "a67f1b97901d8567f25fe76d73207a1018ab11b37a5cb9a6f716025b4c1bdbab",
+      "preinstall-root-power.txt": "b6437bf5baa4ebd68b1bc7cf24c8f383f27d1817946ef33148dda3d76214d46b",
+      "preinstall-update-engine.txt": "ca75214540b59c2d5ad8f1243263f2966e19df49423114f265056026f347c493",
+      "pstore-inventory.json": "bcea7e2112985ef1bf6eba60386b695667c87c3bce83945403e4dd5d2be35da0",
+      "push-lineage_gold-ota.zip.txt": "bc735e705862e9be5492ba0c2650cb33069ef2efc863ba26c8319fa0dc8a4cde",
+      "push-payload_metadata.bin.txt": "ca4fb26b24de5e7a0343845c887c95c63e4a68c349dfea36ff9f4609e92a2650",
+      "recovery-adb-observations.json": "cc0d8dc5786e6f797975a1e17be27023957212ad10ccf2a089540408ae5baf0e",
+      "recovery-health.txt": "4b07471d3ec4e971c28080108359427bdd9818b361695814aab0bf2fb90250a8",
+      "recovery-normal-observer.txt": "f55842097e1d0e09051f9946e9c6f728e745abb48f99e32b9ed5c5fe4967241f",
+      "recovery-preflight.txt": "6c1ff2c8df806488e1e2f344607d719977232ee5d0d016813f71054a972d4813",
+      "recovery-reboot-command.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recovery-roundtrip-state.json": "cecf4a01fe7c521a6fcd16a7ffa2a3331a893793407b423db1a60618c23b2b41",
+      "recovery-runtime.txt": "4925822b4b71789adb003564af11054ff0f878d43b29d2729af0c36a7c2f5957",
+      "root-after-recovery.txt": "cbfc5f4f46947a84c46216ae8ee0bfaebce09bbac37337972e033b39056106eb",
+      "staged-package.json": "3e37af987a3181c538eae250671e18094d5ca1252f1545c360fffa31cf87ce45",
+      "state-before-readback.txt": "ebca487a9fcbe22908566cc0cf986ca0e139f89bb212849eaef9a7dee8d0536f",
+      "strategy-root-zero.txt": "cddb034212d042dd010102378a8adeab73fe863739ac6322bc43799f563fd704",
+      "strategy-shell-denied.txt": "994e912325b18be19c78fd8f5c2eb2ef5027fccba37931c24da951c0bf0cf830",
+      "strategy-validation.json": "5258c490081d85b9da1fc7588cd581adf5b001cba28aea93e385d40b2b4c0d3a",
+      "telephony-debug-after-recovery.txt": "bb8d54ed35dfd537d960a67d728cd177b3774ed6af0710857e50b7d6c788c864",
+      "thermal-after-boot.txt": "ca5cf909becdafc816d658227da9ef973c0236b14603f5fbcc580b66982b17a6",
+      "update-engine-client.log": "6ef6a4b737fa081e2f7ad046aeb605ff5b19f8ffbf45dd21dc3c5414c7bc05eb",
+      "update-engine-daemon-before-reboot.log": "a0438169c6ef507f42bf4f5abc295ed3cd7c70076a3f9dd6aa1bd3dba7d8919d",
+      "wifi-after-explicit-selection.txt": "a18a92d056f0eb87b651c3fbd02ab11dc350ead6f765af067825d89c8293b323",
+      "wifi-after-recovery.txt": "2ac0471cfbea2f229d0d6ef1b35e331dbe3c4156413600870eaf1263de47d9af",
+      "wifi-after-second-unlock.txt": "32b3002aa1e1f7f9c5d3552e5096428baa21c81f24d275cfd94d7584f3605c57",
+      "wifi-connectivity-before-recovery.txt": "8961166bc3dbf610307690b009008bffedbe97d32a9d7863c1b5234409be0706",
+      "wifi-connectivity-probes.json": "96c020b48dba8a0a59a0a947535ff99aabaa98415301d90ec8996c7327b4c426",
+      "wifi-explicit-selection.json": "ac5ea5784f52415b95e0f1fbc0725fb4a6de64cf5ac63b0afd5cfd7c0948d0dc",
+      "wifi-explicit-selection.txt": "3418bfbc04668019b1d0dd12d9ec309b5371bc43415a4fb0d2fe5d8aeb6f072e",
+      "wifi-https-0.txt": "bde60dfe51d3fe795418712b9d71adb44242659fe43d0deec58bb46cb3bfbfde",
+      "wifi-https-1.txt": "3e8436b9632240b174c30bd194d3d58611c680405514595de56b2c024e385522",
+      "wifi-https-2.txt": "4b8eed33175dab34f7a520f9792d6b3bdcffb7ce231a698896d65a1c7830d138",
+      "wifi-log-after-recovery.txt": "3dabcb1a411b36f51043d98b0a2ea3d94491b40a722de5e43aeaab464a79d8ba",
+      "wifi-now.txt": "3459c11c9ba55ea27b80abc4d71ad95391d8aca1dbb4427d409b2c838f05b1b8",
+      "wifi-reconnect-0.txt": "96e3536edbe6fae16e4c32d05b6a680598890c96cf5cf6531baacf96ff22dfca",
+      "wifi-reconnect-1.txt": "eebeda33e8911631d83c3349f9b922814f98907cb5323dfc67aacabeaae48fcb",
+      "wifi-reconnect.json": "23c383e9916a238670aacc1d74b27e7bde2cc903f51945a3434fe7ce538929ce",
+      "wifi-recovery-diagnostic.txt": "f2b78ccb8227a8f5fb1d385785da223f528221c65df3c075e628aa39d3163630",
+      "wifi-saved-before-selection.txt": "5fdb767e21f216ae30ce37fde9b54d48c58513d2a94f199a6bd282a31172254b",
+      "wifi-settings-ui-current.xml": "c8c2851b41b96032013446b274720ca29f221efc16755557e055d26331fa9b55",
+      "wifi-settings-ui.xml": "69e64446424a7cafcf64b15cf3a20ec9d7642639864e610c91d0f22cf67980b0"
+    },
+    "performance_bd50b19": {
+      "schema_version": 1,
+      "incremental": "1789938387",
+      "apk_sha256": "40997b44c53383d8f260d20ce8e8588f6a404e75261e27f349997bece94a491f",
+      "protocol": {
+        "strategies": [
+          [
+            0,
+            0
+          ],
+          [
+            20,
+            20
+          ]
+        ],
+        "pair_order": "AB, BA, alternating",
+        "launch_pairs": 12,
+        "scroll_pairs": 4,
+        "scroll_seconds": 60,
+        "brightness": "test window 0.35",
+        "temperature_pair_start_tolerance_decic": 5,
+        "force_stop_scope": "org.lineageos.gold.perfprobe",
+        "filesystem_cache_not_cleared": true,
+        "synthetic_workload_not_general_app_benchmark": true
+      },
+      "framework_launch_calibration": {
+        "samples": 100,
+        "maximum": 20.0,
+        "final": 0.0
+      },
+      "strategies_restored": true,
+      "samples": [
+        {
+          "phase": "launch",
+          "pair": 0,
+          "uclamp": 0,
+          "sample": "launch_00_00",
+          "cold_launch_ms": 253,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "8f06aa18179e48f9f035944e586290f25443b0f457abfadc73018ccac68c2f88"
+        },
+        {
+          "phase": "launch",
+          "pair": 0,
+          "uclamp": 20,
+          "sample": "launch_00_20",
+          "cold_launch_ms": 252,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "c69be6d526e58c7ef008b90ff5b1bd55945983db0888309a13e869ab059dabb8"
+        },
+        {
+          "phase": "launch",
+          "pair": 1,
+          "uclamp": 20,
+          "sample": "launch_01_20",
+          "cold_launch_ms": 255,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "3235ffc5b492fd6fb6dbf291b7ced38f843e30c75937205a2615cfb9d6ddd0d0"
+        },
+        {
+          "phase": "launch",
+          "pair": 1,
+          "uclamp": 0,
+          "sample": "launch_01_00",
+          "cold_launch_ms": 254,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "43b5b52a95549d85d90f8ec6799c5446cc37a4a90f99ad776083f5078dd79bca"
+        },
+        {
+          "phase": "launch",
+          "pair": 2,
+          "uclamp": 0,
+          "sample": "launch_02_00",
+          "cold_launch_ms": 249,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 43,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "afe9dc8cbf133a20bdae215e8fbc6a9c9786ed0f09c58f3411f542b237c561a8"
+        },
+        {
+          "phase": "launch",
+          "pair": 2,
+          "uclamp": 20,
+          "sample": "launch_02_20",
+          "cold_launch_ms": 272,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "ba71698978eef3bc8c6c6e5fb7989101072c77d432d70d1e82e68ccb873759ec"
+        },
+        {
+          "phase": "launch",
+          "pair": 3,
+          "uclamp": 20,
+          "sample": "launch_03_20",
+          "cold_launch_ms": 248,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "f62518510581e03004b0a077862fa959a56747b90229a1ce676fb096f2995776"
+        },
+        {
+          "phase": "launch",
+          "pair": 3,
+          "uclamp": 0,
+          "sample": "launch_03_00",
+          "cold_launch_ms": 261,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "bd03b96176fefa01ce0aa7c33d4912ed791b48f0d8f70f0c3a34e8fc83238394"
+        },
+        {
+          "phase": "launch",
+          "pair": 4,
+          "uclamp": 0,
+          "sample": "launch_04_00",
+          "cold_launch_ms": 259,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "d3cfacec8b4976363d46d4ab0d53b46454926c6d3a7eb85675e2e77270d7e1c8"
+        },
+        {
+          "phase": "launch",
+          "pair": 4,
+          "uclamp": 20,
+          "sample": "launch_04_20",
+          "cold_launch_ms": 253,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "b7a2382f5f26a8d87f5f8b242dfc5e163445a2e200f71b9559be659e78fd20aa"
+        },
+        {
+          "phase": "launch",
+          "pair": 5,
+          "uclamp": 20,
+          "sample": "launch_05_20",
+          "cold_launch_ms": 258,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 47,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "cbeeae52495a0a7489968c491197d6639539b33a4383b1b9a1ac9d376b76faba"
+        },
+        {
+          "phase": "launch",
+          "pair": 5,
+          "uclamp": 0,
+          "sample": "launch_05_00",
+          "cold_launch_ms": 268,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "dd92e2145c30c345eab691c03be5dbde570094e1eb3507986825bae83372f169"
+        },
+        {
+          "phase": "launch",
+          "pair": 6,
+          "uclamp": 0,
+          "sample": "launch_06_00",
+          "cold_launch_ms": 255,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "8def3fbf7770fea7f6c3aecc66844d8727f6f824ff6170f6db9c70fec9d5e73d"
+        },
+        {
+          "phase": "launch",
+          "pair": 6,
+          "uclamp": 20,
+          "sample": "launch_06_20",
+          "cold_launch_ms": 277,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 330,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": false,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "a7644f8ba6b0757a254b9bd01efda90deb9bc30b8055d519e7df75ea2577b85b"
+        },
+        {
+          "phase": "launch",
+          "pair": 7,
+          "uclamp": 20,
+          "sample": "launch_07_20",
+          "cold_launch_ms": 252,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "f4e2d420d66860aac84f96eb0515c335e5b09df01ab8615c5376462799d86519"
+        },
+        {
+          "phase": "launch",
+          "pair": 7,
+          "uclamp": 0,
+          "sample": "launch_07_00",
+          "cold_launch_ms": 268,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "ca450b51d60b6a0883f994697a813087dc010aab698976ccb9ea52d7a7b5bd71"
+        },
+        {
+          "phase": "launch",
+          "pair": 8,
+          "uclamp": 0,
+          "sample": "launch_08_00",
+          "cold_launch_ms": 254,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "a054b49205c5f75de09b8d08ef7438733e5290d3faf9cf506f21b8400489df91"
+        },
+        {
+          "phase": "launch",
+          "pair": 8,
+          "uclamp": 20,
+          "sample": "launch_08_20",
+          "cold_launch_ms": 256,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "9ba220068f022d65dbe494860d85e9a387bb989547a294e4206b3ac644b68606"
+        },
+        {
+          "phase": "launch",
+          "pair": 9,
+          "uclamp": 20,
+          "sample": "launch_09_20",
+          "cold_launch_ms": 246,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "753bccaed9b7cd421e9750408e08c5823d8a1ee1fd29e2c28a4184020023fdfd"
+        },
+        {
+          "phase": "launch",
+          "pair": 9,
+          "uclamp": 0,
+          "sample": "launch_09_00",
+          "cold_launch_ms": 265,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 46,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "6341538fe9b5d7e1d77fb35c4d678d92af9a4f6bf44327f7c2edca32e035edb8"
+        },
+        {
+          "phase": "launch",
+          "pair": 10,
+          "uclamp": 0,
+          "sample": "launch_10_00",
+          "cold_launch_ms": 264,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "26565318142dc1639b0af843af2552738072833c4b216341e24594d1dc72292a"
+        },
+        {
+          "phase": "launch",
+          "pair": 10,
+          "uclamp": 20,
+          "sample": "launch_10_20",
+          "cold_launch_ms": 252,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 320,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 320,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "98a1e94f98d22b0c2c6ddc51313f016cbbeeca3c195142460310485527207f2b"
+        },
+        {
+          "phase": "launch",
+          "pair": 11,
+          "uclamp": 20,
+          "sample": "launch_11_20",
+          "cold_launch_ms": 234,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 330,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 330,
+          "pair_start_temperature_matched": true,
+          "frames": 45,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "e0ce5579ce38735153a39b7fc4148fd6e7ddcf4e5cca03ec67a754f2f9c02257"
+        },
+        {
+          "phase": "launch",
+          "pair": 11,
+          "uclamp": 0,
+          "sample": "launch_11_00",
+          "cold_launch_ms": 246,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 330,
+            "thermal_status": 0
+          },
+          "swipes": 0,
+          "pair_temperature_decic": 330,
+          "pair_start_temperature_matched": true,
+          "frames": 44,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "6f93403dc225992535e6310d663ea229463b36160cfeae7cc1cdbe6f9f911e26"
+        },
+        {
+          "phase": "scroll",
+          "pair": 0,
+          "uclamp": 0,
+          "sample": "scroll_00_00",
+          "cold_launch_ms": 263,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 330,
+            "thermal_status": 0
+          },
+          "swipes": 107,
+          "pair_temperature_decic": 330,
+          "pair_start_temperature_matched": true,
+          "frames": 6758,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "fd0b628269de3cdf19ac638d13a47612652751d45084a4602adab8fae981ff35",
+          "steady_frames": 6661,
+          "p50_frame_ms": 4.546384,
+          "p95_frame_ms": 8.133845,
+          "p99_frame_ms": 8.848378199999999,
+          "deadline_miss_percent": 0.015012760846719712,
+          "energy_window_seconds": 56.000000000000014,
+          "energy_joules": 154.03736869974816,
+          "average_battery_power_watts": 2.750667298209788,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            330,
+            330
+          ],
+          "temperature_peak_decic": 330
+        },
+        {
+          "phase": "scroll",
+          "pair": 0,
+          "uclamp": 20,
+          "sample": "scroll_00_20",
+          "cold_launch_ms": 249,
+          "preflight": {
+            "level": 51,
+            "temperature_decic": 330,
+            "thermal_status": 0
+          },
+          "swipes": 110,
+          "pair_temperature_decic": 330,
+          "pair_start_temperature_matched": true,
+          "frames": 6773,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "c9ed268c94e58957f71b6fef66ee69adc20b2cb0f297131ca694bce2056f5729",
+          "steady_frames": 6670,
+          "p50_frame_ms": 4.534492999999999,
+          "p95_frame_ms": 8.082836499999999,
+          "p99_frame_ms": 8.8841849,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 56.00000000000001,
+          "energy_joules": 148.72198900117513,
+          "average_battery_power_watts": 2.6557498035924127,
+          "full_sample_charge_counter_drop_uah": 52000,
+          "temperature_start_end_decic": [
+            330,
+            340
+          ],
+          "temperature_peak_decic": 340
+        },
+        {
+          "phase": "scroll",
+          "pair": 1,
+          "uclamp": 20,
+          "sample": "scroll_01_20",
+          "cold_launch_ms": 248,
+          "preflight": {
+            "level": 50,
+            "temperature_decic": 340,
+            "thermal_status": 0
+          },
+          "swipes": 105,
+          "pair_temperature_decic": 340,
+          "pair_start_temperature_matched": true,
+          "frames": 6696,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "5270241893930f30458526480a9d826ec6f8cac14e859b7a31d5dd33a36a69e2",
+          "steady_frames": 6567,
+          "p50_frame_ms": 4.45079,
+          "p95_frame_ms": 7.8471044999999995,
+          "p99_frame_ms": 8.55586708,
+          "deadline_miss_percent": 0.015227653418608192,
+          "energy_window_seconds": 56.000000000000014,
+          "energy_joules": 147.10169462827247,
+          "average_battery_power_watts": 2.626815975504865,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            340,
+            340
+          ],
+          "temperature_peak_decic": 340
+        },
+        {
+          "phase": "scroll",
+          "pair": 1,
+          "uclamp": 0,
+          "sample": "scroll_01_00",
+          "cold_launch_ms": 256,
+          "preflight": {
+            "level": 50,
+            "temperature_decic": 340,
+            "thermal_status": 0
+          },
+          "swipes": 108,
+          "pair_temperature_decic": 340,
+          "pair_start_temperature_matched": true,
+          "frames": 6733,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "377f3ac65ca13294ac22cdaa5260db0059cc4cf9264f64f9829b35ac7d426f62",
+          "steady_frames": 6644,
+          "p50_frame_ms": 4.536465,
+          "p95_frame_ms": 7.990509549999996,
+          "p99_frame_ms": 8.907071489999998,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 55.99999999999999,
+          "energy_joules": 152.5933365377069,
+          "average_battery_power_watts": 2.7248810096019094,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            340,
+            350
+          ],
+          "temperature_peak_decic": 350
+        },
+        {
+          "phase": "scroll",
+          "pair": 2,
+          "uclamp": 0,
+          "sample": "scroll_02_00",
+          "cold_launch_ms": 265,
+          "preflight": {
+            "level": 50,
+            "temperature_decic": 350,
+            "thermal_status": 0
+          },
+          "swipes": 110,
+          "pair_temperature_decic": 350,
+          "pair_start_temperature_matched": true,
+          "frames": 6754,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "82fae54d88e5b6e42f00ad77a77543d1c79b0fe37c9c9f27d11bb3ba271ca2eb",
+          "steady_frames": 6678,
+          "p50_frame_ms": 4.549934,
+          "p95_frame_ms": 8.114697499999998,
+          "p99_frame_ms": 8.900043029999999,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 55.99999999999998,
+          "energy_joules": 148.98748658512721,
+          "average_battery_power_watts": 2.6604908318772726,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            350,
+            350
+          ],
+          "temperature_peak_decic": 350
+        },
+        {
+          "phase": "scroll",
+          "pair": 2,
+          "uclamp": 20,
+          "sample": "scroll_02_20",
+          "cold_launch_ms": 285,
+          "preflight": {
+            "level": 50,
+            "temperature_decic": 350,
+            "thermal_status": 0
+          },
+          "swipes": 108,
+          "pair_temperature_decic": 350,
+          "pair_start_temperature_matched": true,
+          "frames": 6766,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "f2a0b6ad2c683435bd351a1812b12c33a4c19d7df08ea19e22a5c6e67331b111",
+          "steady_frames": 6658,
+          "p50_frame_ms": 4.4639775,
+          "p95_frame_ms": 7.7663560999999985,
+          "p99_frame_ms": 8.670736680000003,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 56.00000000000002,
+          "energy_joules": 153.66299231773968,
+          "average_battery_power_watts": 2.7439820056739217,
+          "full_sample_charge_counter_drop_uah": 50000,
+          "temperature_start_end_decic": [
+            350,
+            360
+          ],
+          "temperature_peak_decic": 360
+        },
+        {
+          "phase": "scroll",
+          "pair": 3,
+          "uclamp": 20,
+          "sample": "scroll_03_20",
+          "cold_launch_ms": 268,
+          "preflight": {
+            "level": 49,
+            "temperature_decic": 360,
+            "thermal_status": 0
+          },
+          "swipes": 110,
+          "pair_temperature_decic": 360,
+          "pair_start_temperature_matched": true,
+          "frames": 6755,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "ba69adfb8d8292687e4b260bed7e92776c6bd0fb82a0a69213fe7ae925ebe802",
+          "steady_frames": 6675,
+          "p50_frame_ms": 4.525625,
+          "p95_frame_ms": 8.096184099999999,
+          "p99_frame_ms": 8.907374800000001,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 56.0,
+          "energy_joules": 153.3800948309865,
+          "average_battery_power_watts": 2.738930264839045,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            360,
+            360
+          ],
+          "temperature_peak_decic": 360
+        },
+        {
+          "phase": "scroll",
+          "pair": 3,
+          "uclamp": 0,
+          "sample": "scroll_03_00",
+          "cold_launch_ms": 249,
+          "preflight": {
+            "level": 49,
+            "temperature_decic": 360,
+            "thermal_status": 0
+          },
+          "swipes": 106,
+          "pair_temperature_decic": 360,
+          "pair_start_temperature_matched": true,
+          "frames": 6722,
+          "dropped_callbacks": 0,
+          "initial_refresh_hz": 120.00000762939453,
+          "sample_sha256": "c139ad88105fe2824eb5abfd2e0696ea18ce683c5ea63df973860013be5a5d7f",
+          "steady_frames": 6614,
+          "p50_frame_ms": 4.388358,
+          "p95_frame_ms": 5.565789949999999,
+          "p99_frame_ms": 6.206772749999999,
+          "deadline_miss_percent": 0.0,
+          "energy_window_seconds": 55.999999999999986,
+          "energy_joules": 153.21077944639507,
+          "average_battery_power_watts": 2.735906775828484,
+          "full_sample_charge_counter_drop_uah": 0,
+          "temperature_start_end_decic": [
+            360,
+            360
+          ],
+          "temperature_peak_decic": 360
+        }
+      ],
+      "comparisons": {
+        "launch": {
+          "excluded_pair_numbers": [
+            6
+          ],
+          "metrics": {
+            "cold_launch_ms": {
+              "pairs": 11,
+              "baseline_mean": 258.27272727272725,
+              "boost_mean": 252.54545454545453,
+              "boost_minus_baseline_by_pair": [
+                -1,
+                1,
+                23,
+                -13,
+                -6,
+                -10,
+                -16,
+                2,
+                -19,
+                -12,
+                -12
+              ],
+              "mean_difference": -5.7272727272727275,
+              "paired_bootstrap_mean_difference_95pct": [
+                -11.636363636363637,
+                1.5454545454545454
+              ],
+              "two_sided_paired_sign_flip_probability": 0.1455078125
+            }
+          }
+        },
+        "scroll": {
+          "excluded_pair_numbers": [],
+          "metrics": {
+            "p95_frame_ms": {
+              "pairs": 4,
+              "baseline_mean": 7.451210499999998,
+              "boost_mean": 7.948120299999999,
+              "boost_minus_baseline_by_pair": [
+                -0.05100850000000179,
+                -0.1434050499999966,
+                -0.3483413999999998,
+                2.5303941499999993
+              ],
+              "mean_difference": 0.4969098000000003,
+              "paired_bootstrap_mean_difference_95pct": [
+                -0.2740081750000003,
+                1.8619443500000004
+              ],
+              "two_sided_paired_sign_flip_probability": 1.0
+            },
+            "p99_frame_ms": {
+              "pairs": 4,
+              "baseline_mean": 8.2155663675,
+              "boost_mean": 8.754540865000001,
+              "boost_minus_baseline_by_pair": [
+                0.03580670000000019,
+                -0.3512044099999976,
+                -0.22930634999999633,
+                2.7006020500000023
+              ],
+              "mean_difference": 0.5389744975000021,
+              "paired_bootstrap_mean_difference_95pct": [
+                -0.29025537999999695,
+                1.9681249500000026
+              ],
+              "two_sided_paired_sign_flip_probability": 0.875
+            },
+            "deadline_miss_percent": {
+              "pairs": 4,
+              "baseline_mean": 0.003753190211679928,
+              "boost_mean": 0.003806913354652048,
+              "boost_minus_baseline_by_pair": [
+                -0.015012760846719712,
+                0.015227653418608192,
+                0.0,
+                0.0
+              ],
+              "mean_difference": 5.372314297212013e-05,
+              "paired_bootstrap_mean_difference_95pct": [
+                -0.011259570635039785,
+                0.011420740063956145
+              ],
+              "two_sided_paired_sign_flip_probability": 1.0
+            },
+            "average_battery_power_watts": {
+              "pairs": 4,
+              "baseline_mean": 2.7179864788793635,
+              "boost_mean": 2.691369512402561,
+              "boost_minus_baseline_by_pair": [
+                -0.0949174946173752,
+                -0.09806503409704437,
+                0.08349117379664905,
+                0.0030234890105607093
+              ],
+              "mean_difference": -0.02661696647680245,
+              "paired_bootstrap_mean_difference_95pct": [
+                -0.09649126435720978,
+                0.04325733140360488
+              ],
+              "two_sided_paired_sign_flip_probability": 0.5
+            },
+            "energy_joules": {
+              "pairs": 4,
+              "baseline_mean": 152.20724281724432,
+              "boost_mean": 150.71669269454344,
+              "boost_minus_baseline_by_pair": [
+                -5.315379698573025,
+                -5.491641909434435,
+                4.675505732612464,
+                0.16931538459144235
+              ],
+              "mean_difference": -1.4905501227008884,
+              "paired_bootstrap_mean_difference_95pct": [
+                -5.40351080400373,
+                2.4224105586019533
+              ],
+              "two_sided_paired_sign_flip_probability": 0.5
+            }
+          }
+        }
+      },
+      "limitations": [
+        "One synthetic app; cold process with warm filesystem caches.",
+        "Fuel gauge estimates, not an external power meter; charge counter is coarse.",
+        "Network ADB and synthetic input overhead are shared by both strategies.",
+        "Frame duration and deadline misses are not a full input-to-display latency measurement.",
+        "Paired runs, not individual frames, are independent comparison units.",
+        "Small sample exploratory statistics do not prove equivalence or general battery life.",
+        "Actual 60-second swipe counts varied 105..110 with host/network dispatch; not exactly matched useful work.",
+        "Fuel-gauge charge counter has coarse/delayed updates; counter drops were not used to claim fine energy accuracy.",
+        "One launch pair excluded for 1.0 C temperature mismatch; 11 launch and 4 scroll pairs remain."
+      ],
+      "rom_revision": "bd50b19",
+      "test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "framework_interaction_calibration": {
+        "type": "framework interaction only",
+        "launch_strategy": 0,
+        "interaction_strategy": 20,
+        "restored": true,
+        "samples": 100,
+        "maximum": 20.0,
+        "final": 0.0,
+        "passed": true
+      },
+      "decision": {
+        "adopt_extra_framework_boost": false,
+        "defaults": [
+          0,
+          0
+        ],
+        "reason": "No reliable repeatable launch, frame-time or energy improvement in this bounded synthetic workload; confidence intervals include zero. This is not an equivalence or all-app claim."
+      },
+      "private_evidence": {
+        "analysis_sha256": "303015bbe2ad62fd765e0044c2619b575c5dc7088cffdb2fcfaf694f98f60be6",
+        "progress_sha256": "98e157b6a70803dcaa9898180fd7198da0ad3363937b1750ad3d44e903994d0c",
+        "comparison_record": "private/performance-bd50b19/comparison/",
+        "raw_samples": "Each sample hash and paired preflight is listed in samples."
+      }
+    },
+    "post_test_state_bd50b19": {
+      "at": "2026-09-21T03:06:04.673487+00:00",
+      "revision": "bd50b19",
+      "incremental": "1789938387",
+      "slot": "_a",
+      "selinux": "Enforcing",
+      "transport": "authenticated network ADB",
+      "both_canaries_match": true,
+      "canary_sha256": "42a01216a9cc1ab6b510cb8be7444ca9f871c4c78c3b119f69bdd5057ef3a5f6",
+      "user_unlocked": true,
+      "power": "ready=1 enabled=1 dirty=0 requests=0 accepted=0 rejected=0 next_expiry_ms=9223372036854775807\nlaunch_uclamp=0 interaction_uclamp=0 backend_error=\neffective[0x00400000]=-1\neffective[0x00400100]=-1\neffective[0x00404000]=-1\neffective[0x00404100]=-1\neffective[0x01404300]=0\neffective[0x01408300]=0\n"
+    },
+    "test_cleanup_bd50b19": {
+      "at": "2026-09-21T03:09:26.984247+00:00",
+      "revision": "bd50b19",
+      "owned_apps": [
+        {
+          "package": "org.lineageos.gold.perfprobe",
+          "verified_apk_sha256": "40997b44c53383d8f260d20ce8e8588f6a404e75261e27f349997bece94a491f",
+          "uninstalled": true
+        },
+        {
+          "package": "org.lineageos.gold.hardwareprobe",
+          "verified_apk_sha256": "68e3352c6058c83436c6de48ba0fb6b2e0d827fc3bf42a944015fcc7c3cc5762",
+          "uninstalled": true
+        }
+      ],
+      "owned_temporary_directory_removed": "/data/local/tmp/gold-bd50b19-tests",
+      "removed_file_count": 8,
+      "user_keyattestation_app_retained": true,
+      "framework_boost_defaults": [
+        0,
+        0
+      ],
+      "live_power_requests": 0,
+      "canaries_untouched": true,
+      "no_user_app_data_cleared": true,
+      "adbd_root_restored_to_shell": true,
+      "authenticated_network_adb_after_unroot": true,
+      "adb_shell_uid": 2000,
+      "ro_adb_secure": 1,
+      "user_app_present_after_unroot": true,
+      "finished_at": "2026-09-21T03:17:33.891077+00:00",
+      "unroot_command_note": "Returned exit 0 with no text; actual subsequent shell UID 2000 verifies completion."
+    },
+    "hardware_bd50b19": {
+      "rom_revision": "bd50b19",
+      "test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "apk_sha256": "68e3352c6058c83436c6de48ba0fb6b2e0d827fc3bf42a944015fcc7c3cc5762",
+      "result": {
+        "schema_version": 1,
+        "keystore": [
+          {
+            "algorithm": "EC",
+            "security_level": 1,
+            "key_bits": 256,
+            "sign_verify_and_tamper_rejection": true
+          },
+          {
+            "algorithm": "RSA",
+            "security_level": 1,
+            "key_bits": 2048,
+            "sign_verify_and_tamper_rejection": true
+          },
+          {
+            "algorithm": "AES-GCM",
+            "security_level": 1,
+            "key_bits": 256,
+            "encrypt_decrypt_and_tamper_rejection": true
+          }
+        ],
+        "display": [
+          {
+            "requested_mode_id": 1,
+            "requested_hz": 60,
+            "observed_mode_id": 1,
+            "observed_hz": 60,
+            "vsync_samples": 91,
+            "median_vsync_hz": 61.23589216898265,
+            "mode_request_honored": true
+          },
+          {
+            "requested_mode_id": 2,
+            "requested_hz": 120.00000762939453,
+            "observed_mode_id": 2,
+            "observed_hz": 120.00000762939453,
+            "vsync_samples": 91,
+            "median_vsync_hz": 120.78096975040613,
+            "mode_request_honored": true
+          },
+          {
+            "requested_mode_id": 3,
+            "requested_hz": 90,
+            "observed_mode_id": 3,
+            "observed_hz": 90,
+            "vsync_samples": 91,
+            "median_vsync_hz": 90.92191916532224,
+            "mode_request_honored": true
+          }
+        ],
+        "density": 2.75,
+        "effective_dimensions_px": {
+          "android:rounded_corner_content_padding": 0,
+          "com.android.systemui:rounded_corner_content_padding": 55,
+          "com.android.systemui:status_bar_padding_start": 0,
+          "com.android.systemui:status_bar_padding_end": 0,
+          "com.android.systemui:status_bar_clock_starting_padding": 0,
+          "com.android.systemui:status_bar_icons_padding_end": 0
+        },
+        "completed": true,
+        "owned_keys_deleted": true,
+        "owned_key_count": 3
+      },
+      "client_domain": "untrusted_app",
+      "keymint_domain": "hal_keymint_default",
+      "keymint_instance": "android.hardware.security.keymint@3.0-service.mitee",
+      "global_selinux": "Enforcing",
+      "relevant_keymint_avcs": 0,
+      "scope": "Own app EC P-256/RSA-2048 signatures and AES-256-GCM with tamper rejection; TEE security level 1. Three generated keys deleted. No attestation, auth-bound keys, StrongBox or key export claim.",
+      "display_scope": "Window-only requested modes honored; Choreographer sampling is not a precision panel measurement. Global display settings unchanged.",
+      "systemui_visual_review": {
+        "portrait_and_landscape_viewed": true,
+        "present_clock_wifi_mobile_battery_icons_no_overlap_or_crop": true,
+        "effective_rounded_corner_padding_dp": 20,
+        "many_icons_overflow_rtl_not_tested": true,
+        "screenshots": {
+          "portrait": {
+            "screenshot_sha256": "9668ec8805f07a6f19d60c336e3f8d0746e6c8a3c51a3d6d20e45465d8f6ad94"
+          },
+          "landscape": {
+            "screenshot_sha256": "2650a6151d5ab4ff22cb919d2bbccf8bf01ee2e49449b4bddb4b71fc47bc4922"
+          }
+        }
+      }
+    },
+    "conntrack_bd50b19": {
+      "source_sha256": "981deda81fab32a21173f01598b70b400176fdc2eeb5779d97cadb25eacb8240",
+      "dex_sha256": "c7c117eb5a3b6574a1f17503c3120ff6f5f04f141561cc6703bdd43f77a55496",
+      "compiled": true,
+      "run_exit": 0,
+      "stderr": "",
+      "installed_apk_path": "/apex/com.android.tethering/priv-app/TetheringNext@BP4A.251205.006/TetheringNext.apk",
+      "installed_apk_sha256": "bb7ba7f6981c56f7b1b615521eb7cee70ac87f79b5813e62619e49878064c455",
+      "result": {
+        "passed": true,
+        "installed_parser_and_event_cases": 13,
+        "tcp_states": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          255
+        ],
+        "missing_and_malformed_fail_unknown": true,
+        "bpf_rule_lifecycle_tested": false
+      },
+      "rom_revision": "bd50b19",
+      "test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+      "scope": "Explicit installed TetheringNext APK class loader, actual parser and ConntrackEvent; synthetic messages only. No sockets or BPF writes; real dual-rule deletion and tethering offload remain untested."
+    },
+    "ui_checks_deferred_while_user_active": {
+      "at": "2026-09-21T03:12:51.731107+00:00",
+      "reason": "User is using the newly requested Key Attestation app; DeviceDiagnostics/OpenEUICC foreground UI tests have not been run.",
+      "user_requested_app": "io.github.vvb2060.keyattestation",
+      "installed_version": "1.8.4",
+      "installation_receipt": "private/user-app-keyattestation/installation.json",
+      "do_not_remove_with_probes": true
+    },
+    "additional_private_evidence_hashes": {
+      "hardware-bd50b19/result.json": "4fa7187e41f647779288eeef2550e26bdc2b55bbdbf45deabedc89ec7e8fe527",
+      "recovery-cache-bd50b19/result.json": "81c42b12099995be6bb2f4bcec2d5b8ef3635f4ccadaefb4089816810a71a21d",
+      "conntrack-bd50b19/result.json": "c3596f7c31f1ebb4dffe665a2f9e5f39cf2ca5a2357faf7a6442b73d68e08464",
+      "runtime-bd50b19/post-test-state.json": "66106b413a541795ed82bf6b286f8e4802a9bddcf6a55d915b8105d4def8ae6a",
+      "runtime-bd50b19/test-cleanup.json": "dc3114a7fa07adae20cd8faad14f48202ba4963416bb27e3b8b69ff1eb52d8bf",
+      "performance-bd50b19/interaction-calibration.json": "49f1668aaad0baa8d3e89141609fc413e43ae833bd328c2d3f126e46f90a98e8"
+    },
+    "runtime_labels_modules_bd50b19": {
+      "actual_property_contexts": {
+        "persist.vendor.ims_support": "vendor_mtk_ims_prop",
+        "vendor.camera.aux.packagelist": "vendor_persist_camera_prop",
+        "persist.vendor.pco5.radio.ctrl": "system_mtk_pco_prop"
+      },
+      "system_modules_link": "/system_dlkm/lib/modules",
+      "vendor_modules_link": "/vendor_dlkm/lib/modules",
+      "loaded_module_count": 421,
+      "shared_display_node": "root:root 0440 proc_displowpower",
+      "log_sha256": "a6fe800e98144816720e51b7db84e07adda6d1bf6cb49e0b4f660541561aa1df",
+      "scope": "Installed labels, links and loaded modules only; hardware path tests remain separately scoped."
     }
   },
   "retirement": {
@@ -2240,11 +4178,9 @@
     "stock_to_complete_ims_payload_rebuild": false,
     "missing_ims_rebuild_is_declared_prebuilt_limitation": true,
     "blocking_work": [
-      "bd50b19 Codec2 source-built AIDL frontend must compile and pass cold first-use/repeated lifecycle device tests; stock frontend ABI crash disproves prior equivalence",
-      "IMS registration/capabilities remain unready; effective carrier VoLTE false and eSIM voice plan unknown, despite backend/MMTEL initialization and reboot recovery passing on 2cca323",
-      "Power 2cca323 enforcing C ABI lifecycle/owner exit/HAL restart passed; new root-strategy/shell-dump fix and comparable launch/frame/energy trials remain pending",
-      "Wi-Fi PMF overlay installed; saved hotspots absent from fresh scan; association/DHCP/connectivity/reconnect/network ADB await test conditions",
-      "First user unlock needed for emulated-storage canary and affected hardware/UI acceptance; 2cca323 original boot, Recovery auto ADB, installer and independent B14 hashes passed"
+      "IMS registration and voice/video/UT/SMS capabilities remain unready; effective carrier VoLTE false and roaming eSIM voice qualification still unconfirmed. No authorization for real calls/SMS. Initialization and Recovery restoration passed on bd50b19.",
+      "Targeted remaining runtime acceptance: DeviceDiagnostics/OpenEUICC UI, real TCP/BPF offload recycling, device Recovery sideload/cache peak, relevant camera/media paths. Basic SystemUI/padding, 60/90/120 Hz and TEE cryptographic operations now passed in their stated scope.",
+      "Wi-Fi full internet validation and consistently automatic recovery remain separate from proven WPA3 association/DHCP/HTTPS/network ADB. Extra framework boost was measured without reliable benefit and remains disabled."
     ],
     "conditional_delete_paths": [
       "archive/hybrid/README.md",
@@ -2289,7 +4225,16 @@
       "Current source OverlayFS lower/upper/work, unique output and cache",
       "Historical images and unique inputs remain outside this round deletion scope"
     ],
-    "codec2_prior_equivalence_rejected_by_runtime_evidence": true
+    "codec2_prior_equivalence_rejected_by_runtime_evidence": true,
+    "preexisting_uncommitted_archive_changes": {
+      "observed_at": "2026-09-21T03:12:51.731107+00:00",
+      "local_paths": [
+        "archive/hybrid/README.md (modified)",
+        "archive/hybrid/patches/hardware__mediatek/0001-aidl-codec2-service.patch (deleted in working tree)"
+      ],
+      "handled_by_this_validation_commit": false,
+      "notes": "Observed after test work; preserved without staging, reverting or propagating. HEAD retains historical patch. The global delete-ready decision remains NOT_READY; remote original archive is retained."
+    }
   },
   "additional_completed_builds": [
     {
@@ -2643,7 +4588,7 @@
   },
   "power_implementation": {
     "revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
-    "android_compilation": "3cb28c3 Android compiled in 13:14; all 14 payload/29 actual-file gates passed; not installed",
+    "android_compilation": "3cb28c3 changes included in bd50b19 original-image build and runtime validation.",
     "single_service": "android.hardware.power-service.gold",
     "clients": "Native ARM and ARM64 C ABI forwards to synchronous HIDL 1.2; one shared engine with framework AIDL V6",
     "resources": [
@@ -2673,9 +4618,8 @@
       "record": "/srv/build/build-jobs/gold-mainline-20260920/ppm-matched-kernel-contract.json"
     },
     "remaining": [
-      "3cb28c3 root strategy gate and normal shell dump runtime verification on next candidate",
-      "matched-temperature launch/frame/energy trials and restoration evidence",
-      "real media private/core resources still explicitly unsupported; no unsupported success claim"
+      "No universal app/battery-life claim from the bounded 0/20 trial. Defaults remain 0/0.",
+      "Observed media shared display-idle and unmapped private/core resources remain explicitly unsupported; no fabricated success."
     ],
     "diagnostics": "64 in-memory caller/resource records, at most 64 words each; no package/activity/media strings; bounded private protocol warnings",
     "strategy_control": {
@@ -2683,10 +4627,10 @@
       "property_writer": "mtk_hal_power vendor domain",
       "shell_or_su_vendor_write_permission_added": false,
       "neverallow_exception_added": false,
-      "permission_and_runtime_validation": "3cb28c3 policy and Android gates passed; shell FIFO and root strategy changes not yet installed",
+      "permission_and_runtime_validation": "bd50b19: normal shell dump works; shell strategy rejected; UID 0 range-checked setter/restart/apply/reset passed in Enforcing.",
       "reload": "standard controlled service restart to refresh framework capability discovery; no vendor reload property trigger",
       "android_compilation_passed": true,
-      "device_verified": false
+      "device_verified": true
     },
     "shared_display_scalar": {
       "adopted": false,
@@ -2700,12 +4644,36 @@
     "backend_unavailable_behavior": "register controls, reject leases with ENODEV and do not advertise boosts; retry with cached display/idle/low-power and fresh thermal gates",
     "readback_reconciliation": "unchanged requests and expiry checks verify actual owned votes; backend suppresses redundant writes and restores drift before success",
     "root_probe_policy": "userdebug/eng only: mtk_hal_power may search su process directories and read/getattr/open su process files for starttime; no ptrace, production su access or vendor-property exception",
-    "runtime_kernel_writes_revision": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb"
+    "runtime_kernel_writes_revision": "bd50b19",
+    "observed_stock_resource_mapping": {
+      "at": "2026-09-21T02:55:57.965740+00:00",
+      "stock_version": "OS3.0.5.0.VNQMIXM",
+      "vendor_fingerprint": "Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.5.0.VNQMIXM:user/release-keys",
+      "powercontable_sha256": "65aaee56ebbaac0d1b713e77f8e5b659e064e5aaadc7f6a19f45b1f4e7083775",
+      "libpowerhal_sha256": "d60179983bff5af04635d348c8720a617cf9afcb10515683bc9f09170e5b4224",
+      "configured_command_count": 180,
+      "observed_media_requests": [
+        {
+          "id": "0x240c000",
+          "configured": true,
+          "mappings": [
+            "<CMD name=\"PERF_RES_DISP_IDLE_TIME\" id=\"0x0240C000\">\n        <Entry path=\"/proc/displowpower/idletime\" />\n        <Compare>more</Compare>\n        <MaxValue>1000000</MaxValue>\n        <MinValue>33</MinValue>\n    </CMD>\n    "
+          ]
+        },
+        {
+          "id": "0x1468000",
+          "configured": false,
+          "mappings": []
+        }
+      ],
+      "scope": "The configured stock resource table is evidence of configured mappings, not proof that the entire closed library cannot implement other IDs."
+    },
+    "measured_strategy_decision": "Do not adopt additional LAUNCH/INTERACTION uclamp20: no reliable repeatable benefit in measured workload."
   },
   "local_followup": {
     "revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
     "synced_to_research_host": true,
-    "synced_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "synced_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
     "sync_record": {
       "previous_project_commit": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
       "project_commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -2768,8 +4736,9 @@
       "retain matched MTK libraries, service identity and sandbox; add only observed crash reporter uname syscall",
       "Power root strategy gate uses immutable debug build type; bounded shell dump gets actual FIFO write permission"
     ],
-    "android_build_and_device_tests": "2cca323 unaided boot, recovery roundtrip, ARM/ARM64 C ABI and hardware lifecycle passed; Codec2 first-use crash failed. 3cb28c3 Android gates passed, not installed. bd50b19 Android build running.",
-    "next_sync": "Do not modify active remote project/source; only sync after terminal result and matching input audit."
+    "android_build_and_device_tests": "bd50b19 original-image build/install/readback/normal-Recovery boot, Codec2 lifecycle, real Power lifecycle/diagnostics, WPA3+HTTPS, and bounded power strategy comparison completed. See per-feature device records; IMS registration still not ready.",
+    "next_sync": "Test tools committed and fast-forwarded to research project; all 161 actual Android inputs still match bd50b19. Evidence-only update follows; no Android graph or build needed.",
+    "test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482"
   },
   "failed_builds": [
     {
@@ -2865,44 +4834,57 @@
   ],
   "latest_android_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
   "latest_candidate_validation": {
-    "source_revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
-    "validator_revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
-    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789936650390776063",
-    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3",
+    "source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "validator_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
     "validation_completed": true,
     "device_accepted": false,
     "ota": {
-      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3/lineage_gold-ota.zip",
-      "sha256": "2b4840d4bdc7bc358ebb87ce2fbdd21da04c75bdcce6b4f69a96a9fcf3b38228",
-      "bytes": 1174889970
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-ota.zip",
+      "sha256": "dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4",
+      "bytes": 1174891230
     },
     "target_files": {
-      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3/lineage_gold-target_files.zip",
-      "sha256": "e32739f2532f3c7fa8cdd5e85828642b48eae950f80ed3d51f5edbd8b5c25e1e",
-      "bytes": 2903015213
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-target_files.zip",
+      "sha256": "60a6521e89d36e99a3394fb81030d3e3f83da959f519869ab164409f97ef83df",
+      "bytes": 2903016483
     },
     "frozen_source_hashes": {
-      "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
       "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
-      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
-      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "tools/check-gold-package.py": "2770e2c322079c422ef469ead3e200fc95affda8d423f623920c501d1cb856e4",
+      "device/xiaomi/gold/codec2/Android.bp": "d2cff48f4d4d7ebe4f51710d201a1b9d72f8513b33733c1672877d959020577d",
+      "device/xiaomi/gold/codec2/gold-codec2-crash.policy": "a66ff0845e63e97d907792bcee057390c395fe94e0af56722d36bbb8ff5e4a6c",
+      "device/xiaomi/gold/codec2/service.cpp": "758fb36815a32e70534c7afd79b0845a91d745400e4dc72a5ff49684567712eb",
       "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
       "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
       "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
-      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
-      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
+      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626"
     },
     "host_tool_hashes": {
-      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
       "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
-      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
       "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
-      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
-      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
+      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669",
+      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
       "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
       "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
-      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
-      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
+      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875"
+    },
+    "host_library_hashes": {
+      "libvintf.so": "b7ec738659d20cf9644bdf7209219b2ba032b1e2a044a9dc050852d4c1dcbf32",
+      "libz-host.so": "db58a2e3aef638cf68b7ed3dde5ad70ceb1566ddbd84c6157d871ed695983ec3",
+      "libselinux.so": "7efcadf7e700573ec4b4bbf8757661a97c64b105da6e13767162421c7d125758",
+      "libpcre2.so": "6bb5df766288ad1a535913ebb07fe8c2c49f540f5ede092bd61410a06904f144",
+      "libbase.so": "873c30ca9cc59f925a8a414d3937c9cea174ec46dbe6a950c72ecca4f267d737",
+      "libtinyxml2.so": "a3bc9b798d3507f8e524fe8416c1ac1f8268f9cd3fc25751243907edfe63efb6",
+      "liblog.so": "5bdd1193cc34fbe37fdd6f640b7cb16359ae92c1b4993f9e55cd390d5d15bebb",
+      "libc++.so": "aab89aa18f9bec8e01c632b4230f4544fb6128b5d3df7ce6971c52b8c77bb11c"
     },
     "system_tool_hashes": {
       "readelf": "64c58e15274bbbb5153f31078e455e9e77ee5f51489e709bba5bb788ce9df2b0",
@@ -2915,13 +4897,13 @@
       "arm64/gold_power_nodes_test": "342714469661a39f6cb8b8ba0ec71d582ad5b7e09dee122e69fd2ff0aafffdc9"
     },
     "linux_native_tests_observed": {
-      "requests_passed": 27,
-      "nodes_engine_passed": 32
+      "gold_power_requests_test": 27,
+      "gold_power_nodes_test": 32
     },
-    "actual_image_files": 29,
+    "actual_image_files": 35,
     "payload_partitions": 14,
     "guard_restored_live": true,
-    "completed_at": "2026-09-20T20:58:19.938099+00:00"
+    "completed_at": "2026-09-21T01:07:44.570210+00:00"
   },
   "latest_completed_candidate_build_c36757a": {
     "unit": "gold-power-ims-r2-20260921.service",
@@ -3165,7 +5147,7 @@
   },
   "codec2_implementation": {
     "failed_candidate": "2cca32362fc5cd4b28ef840bd90f0e14f46b4ecb",
-    "runtime_stability_passed": false,
+    "runtime_stability_passed": true,
     "observed_fault": "SIGSEGV during first MTK AVC encoder creation in platform ComponentStore::reportComponentBirth map emplace; debuggerd then hit seccomp uname SIGSYS",
     "fault_library": "libcodec2_aidl.so",
     "fault_offset": "0x3da60",
@@ -3211,8 +5193,8 @@
     "legacy_workflow_executed": false,
     "stock_binary_removed_from_build_inputs": true,
     "stock_binary_file_deleted": false,
-    "android_compiled": false,
-    "new_candidate_runtime_verified": false,
+    "android_compiled": true,
+    "new_candidate_runtime_verified": true,
     "required_validation": [
       "first encoder creation after cold service start",
       "repeated create/destroy and hardware decode without service PID change or fatal signal",
@@ -3224,7 +5206,145 @@
       "codec2-stock-service-disassembly.txt": "89cdc91009e623ab3556f7db5609e6ea16ac4ba94961bb8ed922f08598a4e06c",
       "codec2-aidl-componentstore-dwarf.txt": "befd6575f62dbdf9a7b78865ac55528d45962aa5807603a00257283207837980",
       "codec-trace.3330": "d112a8162a6661f2572dd366fbb95dba7362b31f356329f223d252d37a1a6874"
-    }
+    },
+    "package_frontend_marker_verified": true,
+    "candidate_binary_sha256": "4ac9ea453b8e421cc9e4d54d84db94ae20a5c0080839adba517a974df4f2b46a",
+    "runtime_stability_revision": "bd50b19",
+    "runtime_scope": "3 cold service starts and 11 total AVC synthetic encode/decode lifecycles; 24 frames each; service PID stable; no related fatal signals; not all media hardware acceptance"
   },
-  "historical_completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965"
+  "historical_completed_candidate_revision": "97969dc34cdc15cc339d91938441d6ff3331c965",
+  "candidate_validation_3cb28c3": {
+    "source_revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
+    "validator_revision": "3cb28c3a7dae7a9f6c798b82665c9e4ef0fd31ef",
+    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789936650390776063",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3",
+    "validation_completed": true,
+    "device_accepted": false,
+    "ota": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3/lineage_gold-ota.zip",
+      "sha256": "2b4840d4bdc7bc358ebb87ce2fbdd21da04c75bdcce6b4f69a96a9fcf3b38228",
+      "bytes": 1174889970
+    },
+    "target_files": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-045747-3cb28c3/lineage_gold-target_files.zip",
+      "sha256": "e32739f2532f3c7fa8cdd5e85828642b48eae950f80ed3d51f5edbd8b5c25e1e",
+      "bytes": 2903015213
+    },
+    "frozen_source_hashes": {
+      "tools/check-gold-package.py": "4b2815e5efa2faf1a4a084218b73808f7e155b23679bb81e72234d4ec3b7ef71",
+      "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
+      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626",
+      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734"
+    },
+    "host_tool_hashes": {
+      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
+      "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
+      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+      "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
+      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875",
+      "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
+      "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
+      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669"
+    },
+    "system_tool_hashes": {
+      "readelf": "64c58e15274bbbb5153f31078e455e9e77ee5f51489e709bba5bb788ce9df2b0",
+      "debugfs": "1e83118cc9582afcad2711fbb7f40f56668adccb386d988cb6d9ad5c2d001049"
+    },
+    "test_binary_hashes": {
+      "arm/gold_power_requests_test": "664971f2e8d1fa6563cc74f452741d952bb5a66245d37663fd5afa80fcee5225",
+      "arm/gold_power_nodes_test": "b89532dd825addd27386958b206320b493a3668299d23aeffd7a47a285465c6d",
+      "arm64/gold_power_requests_test": "a3eb83896583cf84572c7d018ee30a5704c8072c14cf9962cdf90b67ffb6c2ca",
+      "arm64/gold_power_nodes_test": "342714469661a39f6cb8b8ba0ec71d582ad5b7e09dee122e69fd2ff0aafffdc9"
+    },
+    "linux_native_tests_observed": {
+      "requests_passed": 27,
+      "nodes_engine_passed": 32
+    },
+    "actual_image_files": 29,
+    "payload_partitions": 14,
+    "guard_restored_live": true,
+    "completed_at": "2026-09-20T20:58:19.938099+00:00"
+  },
+  "latest_completed_candidate_build_bd50b19": {
+    "unit": "gold-codec-r5-20260921.service",
+    "guard": "gold-codec-r5-vm-guard-20260921.service",
+    "commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "build_datetime": 1789938387,
+    "source": "/srv/build/migration/gold-architecture-20260914/source",
+    "out": "out-gold-standard",
+    "log": "/srv/build/logs/gold-codec-r5-20260921.log",
+    "records_before": [
+      "1789353186009140661",
+      "1789355968059835540",
+      "1789356597523890222",
+      "1789397823611175488",
+      "1789401150371178312",
+      "1789403686745335883",
+      "1789404209822755068",
+      "1789436071622690739",
+      "1789438870571140872",
+      "1789442945709903724",
+      "1789870292199957320",
+      "1789870972867912990",
+      "1789893347560759279",
+      "1789894178297235723",
+      "1789894861622125711",
+      "1789911389192271607",
+      "1789914079640672965",
+      "1789918353346734747",
+      "1789925665663472655",
+      "1789933740204304290",
+      "1789936650390776063"
+    ],
+    "phase": "Compile current-platform Codec2 AIDL frontend to remove reproduced 336 vs 352 byte allocation mismatch; preserve matched vendor store and policies",
+    "device_accepted": false,
+    "terminal_result": "success",
+    "source_audit_inputs": 161,
+    "source_audit_matches": true,
+    "resource_limits_verified": true,
+    "expected_actual_image_files": 35,
+    "build_exit_code": 0,
+    "android_elapsed": "01:27:20",
+    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+    "guard_restored_live": true,
+    "actual_image_files": 35,
+    "payload_partitions": 14
+  },
+  "latest_test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+  "mainline_test_sync": {
+    "at": "2026-09-21T03:19:16.180146+00:00",
+    "previous_project_commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "project_commit": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+    "production_android_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "changed_paths": [
+      "docs/ADAPTATION.md",
+      "docs/BUILD.md",
+      "docs/STATUS.md",
+      "tests/android/GoldConntrackProbe.java",
+      "tests/android/GoldHardwareProbe/AndroidManifest.xml",
+      "tests/android/GoldHardwareProbe/MainActivity.java",
+      "tests/android/GoldMediaDecodeProbe.java",
+      "tests/android/GoldPerfProbe/AndroidManifest.xml",
+      "tests/android/GoldPerfProbe/MainActivity.java",
+      "tests/android/GoldWifiReconnect.java",
+      "tests/native/RecoveryCacheProbe.cpp",
+      "tools/analyze-power-strategies.py",
+      "tools/build-device-probe.py",
+      "tools/measure-power-strategies.py",
+      "validation/mainline-convergence-20260920.json"
+    ],
+    "source_audit_matches": true,
+    "source_files_checked": 161,
+    "remote_archive_untouched": true,
+    "android_build_started": false,
+    "new_output_created": false
+  }
 }
