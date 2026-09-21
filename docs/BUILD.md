@@ -87,6 +87,8 @@ Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数�
 
 同一探针支持 `--roundtrip <专属测试目录> <1..20轮>`：每轮用 MTK AVC 编码器生成 24 帧 640×360 的合成 YUV，使用实际 plane stride 写入，封装到独占临时文件后再硬件解码，要求编码／解码帧数和 EOS 一致。每段排队循环限 20 秒；协调者还应使用外层进程超时，覆盖组件创建／释放可能阻塞的情况。它不读取用户媒体，每轮清理自己的片段；异常中止后由协调者清理专属目录。服务冷启动后的第一轮和同进程多轮分别验收，并监测 Codec2 服务 PID、原始故障日志和 AVC；客户端内部重试导致 PID 变化，即使探针返回成功也不能通过稳定性验收。
 
+已授权的 Wi-Fi 重连可使用 `tests/android/GoldWifiReconnect.java`，沿用上述 javac／d8 准备方法。先用 `cmd wifi list-networks` 核实目标是用户指定的已保存网络，再以临时 adb root 执行 `CLASSPATH=<dex> app_process /system/bin GoldWifiReconnect <network-id>`。它按方法名调用当前框架的网络选择接口，不读取或替换凭据，不强制网络验证结果。`SELECTION_REQUEST_ACCEPTED` 仅表示请求已受理，必须另验关联、DHCP、联网、自动重连和网络 ADB。若框架因互联网探测失败禁止自动连接，要把显式重选与自动恢复分开记录，不能用前者冒充后者；结束后删除自己的 dex。
+
 Codec2 的 AIDL 服务入口由 `device/xiaomi/gold/codec2/` 编译，继续调用匹配 Global 的 MTK codec store／编解码库，保留原有服务路径、身份和唯一 AIDL 声明。固定原厂入口在 0x3c2c 只分配 336 字节，当前 `libcodec2_aidl` 的 `ComponentStore` 实际需要 352 字节；实机首次编码已在组件表插入处崩溃。因此不能再把原厂可执行文件直接当作当前平台 ABI 兼容输入，也不能手工改一个分配常数替代源码编译。原 seccomp 规则继续生效，仅按实际崩溃报告被二次 SIGSYS 中断的证据追加只读 `uname`。验收需覆盖服务冷启动后的首次编码、多次创建／销毁及解码，核对 PID、信号与日志；客户端自动重试后成功不算无崩溃通过。
 
 在已有明确设备授权内，正常系统的标准 `update_engine_client` 可以安装已签名的完整 A/B OTA，避免为升级临时进入旧 Recovery。首先核对显式 ADB 序号、gold 身份、当前槽位／incremental、剩余空间和电量、签名证书与已装 `otacerts.zip`、snapshot state none，以及 `timeout 2 update_engine_client --follow` 回调的 `UPDATE_STATUS_IDLE (0)`。该只读跟随因超时退出 124 属于预期；此版本没有 `--status` 参数。加密用户未首次解锁时，共享存储保留文件只能记作待核验，不能误报为丢失。
