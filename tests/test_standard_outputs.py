@@ -265,5 +265,26 @@ class ProductPackagingOrderTest(unittest.TestCase):
         self.assertEqual(stages[-1]['exit_code'], 23)
 
 
+class OtaScratchTest(unittest.TestCase):
+    def test_default_does_not_select_an_external_directory(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertIsNone(BUILD.ota_temp_directory())
+
+    def test_private_owned_directory_is_recorded(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary).resolve()
+            with patch.dict(os.environ, {'GOLD_OTA_TMPDIR': str(path)}):
+                self.assertEqual(BUILD.ota_temp_directory(), str(path))
+
+    def test_relative_missing_shared_or_symlinked_directory_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            shared = root / 'shared'; shared.mkdir(mode=0o755)
+            link = root / 'link'; link.symlink_to(root, target_is_directory=True)
+            for path in ['relative', root / 'missing', shared, link]:
+                with self.subTest(path=path), patch.dict(os.environ, {'GOLD_OTA_TMPDIR': str(path)}), self.assertRaises(ValueError):
+                    BUILD.ota_temp_directory()
+
+
 if __name__ == '__main__':
     unittest.main()

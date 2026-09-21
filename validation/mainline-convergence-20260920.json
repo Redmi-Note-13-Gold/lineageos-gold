@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T18:18:46.583110+00:00",
+  "updated_at": "2026-09-21T18:44:17.593437+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6097,10 +6097,10 @@
       "device/xiaomi/gold/device.mk"
     ],
     "reason": "Stock-backed WPA3 SoftAP SAE fix plus user-requested OpenEUICC/eSIM removal",
-    "merged_input_count": 165,
+    "merged_input_count": 166,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r2"
+    "build_job_prefix": "no-euicc-r3"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6229,6 +6229,82 @@
       "all_artifact_validators_retained": true,
       "host_tests_passed": 95,
       "merged_android_inputs_unchanged": 165
+    },
+    "second_build_terminal": {
+      "recorded_at": "2026-09-21T18:44:16.045975+00:00",
+      "source_revision": "6d7aa42542a3f06faabcaaa1ef36c5de57c12a9b",
+      "entry_exit_code": 1,
+      "android_build_exit_code": 1,
+      "android_elapsed": "12:05",
+      "direct_error": "OTA zip2zip temporary file: no space left on device",
+      "failed_stage": "bacon",
+      "target_files_stage_started": false,
+      "service_manager_events": {
+        "gold-no-euicc-20260922-r2.service": [
+          {
+            "UNIT": "gold-no-euicc-20260922-r2.service",
+            "MESSAGE": "Started gold-no-euicc-20260922-r2.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r2.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "__REALTIME_TIMESTAMP": "1790014877861397"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r2.service",
+            "MESSAGE": "gold-no-euicc-20260922-r2.service: Main process exited, code=exited, status=1/FAILURE",
+            "MESSAGE_ID": "98e322203f7a4ed290d09fe03c09fe15",
+            "__REALTIME_TIMESTAMP": "1790015666554732"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r2.service",
+            "MESSAGE": "gold-no-euicc-20260922-r2.service: Failed with result 'exit-code'.",
+            "MESSAGE_ID": "d9b373ed55a64feb8242e02dbe79a49c",
+            "__REALTIME_TIMESTAMP": "1790015666565495"
+          },
+          {
+            "UNIT": "gold-no-euicc-20260922-r2.service",
+            "MESSAGE": "gold-no-euicc-20260922-r2.service: Consumed 33min 27.078s CPU time, 1.3G memory peak, 0B memory swap peak.",
+            "MESSAGE_ID": "ae8f7b866b0347b9af31fe1c80b127c0",
+            "__REALTIME_TIMESTAMP": "1790015666569040"
+          }
+        ],
+        "gold-no-euicc-vm-guard-20260922-r2.service": [
+          {
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r2.service",
+            "MESSAGE": "Started gold-no-euicc-vm-guard-20260922-r2.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r2.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "__REALTIME_TIMESTAMP": "1790014877868063"
+          },
+          {
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r2.service",
+            "MESSAGE": "gold-no-euicc-vm-guard-20260922-r2.service: Deactivated successfully.",
+            "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+            "__REALTIME_TIMESTAMP": "1790015678013443"
+          }
+        ]
+      },
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "temporary_host_tools_absent": true,
+      "kernel_oom_lines": [],
+      "device_operated": false,
+      "candidate_created": false,
+      "prior_peak_estimate_insufficient": true
+    },
+    "ota_temporary_storage_fix": {
+      "make_revision": "5a841be38fec92de9a8a408cf5812ca748ccc02e",
+      "patch": "patches/build__make/0001-ota-temporary-directory.patch",
+      "variable": "GOLD_OTA_TMPDIR",
+      "default_unchanged": true,
+      "actual_macro_test_passed": true,
+      "ninja_sandbox_already_permits_tmp": true,
+      "new_merged_input_count": 166,
+      "final_package_not_yet_accepted": true,
+      "python_host_tests_passed": 98,
+      "prior_165_inputs_byte_identical": true,
+      "managed_projects": 9
     }
   }
 }

@@ -8,6 +8,14 @@
     ]
   },
   {
+    "path": "build/make",
+    "url": "https://github.com/LineageOS/android_build",
+    "revision": "5a841be38fec92de9a8a408cf5812ca748ccc02e",
+    "patches": [
+      "patches/build__make/0001-ota-temporary-directory.patch"
+    ]
+  },
+  {
     "path": "build/soong",
     "url": "https://github.com/LineageOS/android_build_soong",
     "revision": "9aa045a2aef10b8089e32e847fed26d9aa3d61be",

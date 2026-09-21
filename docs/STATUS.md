@@ -1,6 +1,6 @@
 更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版首轮在 target-files 打包时因空间不足失败，现修复打包顺序后准备原输出续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版前两轮分别在 target-files 和 OTA 临时 ZIP 阶段因空间不足失败；顺序打包之外，现增加专属系统盘临时目录，准备复用原输出第三次续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -46,7 +46,7 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 ## 构建与工程证据
 
-本轮移除后，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
+eSIM 移除时，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
 
 本次已装候选的 Android r2 构建成功，02:36:40；原入口于 22:14:26 +08 exit 1，因检查器固定四空格缩进误拒绝正确 OpenEUICC 路由。`00be34a` 修正层级解析，91 项测试、原 ZIP 和冻结工具独立复验均通过，未改 Android 输入或 ZIP，也未改写原失败结果。168 项输入一致，签名/VINTF/SELinux、14 payload / 38 实际镜像文件通过。OTA SHA-256 `22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb`；target-files `7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c`。
 
@@ -103,3 +103,5 @@ SHA-256 见 [IMS 修正版校验清单](../validation/ims-build-20260920-SHA256S
 - 关机充电图案曾由用户在包含相同永久修复的诊断版确认；最终清理版的完整插电循环及熄屏唤醒仍需测试。
 
 WPA3 下一轮任务记录使用 `jobs/gold-mainline-20260920/wpa3-r1-build-request.json` / `wpa3-r1-build-result.json`；是否实际启动、终态与 VM 恢复以实时服务和这些记录为准。该构建不授予重启当前手机的权限。
+
+2026-09-22续编r2于02:34:26入口exit1，bacon阶段12:05；OTA zip2zip自身临时副本仍触发ENOSPC，target-files阶段未启动。guard02:34:37恢复VM并清理工具；旧峰值估算不足。新增可选OTA系统盘临时目录补丁并准备r3：98项主机测试、实际Make宏默认/覆盖/含空格路径检查通过；合并输入166项/9个受管项目，原165项字节不变，只增加build/make主机打包规则。最终包尚未验收；手机和网络未动。

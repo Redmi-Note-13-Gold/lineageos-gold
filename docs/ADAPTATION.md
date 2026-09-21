@@ -156,3 +156,5 @@ Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完�
 用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和WPA3启动/客户端认证仍待进行。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
 
 用户最新要求不再重启手机以保持网络连接；Recovery往返及后续安装暂不执行，移动数据仍保持关闭，IMS仍最后处理。
+
+OTA打包临时空间：`patches/build__make/0001-ota-temporary-directory.patch` 在固定build/make提交上为OTA命令增加可选 `GOLD_OTA_TMPDIR`，由主机入口校验私有目录；不改变分区内容或输出位置。未设置时保持上游TMPDIR。新增一个实际构建输入后为166项/9个受管项目，原165项功能输入字节不变；新包和设备验收仍以同次证据为准。

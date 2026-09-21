@@ -65,6 +65,20 @@ def host_zip_tools():
     return tools
 
 
+
+def ota_temp_directory():
+    """Optional private host scratch; lifecycle belongs to the invoking job."""
+    value = os.environ.get('GOLD_OTA_TMPDIR')
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute() or path.is_symlink() or not path.is_dir():
+        raise ValueError('GOLD_OTA_TMPDIR must be an existing absolute real directory')
+    if path.stat().st_uid != os.geteuid() or path.stat().st_mode & 0o077:
+        raise ValueError('GOLD_OTA_TMPDIR must be private and owned by the build user')
+    return str(path.resolve())
+
+
 def output_path(tree, requested=None):
     # This pinned Soong tree feeds host output paths into module-relative data
     # paths. Keep OUT_DIR inside the source tree and pass its relative spelling.
@@ -173,6 +187,7 @@ def main():
         if enabled(os.environ.get(name, '')):
             parser.error('Remove build bypass environment flag: ' + name)
     plan['host_zip_tools'] = host_zip_tools()
+    plan['ota_temp_dir'] = ota_temp_directory()
     with (tree / '.repo/gold-source-build.lock').open('a') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -250,7 +265,7 @@ def main():
             with (record_dir / 'gold-package.json').open('w') as report:
                 subprocess.run(['python3', str(REPO / 'tools/check-gold-package.py'),
                                 '--target-files', str(target), '--aapt2', str(host_bin / 'aapt2'),
-                                '--image-tools', str(host_bin), '--scratch-parent', str(record_dir)],
+                                '--image-tools', str(host_bin), '--scratch-parent', plan['ota_temp_dir'] or str(record_dir)],
                                cwd=tree, env=verify_env, stdout=report, check=True)
             result_record['gold_package_verified'] = True
         except (ValueError, OSError, KeyError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:
