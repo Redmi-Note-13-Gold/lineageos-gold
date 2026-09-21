@@ -23,7 +23,7 @@ python3 /path/to/lineageos-gold/tools/apply-patches.py /path/to/android --apply
 
 默认只检查；显式应用前检查各目标项目固定提交、工作区及补丁。执行后，device 采用本仓库完整源码，平台只应用 `patches/series.json` 中的差异，vendor 仅复制本项目 IMS 集成源码。已有未记录文件不应被覆盖；被中断的应用需先检查工作区，不要直接重复套补丁或清理。
 
-必要的只读启动观察工具及回归测试已归入 `tools/capture_boot.py` 和 `tests/test_capture_boot.py`。本项目目录中没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁归档在 `archive/hybrid/`，不属于源码恢复步骤。
+必要的只读启动观察工具及回归测试已归入 `tools/capture_boot.py` 和 `tests/test_capture_boot.py`。本项目目录中没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁已退出工作树；追溯时读取 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 的 `archive/hybrid/` 原路径，恢复和构建均不需要检出或执行它们。
 
 ## 准备厂商组件并构建
 

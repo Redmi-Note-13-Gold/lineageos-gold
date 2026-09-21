@@ -16,12 +16,11 @@ lineageos-gold/
 ├── docs/                    当前最终文档
 │   └── releases/CN-R1.md    已发布 CN 版本最终说明
 ├── validation/              最终构建/安装/实机证据与本轮审查摘要
-├── archive/hybrid/          v1 Python 参考代码；不参与当前构建
 ├── LICENSES/
 └── NOTICE.md
 ```
 
-中间迁移、调试、失败尝试文档和重复的中间 JSON 已从当前检出移除，历史由 Git 保存。除明确锁定的 IMS prebuilt 外，源码仓库不保存生成的厂商组件；用户日志和密钥不入 Git。
+旧 hybrid 运行代码、内部补丁和重复测试已按用户后续授权从当前检出移除，15 个原路径及依据见 ADAPTATION.md；历史由 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 保存。中间迁移、调试、失败尝试文档和重复的中间 JSON 也不作为第二套工程保留。除明确锁定的 IMS prebuilt 外，源码仓库不保存生成的厂商组件；用户日志和密钥不入 Git。
 
 ## 科研机
 

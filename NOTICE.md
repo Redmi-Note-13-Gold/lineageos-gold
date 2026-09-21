@@ -15,7 +15,7 @@
 
 Apache-2.0 完整文本见 `LICENSES/Apache-2.0.txt`。修改补丁的许可随其所修改代码的适用条款，不能从此目录的存在推断整个 Android/厂商代码都可按同一许可使用。
 
-本仓库源码树发布源码差异、集成工具及验证摘要，不纳入厂商二进制。配套测试 ROM 和官方底层组件通过单独的 Pre-release 提供，具体内容、来源和未验收项目以该 Release 说明为准；不将厂商二进制称为开源源码，也不声明重新许可第三方组件。设备原始日志、私人密钥、云账号资料和个人标识不在发布范围。
+本仓库管理源码差异、集成工具及验证摘要，并明确保留带版本和哈希的闭源 IMS APK 输入；该输入的来源与重建限制见 vendor/xiaomi/gold/ims/input.json，不声明拥有或重新许可厂商代码。配套测试 ROM 和官方底层组件通过单独的 Pre-release 提供，具体内容、来源和未验收项目以该 Release 说明为准；不将厂商二进制称为开源源码，也不声明重新许可第三方组件。设备原始日志、私人密钥、云账号资料和个人标识不在发布范围。
 
 ## 致谢
 
@@ -27,7 +27,7 @@ Apache-2.0 完整文本见 `LICENSES/Apache-2.0.txt`。修改补丁的许可随�
 
 本次提取规则参考 Dhterech/android_device_xiaomi_gold 的固定提交 [`05f3e97ecf196e7f912cbcf7d1e93fa32958cf98`](https://github.com/Dhterech/android_device_xiaomi_gold/commit/05f3e97ecf196e7f912cbcf7d1e93fa32958cf98)。保留原始版权；参考文件哈希、实际原包与差异记录在 `device/xiaomi/gold/proprietary-source.json`。设备启动配置以实际 Global Recovery 的分区和 header 核验为准，未将参考仓库的开发绕过配置直接迁入。
 
-Global 内核与厂商固件来自锁定的 OS3.0.5.0.VNQMIXM 官方 Recovery。旧镜像修复工具和来源保留于 `archive/hybrid/`，不再参与主构建。
+Global 内核与厂商固件来自锁定的 OS3.0.5.0.VNQMIXM 官方 Recovery。旧镜像修复工具已退出工作树，来源仍可从 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 的 `archive/hybrid/` 原路径审计；当前构建不执行旧工具。
 
 ## 2026-09-20 参考更新
 

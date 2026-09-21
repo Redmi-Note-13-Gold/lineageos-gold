@@ -1,10 +1,10 @@
 # 适配来源与取舍
 
-本轮接手基线 `462fab1`，未回退。当前手机为 bd50b19 原镜像 A 槽、incremental 1789938387：保数据 OTA、安装器与独立回读各 14 项、正常启动、两份 canary 和 Recovery 自动 ADB 往返通过。Codec2 的 336／352 字节 ABI 修复已独立通过 3 次冷服务启动与 11 轮编解码；Power 生命周期、节点和诊断入口复验通过。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 `e14a7fa` 与 `archive/hybrid/`。
+本轮接手基线 `462fab1`，未回退。当前手机为 bd50b19 原镜像 A 槽、incremental 1789938387：保数据 OTA、安装器与独立回读各 14 项、正常启动、两份 canary 和 Recovery 自动 ADB 往返通过。Codec2 的 336／352 字节 ABI 修复已独立通过 3 次冷服务启动与 11 轮编解码；Power 生命周期、节点和诊断入口复验通过。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`。
 
 ## 旧版到主线的完整收敛对照
 
-对照 Git `e14a7fa` 与 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。五份平台补丁逐字一致，97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
+对照 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。五份平台补丁逐字一致，97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
 
 | 旧版项目／解决的问题 | 旧版实际证据及边界 | 主线实现与位置 | 决定 | 仍缺的验证 | 是否依赖旧流程／旧产物 |
 |---|---|---|---|---|---|
@@ -36,11 +36,20 @@
 | 只读启动观察／槽位判定 | 旧观察工具有 36 项模拟测试 | 主线 `tools/capture_boot.py` 与测试；无 archive 的 3dcd922 新导出通过 75 项且 IMS 哈希匹配 | 归入主线保留 | bd50b19 两次 A 槽启动观察 exit 0、各稳定超过 20 秒；c36757a 原始启动失败仍保留，不把临时 DAC 当成功 | 不需要归档路径 |
 | MDDP WH／全运营商 IMS／持续性能 | 旧记录没有 WH modem 能力位，也未完成这些完整验收 | 不伪造 WH、不全局强制 carrier override；性能按测量决定 | MDDP 无依据功能不导入；其余如实保留未完成状态 | 实际能力与测试条件 | 不作为旧版已通过的遗失能力 |
 
-**当前结论：尚不可删除。** 主线入口不调用旧拼装。bd50b19 的安装／A14 回读、两次启动、两份保留文件、Recovery、Codec2 冷启动／反复创建、实际 Power 生命周期与诊断、Wi-Fi 关联／HTTPS 和网络 ADB 已通过相应层次。仍缺 IMS 注册／实际能力、Android Recovery 侧载峰值、实际 BPF 回收与部分界面／媒体验收；已测的额外 boost 无可靠收益，保留默认 0／0；Wi-Fi 完整网络验证及一致自动恢复不能由一次手动重选代替。以下路径是条件删除清单。本验收未执行删除；本机另有未提交的归档 README 修改与旧 Codec2 patch 工作树删除，未纳入本验收提交或同步，远端仍保留。
+**当前结论：旧 hybrid 运行代码已按用户后续明确授权退出工作树，完整功能验收仍未完成。** 当前维护、构建和验证入口不调用旧拼装。bd50b19 的构建、安装、回读、启动、Codec2 和 Power 等通过范围保持不变；IMS 注册／实际能力、Android Recovery 侧载峰值、实际 BPF 回收和部分界面／媒体验收仍按上表跟进。删除不将这些项目改记为通过，也不宣称完成从零 Android 全量重建。
 
-- 本机仓库 `archive/hybrid/`：`README.md`、`stock/vendor-compat.patch`、`patches/hardware__mediatek/0001-aidl-codec2-service.patch`，以及 `tools/` 下 `build-recovery.py`、`build-stock-base.py`、`verify-stock-base.py`、`hybrid_policy.py`、`hybrid_properties.py`、`hybrid_modules.py`、`hybrid_zygote.py`、`capture_boot.py` 和四份测试 `test_capture_boot.py`、`test_hybrid_modules.py`、`test_hybrid_properties.py`、`test_hybrid_zygote.py`。镜像修补功能由上表标准源码／构建替代，唯一需保留的观察工具和测试已经归入主线。
-- 科研机集成仓库同名 `project/archive/hybrid/`：与本机受管代码相同；实际合并源码没有此处运行依赖。已盘点科研机任务、systemd、project、history、vendor 中 211 份脚本；相关运行引用只在归档自身，未发现指向 history/hybrid 的符号链接。本机脚本及自动化也未发现归档运行引用。盘点排除原始 dump、proprietary 和镜像目录；其中的历史镜像／唯一输入仍须保留，不能把整个 `history/`、`vendor/` 或 OverlayFS 层当作删除候选。
-- 主线仍保留 `prepare-stock.py`、`prepare-vendor.py`、`extract-files.py`、`setup-makefiles.py`、`apply-patches.py`、`build-source.py`、各 `check-*.py`、`capture_boot.py` 和 IMS 兼容验证工具。Python 语言不是删除依据。
+2026-09-21 用户在区分运行依赖与功能验收后明确要求删除不再需要的旧实现。下列 15 个受管文件已成组移除（旧 Codec2 补丁此前已局部删除）；原内容可从 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 的同名路径读取，不复制另一套可运行工程：
+
+- `archive/hybrid/README.md`：当前说明统一到本文件及 STATUS/LAYOUT。
+- `archive/hybrid/patches/hardware__mediatek/0001-aidl-codec2-service.patch`：主线当前平台 AIDL 入口已完成针对性构建和设备生命周期验证。
+- `archive/hybrid/stock/vendor-compat.patch`，以及 `archive/hybrid/tools/` 下的 `build-stock-base.py`、`verify-stock-base.py`、`build-recovery.py`、`hybrid_policy.py`、`hybrid_properties.py`、`hybrid_modules.py`：标准源码策略、镜像/DLKM生成和产物校验已接管；内部调用者与补丁一并退役。
+- 同一旧 tools 目录的 `hybrid_zygote.py`、`test_hybrid_zygote.py`：双 zygote 应用兼容已明确放弃，底层 ARM 库仍由主线保留。
+- 同一旧 tools 目录的 `capture_boot.py`、`test_capture_boot.py`：观察工具与主线逐字一致，测试差异仅为主线导入路径，当前工具及测试继续维护。
+- 同一旧 tools 目录的 `test_hybrid_modules.py`、`test_hybrid_properties.py`：只验证已退役的镜像修补实现，与对应旧实现一起退出。
+
+科研机执行与验证记录：`/srv/build/build-jobs/gold-mainline-20260920/archive-retirement-20260921.json`。核验包括归档外运行引用、当前主机工具测试、固定 IMS 输入及 161 项实际合并输入；设备 README 只更新历史定位，编译配置、服务源码、输出、OverlayFS 和缓存保持原状。历史镜像、官方输入、Git 历史及所有许可证继续保留。若交互终端仍位于原目录，可暂留空目录；它不包含可运行旧流程。
+
+主线继续维护 `prepare-stock.py`、`prepare-vendor.py`、`extract-files.py`、`setup-makefiles.py`、`apply-patches.py`、`build-source.py`、各 `check-*.py`、`capture_boot.py`、IMS 兼容工具和测试。Python 语言不是删除依据。
 
 ## Dhterech 参考
 

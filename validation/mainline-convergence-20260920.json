@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T03:20:29.191041+00:00",
+  "updated_at": "2026-09-21T03:39:34.134670+00:00",
   "task_state": "implementation_and_validation_in_progress_NOT_READY",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -4172,7 +4172,7 @@
     }
   },
   "retirement": {
-    "status": "NOT_READY",
+    "status": "ARCHIVE_REMOVED_FUNCTIONAL_ACCEPTANCE_PENDING",
     "old_workflow_executed_for_candidate": false,
     "managed_ims_prebuilt_available_in_mainline_git": true,
     "stock_to_complete_ims_payload_rebuild": false,
@@ -4182,7 +4182,10 @@
       "Targeted remaining runtime acceptance: DeviceDiagnostics/OpenEUICC UI, real TCP/BPF offload recycling, device Recovery sideload/cache peak, relevant camera/media paths. Basic SystemUI/padding, 60/90/120 Hz and TEE cryptographic operations now passed in their stated scope.",
       "Wi-Fi full internet validation and consistently automatic recovery remain separate from proven WPA3 association/DHCP/HTTPS/network ADB. Extra framework boost was measured without reliable benefit and remains disabled."
     ],
-    "conditional_delete_paths": [
+    "conditional_delete_paths": [],
+    "local_repository": "/Users/betterr/Documents/Codex/2026-09-20/m-q/work/lineageos-gold",
+    "remote_repository": "/srv/build/migration/gold-architecture-20260914/project",
+    "deleted_this_task": [
       "archive/hybrid/README.md",
       "archive/hybrid/patches/hardware__mediatek/0001-aidl-codec2-service.patch",
       "archive/hybrid/stock/vendor-compat.patch",
@@ -4199,9 +4202,6 @@
       "archive/hybrid/tools/test_hybrid_zygote.py",
       "archive/hybrid/tools/verify-stock-base.py"
     ],
-    "local_repository": "/Users/betterr/Documents/Codex/2026-09-20/m-q/work/lineageos-gold",
-    "remote_repository": "/srv/build/migration/gold-architecture-20260914/project",
-    "deleted_this_task": [],
     "runtime_reference_audit": {
       "remote_script_count": 211,
       "references_only_in_archive_hybrid": true,
@@ -4233,7 +4233,45 @@
         "archive/hybrid/patches/hardware__mediatek/0001-aidl-codec2-service.patch (deleted in working tree)"
       ],
       "handled_by_this_validation_commit": false,
-      "notes": "Observed after test work; preserved without staging, reverting or propagating. HEAD retains historical patch. The global delete-ready decision remains NOT_READY; remote original archive is retained."
+      "notes": "Historical observation retained; no longer describes current archive state.",
+      "subsequently_resolved": "Included in the user-authorized grouped retirement; local and research-server tracked trees are synchronized."
+    },
+    "functional_acceptance_status": "NOT_READY",
+    "removed_paths": [
+      "archive/hybrid/README.md",
+      "archive/hybrid/patches/hardware__mediatek/0001-aidl-codec2-service.patch",
+      "archive/hybrid/stock/vendor-compat.patch",
+      "archive/hybrid/tools/build-recovery.py",
+      "archive/hybrid/tools/build-stock-base.py",
+      "archive/hybrid/tools/capture_boot.py",
+      "archive/hybrid/tools/hybrid_modules.py",
+      "archive/hybrid/tools/hybrid_policy.py",
+      "archive/hybrid/tools/hybrid_properties.py",
+      "archive/hybrid/tools/hybrid_zygote.py",
+      "archive/hybrid/tools/test_capture_boot.py",
+      "archive/hybrid/tools/test_hybrid_modules.py",
+      "archive/hybrid/tools/test_hybrid_properties.py",
+      "archive/hybrid/tools/test_hybrid_zygote.py",
+      "archive/hybrid/tools/verify-stock-base.py"
+    ],
+    "deletion_authorization": "User explicitly requested removing the no-longer-needed legacy implementations after reviewing remaining functional acceptance; research server is authoritative.",
+    "deletion_record": "/srv/build/build-jobs/gold-mainline-20260920/archive-retirement-20260921.json",
+    "history_commit": "0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f",
+    "deletion_does_not_complete_functional_acceptance": true,
+    "archive_removal_verification": {
+      "status": "passed",
+      "record": "/srv/build/build-jobs/gold-mainline-20260920/archive-retirement-20260921.json",
+      "research_server_python_tests": 75,
+      "skipped_tests": 0,
+      "merged_source_files_checked": 161,
+      "merged_documentation_only_change": "device/xiaomi/gold/README.md",
+      "production_code_and_build_configuration_changed": false,
+      "ims_input_hash_matches": true,
+      "archive_executable_files_remaining": 0,
+      "runtime_references_outside_retired_group": 0,
+      "full_android_rebuild_performed": false,
+      "device_tests_rerun": false,
+      "historical_images_or_unique_inputs_deleted": false
     }
   },
   "additional_completed_builds": [

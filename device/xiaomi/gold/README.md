@@ -32,6 +32,7 @@ separately in the integration repository's `docs/BUILD.md` and `docs/STATUS.md`.
 Builds use prepared vendor files directly, without a generated-input receipt
 or source preflight scan.
 
-Historical property/CIL/image fixes are retained in the integration
-repository under `archive/hybrid/` for tracing previous packages. They are
-not part of the standard source build.
+Historical property/CIL/image tools have been removed from the worktree.
+Their sources remain available at integration commit `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f`
+under the former `archive/hybrid/` paths; the standard build uses only
+current mainline tools. Outstanding device acceptance is tracked separately.
