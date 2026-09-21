@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T15:52:22.151680+00:00",
+  "updated_at": "2026-09-21T16:32:33.510895+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -5757,7 +5757,19 @@
         "no_shortcut_crash_observed": true,
         "provisioning_screen_not_opened": true,
         "sim_changes_performed": false,
-        "physical_slot_mapping": "pending explicit runtime readback"
+        "physical_slot_mapping": {
+          "status": "passed_readonly",
+          "physical_slot_zero_based": 1,
+          "physical_slot_user_number": 2,
+          "port": 0,
+          "logical_phone_id": 1,
+          "is_euicc": true,
+          "physical_slot_0_is_euicc": false,
+          "evidence": "Installed TelephonyDebugService UiccSlot/UiccPort dump; existing OpenEUICC read-only management lists 4 profiles, 1 enabled",
+          "sim_modifications": false,
+          "network_state_changed": false,
+          "observed_at": "2026-09-21T16:18:04.791101+00:00"
+        }
       },
       "keymint": {
         "status": "failed_device_property_attestation",
@@ -5837,7 +5849,8 @@
         "ims_deferred_by_user": true,
         "no_sim_changes_calls_sms": true
       },
-      "raw_evidence": "Private local directory only, mode 0600; no hardware identifiers, endpoints or wireless logs committed."
+      "raw_evidence": "Private local directory only, mode 0600; no hardware identifiers, endpoints or wireless logs committed.",
+      "last_readonly_addendum_at": "2026-09-21T16:18:04.791101+00:00"
     },
     "wpa3_softap_followup": {
       "status": "runtime_failure_reproduced_source_fix_pending_build",
@@ -5880,6 +5893,193 @@
       "frozen_copies_verified": true,
       "reclaimed_bytes": 4077928448,
       "source_output_inode_preserved": true
+    },
+    "wpa3_candidate_89ae983": {
+      "source_revision": "89ae983a59d1f58f6bfb272830cce040bb632998",
+      "android_result": {
+        "build_exit_code": 0,
+        "artifact_contract_verified": true,
+        "android_validators_passed": true,
+        "release_signing_verified": false,
+        "device_accepted": false,
+        "target_files_sha256": "d21f9145587ab0aaa835e9cbc3f13ea3acf06d0eb9f35b6bc3103d0f0320826e",
+        "ota_sha256": "51cef348f7bd90b73b5d6b04cee176134c5a65f45c3eb7a1b91caef554d1661a",
+        "partitions": [
+          "boot",
+          "dtbo",
+          "odm_dlkm",
+          "product",
+          "scp",
+          "system",
+          "system_dlkm",
+          "system_ext",
+          "vbmeta",
+          "vbmeta_system",
+          "vbmeta_vendor",
+          "vendor",
+          "vendor_boot",
+          "vendor_dlkm"
+        ],
+        "dynamic_partitions": [
+          "odm_dlkm",
+          "product",
+          "system",
+          "system_dlkm",
+          "system_ext",
+          "vendor",
+          "vendor_dlkm"
+        ],
+        "post_timestamp": 1790006669,
+        "signing_tag": "test-keys",
+        "payload_images_verified": true,
+        "payload_images": [
+          {
+            "partition": "boot",
+            "entry": "IMAGES/boot.img",
+            "bytes": 67108864,
+            "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f"
+          },
+          {
+            "partition": "dtbo",
+            "entry": "IMAGES/dtbo.img",
+            "bytes": 8388608,
+            "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01"
+          },
+          {
+            "partition": "odm_dlkm",
+            "entry": "IMAGES/odm_dlkm.img",
+            "bytes": 348160,
+            "sha256": "b75acc2c53c235cb40f8284e1d6bc7f84279cbf1b809faf5a074a908e6641dd7"
+          },
+          {
+            "partition": "product",
+            "entry": "IMAGES/product.img",
+            "bytes": 510750720,
+            "sha256": "78b03cf8ed0eb543c1ccb4f5c84bdee7a1c4428fa97e411aeffe2c76393904f7"
+          },
+          {
+            "partition": "scp",
+            "entry": "RADIO/scp.img",
+            "bytes": 1200128,
+            "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c"
+          },
+          {
+            "partition": "system",
+            "entry": "IMAGES/system.img",
+            "bytes": 1048506368,
+            "sha256": "358c6fbfa76c0832a43e9716c493a43713422774d59257d45be56288661a700c"
+          },
+          {
+            "partition": "system_dlkm",
+            "entry": "IMAGES/system_dlkm.img",
+            "bytes": 7303168,
+            "sha256": "20605b7237905bdcd9090addba1ae89d2e538f6b835ad9db4c1267ac9a31efaf"
+          },
+          {
+            "partition": "system_ext",
+            "entry": "IMAGES/system_ext.img",
+            "bytes": 461287424,
+            "sha256": "fe00b2347c48695aab84842ae71d89a23d10483bcc838f21c59409e4cb7f4aa7"
+          },
+          {
+            "partition": "vbmeta",
+            "entry": "IMAGES/vbmeta.img",
+            "bytes": 8192,
+            "sha256": "c61fa33efb131ea3241127ccfd85f4c8aa83628ac37947454e945e7fffde25bc"
+          },
+          {
+            "partition": "vbmeta_system",
+            "entry": "IMAGES/vbmeta_system.img",
+            "bytes": 4096,
+            "sha256": "adcb124f8c8cead31e15e9e0aa8315cc2e0ff557eb4fcef532d283354af375e0"
+          },
+          {
+            "partition": "vbmeta_vendor",
+            "entry": "IMAGES/vbmeta_vendor.img",
+            "bytes": 4096,
+            "sha256": "6a0047b0ca891e3be592a8230605a0ad72fb882dcc248a860706fa043926dd2a"
+          },
+          {
+            "partition": "vendor",
+            "entry": "IMAGES/vendor.img",
+            "bytes": 483647488,
+            "sha256": "89928241dabf34206313cb237960088040ddb5c71330123daeae0912ca60c697"
+          },
+          {
+            "partition": "vendor_boot",
+            "entry": "IMAGES/vendor_boot.img",
+            "bytes": 67108864,
+            "sha256": "ffc028839480c4489764712cdae5b7a061db5e4aaf096a0fecb711ad605a9b82"
+          },
+          {
+            "partition": "vendor_dlkm",
+            "entry": "IMAGES/vendor_dlkm.img",
+            "bytes": 13967360,
+            "sha256": "e01e2d4e14ddaf07955b0cb43d94d8e6c8e185e3a3fda17cb94aa45e48fa5ec4"
+          }
+        ],
+        "ota_certificate_sha256": "a4384ba815b9499a5ce349b4e33c1755278873fe2eac150a068823f526e6dbde",
+        "packaged_policy_sha256": "53d6709a7537a8a5ae568c798b6a0926fb04ad7b07892bf76936079049e2c1b4",
+        "permissive_domains": [
+          "su",
+          "osi",
+          "backuptool"
+        ],
+        "ota_and_payload_signatures_verified": true,
+        "target_files": "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+        "ota": "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+        "gold_package_verified": true
+      },
+      "terminal": {
+        "at": "2026-09-21T16:25:59.796761+00:00",
+        "services": {
+          "gold-wpa3-20260922-r1.service": {
+            "Result": "success",
+            "ExecMainExitTimestamp": "",
+            "ExecMainStatus": "0",
+            "LoadState": "not-found",
+            "ActiveState": "inactive",
+            "SubState": "dead",
+            "terminal_evidence": {
+              "MESSAGE": "gold-wpa3-20260922-r1.service: Deactivated successfully.",
+              "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+              "__REALTIME_TIMESTAMP": "1790007625301200",
+              "UNIT": "gold-wpa3-20260922-r1.service"
+            },
+            "observation": "Transient unit unloaded; use manager success event, not default show values"
+          },
+          "gold-wpa3-vm-guard-20260922-r1.service": {
+            "Result": "success",
+            "ExecMainExitTimestamp": "",
+            "ExecMainStatus": "0",
+            "LoadState": "not-found",
+            "ActiveState": "inactive",
+            "SubState": "dead",
+            "terminal_evidence": {
+              "MESSAGE": "gold-wpa3-vm-guard-20260922-r1.service: Deactivated successfully.",
+              "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+              "__REALTIME_TIMESTAMP": "1790007629789311",
+              "UNIT": "gold-wpa3-vm-guard-20260922-r1.service"
+            },
+            "observation": "Transient unit unloaded; use manager success event, not default show values"
+          }
+        },
+        "vm_readback": [
+          "0",
+          "zbud",
+          "N",
+          "Y"
+        ],
+        "temporary_tools_absent": true,
+        "kernel_oom_lines": [],
+        "output_inode": 9437191,
+        "source_input_count": 168,
+        "phone_operated": false
+      },
+      "candidate": "/srv/build/gold/releases/20260922-002433-89ae983",
+      "freeze_validated": true,
+      "device_accepted": false,
+      "superseded_before_install_reason": "User withdrew OpenEUICC/eSIM support after this build started; removal candidate will replace it"
     }
   },
   "current_installed_candidate": {
@@ -5893,11 +6093,63 @@
   },
   "current_pending_android_delta": {
     "files": [
-      "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml"
+      "device/xiaomi/gold/overlay/WifiOverlay/res/values/config.xml",
+      "device/xiaomi/gold/device.mk"
     ],
-    "reason": "Stock-backed WPA3 SoftAP SAE capability",
-    "merged_input_count": 168,
+    "reason": "Stock-backed WPA3 SoftAP SAE fix plus user-requested OpenEUICC/eSIM removal",
+    "merged_input_count": 165,
+    "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "wpa3-r1"
+    "build_job_prefix": "no-euicc-r1"
+  },
+  "openeuicc_support_withdrawn_20260922": {
+    "recorded_at": "2026-09-21T16:30:16.720525+00:00",
+    "decision": "User withdrew OpenEUICC/eSIM support",
+    "previous_revision": "89ae983a59d1f58f6bfb272830cce040bb632998",
+    "retired_source_projects": [
+      {
+        "path": "external/openeuicc",
+        "url": "https://gitea.angry.im/PeterCxy/OpenEUICC",
+        "revision": "9a537a25163c5159899260fb6191a5da35a692bd",
+        "patches": [
+          "patches/external__openeuicc/0001-service-slot-integration.patch"
+        ],
+        "submodules": {
+          "libs/lpac-jni/src/main/jni/lpac": "d214738fa0bdb23faf5833d3d798963079a00468",
+          "libs/lpac-jni/src/main/jni/cjson/cjson": "c859b25da02955fef659d658b8f324b5cde87be3"
+        }
+      },
+      {
+        "path": "external/openeuicc-deps",
+        "url": "https://gitea.angry.im/PeterCxy/android_prebuilts_openeuicc-deps",
+        "revision": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
+        "patches": []
+      }
+    ],
+    "merged_source_inputs": 165,
+    "remaining_managed_projects": {
+      "bootable/recovery": "d4ef5569dda1c5066f90efd25455b589ced6073e",
+      "build/soong": "9aa045a2aef10b8089e32e847fed26d9aa3d61be",
+      "device/xiaomi/gold": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
+      "frameworks/base": "35ad1f68539dce0857d25154dacb1116100737e9",
+      "packages/apps/DeviceDiagnostics": "6a93abdc96f0e553bac7efd5b41f0e549f4746be",
+      "packages/modules/Connectivity": "c9f3e7795256bd4a3f99d02e604e24fd1552c2b3",
+      "hardware/mediatek": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
+      "packages/apps/Settings": "9a102220cb80941628685585b6818e5715271cf0"
+    },
+    "changed_remaining_input": "device/xiaomi/gold/device.mk",
+    "unchanged_repo_project_list_sha256": "66e1e683b87ef9f12ed1546638d6c68cdd343135d8de007dafbf9869d7d2217a",
+    "repo_project_count": 1158,
+    "frozen_wpa3_candidate": "/srv/build/gold/releases/20260922-002433-89ae983",
+    "phone_operated": false,
+    "new_candidate_built": false,
+    "source_removal_complete": true,
+    "target_files_and_image_negative_tests": {
+      "old_target_files_rejected": "Retired eSIM file still packaged: SYSTEM_EXT/etc/permissions/android.hardware.telephony.euicc.xml",
+      "old_system_ext_image_rejected": "Cannot prove retired eSIM path absent from system_ext image: priv-app/OpenEUICC"
+    },
+    "next_build_pending": true,
+    "runtime_removal_not_applied": true,
+    "host_tests_passed": 92
   }
 }

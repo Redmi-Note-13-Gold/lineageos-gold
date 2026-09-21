@@ -307,13 +307,9 @@ PRODUCT_COPY_FILES += \
 # Inherit the proprietary files
 $(call inherit-product, vendor/xiaomi/gold/gold-vendor.mk)
 
-# Gold 23.0 validated eUICC integration and shared 20dp status bar insets.
+# Shared 20dp status bar insets.
 PRODUCT_PACKAGES += \
-    OpenEUICC \
     GoldStatusBarOverlay
-
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/android.hardware.telephony.euicc.xml
 
 # Validated MediaTek IMS v5 and VoLTE integration from the 23.0 gold tree.
 PRODUCT_PACKAGES += \

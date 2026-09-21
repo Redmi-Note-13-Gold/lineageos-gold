@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import importlib.util
+import io
+import subprocess
+import zipfile
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -74,44 +77,52 @@ class ImsStartupTest(unittest.TestCase):
             package.verify_ims_startup_properties(self.defaults + [self.defaults[0]])
 
 
-class OpenEuiccManifestTest(unittest.TestCase):
-    # Captured with the candidate's actual aapt2, including namespace indentation.
-    manifest = (Path(__file__).parent / 'fixtures/openeuicc-aapt2-manifest.txt').read_text()
+class RemovedEuiccTest(unittest.TestCase):
+    def verify(self, members):
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, 'w') as archive:
+            for name, data in members.items():
+                archive.writestr(name, data)
+        with zipfile.ZipFile(buffer) as archive:
+            return package.verify_euicc_removed(archive)
 
-    def test_real_compiled_manifest_and_shifted_indentation(self):
-        package.verify_openeuicc_manifest(self.manifest)
-        shifted = ''.join('  ' + line for line in self.manifest.splitlines(keepends=True))
-        package.verify_openeuicc_manifest(shifted)
+    def test_regular_dual_sim_ims_and_platform_apis_remain_allowed(self):
+        result = self.verify({'SYSTEM_EXT/priv-app/ImsService/ImsService.apk': b'ims',
+                              'SYSTEM/framework/framework.jar': b'EuiccManager API',
+                              'VENDOR/etc/permissions/phone.xml':
+                              b'<permissions><feature name="android.hardware.telephony.ims"/></permissions>'})
+        self.assertFalse(result['supported'])
 
-    def test_permission_from_adjacent_service_cannot_satisfy_activity(self):
-        # aapt2 prints each string twice (decoded and Raw); replace only main's pair.
-        changed = self.manifest.replace('android.permission.BIND_EUICC_SERVICE',
-                                        'android.permission.WRONG_PERMISSION', 2)
-        self.assertIn('android.permission.BIND_EUICC_SERVICE', changed)
-        with self.assertRaisesRegex(ValueError, 'entry points'):
-            package.verify_openeuicc_manifest(changed)
+    def test_stale_apk_compiled_code_library_and_permission_files_are_rejected(self):
+        for name in ['SYSTEM_EXT/priv-app/OpenEUICC/OpenEUICC.apk',
+                     'SYSTEM_EXT/priv-app/OpenEUICC/oat/arm64/OpenEUICC.odex',
+                     'SYSTEM_EXT/etc/permissions/privapp_whitelist_im.angry.openeuicc.xml',
+                     'SYSTEM_EXT/lib64/liblpac-jni.so',
+                     'PRODUCT/lib/liblpac-jni.so',
+                     'PRODUCT/etc/permissions/android.hardware.telephony.euicc.mep.xml']:
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'still packaged'):
+                self.verify({name: b'residual'})
 
-    def test_wrong_route_or_launcher_is_rejected(self):
-        changes = [
-            ('MANAGE_EMBEDDED_SUBSCRIPTIONS', 'WRONG_MANAGEMENT_ACTION', 2),
-            ('PROVISION_EMBEDDED_SUBSCRIPTION', 'MANAGE_EMBEDDED_SUBSCRIPTIONS', 2),
-            ('android.intent.category.DEFAULT', 'android.intent.category.LAUNCHER', 2),
-        ]
-        for old, new, count in changes:
-            with self.subTest(change=new), self.assertRaises(ValueError):
-                package.verify_openeuicc_manifest(self.manifest.replace(old, new, count))
+    def test_renamed_feature_xml_is_rejected(self):
+        for feature in ['android.hardware.telephony.euicc', 'android.hardware.telephony.euicc.mep']:
+            with self.subTest(feature=feature), self.assertRaisesRegex(ValueError, 'feature still declared'):
+                self.verify({'VENDOR/etc/permissions/phone.xml':
+                             '<permissions><feature name="' + feature + '"/></permissions>'})
 
-    def test_missing_duplicate_and_alias_activity_are_rejected(self):
-        block = next(x for x in package.aapt_element_blocks(self.manifest, 'activity')
-                     if '.ui.PrivilegedMainActivity"' in x)
-        for changed in [self.manifest.replace(block, ''),
-                        self.manifest.replace(block, block + block),
-                        self.manifest.replace(block, block.replace('E: activity ', 'E: activity-alias ', 1))]:
-            with self.subTest(), self.assertRaises(ValueError):
-                package.verify_openeuicc_manifest(changed)
+    def test_renamed_privileged_permission_xml_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'permission grant'):
+            self.verify({'SYSTEM_EXT/etc/permissions/privileged.xml':
+                         '<permissions><privapp-permissions package="im.angry.openeuicc"/></permissions>'})
 
-    def test_last_activity_at_end_of_dump_is_kept(self):
-        blocks = package.aapt_element_blocks(self.manifest, 'activity')
-        main = next(x for x in blocks if '.ui.PrivilegedMainActivity"' in x)
-        lui = next(x for x in blocks if '.ui.LuiActivity"' in x)
-        package.verify_openeuicc_manifest(main + lui)
+    def test_image_lookup_miss_proves_paths_absent(self):
+        missing = subprocess.CompletedProcess([], 0, '', 'File not found by ext2_lookup')
+        with patch.object(package.subprocess, 'run', return_value=missing):
+            self.assertEqual(package.verify_euicc_image_removed(Path('/system_ext.img')),
+                             list(package.REMOVED_EUICC_IMAGE_PATHS))
+
+    def test_existing_image_entry_and_reader_failure_cannot_pass_absence_check(self):
+        for result in [subprocess.CompletedProcess([], 0, 'Inode: 41 Type: regular', ''),
+                       subprocess.CompletedProcess([], 0, '', 'Bad magic number in super-block'),
+                       subprocess.CompletedProcess([], 1, '', 'File not found by ext2_lookup')]:
+            with self.subTest(result=result), patch.object(package.subprocess, 'run', return_value=result), self.assertRaises(ValueError):
+                package.verify_euicc_image_removed(Path('/system_ext.img'))

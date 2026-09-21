@@ -529,5 +529,20 @@
     "kernel_oom_observed": false,
     "temporary_zip_tools_cleaned": true,
     "host_reboot_tested": false
+  },
+  "candidate_freeze_overlayfs_20260922": {
+    "candidate": "/srv/build/gold/releases/20260922-002433-89ae983",
+    "initial_rename_error": "EXDEV across OverlayFS mount boundary",
+    "recovery": "same staging, per-package verified copy then unlink all mutable aliases",
+    "independent_frozen_recheck_passed": true,
+    "output_inode": 9437191,
+    "vm_readback": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "temporary_zip_tools_removed": true,
+    "server_reboot_tested": false
   }
 }

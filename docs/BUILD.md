@@ -123,11 +123,11 @@ userdebug 允许上游调试域；不能等同于全局 permissive。正式 user
 源码编译、包验证、Recovery 安装、分区回读、稳定开机、硬件和保数据 OTA 分别记录。当前结论见 [STATUS](STATUS.md)。
 
 
-当前非 IMS 修复的包检查同时核验双击唤醒资源／Power 路径／设备标签、NetworkStack 的真实 HTTPS 地址、原厂 attestation 专用属性和 OpenEUICC 管理／下载 action 分离；实际镜像读取覆盖新增 RRO、OpenEUICC 和 SystemUI。包内存在不等于运行通过。双击协议的 Linux 主机定向测试为 `g++ -std=c++17 -Wall -Wextra -Werror -I device/xiaomi/gold/power tests/native/TouchWakeTest.cpp -o <专属目录>/touch-test`，执行该程序只调用系统调用替身，不访问手机。安装后仍需通过正式 Settings→Power Binder→Enforcing 域测试开关、物理双击、服务与设备重启恢复，不能用 root 直接 ioctl 代替。
+当前非 IMS 修复的包检查同时核验双击唤醒资源／Power 路径／设备标签、NetworkStack 的真实 HTTPS 地址、原厂 attestation 专用属性；实际镜像读取覆盖新增 RRO 和 SystemUI。OpenEUICC/eSIM 已退出支持，检查 target-files 中不存在 APK、odex、权限、feature 或 lpac-jni 残留，并直接检查 system_ext 镜像的旧安装路径不存在。包内存在不等于运行通过。双击协议的 Linux 主机定向测试为 `g++ -std=c++17 -Wall -Wextra -Werror -I device/xiaomi/gold/power tests/native/TouchWakeTest.cpp -o <专属目录>/touch-test`，执行该程序只调用系统调用替身，不访问手机。安装后仍需通过正式 Settings→Power Binder→Enforcing 域测试开关、物理双击、服务与设备重启恢复，不能用 root 直接 ioctl 代替。
 
 设备 Recovery 缓存测试可用 test-key 签名、OTA 大小的无 payload／updater fixture，令 pre-device 为专用不匹配标识；要求完整签名验证通过，再在元数据检查被拒绝且从未启动 updater。ADB transfer exit 0 只证明传输。RSS 观察者须在 sideload 切换停止 adbd 后仍存活且有边界；只分离自己的观察进程，不改 Recovery／minadbd 控制组或 SELinux。结束核对原槽位／版本、挂载、快照与 canary。这是缓存／验签的定向证据，不能记作完整 Recovery OTA 安装通过。
 
 
 WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay/WifiOverlay.apk` 中 `config_wifi_softap_sae_supported=true`，并从最终vendor镜像读取同一APK比较字节；新增后预期关键文件39项。其能力值有同基线原厂RRO依据；包通过不等于热点真实启动或客户端SAE认证通过。
 
-空间受限时，只能在源码锁空闲、构建停止且独立冻结包重读哈希一致后移除同次可变输出包副本，保留精确路径映射；不得清理唯一输入、缓存、swap或历史候选。2026-09-21的两种包/三个可变路径见jobs/wpa3-active-package-duplicates.json（实际位于gold-mainline-20260920下）。后续可把已通过全部门禁的完成产物同盘移动到新releases目录，移除该inode在可变输出下的全部硬链接，记录来源/去向并独立重验；不能保留会被重写的硬链接或链接回旧外层路径。冻结JSON保持当时事实，后来的安装/实机证据另存聚合validation。
+空间受限时，只能在源码锁空闲、构建停止且独立冻结包重读哈希一致后移除同次可变输出包副本，保留精确路径映射；不得清理唯一输入、缓存、swap或历史候选。2026-09-21的两种包/三个可变路径见jobs/wpa3-active-package-duplicates.json（实际位于gold-mainline-20260920下）。OverlayFS合并视图到releases直接rename已实测EXDEV。后续逐包复制到同一冻结staging，重读SHA-256并fsync后才移除该包在可变输出下的全部硬链接，记录来源/去向并独立重验；不能保留会被重写的硬链接或链接回旧外层路径。冻结JSON保持当时事实，后来的安装/实机证据另存聚合validation。

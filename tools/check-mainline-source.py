@@ -59,6 +59,10 @@ def check(tree):
         if data != expected or execute is not None and bool(actual.stat().st_mode & 0o111) != bool(execute):
             result['failures'].append('Merged source differs: ' + path)
 
+    for retired in ('external/openeuicc', 'external/openeuicc-deps'):
+        if (tree / retired).exists() or (tree / retired).is_symlink():
+            result['failures'].append('Retired eSIM source still present: ' + retired)
+
     for entry in json.loads((ROOT / 'patches/series.json').read_text()):
         path = entry['path']
         project = tree / path

@@ -49,24 +49,6 @@
     ]
   },
   {
-    "path": "external/openeuicc",
-    "url": "https://gitea.angry.im/PeterCxy/OpenEUICC",
-    "revision": "9a537a25163c5159899260fb6191a5da35a692bd",
-    "patches": [
-      "patches/external__openeuicc/0001-service-slot-integration.patch"
-    ],
-    "submodules": {
-      "libs/lpac-jni/src/main/jni/lpac": "d214738fa0bdb23faf5833d3d798963079a00468",
-      "libs/lpac-jni/src/main/jni/cjson/cjson": "c859b25da02955fef659d658b8f324b5cde87be3"
-    }
-  },
-  {
-    "path": "external/openeuicc-deps",
-    "url": "https://gitea.angry.im/PeterCxy/android_prebuilts_openeuicc-deps",
-    "revision": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
-    "patches": []
-  },
-  {
     "path": "hardware/mediatek",
     "url": "https://github.com/LineageOS/android_hardware_mediatek",
     "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",

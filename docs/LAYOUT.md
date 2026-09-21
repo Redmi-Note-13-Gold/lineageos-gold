@@ -84,4 +84,6 @@ project/
 执行明细在 `/srv/build/gold/jobs/gold-mainline-20260920/physical-layout-20260921.json`；脱敏结论统一更新 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
 
-2026-09-21夜间，releases/index.json含9个冻结候选，最新6e7c418已安装B槽。完成独立冻结包的SHA-256重读后，清理活动输出中同次OTA两硬链接路径及target-files一个路径，释放约3.80GiB，output inode9437191保留。原路径到现存冻结包的映射在 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json`；不修改冻结candidate.json，不删除历史候选或官方输入。后续完成构建的包允许同盘移动入新的实际releases目录并解除所有活动输出硬链接，以免再占一份完整包空间；工具、输入、结果与哈希仍完整冻结和独立复验。
+2026-09-21夜间，releases/index.json含9个冻结候选，最新6e7c418已安装B槽。完成独立冻结包的SHA-256重读后，清理活动输出中同次OTA两硬链接路径及target-files一个路径，释放约3.80GiB，output inode9437191保留。原路径到现存冻结包的映射在 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json`；不修改冻结candidate.json，不删除历史候选或官方输入。后续实测OverlayFS合并视图与releases虽使用同一物理盘，跨挂载rename仍返回EXDEV。应在源码锁空闲后逐包复制到同一个冻结staging，校验SHA-256并fsync后才移除该包的全部活动输出硬链接；过程峰值需容纳当前这一包，工具、输入、结果与哈希完整冻结并独立复验。不得修改活动挂载的upper底层绕过跨挂载限制。
+
+2026-09-22 89ae983 已冻结为第10个候选，未安装。OpenEUICC/eSIM 按用户决定退出支持，两个独立 external/openeuicc* 检出已从合并视图移除；原1158项Repo清单未变，无第二套可运行工程。

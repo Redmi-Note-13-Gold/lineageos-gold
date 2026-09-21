@@ -40,35 +40,46 @@ def verify_ims_startup_properties(lines):
     return expected
 
 
-def aapt_element_blocks(dump, element):
-    """Read aapt2 XML subtrees without assuming a fixed namespace/nesting indent."""
-    lines = dump.splitlines(keepends=True)
-    starts = []
-    for index, line in enumerate(lines):
-        match = re.match(r'^( *)E: ([^ ]+)(?: |$)', line)
-        if match:
-            starts.append((index, len(match[1]), match[2]))
-    blocks = []
-    for position, (start, depth, tag) in enumerate(starts):
-        if tag != element:
-            continue
-        end = next((index for index, nesting, _ in starts[position + 1:]
-                    if nesting <= depth), len(lines))
-        blocks.append(''.join(lines[start:end]))
-    return blocks
+REMOVED_EUICC_IMAGE_PATHS = (
+    'priv-app/OpenEUICC',
+    'etc/permissions/android.hardware.telephony.euicc.xml',
+    'etc/permissions/android.hardware.telephony.euicc.mep.xml',
+    'etc/permissions/privapp_whitelist_im.angry.openeuicc.xml',
+    'lib/liblpac-jni.so',
+    'lib64/liblpac-jni.so',
+)
 
 
-def verify_openeuicc_manifest(euicc_manifest):
-    activities = aapt_element_blocks(euicc_manifest, 'activity')
-    main = [x for x in activities if '.ui.PrivilegedMainActivity"' in x]
-    lui = [x for x in activities if '.ui.LuiActivity"' in x]
-    require(len(main) == len(lui) == 1 and
-            'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' in main[0] and
-            'android.permission.BIND_EUICC_SERVICE' in main[0] and
-            'android.intent.category.LAUNCHER' not in main[0] and
-            'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' not in lui[0] and
-            'android.service.euicc.action.PROVISION_EMBEDDED_SUBSCRIPTION' in lui[0],
-            'OpenEUICC management/provisioning entry points do not match the system integration')
+def verify_euicc_removed(archive):
+    """Reject stale installed files or feature declarations in an incremental ROM."""
+    for name in archive.namelist():
+        lower = name.lower()
+        require('openeuicc' not in lower and 'liblpac-jni.so' not in lower and
+                'android.hardware.telephony.euicc' not in lower,
+                'Retired eSIM file still packaged: ' + name)
+        if name.endswith('.xml') and ('/etc/permissions/' in name or '/etc/sysconfig/' in name):
+            root = ET.fromstring(archive.read(name))
+            for node in root.iter():
+                feature = node.get('name', '') if node.tag == 'feature' else ''
+                require(not (feature == 'android.hardware.telephony.euicc' or
+                             feature.startswith('android.hardware.telephony.euicc.')),
+                        'Retired eSIM feature still declared: ' + name)
+                require(node.get('package') != 'im.angry.openeuicc',
+                        'Retired OpenEUICC permission grant: ' + name)
+    return {'supported': False, 'packaged_files_absent': True,
+            'feature_and_privileged_permission_absent': True}
+
+
+def verify_euicc_image_removed(image):
+    # debugfs can return zero on both a missing path and an unreadable image.
+    # Require its specific lookup-miss result, not just a successful process.
+    for relative in REMOVED_EUICC_IMAGE_PATHS:
+        result = subprocess.run(['debugfs', '-R', 'stat /' + relative, str(image)],
+                                capture_output=True, text=True)
+        require(result.returncode == 0 and not result.stdout.strip() and
+                'File not found by ext2_lookup' in result.stderr,
+                'Cannot prove retired eSIM path absent from system_ext image: ' + relative)
+    return list(REMOVED_EUICC_IMAGE_PATHS)
 
 
 def verify_vintf_fragment(packaged, source, assembler):
@@ -114,7 +125,7 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'overlay/WifiOverlay/WifiOverlay.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
-                       'priv-app/OpenEUICC/OpenEUICC.apk', 'priv-app/SystemUI/SystemUI.apk',
+                       'priv-app/SystemUI/SystemUI.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
     }
     recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
@@ -145,6 +156,8 @@ def verify_images(target, host_bin, scratch_parent=None):
                 shutil.copyfileobj(src, dst, 8 * 1024 * 1024)
             if partition == 'vendor_boot':
                 continue
+            if partition == 'system_ext':
+                euicc_absent = verify_euicc_image_removed(image)
             extracted = scratch / partition
             if partition == 'vendor':
                 run([host_bin / 'fsck.erofs', '--extract=' + str(extracted), '--no-preserve', image])
@@ -186,12 +199,14 @@ def verify_images(target, host_bin, scratch_parent=None):
                 offset = (start + size + 3) & ~3
         require(all(recovery_prefix + name in hashes for name in recovery_wanted),
                 'Missing actual Recovery image members')
-    return {'verified': True, 'matched_files': len(hashes), 'members': hashes}
+    return {'verified': True, 'matched_files': len(hashes), 'members': hashes,
+            'retired_euicc_paths_absent': euicc_absent}
 
 
 def verify(target, aapt2, readelf, profile):
     with zipfile.ZipFile(target) as archive, tempfile.TemporaryDirectory(prefix='gold-package-') as scratch:
         members = set(archive.namelist())
+        euicc = verify_euicc_removed(archive)
 
         def unpack(name):
             destination = Path(scratch) / name
@@ -436,9 +451,6 @@ def verify(target, aapt2, readelf, profile):
         network_manifest = dump(network_name, 'xmltree', '--file', 'AndroidManifest.xml')
         require('"com.android.networkstack"' in network_manifest and
                 '"NetworkStackConfig"' in network_manifest, 'Incorrect NetworkStack overlay target')
-        euicc_manifest = dump('SYSTEM_EXT/priv-app/OpenEUICC/OpenEUICC.apk',
-                              'xmltree', '--file', 'AndroidManifest.xml')
-        verify_openeuicc_manifest(euicc_manifest)
         compiled_profile = dump(framework_name, 'xmltree', '--file', 'res/xml/power_profile.xml')
         actual = {}
         for block in re.split(r'^    E: (?:item|array) .*\n', compiled_profile, flags=re.M)[1:]:
@@ -477,7 +489,7 @@ def verify(target, aapt2, readelf, profile):
                                'typed_control_device': True, 'runtime_verified': False},
                 'attestation_identity': {'properties': attestation, 'tee_acceptance_verified': False},
                 'network_probes': {'https_urls': urls, 'runtime_validated': False},
-                'openeuicc': {'system_management_route': True, 'runtime_verified': False},
+                'euicc': euicc,
                 'wifi_association_verified': False,
                 'limitations': ['Checks target-files members; Android validators check image/AVB contracts.',
                                 'Does not prove runtime overlay activation or hardware behavior.']}

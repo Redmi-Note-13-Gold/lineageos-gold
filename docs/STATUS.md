@@ -1,15 +1,16 @@
-更新于 2026-09-21 夜间实机验收。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
+更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 热点另有一处源码修复，尚无新候选构建或设备通过结论。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，下一轮增量 ROM 待构建。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+
+OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
 ## 未完成与当前限制
 
 | 项目 | 当前事实及下一步 |
 |---|---|
-| WPA3 热点 | 本机开启 WPA3 失败已复现：框架 capability=123，缺 SAE bit 4，记录 `Error, SAE requires HAL support`，在 native hostapd 前拒绝。匹配 Global 原厂两份 Wi-Fi RRO 均开启 `config_wifi_softap_sae_supported`，hostapd 已有 CONFIG_SAE。主线补同一资源为 true；168 个 Android 输入中仅此 XML 改变，91 项 Python 测试、实际编译资源检查通过，旧候选被新增资源门禁正确拒绝。需下一候选实测启动、WPA3 客户端认证及关闭；当前手机尚未修复 |
+| WPA3 热点 | 本机开启 WPA3 失败已复现：框架 capability=123，缺 SAE bit 4，记录 `Error, SAE requires HAL support`，在 native hostapd 前拒绝。匹配 Global 原厂两份 Wi-Fi RRO 均开启 `config_wifi_softap_sae_supported`，hostapd 已有 CONFIG_SAE。主线补同一资源为 true；168 个 Android 输入中仅此 XML 改变，91 项 Python 测试、实际编译资源检查通过，旧候选被新增资源门禁正确拒绝。89ae983 已构建及包门禁通过；合并 eSIM 移除的下一候选仍需实测启动、WPA3 客户端认证及关闭，当前手机尚未安装修复 |
 | Wi-Fi 自动恢复 | 已安装正式探测 RRO，但之前批准的保存网络不在当前扫描范围；需该热点重新可见后核对自动关联、真实 TLS/204 和框架判定，不强制 VALIDATED |
 | 设备属性证明 / 认证密钥 | 新 ROM 的 Key Attestation 仍报 -66 CANNOT_ATTEST_IDS；vnd_gold/gold 两项专用属性未获 TEE 接受。实机 SKU=gold_cn，已核验 Global vendor 与 product 镜像的通用属性不足以证明实际预置身份。不得继续把 vendor 值假说写成已修复；需核对真实变体与 TEE 请求。引导状态仍 orange；安全锁屏未设置，认证绑定密钥未测，不代用户设锁或导入 keybox |
-| OpenEUICC 槽位 | 管理列表和旧崩溃修复已通过下述定向测试；实际 physical/logical 槽映射仍需明确读回，未切换、删除或下载配置 |
 | TCP/BPF | parser/event 和真实 TCP 状态变化已有旧版证据，IPv4 双向规则删除仍未证明；用户明确保持移动数据关闭，缺允许的 raw-IP 上行条件 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；6e7c418 的 Recovery 往返尚未执行。用户现要求不再重启手机，当前保持网络连接；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
 | DeviceDiagnostics / AOD / 媒体 | 电池未知值界面旧版已测，非法边界注入未测；AOD/doze 与必要扩展媒体场景尚未完整验收，不把短 AVC 片段扩大为全格式通过 |
@@ -27,7 +28,7 @@
 | 正常启动与数据 | B / 1789977174，首次稳定观察 25.8 秒，另一次正常重启稳定 20.34 秒；Enforcing、data/persist、snapshot none、两份 canary 通过。后续不再重启的限制已生效 |
 | 正式双击唤醒 | Settings→Power HAL→窄 SELinux 权限生效；用户确认两轮黑屏物理双击均亮，FTS 两组 KEY_POWER 对应。实际设置开关 Off/On 与 framework、睡眠寄存器 0xD0=0/1 一致；正常重启保留，Power HAL 受控重启后 PID 改变且状态恢复。没有用直接 ioctl 冒充本轮正式路径 |
 | SystemUI 横屏边距 | zh-CN / ar-SA、rotation 1 / 3 共四组真机截图和实际 InsetsProvider 缓存核对；左右均 55 px，原 111/55 px 缺陷消失。10 合成状态图标可见溢出点，未见重叠；不是全部可能组合的穷尽测试，语言/旋转/demo 已恢复 |
-| OpenEUICC 管理 | 系统 SIM 列表可见；标准 MANAGE_EMBEDDED_SUBSCRIPTIONS 路由打开 PrivilegedMainActivity 只读管理列表，4 个配置、1 个已启用，未进入下载页，观察窗口没有原快捷方式崩溃。槽位映射另列待办 |
+| OpenEUICC 管理 | 系统 SIM 列表可见；标准 MANAGE_EMBEDDED_SUBSCRIPTIONS 路由打开 PrivilegedMainActivity 只读管理列表，4 个配置、1 个已启用，未进入下载页，观察窗口没有原快捷方式崩溃。已只读核对第二实体槽 physical1→port0→logical phone1 为 eUICC，第一槽不是。2026-09-22 用户决定退出该支持，此行仅为 6e7c418 历史记录 |
 
 ## bd50b19 既有验收（不继承给新候选）
 
@@ -45,11 +46,13 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 ## 构建与工程证据
 
+本轮移除后，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。
+
 本次已装候选的 Android r2 构建成功，02:36:40；原入口于 22:14:26 +08 exit 1，因检查器固定四空格缩进误拒绝正确 OpenEUICC 路由。`00be34a` 修正层级解析，91 项测试、原 ZIP 和冻结工具独立复验均通过，未改 Android 输入或 ZIP，也未改写原失败结果。168 项输入一致，签名/VINTF/SELinux、14 payload / 38 实际镜像文件通过。OTA SHA-256 `22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb`；target-files `7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c`。
 
-r2 guard 于 22:14:31 恢复，终态实读 VM=0/zbud/N/Y，无 OOM，临时 ZIP 工具清理；r1 缺 unzip 失败及 6e7c418 前置检查修复记录保留。WPA3 补丁只改一个实际 Android XML，包验证器新增已编译 SAE 布尔值及真实 vendor 镜像内 WifiOverlay.apk 的一致性检查；预期下一包实际文件检查数为 39，只有完成构建门禁后才记通过。
+r2 guard 于 22:14:31 恢复，终态实读 VM=0/zbud/N/Y，无 OOM，临时 ZIP 工具清理；r1 缺 unzip 失败及 6e7c418 前置检查修复记录保留。WPA3 补丁只改一个实际 Android XML；89ae983 于 2026-09-22 00:20:25 +08 入口 exit 0，Android 编译打包 12:33，签名/VINTF/SELinux、14 payload / 39 实际镜像文件通过。guard 00:20:29 恢复 VM=0/zbud/N/Y，临时 ZIP 工具清理、无 OOM。冻结候选 `/srv/build/gold/releases/20260922-002433-89ae983` 已独立复验，包含撤回之前的 OpenEUICC，未安装；下一版本合并移除后重新构建，不继承设备结论。
 
-活动输出两种同次包的三个路径在与独立冻结候选逐个重读 SHA-256 一致后清理，释放约 3.80 GiB，输出 inode 9437191 不变；记录 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json` 给出已保存冻结路径。历史候选、官方输入、OverlayFS、缓存与 swap 均保留。下一次冻结可在构建完全停止并核对哈希后同盘移动产物入 releases，解除全部可变硬链接，保存路径映射和独立工具复验；不改 OUT_DIR，不复制第二套输出。
+活动输出两种同次包的三个路径在与独立冻结候选逐个重读 SHA-256 一致后清理，释放约 3.80 GiB，输出 inode 9437191 不变；记录 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json` 给出已保存冻结路径。历史候选、官方输入、OverlayFS、缓存与 swap 均保留。OverlayFS 合并视图到 releases 直接 rename 实测返回 EXDEV；冻结改为逐包复制、重读 SHA-256 并 fsync 后才移除该包的全部可变硬链接，保存路径映射和独立工具复验；不改 OUT_DIR，不复制第二套输出。
 
 目录迁移构图于 14:56:55 exit 0、01:01:37，guard 14:57:03 退出、VM 0/zbud/N/Y，无 OOM；.top、新路径、inode9437191、161 项原输入和1158个Repo提交未变。整机重启恢复尚未测。`27ea764` 已退役15个 archive/hybrid 文件；旧源码从 Git 历史查阅，当前主线 Python 提取/构建/检查工具继续保留，后续适配只走主线。
 

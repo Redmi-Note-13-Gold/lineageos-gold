@@ -4,7 +4,7 @@
 
 ## 旧版到主线的完整收敛对照
 
-对照 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。在 bd50b19 对照阶段，五份迁入平台补丁逐字一致；本轮 OpenEUICC 和 SystemUI 后续修复仍在这些主线入口维护。97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
+对照 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`，并检查实际合并源码。旧证据只属于旧版。在 bd50b19 对照阶段，五份迁入平台补丁逐字一致；SystemUI 后续修复仍在这些主线入口维护；OpenEUICC/eSIM 于 2026-09-22 按用户决定退出支持。97969dc 的 143 项、2cca323／3cb28c3 的 158 项以及 bd50b19 的 161 项合并输入分别核对通过。新 Codec2 入口使 Android.bp 有实际变化；仅重生成对应 vendor 定义，未重提取。额外启动／交互 boost 默认关闭。
 
 | 旧版项目／解决的问题 | 旧版实际证据及边界 | 主线实现与位置 | 决定 | 仍缺的验证 | 是否依赖旧流程／旧产物 |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@
 | 状态栏 20dp 边距 | 旧 device 集成 overlay | `device/xiaomi/gold/overlay/GoldStatusBarOverlay`；bd50b19 实际资源 55px／density 2.75=20dp，横竖屏已目视 | 保留且定向验证通过 | 横屏非对称边距已复现，修复后需再验 LTR／RTL | 不需要 |
 | TCP conntrack／BPF 回收 | 旧实现和测试差异；没有所有热点场景验收 | `patches/packages__modules__Connectivity/0001-tcp-conntrack-recycling.patch`；字节一致；实际已装 TetheringNext 解析器与事件类 13 项通过，缺失／非法字段返回 UNKNOWN | 保留 | 实机 BPF 双向规则删除、连接回收／热点；当前探针不写 BPF | 不需要 |
 | DeviceDiagnostics 电池信息有效值 | 旧补丁；错误值过滤逻辑可查 | `patches/packages__apps__DeviceDiagnostics/0001-battery-information.patch`；字节一致 | 保留 | bd50b19 界面与实际不可用值隐藏通过；非法边界注入未做 | 不需要 |
-| OpenEUICC 物理槽位／设置入口 | 旧补丁、固定子模块；未证明所有 eUICC 场景或本机号码 | `patches/external__openeuicc/0001-service-slot-integration.patch` 与两个固定子模块；字节一致 | 保留 | 已发现管理入口和快捷方式崩溃；主线修复后需只读管理页验收，不修改 SIM | 不需要 |
+| OpenEUICC 物理槽位／设置入口 | 6e7c418 只读管理、崩溃修复与第二实体槽 physical1→port0→phone1 映射已验；无 SIM 写操作 | 2026-09-22 移除产品包、特性声明、两个专属来源项目及补丁；历史由 Git 保存 | 用户决定不再支持 | 不再作为后续验收待办；既有设备与冻结记录保持原始事实 | 不恢复旧实现 |
 | IMS 动态广播及视频 guard | 旧版有注册与 voice/SMS/UT 能力记录；无完整通话／全运营商验收 | `vendor/xiaomi/gold/ims/` 管理 APK、权限、兼容 Java 和限定 MCC/MNC overlay | 保留受管 prebuilt | bd50b19 原镜像及 Recovery 往返后已绑定且 MMTEL READY；尚未注册，需核对有效配置、套餐与漫游条件；无通话／短信授权 | APK 是主线 Git blob；完整原厂依赖打包不可重建是已声明 prebuilt 限制，不要求旧目录 |
 | IMS 框架发现和 modem 初始化 | 首次标准候选漏 feature；97969dc 已绑定但缺启动属性，APK 提前退出 | `device.mk` feature、`vendor.prop` 三项匹配 Global 启动配置及包／标签检查 | 主线修复，初始化及重启恢复已验证 | bd50b19 原镜像的 mtkIms Binder、双槽 MMTEL READY 和 Recovery 往返恢复通过；有效 carrier VoLTE=false，注册／能力仍未通过，不能直接归因运营商 | 不需要旧流程 |
 | TelephonyMetrics 兼容 dex | 固定旧 v5 加 `classes2.dex` 的配方 | 主线 `ims/compat/rebuild.py` 从受管 APK 重编兼容 Java；实际 dex 和全载荷一致 | 保留，移除对旧 v5 目录的必需依赖 | ZIP 字节因宿主压缩元数据不同；新 APK 如要采用必须重新评审 pin | 不需要；闭源主 dex 明确保留 |
@@ -151,7 +151,7 @@ Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完�
 
 ## 6e7c418 实机后续与 WPA3 热点
 
-6e7c418 / B / 1789977174 已完成保数据安装、安装器和独立各14分区回读、正常启动及 canary。正式双击物理两轮、设置 Off/On、Power HAL 重启和既有正常重启保持通过；横屏 LTR/RTL 两方向实际左右55px，OpenEUICC 管理路由和无 launcher 快捷方式崩溃修复通过只读列表测试，明确槽位映射仍待补。设备属性证明仍报 -66，vendor 的 vnd_gold/gold 假说未通过 TEE；Global product镜像核验只证明其通用属性，不能替代 gold_cn 实机预置身份。以上与旧版已验收分开，详见 STATUS 和聚合 JSON。
+6e7c418 / B / 1789977174 已完成保数据安装、安装器和独立各14分区回读、正常启动及 canary。正式双击物理两轮、设置 Off/On、Power HAL 重启和既有正常重启保持通过；横屏 LTR/RTL 两方向实际左右55px，OpenEUICC 管理路由和无 launcher 快捷方式崩溃修复通过只读列表测试，后续已只读确认第二实体槽 physical1→port0→phone1 为 eUICC；2026-09-22 用户决定移除该支持，以上仅为旧候选历史验收。设备属性证明仍报 -66，vendor 的 vnd_gold/gold 假说未通过 TEE；Global product镜像核验只证明其通用属性，不能替代 gold_cn 实机预置身份。以上与旧版已验收分开，详见 STATUS 和聚合 JSON。
 
 用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和WPA3启动/客户端认证仍待进行。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
 
