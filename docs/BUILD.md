@@ -71,6 +71,8 @@ IMS 固定输入现作为 `vendor/xiaomi/gold/ims/ImsService.apk` 普通 Git blo
 
 冻结候选实际目录为 `/srv/build/gold/releases`，8 个既有候选已整体移出活动输出，14 个 ZIP 重读哈希均匹配原始记录。后续完整冻结目录直接写入此入口下新的 `<时间-提交>`，不改活动 OUT_DIR；包不能与会被覆盖的输出建立硬链接。用 `tools/index-candidates.py <候选根> --verify-hashes` 更新清单，索引不代替原有验证器与实机验收。路径与归档规则见 [LAYOUT](LAYOUT.md)。
 
+Gold 清单检查按 aapt2 实际输出层级提取 activity 子树，不能假定固定缩进；权限不得从相邻 service 或 activity 借用。若 Android 构建和签名等检查已通过，但后续检查器有经回归测试确认的误判，应保留原入口失败 result／日志，只在 Android 输入及包哈希均未变时单独记录修正后的完整复验；冻结时同时保存原检查器与新版工具，并独立复验冻结包。不能修改旧 result 的退出码或跳过原门禁。2026-09-21 r2 的实例见 mainline-convergence validation 和 `jobs/gold-mainline-20260920/functional-r2-closure.json`。
+
 Android 验证通过后，在科研机用同次构建的 `aapt2` 复查 Gold 组件和已编译资源：
 
 ```sh

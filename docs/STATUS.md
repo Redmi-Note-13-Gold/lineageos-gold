@@ -1,6 +1,10 @@
 更新于 2026-09-21（构图收尾与非 IMS 定向适配）。主线为 Global OS3.0.5.0.VNQMIXM / 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`。接手基线 462fab1，未回退到 c7c2c04。
 
-本轮 47b34c3 构建于 18:09:27 +08 以 exit 1 结束（Android 02:15:19），直接错误为 hiddenapi 编码命令 `unzip: not found`；宿主 zip/unzip 均未安装，非旧路径失效。内核日志无 OOM，独立 guard 于 18:09:34 恢复 VM，终态后实读为 0/zbud/N/Y。没有生成本轮可验收候选。新增入口依赖预检及宿主工具路径/哈希记录；使用经 APT 元数据 SHA-256 校验的 Ubuntu zip/unzip 临时解包到本次 job，不写 dpkg 安装状态，独立 guard 在续编结束后清理。ROM 的 168 项合并输入不因宿主修复而改变。
+**本轮完整 ROM 已构建、验包并冻结，尚未安装。** 新候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`，ROM 源码 `6e7c4186bd1bb264dd1db24c96589aa1b0d802a8`、BUILD_DATETIME=1789977174。r2 Android 构建成功，耗时 02:36:40；原入口在 22:14:26 +08 以 exit 1 结束，原因是 Gold 包检查器用固定四空格缩进匹配 APK activity，误拒绝实际正确的 OpenEUICC 管理路由。检查器提交 `00be34ae912012a4e10a7f5ee25f975e9599fc9f` 按实际层级提取子树，原权限／路由／无 launcher 约束不变。91 项 Python 测试通过；没有修改 Android 输入或原 ZIP，原包及冻结后的独立复验均 exit 0。原失败 result、日志与旧检查器保留，没有改写为入口成功。
+
+同次 OTA／payload 签名、VINTF、SELinux、14 个 payload 分区及 38 个实际镜像文件检查通过；168 项合并输入与构建输入相同。OTA SHA-256 `22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb`，target-files SHA-256 `7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c`。同次输入、工具、原结果与复验记录均已冻结，releases/index.json 已包含该候选；设备安装／受影响功能验收仍待进行，不能继承 bd50b19 结论。
+
+独立 guard 于 22:14:31 +08 恢复，终态及冻结后实读 VM 均为 0/zbud/N/Y，无内核 OOM，原输出 inode 9437191 保留。本次临时 ZIP 工具目录已清理，宿主 dpkg 安装状态未改变。r1 的 18:09:27 失败（hiddenapi 缺 unzip，Android 02:15:19）和 18:09:34 VM 恢复记录继续保留；宿主前置依赖检查与工具哈希记录已在 6e7c418 修复。
 
 **旧 hybrid 运行代码已按用户后续明确授权清理；完整功能验收仍未完成。** 原 15 个受管归档文件（含此前已删除的 Codec2 补丁）均退出主线工作树，删除依据与历史定位见 [ADAPTATION](ADAPTATION.md)。退役本身不授予任何功能通过结论；后续主线定向验收按下表记录，不删除历史镜像、唯一输入或当前主线 Python 工具。科研机为执行与核验依据，本地同步同一提交。
 
@@ -8,7 +12,7 @@
 
 **bd50b19 原镜像已保数据安装到 A 槽，incremental 1789938387。** 用户明确授权 15% 电量即可写入，实际在 16%、Charging、USB 在线时开始；标准 update_engine 于 09:21:56–09:25:27 以 kSuccess(0) 结束。安装器与独立 A 槽读回各 14 项最终镜像哈希全部匹配。首次启动观察 exit 0，稳定 20.76 秒；正常系统→Recovery→正常系统往返通过，返回后稳定 21.17 秒。两次均 Enforcing，data/persist 挂载、snapshot none、首次解锁和内部／共享存储两份 canary 均核验通过。没有临时修改显示节点权限。
 
-最新 ROM 源码 `bd50b19ef82575790eb455c6cb1d712a482d62b7` 已核对 161 项实际合并输入。r5 Android 构建 01:27:20、入口 exit 0，14 payload／35 实际镜像文件、签名、VINTF、SELinux 和同次 Linux 27+32 测试全部通过。`gold-codec-r5-20260921.service` 已结束，guard 已退出且实读恢复 0/zbud/N/Y。当前目录迁移构图也已收尾；后续任务须重新核对占用。复用唯一输出与原 OverlayFS、缓存和资源上限。
+最近已完成设备验收的 ROM 源码 `bd50b19ef82575790eb455c6cb1d712a482d62b7` 已核对 161 项实际合并输入。r5 Android 构建 01:27:20、入口 exit 0，14 payload／35 实际镜像文件、签名、VINTF、SELinux 和同次 Linux 27+32 测试全部通过。`gold-codec-r5-20260921.service` 已结束，guard 已退出且实读恢复 0/zbud/N/Y。当前目录迁移构图也已收尾；后续任务须重新核对占用。复用唯一输出与原 OverlayFS、缓存和资源上限。
 
 | 验证层次 | bd50b19 实际结果与边界 |
 |---|---|
@@ -23,13 +27,13 @@
 | 网络 ADB | 已开启并通过 TCP 调试读取身份、A 槽、incremental 和 Enforcing；正常系统 ro.adb.secure=1。Mac 旧 ADB 进程报无路由、同地址普通 TCP 成功，重启专属 ADB server 后连通；后续使用网络 transport |
 | SystemUI／显示／KeyMint | 60／90／120 Hz 与 TEE EC／RSA／AES 运算保留既有通过。新增 10 合成图标 LTR／RTL 横竖屏溢出点检查，无图标重叠；**横屏左 111px／右 55px 不对称已复现，不能记全组合通过**。Key Attestation 设备属性证明报 -66，实际原厂 vendor product/model 为 vnd_gold/gold，与当前值不同。两项已集成源码修复，均待新镜像；引导状态仍真实 orange，认证绑定密钥未测 |
 | Recovery 缓存／TCP | 主机缓存测试和上述设备侧载峰值各自通过。已装 TCP parser／event 13 项通过；USB NCM 真连接 ESTABLISHED→TIME_WAIT 已见，Wi-Fi 上行没有创建 IPv4 BPF 规则，故未证明规则删除。用户明确保持移动数据关闭，后续需允许的 raw-IP 上行条件 |
-| 其他受影响能力 | DeviceDiagnostics 电池界面、实际未知值隐藏通过，非法边界注入未做。OpenEUICC 系统只读 SIM 列表可见，但管理路由误进下载页、无 launcher 时动态快捷方式导致崩溃；修复待构建／安装。用户确认麦克风、扬声器、震动体验正常。持续热控和认证密钥未测；保留用户 Key Attestation 应用 |
+| 其他受影响能力 | DeviceDiagnostics 电池界面、实际未知值隐藏通过，非法边界注入未做。OpenEUICC 系统只读 SIM 列表可见，但管理路由误进下载页、无 launcher 时动态快捷方式导致崩溃；修复已随新候选构建，待安装验收。用户确认麦克风、扬声器、震动体验正常。持续热控和认证密钥未测；保留用户 Key Attestation 应用 |
 
 双击唤醒：LineageOS 已有标准设置；bd50b19 缺 Gold 能力资源和 Power HAL 模式处理。原厂 FT3683G 模块的 mode 14 临时调用已确认熄屏寄存器 0xD0=1、两组触摸 KEY_POWER 和 gesture ID 0x24，用户确认两次双击亮屏；临时状态已恢复。主线已接入系统设置、实际 ioctl 和最小 SELinux 设备类型，9 项协议／失败测试通过；**正式 HAL、开关和重启恢复仍待新镜像验收**。
 
-本轮五处运行修复（Wi-Fi 探测、OpenEUICC、原厂证明身份、横屏边距、双击唤醒）已经集成到服务器合并源码，168 项输入核对一致；84 项主机工具测试、40 个实际 Kotlin 几何用例通过，旧代码能复现同一几何回归。目前尚未生成或安装本轮新候选；不得继承 bd50b19 的设备验收。原始设备证据只在本机私有目录，跨机可读脱敏结论为 [聚合证据](../validation/mainline-convergence-20260920.json) 的 non_ims_followup_20260921 及服务器 jobs 中同名记录。
+本轮五处运行修复（Wi-Fi 探测、OpenEUICC、原厂证明身份、横屏边距、双击唤醒）已经集成到服务器合并源码，168 项输入核对一致；84 项主机工具测试、40 个实际 Kotlin 几何用例通过，旧代码能复现同一几何回归。本轮新候选已完成构建、包验证和冻结，尚未安装；不得继承 bd50b19 的设备验收。原始设备证据只在本机私有目录，跨机可读脱敏结论为 [聚合证据](../validation/mainline-convergence-20260920.json) 的 non_ims_followup_20260921 及服务器 jobs 中同名记录。
 
-当前不可变候选 `/srv/build/gold/releases/20260921-090452-bd50b19/`：OTA SHA-256 `dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4`，target-files `60a6521e89d36e99a3394fb81030d3e3f83da959f519869ab164409f97ef83df`。同次工具、12 项检查输入和 ELF 已冻结；本机 a7bcbba／57b2a51 分别增加合成媒体探针和不读取凭据的已保存 Wi-Fi 重选工具，属于测试源码，没有改变已安装 ROM。`3dcd922` 归入可复用性能、TEE／显示、已装 conntrack 和 Recovery 缓存探针，已同步科研机；同步后 161 个实际 Android 输入仍一致，未重复构建。完全不含 archive 的该提交新导出通过 75 项主线测试，IMS pin 一致；不冒充从零 Android 构建。两款自建测试 APK 与专属 8 个临时文件已清理，临时 adb root 已恢复 UID 2000 且鉴权网络 ADB 仍可用，用户要求的 Key Attestation 1.8.4 保留。11:06 再验两份 canary 相符、默认策略 0／0、活动请求 0。
+最近已安装验收的不可变候选 `/srv/build/gold/releases/20260921-090452-bd50b19/`：OTA SHA-256 `dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4`，target-files `60a6521e89d36e99a3394fb81030d3e3f83da959f519869ab164409f97ef83df`。同次工具、12 项检查输入和 ELF 已冻结；本机 a7bcbba／57b2a51 分别增加合成媒体探针和不读取凭据的已保存 Wi-Fi 重选工具，属于测试源码，没有改变已安装 ROM。`3dcd922` 归入可复用性能、TEE／显示、已装 conntrack 和 Recovery 缓存探针，已同步科研机；同步后 161 个实际 Android 输入仍一致，未重复构建。完全不含 archive 的该提交新导出通过 75 项主线测试，IMS pin 一致；不冒充从零 Android 构建。两款自建测试 APK 与专属 8 个临时文件已清理，临时 adb root 已恢复 UID 2000 且鉴权网络 ADB 仍可用，用户要求的 Key Attestation 1.8.4 保留。11:06 再验两份 canary 相符、默认策略 0／0、活动请求 0。
 
 2cca323 的首次 MTK 编码器创建 SIGSEGV 仍保留为历史失败：原厂入口分配 336 字节，当前类需要 352 字节。客户端重试后的成功不能清除该失败；bd50b19 源码入口的独立实测才证明上述生命周期修复。3cb28c3 单独候选未安装，其诊断修复随 bd50b19 实测通过。97969dc 的 Recovery status 0／B14 已齐备，c36757a 原镜像启动失败和临时 DAC、3ee80e9 neverallow 失败均保留版本边界。
 

@@ -145,3 +145,5 @@ KeyMint 的 -66 目前仅证实为设备属性证明失败。重新从锁定 Glo
 双击唤醒的 Lineage 设置和 Power AIDL DOUBLE_TAP_TO_WAKE 原本未在 Gold 接通。匹配内核模块反汇编及 Xiaomi gold-s-oss 原始接口确认 /dev/xiaomi-touch 的 SET_CUR_VALUE payload 是 256 个 int32、[mode, value]，没有 touch-id 前缀；mode 14 只更新双击位，保留 AOD 位。临时 root 探针成功进入手势模式并观察到两组触摸 KEY_POWER、gesture ID 0x24，用户确认两次亮屏，之后恢复 Off。主线用实际 ioctl 返回值和内核回传错误，不空报成功；只给 Power 域特定设备类型和 0x5400 ioctl，保留 DAC 与 Enforcing。9 项协议／错误测试通过，正式系统开关、HAL 权限及重启后状态待安装验证。当前硬件证据来自 FT3683G，其他面板不冒充已测。
 
 Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完整验签后在产品名检查明确拒绝，未安装 ROM；32 MiB 缓存，minadbd HWM 43,436 KiB、Recovery HWM 99,284 KiB，返回正常系统、两份 canary 和原槽位／版本保持。未见 Scudo abort，不等于做过设备分配失败注入。USB NCM 的真连接状态已从 ESTABLISHED 变为 TIME_WAIT；Wi-Fi 上行未建 IPv4 BPF 规则，用户拒绝开启移动数据，所以双向规则回收仍缺允许的 raw-IP 条件。用户确认相机、麦克风、扬声器和震动实际体验正常。完整脱敏结果见 mainline-convergence validation 的 non_ims_followup_20260921。
+
+本轮五项运行修复已随 6e7c418 完整 ROM 构建并冻结到 `releases/20260921-224022-6e7c418`，尚未安装。原入口因 Gold 检查器的固定缩进误判 exit 1；00be34a 修正清单子树解析，原包和冻结工具复验通过（14 payload／38 实际镜像文件，91 项 Python 测试）。Android 输入与包哈希未变；保留原失败记录，以上包级通过不改变各功能的实机待验边界。

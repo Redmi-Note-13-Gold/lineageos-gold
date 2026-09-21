@@ -5554,10 +5554,11 @@
     "host_tests": {
       "mainline_python": 84,
       "touch_protocol": 9,
-      "pure_kotlin_geometry": 40
+      "pure_kotlin_geometry": 40,
+      "mainline_python_after_host_and_checker_fixes": 91
     },
     "implementation": {
-      "status": "integrated_pending_build",
+      "status": "validated_frozen_pending_device_install",
       "merged_inputs": 168,
       "new_complete_output": false,
       "overlay_lower_modified": false,
@@ -5565,10 +5566,12 @@
       "power_launch_interaction_defaults": [
         0,
         0
-      ]
+      ],
+      "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
+      "device_accepted": false
     },
     "remaining_conditions": [
-      "New candidate build, package verification, installation and affected runtime acceptance",
+      "Frozen candidate is ready; USB/availability confirmation, live preflight, retained-data installation and affected runtime acceptance remain pending",
       "BPF rule lifecycle requires an allowed raw-IP upstream/client scenario; mobile data remains off",
       "IMS is deferred by user; no calls/SMS authorization",
       "Scudo allocation-failure injection, invalid battery boundary injection, authenticated keys and sustained thermal/charging remain untested"
@@ -5596,6 +5599,65 @@
         "temporary_tools_environment_check_passed": true,
         "same_android_inputs": 168
       }
+    },
+    "functional_build_r2_terminal": {
+      "source_revision": "6e7c4186bd1bb264dd1db24c96589aa1b0d802a8",
+      "validator_revision": "00be34ae912012a4e10a7f5ee25f975e9599fc9f",
+      "build_datetime": 1789977174,
+      "android_build_exit_code": 0,
+      "original_entry_exit_code": 1,
+      "android_duration": "02:36:40",
+      "merged_input_count": 168,
+      "payload_partitions": 14,
+      "actual_image_files": 38,
+      "ota": {
+        "path": "/srv/build/gold/releases/20260921-224022-6e7c418/lineage_gold-ota.zip",
+        "sha256": "22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb",
+        "bytes": 1174892027
+      },
+      "target_files": {
+        "path": "/srv/build/gold/releases/20260921-224022-6e7c418/lineage_gold-target_files.zip",
+        "sha256": "7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c",
+        "bytes": 2903025129
+      },
+      "recorded_at": "2026-09-21T14:47:46.377250+00:00",
+      "status": "validated_frozen_pending_device_install",
+      "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
+      "candidate_completed_at": "2026-09-21T14:40:59.204631+00:00",
+      "started_at": "2026-09-21T19:35:11+08:00",
+      "original_entry_finished_at": "2026-09-21T22:14:26+08:00",
+      "original_result_preserved": true,
+      "checker_failure": "Fixed four-space activity regex did not match actual aapt2 manifest indentation; correct compiled OpenEUICC routes were present.",
+      "checker_fix": "Parse element subtrees at their actual indentation and enforce unchanged permission, route, and no-launcher requirements.",
+      "checker_regression_tests_added": 5,
+      "python_tests_passed": 91,
+      "gold_package_recheck_exit_code": 0,
+      "frozen_package_recheck_exit_code": 0,
+      "original_package_hashes_unchanged": true,
+      "artifact_contract_verified": true,
+      "android_validators_passed": true,
+      "android_inputs_unchanged_during_revalidation": true,
+      "kernel_oom_observed": false,
+      "vm_guard_restored_at": "2026-09-21T22:14:31+08:00",
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "temporary_host_tools_cleaned": true,
+      "host_zip_dpkg_install_state_changed": false,
+      "output_inode": 9437191,
+      "device_installed": false,
+      "device_accepted": false,
+      "release_signing_verified": false,
+      "records": [
+        "functional-r2-build-result.json",
+        "functional-r2-terminal.json",
+        "functional-r2-checker-diagnosis.json",
+        "functional-r2-revalidation-result.json",
+        "functional-r2-frozen-hash-verification.json"
+      ]
     }
   }
 }

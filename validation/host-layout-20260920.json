@@ -510,5 +510,24 @@
     ],
     "automations_still_paused": true,
     "tools_tests_log": "/srv/build/gold/jobs/gold-mainline-20260920/physical-tools-tests.stderr"
+  },
+  "functional_build_r2_followup_20260921": {
+    "source_revision": "6e7c4186bd1bb264dd1db24c96589aa1b0d802a8",
+    "android_build_exit_code": 0,
+    "original_entry_exit_code": 1,
+    "post_build_checker_revalidated": true,
+    "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
+    "output_inode": 9437191,
+    "new_output_created": false,
+    "vm_guard_restored_at": "2026-09-21T22:14:31+08:00",
+    "vm_readback": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "kernel_oom_observed": false,
+    "temporary_zip_tools_cleaned": true,
+    "host_reboot_tested": false
   }
 }
