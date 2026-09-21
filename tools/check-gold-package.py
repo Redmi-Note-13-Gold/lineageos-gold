@@ -40,6 +40,37 @@ def verify_ims_startup_properties(lines):
     return expected
 
 
+def aapt_element_blocks(dump, element):
+    """Read aapt2 XML subtrees without assuming a fixed namespace/nesting indent."""
+    lines = dump.splitlines(keepends=True)
+    starts = []
+    for index, line in enumerate(lines):
+        match = re.match(r'^( *)E: ([^ ]+)(?: |$)', line)
+        if match:
+            starts.append((index, len(match[1]), match[2]))
+    blocks = []
+    for position, (start, depth, tag) in enumerate(starts):
+        if tag != element:
+            continue
+        end = next((index for index, nesting, _ in starts[position + 1:]
+                    if nesting <= depth), len(lines))
+        blocks.append(''.join(lines[start:end]))
+    return blocks
+
+
+def verify_openeuicc_manifest(euicc_manifest):
+    activities = aapt_element_blocks(euicc_manifest, 'activity')
+    main = [x for x in activities if '.ui.PrivilegedMainActivity"' in x]
+    lui = [x for x in activities if '.ui.LuiActivity"' in x]
+    require(len(main) == len(lui) == 1 and
+            'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' in main[0] and
+            'android.permission.BIND_EUICC_SERVICE' in main[0] and
+            'android.intent.category.LAUNCHER' not in main[0] and
+            'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' not in lui[0] and
+            'android.service.euicc.action.PROVISION_EMBEDDED_SUBSCRIPTION' in lui[0],
+            'OpenEUICC management/provisioning entry points do not match the system integration')
+
+
 def verify_vintf_fragment(packaged, source, assembler):
     # Soong's android/defs.go processes fragments with this flag. Rebuild the
     # expected XML with the same host tool: its schema version is not the HAL
@@ -403,16 +434,7 @@ def verify(target, aapt2, readelf, profile):
                 '"NetworkStackConfig"' in network_manifest, 'Incorrect NetworkStack overlay target')
         euicc_manifest = dump('SYSTEM_EXT/priv-app/OpenEUICC/OpenEUICC.apk',
                               'xmltree', '--file', 'AndroidManifest.xml')
-        activities = re.findall(r'^    E: activity .*?(?=^    E: |\Z)', euicc_manifest, re.M | re.S)
-        main = [x for x in activities if '.ui.PrivilegedMainActivity"' in x]
-        lui = [x for x in activities if '.ui.LuiActivity"' in x]
-        require(len(main) == len(lui) == 1 and
-                'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' in main[0] and
-                'android.permission.BIND_EUICC_SERVICE' in main[0] and
-                'android.intent.category.LAUNCHER' not in main[0] and
-                'android.service.euicc.action.MANAGE_EMBEDDED_SUBSCRIPTIONS' not in lui[0] and
-                'android.service.euicc.action.PROVISION_EMBEDDED_SUBSCRIPTION' in lui[0],
-                'OpenEUICC management/provisioning entry points do not match the system integration')
+        verify_openeuicc_manifest(euicc_manifest)
         compiled_profile = dump(framework_name, 'xmltree', '--file', 'res/xml/power_profile.xml')
         actual = {}
         for block in re.split(r'^    E: (?:item|array) .*\n', compiled_profile, flags=re.M)[1:]:

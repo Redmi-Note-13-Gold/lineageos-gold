@@ -72,3 +72,46 @@ class ImsStartupTest(unittest.TestCase):
     def test_duplicate_even_identical_value_is_rejected(self):
         with self.assertRaises(ValueError):
             package.verify_ims_startup_properties(self.defaults + [self.defaults[0]])
+
+
+class OpenEuiccManifestTest(unittest.TestCase):
+    # Captured with the candidate's actual aapt2, including namespace indentation.
+    manifest = (Path(__file__).parent / 'fixtures/openeuicc-aapt2-manifest.txt').read_text()
+
+    def test_real_compiled_manifest_and_shifted_indentation(self):
+        package.verify_openeuicc_manifest(self.manifest)
+        shifted = ''.join('  ' + line for line in self.manifest.splitlines(keepends=True))
+        package.verify_openeuicc_manifest(shifted)
+
+    def test_permission_from_adjacent_service_cannot_satisfy_activity(self):
+        # aapt2 prints each string twice (decoded and Raw); replace only main's pair.
+        changed = self.manifest.replace('android.permission.BIND_EUICC_SERVICE',
+                                        'android.permission.WRONG_PERMISSION', 2)
+        self.assertIn('android.permission.BIND_EUICC_SERVICE', changed)
+        with self.assertRaisesRegex(ValueError, 'entry points'):
+            package.verify_openeuicc_manifest(changed)
+
+    def test_wrong_route_or_launcher_is_rejected(self):
+        changes = [
+            ('MANAGE_EMBEDDED_SUBSCRIPTIONS', 'WRONG_MANAGEMENT_ACTION', 2),
+            ('PROVISION_EMBEDDED_SUBSCRIPTION', 'MANAGE_EMBEDDED_SUBSCRIPTIONS', 2),
+            ('android.intent.category.DEFAULT', 'android.intent.category.LAUNCHER', 2),
+        ]
+        for old, new, count in changes:
+            with self.subTest(change=new), self.assertRaises(ValueError):
+                package.verify_openeuicc_manifest(self.manifest.replace(old, new, count))
+
+    def test_missing_duplicate_and_alias_activity_are_rejected(self):
+        block = next(x for x in package.aapt_element_blocks(self.manifest, 'activity')
+                     if '.ui.PrivilegedMainActivity"' in x)
+        for changed in [self.manifest.replace(block, ''),
+                        self.manifest.replace(block, block + block),
+                        self.manifest.replace(block, block.replace('E: activity ', 'E: activity-alias ', 1))]:
+            with self.subTest(), self.assertRaises(ValueError):
+                package.verify_openeuicc_manifest(changed)
+
+    def test_last_activity_at_end_of_dump_is_kept(self):
+        blocks = package.aapt_element_blocks(self.manifest, 'activity')
+        main = next(x for x in blocks if '.ui.PrivilegedMainActivity"' in x)
+        lui = next(x for x in blocks if '.ui.LuiActivity"' in x)
+        package.verify_openeuicc_manifest(main + lui)
