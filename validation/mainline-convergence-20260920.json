@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T18:44:17.593437+00:00",
+  "updated_at": "2026-09-21T20:09:52.588073+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6097,10 +6097,10 @@
       "device/xiaomi/gold/device.mk"
     ],
     "reason": "Stock-backed WPA3 SoftAP SAE fix plus user-requested OpenEUICC/eSIM removal",
-    "merged_input_count": 166,
+    "merged_input_count": 167,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r3"
+    "build_job_prefix": "no-euicc-r4"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6305,6 +6305,153 @@
       "python_host_tests_passed": 98,
       "prior_165_inputs_byte_identical": true,
       "managed_projects": 9
+    },
+    "third_build_terminal": {
+      "recorded_at": "2026-09-21T20:07:06.007305+00:00",
+      "source_revision": "fa0f5e557ed0cb8cd8d54f6766f8ff264c5aa92e",
+      "entry_exit_code": 1,
+      "android_build_exit_code": 0,
+      "build_stages": [
+        {
+          "targets": [
+            "bacon"
+          ],
+          "exit_code": 0
+        },
+        {
+          "targets": [
+            "target-files-package"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "android_stage_elapsed": [
+        "12:40",
+        "48:59"
+      ],
+      "original_result": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r3-build-result.json",
+      "service_manager_events": {
+        "gold-no-euicc-20260922-r3.service": [
+          {
+            "MESSAGE": "Started gold-no-euicc-20260922-r3.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r3.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "UNIT": "gold-no-euicc-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790016663125393"
+          },
+          {
+            "MESSAGE": "gold-no-euicc-20260922-r3.service: Main process exited, code=exited, status=1/FAILURE",
+            "MESSAGE_ID": "98e322203f7a4ed290d09fe03c09fe15",
+            "UNIT": "gold-no-euicc-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790020541192702"
+          },
+          {
+            "MESSAGE": "gold-no-euicc-20260922-r3.service: Failed with result 'exit-code'.",
+            "MESSAGE_ID": "d9b373ed55a64feb8242e02dbe79a49c",
+            "UNIT": "gold-no-euicc-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790020541201517"
+          },
+          {
+            "MESSAGE": "gold-no-euicc-20260922-r3.service: Consumed 3h 11min 24.124s CPU time, 12.5G memory peak, 12.6G memory swap peak.",
+            "MESSAGE_ID": "ae8f7b866b0347b9af31fe1c80b127c0",
+            "UNIT": "gold-no-euicc-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790020541206341"
+          }
+        ],
+        "gold-no-euicc-vm-guard-20260922-r3.service": [
+          {
+            "MESSAGE": "Started gold-no-euicc-vm-guard-20260922-r3.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r3.py.",
+            "MESSAGE_ID": "39f53479d3a045ac8e11786248231fbf",
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790016663132339"
+          },
+          {
+            "MESSAGE": "gold-no-euicc-vm-guard-20260922-r3.service: Deactivated successfully.",
+            "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+            "UNIT": "gold-no-euicc-vm-guard-20260922-r3.service",
+            "__REALTIME_TIMESTAMP": "1790020543346582"
+          }
+        ]
+      },
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "kernel_oom_lines": [],
+      "host_tools_cleaned": true,
+      "ota_scratch_cleaned": true,
+      "direct_error": "Retired eSIM JNI symlink and parent directories remain in target-files and real system_ext image",
+      "archive_residuals": [
+        {
+          "path": "SYSTEM_EXT/priv-app/OpenEUICC/",
+          "bytes": 0,
+          "unix_mode": "0o40755",
+          "directory": true
+        },
+        {
+          "path": "SYSTEM_EXT/priv-app/OpenEUICC/lib/",
+          "bytes": 0,
+          "unix_mode": "0o40755",
+          "directory": true
+        },
+        {
+          "path": "SYSTEM_EXT/priv-app/OpenEUICC/lib/arm64/",
+          "bytes": 0,
+          "unix_mode": "0o40755",
+          "directory": true
+        },
+        {
+          "path": "SYSTEM_EXT/priv-app/OpenEUICC/lib/arm64/liblpac-jni.so",
+          "bytes": 32,
+          "unix_mode": "0o120777",
+          "directory": false,
+          "link_target": "/system_ext/lib64/liblpac-jni.so"
+        }
+      ],
+      "system_ext_readback": {
+        "/priv-app/OpenEUICC": {
+          "exit_code": 0,
+          "stdout": "Inode: 2484   Type: directory    Mode:  0755   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 4096\nFile ACL: 0\nLinks: 3   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\n atime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\n mtime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\ncrtime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\nSize of extra inode fields: 32\nExtended attributes:\n  security.selinux (26) = \"u:object_r:system_file:s0\\000\"\nEXTENTS:\n(0):65635\n",
+          "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+        },
+        "/priv-app/OpenEUICC/lib/arm64/liblpac-jni.so": {
+          "exit_code": 0,
+          "stdout": "Inode: 2487   Type: symlink    Mode:  0644   Flags: 0x0\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 32\nFile ACL: 0\nLinks: 1   Blockcount: 0\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\n atime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\n mtime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\ncrtime: 0x495c0780:00000000 -- Thu Jan  1 08:00:00 2009\nSize of extra inode fields: 32\nExtended attributes:\n  security.selinux (26) = \"u:object_r:system_file:s0\\000\"\nFast link dest: \"/system_ext/lib64/liblpac-jni.so\"\n",
+          "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+        },
+        "/lib64/liblpac-jni.so": {
+          "exit_code": 0,
+          "stdout": "",
+          "stderr": "debugfs 1.47.0 (5-Feb-2023)\n/lib64/liblpac-jni.so: File not found by ext2_lookup \n"
+        }
+      },
+      "ota_sha256": "24c38a82c91d21fe868bc55742b4ebcda6c15e6bff410ebb247f199f54d0409d",
+      "target_files_sha256": "53908b95b365e1473f7a958055b2ca3ca57128117d87a0642e1da785fb9d1fa0",
+      "package_gates_passed_before_failure": [
+        "artifact contract",
+        "14 payload image hashes",
+        "OTA and payload signatures",
+        "VINTF",
+        "SELinux"
+      ],
+      "gold_package_gate_passed": false,
+      "candidate_created": false,
+      "phone_operated": false,
+      "output_inode": 9437191,
+      "ota_scratch_observed_in_actual_build_log": true,
+      "temporary_directories_live_absent": true
+    },
+    "retired_output_migration": {
+      "source": "device/xiaomi/gold/CleanSpec.mk",
+      "reason": "os.Stat-based old installed-file cleanup left an absolute Android JNI symlink; present in actual system_ext",
+      "platform_clean_version_unchanged": 6,
+      "global_clean_performed": false,
+      "postbuild_absence_gates_unchanged": true,
+      "host_tests_passed": 100,
+      "source_input_count": 167,
+      "prior_166_inputs_byte_identical": true,
+      "candidate_accepted": false
     }
   }
 }

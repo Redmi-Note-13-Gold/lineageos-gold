@@ -135,3 +135,5 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 2026-09-22 eSIM移除首轮在 target-files ZIP 压缩时因 ENOSPC 失败，Android耗时01:34:45，入口exit1；同时运行的OTA任务随后结束并清理临时ZIP。主线入口现将打包分为先 `m -j2 bacon`、再 `m -j2 target-files-package`，避免两个压缩/签名高峰重叠；每阶段仍jobs2，第二阶段失败或任一产物门禁失败均不得记完成。两阶段共用同一源码锁、OUT、lunch和BUILD_DATETIME，最终仍校验全量OTA/target-files的签名、分区、VINTF、SELinux和Gold内容，不修改Android源码或关闭检查。
 
 顺序打包的r2仍在OTA zip2zip临时副本阶段ENOSPC，证明先前峰值估算不足。新增最小build/make补丁：设置 `GOLD_OTA_TMPDIR` 时仅OTA命令的TMPDIR改用该私有目录，未设置则保留Soong默认值。主机入口核对目录归属/0700/非链接并记录输入；Gold实际镜像检查也使用同一临时盘。当前科研机通过本次job在既有系统盘/tmp下创建专属目录，独立guard在所有构建进程退出后校验marker并清理；不改OUT、不改Soong源码、不挂载第二输出。nsjail源码本来就以读写方式绑定/tmp，无需放宽沙箱。实际合并Make宏的默认、显式路径和含空格引用已定向验证。
+
+移除版r3的Android两阶段及标准产物校验成功，但最终Gold门禁正确拒绝实际system_ext中的旧JNI悬空链接。固定Soong的普通旧文件清理使用os.Stat，可能跳过宿主不存在的Android绝对链接目标。`device/xiaomi/gold/CleanSpec.mk` 以标准一次性步骤仅迁移Gold旧eSIM安装产物，并失效system_ext镜像/清单和target-files构建清单，让原生规则重建；不修改平台clean版本，不执行全局clean或installclean，不删除完整输出。新增文件已纳入167项输入审计，包内六个退役路径必须继续全部缺席。

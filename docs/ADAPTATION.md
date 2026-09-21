@@ -158,3 +158,5 @@ Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完�
 用户最新要求不再重启手机以保持网络连接；Recovery往返及后续安装暂不执行，移动数据仍保持关闭，IMS仍最后处理。
 
 OTA打包临时空间：`patches/build__make/0001-ota-temporary-directory.patch` 在固定build/make提交上为OTA命令增加可选 `GOLD_OTA_TMPDIR`，由主机入口校验私有目录；不改变分区内容或输出位置。未设置时保持上游TMPDIR。新增一个实际构建输入后为166项/9个受管项目，原165项功能输入字节不变；新包和设备验收仍以同次证据为准。
+
+eSIM退出的增量迁移由 `device/xiaomi/gold/CleanSpec.mk` 补齐：r3证明普通旧文件清理漏掉JNI悬空链接，实际镜像仍有残留。标准一次性步骤处理退役安装路径及受影响镜像/列表，源码支持撤回和最终镜像缺席分别验收；不能把原门禁拒绝改称空目录误报。
