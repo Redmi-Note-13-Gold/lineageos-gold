@@ -170,3 +170,7 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 每次统一入口的systemd执行在`/srv/build/gold/jobs/build-invocations/<InvocationID>.json`单独记录。外部信号记interrupted，即使PID1记录外部stop成功也不能算构建成功；SIGKILL来不及写终态的running记录保持未完成，后续启动使用新的ID。终态需同时核对对应Android result、入口退出及PID1的UNIT/InvocationID/开始后时间。guard只有服务/cgroup稳定空闲且取得源码锁才恢复，退出后实读0/zbud/N/Y。临时zip/unzip和OTA目录仍按本次job的精确路径、归属、marker与哈希记录清理，不能把其他轮保留的失败包包含进去；主线guard只自动移除自己记录且字节一致的needrestart配置。
 
 2026-09-22设备安装记录：冻结70c2ec4的全量OTA按上述标准update_engine流程完成B→A保数据更新，手机端包哈希、证书/适用性、安装器及独立各14项最终分区哈希一致。A / 1790008554正常启动、Enforcing/data/persist/snapshot none/两canary通过。手机端OTA暂存已清理，ADB已恢复UID2000。本次没有重编ROM、修改冻结包或做Recovery OTA；详细边界见STATUS及candidate_70c2ec4_device。
+
+设备网络验证前必须同时核对实际默认/活动数据订阅、逐订阅mobile_data值及实际上行；旧全局mobile_data=0不能替代双卡判断。本次授权仅中国联通，漫游eSIM不可操作。USB线缆不稳定时，正常系统内应及时连接鉴权网络ADB并核对同一硬件身份，后续优先网络控制；端点与硬件标识只存私有记录。网络ADB依赖当前热点，不能因此随意切热点或重启设备。TCP验收须区分FIN、RST、内核状态/过期和两方向规则，记录采样间隔及观察动作，不能只凭解析器测试或瞬时规则存在判为全部通过。
+
+`tests/android/GoldConntrackObserver.java`沿用上述javac/d8方法，是有1..180秒期限的只接收netlink多播事件探针。参数为已安装Tethering APEX APK、明确的测试客户端/服务端IPv4、自己的测试源端口列表和期限；需要已授权的临时ADB root，不发送conntrack查询/更新/删除，不写BPF map。使用已安装APK的真实parser与事件过滤器，记录原始消息是否被识别为建立/删除事件，可区分内核未发通知与框架丢弃。输出含受控连接原始字节，只落0600私有文件，不进Git。协调者必须另观察真实双向规则与终态；读取/proc连接表后的清理时序不冒充自然到期。实际70c2ec4运行exit0，观察到TCP状态仍ESTABLISHED的合法DELETE被接受并删除两条规则；另有自然RST残留复现，探针成功不等于BPF全面通过。执行后删除本次DEX/专属目录、恢复普通鉴权网络ADB；不改SELinux或网络设置。

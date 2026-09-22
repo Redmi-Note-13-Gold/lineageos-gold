@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T11:42:12.554089+00:00",
+  "updated_at": "2026-09-22T20:43:48+08:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6081,7 +6081,7 @@
     "wifi_softap_framework_capability_verified": true,
     "wifi_softap_runtime_verified": false,
     "esim_removal_device_verified": true,
-    "remaining": "WPA3 actual hotspot start and client SAE authentication are not tested; other feature limits remain in STATUS."
+    "remaining": "WPA3 starts and is visible by user testing, but the Mac cannot connect; exact connection failure stage pending. TCP teardown boundaries are recorded in network_followup_20260922. Wi-Fi auto recovery is user-confirmed."
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -7640,7 +7640,12 @@
       "framework_sae_bit": 4,
       "framework_sae_capability_present": true,
       "start_and_client_authentication_tested": false,
-      "status": "installed_resource_and_framework_capability_verified_only"
+      "status": "user_confirmed_start_and_visibility_but_mac_connection_failed",
+      "start_user_confirmed": true,
+      "visible_to_mac_user_confirmed": true,
+      "mac_connection_user_result": "failed, exact stage not yet captured",
+      "new_handshake_capture_available": false,
+      "current_wpa2_hotspot_preserved": true
     },
     "handoff": {
       "recorded_at": "2026-09-22T11:42:12.554089+00:00",
@@ -7656,7 +7661,8 @@
       "temporary_root_restored": true,
       "own_ota_stage_removed": true,
       "sim_operations": false,
-      "validation_network_toggles": false
+      "validation_network_toggles": false,
+      "mobile_data_field_scope": "Legacy global settings key only; not evidence for all subscription data states. See subsequent per-subscription network_followup_20260922."
     },
     "user_keyattestation": {
       "retained": true,
@@ -7671,6 +7677,255 @@
     },
     "all_hardware_features_accepted": false,
     "prior_candidate_feature_results_inherited": false,
-    "raw_evidence": "Private local runtime-70c2ec4-20260922 only; files mode 0600; no hardware identifiers, endpoints or wireless logs committed."
+    "raw_evidence": "Private local runtime-70c2ec4-20260922 only; files mode 0600; no hardware identifiers, endpoints or wireless logs committed.",
+    "wifi_auto_recovery": {
+      "status": "passed_by_user_experience",
+      "candidate": "70c2ec4",
+      "user_confirmed": true,
+      "new_independent_tls_204_framework_log": false,
+      "removed_from_pending": true
+    },
+    "network_followup_evidence_key": "network_followup_20260922"
+  },
+  "network_followup_20260922": {
+    "recorded_at": "2026-09-22T20:43:48+08:00",
+    "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "incremental": "1790008554",
+    "slot": "a",
+    "authorization": {
+      "cellular": "Only the already enabled physical China Unicom subscription; roaming eSIM untouched",
+      "temporary_adb_root": "Explicitly approved for conntrack diagnosis, restored after use",
+      "network_adb": "User requested prompt network ADB connection because the USB cable is damaged",
+      "phone_reboot_or_hotspot_toggle": false
+    },
+    "actual_data_state": {
+      "carrier": "China Unicom",
+      "physical_slot_zero_based": 0,
+      "embedded": false,
+      "default_and_active_data_subscription_match": true,
+      "physical_subscription_data_enabled": true,
+      "roaming_esim_data_enabled": false,
+      "legacy_global_mobile_data": 0,
+      "legacy_global_key_is_not_per_subscription_state": true,
+      "raw_ip_upstream": "ccmni0",
+      "downstream": "Existing WPA2 5 GHz hotspot to Mac",
+      "data_sim_roaming_network_settings_changed": false
+    },
+    "wpa3_user_feedback": {
+      "status": "user_confirmed_start_and_visibility_but_mac_connection_failed",
+      "start_user_confirmed": true,
+      "visible_to_mac_user_confirmed": true,
+      "mac_connection_user_result": "failed, exact stage not yet captured",
+      "new_handshake_capture_available": false,
+      "current_wpa2_hotspot_preserved": true
+    },
+    "wifi_auto_recovery": {
+      "status": "passed_by_user_experience",
+      "candidate": "70c2ec4",
+      "user_confirmed": true,
+      "new_independent_tls_204_framework_log": false,
+      "removed_from_pending": true
+    },
+    "low_battery_shutdown": {
+      "classified_as_rom_fault": false,
+      "user_explanation": "Accidental user event; withdraw the fault record and related diagnostic task",
+      "separate_charging_thermal_scope_unchanged": true
+    },
+    "host_reboot_scope": {
+      "rom_acceptance_requirement": false,
+      "removed_from_rom_backlog": true,
+      "host_maintenance_only": true,
+      "server_reboot_performed": false
+    },
+    "tcp_bpf": {
+      "status": "partial_pass_reset_orphan_rule_gap_reproduced",
+      "current_conclusion_zh": "真实FIN关闭的双向回收与活动连接隔离通过；未发送应用数据的RST也可及时回收。有应用数据的RST仍存在自然清理缺口：一轮140秒后双向规则仍在，253秒时内核表无对应连接但规则保留，后续超过5分钟仍见两条。收到实际DELETE事件的另一轮能正确删除，不能把该子项扩大为全部RST通过",
+      "test_scenarios": 6,
+      "application_payload_bytes_total": 9606,
+      "payload_bytes_exclude_tcp_ssh_control_capture_overhead": true,
+      "fin_bidirectional_remove_passed": true,
+      "unrelated_live_control_connection_preserved": true,
+      "no_client_payload_rst_immediate_remove_passed": true,
+      "with_client_payload_rst_immediate_remove_passed": false,
+      "natural_rst_sample_seconds": [
+        0,
+        12,
+        30,
+        60,
+        90,
+        120,
+        140
+      ],
+      "natural_rst_rules_each_direction_at_140s": 1,
+      "late_kernel_observation": {
+        "at": "2026-09-22T12:34:01.836066+00:00",
+        "matching_rules_before_ct_read": 2,
+        "kernel_states": [],
+        "matching_rules_after_ct_read": 2,
+        "seconds_since_reset": 253.71,
+        "boot_id_unchanged": true,
+        "network_adb_restored": true
+      },
+      "passive_installed_parser_events": [
+        {
+          "type": 256,
+          "tcp_state": 1,
+          "timeout": 120,
+          "status": 408,
+          "monitor_established": false,
+          "monitor_dying": false,
+          "controlled_flow": "rst",
+          "seconds_from_first_event": 0
+        },
+        {
+          "type": 256,
+          "tcp_state": 2,
+          "timeout": 60,
+          "status": 410,
+          "monitor_established": false,
+          "monitor_dying": false,
+          "controlled_flow": "rst",
+          "seconds_from_first_event": 0.033978
+        },
+        {
+          "type": 256,
+          "tcp_state": 3,
+          "timeout": 432000,
+          "status": 414,
+          "monitor_established": true,
+          "monitor_dying": false,
+          "controlled_flow": "rst",
+          "seconds_from_first_event": 0.039127
+        },
+        {
+          "type": 256,
+          "tcp_state": 1,
+          "timeout": 120,
+          "status": 408,
+          "monitor_established": false,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 0.122707
+        },
+        {
+          "type": 256,
+          "tcp_state": 2,
+          "timeout": 60,
+          "status": 410,
+          "monitor_established": false,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 0.15824
+        },
+        {
+          "type": 256,
+          "tcp_state": 3,
+          "timeout": 431999,
+          "status": 414,
+          "monitor_established": true,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 0.163233
+        },
+        {
+          "type": 256,
+          "tcp_state": 4,
+          "timeout": 120,
+          "status": 414,
+          "monitor_established": true,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 1.508395
+        },
+        {
+          "type": 256,
+          "tcp_state": 6,
+          "timeout": 30,
+          "status": 414,
+          "monitor_established": true,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 1.566395
+        },
+        {
+          "type": 256,
+          "tcp_state": 7,
+          "timeout": 120,
+          "status": 414,
+          "monitor_established": true,
+          "monitor_dying": false,
+          "controlled_flow": "fin",
+          "seconds_from_first_event": 1.570328
+        },
+        {
+          "type": 258,
+          "tcp_state": 3,
+          "timeout": 0,
+          "status": 926,
+          "monitor_established": false,
+          "monitor_dying": true,
+          "controlled_flow": "rst",
+          "seconds_from_first_event": 13.284763
+        }
+      ],
+      "passive_observer_exit": 0,
+      "passive_observer_only_receives_multicast": true,
+      "proc_table_read_at_11_seconds_in_event_diagnostic": true,
+      "proc_read_can_affect_expired_entry_collection": "Observation with this read is not claimed as natural expiry timing",
+      "delete_event_with_established_tcp_state_accepted_by_installed_monitor": true,
+      "maps_cleared_after_observed_delete": true,
+      "all_own_tcp_sockets_closed": true,
+      "manual_bpf_map_or_conntrack_delete": false,
+      "remaining_controlled_rule_counts_at_handoff": {
+        "bpf-cu-live-1": {
+          "control": 2,
+          "fin": 0
+        },
+        "bpf-cu-rst-2": {
+          "rst": 0
+        },
+        "bpf-cu-rst-3": {
+          "no_client_payload": 0,
+          "with_client_payload": 0
+        },
+        "bpf-cu-root-4": {
+          "no_client_payload": 0,
+          "with_client_payload": 0
+        },
+        "bpf-cu-natural-5": {
+          "rst": 2
+        },
+        "bpf-cu-events-6": {
+          "rst": 0,
+          "fin": 0
+        }
+      },
+      "entire_hotspot_disable_unload_tested": false,
+      "all_tcp_bpf_scenarios_accepted": false,
+      "next_step": "Trace why natural expired-flow deletion can leave rules, including event delivery and upstream/client lifecycle; do not alter kernel safety settings or claim a fix from parser tests"
+    },
+    "network_adb_handoff": {
+      "connected": true,
+      "authentication_required": true,
+      "same_physical_hardware_verified": true,
+      "preferred_for_further_control": true,
+      "network_only_command_verified": true,
+      "uid": 2000,
+      "selinux": "Enforcing",
+      "phone_rebooted": false,
+      "probe_dex_and_directory_removed": true,
+      "usb_cable_unreliable_user_report": true,
+      "identifiers_and_endpoint": "Private local files only"
+    },
+    "probe": {
+      "source": "tests/android/GoldConntrackObserver.java",
+      "source_sha256": "f68a93c15b38a0e621e5f4ad899ae689c2e67e903e3f620d98adfa7023c2f737",
+      "dex_sha256": "2139d20d092289d80dadfc142173684c67b0202c8d9354f6649c24a2cc41f355",
+      "compiled_with_existing_server_jdk_and_d8": true,
+      "new_tool_or_dependency_installed": false
+    },
+    "android_inputs_modified": false,
+    "rom_build_started": false,
+    "raw_evidence": "Private local runtime-70c2ec4-20260922, mode0600; never commit device identifiers, endpoints, packet payloads or wireless logs."
   }
 }

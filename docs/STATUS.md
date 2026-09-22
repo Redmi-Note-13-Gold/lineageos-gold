@@ -1,4 +1,4 @@
-更新于2026-09-22 19:42 +08：70c2ec4 已保数据安装到 A 槽，安装器与独立各14项分区回读、正常启动和数据核验通过。唯一主线仍为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器为事实来源。
+更新于2026-09-22T20:43:48+08:00：70c2ec4已装机；补入用户Wi-Fi反馈与中国联通上行的真实TCP/BPF验证。唯一主线仍为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器为源码、构建和产物事实来源。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
@@ -8,17 +8,16 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 
 | 项目 | 当前事实及下一步 |
 |---|---|
-| WPA3 热点 | 本机开启 WPA3 失败已复现：框架 capability=123，缺 SAE bit 4，记录 `Error, SAE requires HAL support`，在 native hostapd 前拒绝。匹配 Global 原厂两份 Wi-Fi RRO 均开启 `config_wifi_softap_sae_supported`，hostapd 已有 CONFIG_SAE。该次源码修复仅补Wi-Fi XML同一资源为true，91项Python测试、编译资源检查通过，旧候选被新增资源门禁正确拒绝。70c2ec4已安装，实际资源为true，框架能力值已从123变127、包含SAE bit 4；热点启动、WPA3客户端认证及关闭仍未实测，本轮没有切换网络作测试 |
-| Wi-Fi 自动恢复 | 已安装正式探测 RRO，但之前批准的保存网络不在当前扫描范围；需该热点重新可见后核对自动关联、真实 TLS/204 和框架判定，不强制 VALIDATED |
+| WPA3 热点 | 70c2ec4的SAE资源true、框架能力127含bit4已核验；用户已确认热点可以开启、Mac可以扫描到，但Mac连接失败，具体失败阶段尚未抓到。原“无法启动”问题与当前“客户端连接失败”分开；不记整个WPA3热点通过。当前保留正常使用的WPA2热点；后续需稳定的独立控制链及允许短时断网的复现窗口 |
 | 设备属性证明 / 认证密钥 | 6e7c418 实测 Key Attestation 仍报 -66 CANNOT_ATTEST_IDS；70c2ec4本轮未复测该请求。vnd_gold/gold 两项专用属性未获 TEE 接受。实机 SKU=gold_cn，已核验 Global vendor 与 product 镜像的通用属性不足以证明实际预置身份。不得继续把 vendor 值假说写成已修复；需核对真实变体与 TEE 请求。引导状态仍 orange；安全锁屏未设置，认证绑定密钥未测，不代用户设锁或导入 keybox |
-| TCP/BPF | parser/event 和真实 TCP 状态变化已有旧版证据，IPv4 双向规则删除仍未证明；用户明确保持移动数据关闭，缺允许的 raw-IP 上行条件 |
+| TCP/BPF | 真实FIN关闭的双向回收与活动连接隔离通过；未发送应用数据的RST也可及时回收。有应用数据的RST仍存在自然清理缺口：一轮140秒后双向规则仍在，253秒时内核表无对应连接但规则保留，后续超过5分钟仍见两条。收到实际DELETE事件的另一轮能正确删除，不能把该子项扩大为全部RST通过；只使用用户允许的中国联通现有上行，未改流量/默认订阅/漫游设置，未关闭热点。全热点关闭/卸载未测试 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
 | DeviceDiagnostics / AOD / 媒体 | 电池未知值界面旧版已测，非法边界注入未测；AOD/doze 与必要扩展媒体场景尚未完整验收，不把短 AVC 片段扩大为全格式通过 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
-| 主机重启 / 发行 | 目录迁移构图已过，科研机整机重启恢复未实测；userdebug/test-keys 不是正式发行密钥验收，未公开发布 |
+| 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
 
-2026-09-22用户明确要求“开刷”，本轮已执行保数据安装及必要正常重启；这不扩大为额外Recovery或网络切换测试。未操作SIM、拨号或短信，移动数据仍0，正式双击设置仍1。手机端两份专属OTA暂存文件及其目录已清理，临时root已恢复UID2000、Enforcing。用户Key Attestation 1.8.4/code198保留，没有授予额外权限。
+2026-09-22用户明确要求“开刷”，本轮已执行保数据安装及必要正常重启；这不扩大为额外Recovery或网络切换测试。未操作SIM、拨号或短信，当时只记录旧的全局mobile_data=0，不能据此判定双卡实际数据开关；本轮按订阅与真实上行核实中国联通已开启、漫游eSIM数据关闭，原设置不变。正式双击设置仍1。手机端两份专属OTA暂存文件及其目录已清理，临时root已恢复UID2000、Enforcing。用户Key Attestation 1.8.4/code198保留，没有授予额外权限。
 
 ## 70c2ec4 本次已验收子项
 
@@ -27,8 +26,12 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 全量OTA安装与回读 | 手机端包SHA-256、信任证书和适用性通过，标准update_engine返回kSuccess(0)及UPDATED_NEED_REBOOT；B→A保数据安装，安装器最终14分区与独立活动槽14分区SHA-256均匹配签名镜像 |
 | 正常启动与数据 | A / 1790008554，正常重启一次、首次稳定观察25.40秒；Enforcing、data/persist挂载、snapshot none、两份canary一致。没有做Recovery往返或第二次重启 |
 | eSIM退出支持 | 设备实际system_ext六条旧路径（包含悬空链接）均缺席，PackageManager中无OpenEUICC应用或eUICC feature；没有操作SIM |
-| WPA3资源与能力 | 安装后的SAE资源为true，实际框架SoftAP能力127包含bit4；仅证明此前缺失能力已生效，未开启热点或验证客户端SAE认证 |
-| 交还状态 | 两份OTA暂存文件与专属目录清理；ADB UID2000、Enforcing、移动数据0、双击设置1。用户KeyAttestation 1.8.4/code198保留 |
+| WPA3资源与能力 | SAE资源true、SoftAP能力127含bit4；用户在70c2ec4确认热点能启动、Mac可扫描，Mac连接仍失败，连接故障留在待办 |
+| 交还状态 | OTA暂存已清理；本轮临时root检查后恢复ADB UID2000、Enforcing。因用户提示USB线缆破损，已启用并实际连接鉴权网络ADB，核对硬件身份后优先使用；端点只存私有证据。联通数据开启、漫游eSIM数据关闭，未改设置。用户KeyAttestation1.8.4/code198保留 |
+| Wi-Fi自动恢复（用户验收） | 用户明确确认70c2ec4自动恢复可用；移出未完成清单。未提供本轮独立TLS/204、恢复耗时或框架VALIDATED日志，不将用户体验结论扩大为这些自动化指标 |
+| TCP正常关闭及隔离 | 现有WPA2热点客户端经联通ccmni0上行，真实连接ESTABLISHED时双向各1条规则；FIN后客户端进入TIME_WAIT、双向规则清除，另一条活动连接的两条规则保持。RST细节与边界见上表和聚合证据 |
+
+用户澄清既往低电关机是操作意外，取消其ROM故障记录，不再据此安排故障排查；必要充电/热控场景仍按独立需求决定。没有重启手机、改变热点或操作漫游eSIM。
 
 ## 6e7c418 历史已验收子项
 
@@ -58,7 +61,7 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 2026-09-22 r7 于12:57:15 +08入口 exit 0；bacon 01:15:23、target-files-package 01:36:32 均 exit 0。168项合并输入、14个payload分区与target-files镜像全部一致；签名、VINTF、SELinux、Gold内容与版本日期门禁通过。真实镜像核对38项文件，system_ext六个退役路径缺席，eSIM支持为false，WPA3 SAE编译资源为true。product与Recovery均为UTC epoch对应的20260921版本日期。独立guard12:57:20退出，VM实读0/zbud/N/Y，无OOM，本轮ZIP工具、OTA scratch与精确needrestart配置均已清理；宿主zip/unzip仍未安装。
 
-完整全量OTA与target-files已独立冻结至 `/srv/build/gold/releases/20260922-130256-70c2ec4`，保留同次源码、工具与输入，独立冻结检查器exit0；两包均nlink1，转存和复验临时目录已清理，index现为11个候选。OTA SHA-256 `df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b`；target-files `1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed`。OTA与r5的OTA字节相同：r5的OTA日期原本正确，发生漂移的是第二阶段target-files；r7原生重建后已通过全部分区和日期检查，没有沿用r5失败结论或手工改签名包。r5两份拒绝包继续单独保留。70c2ec4现已完成上文安装与回读；WPA3实际启动和客户端认证尚未测试。
+完整全量OTA与target-files已独立冻结至 `/srv/build/gold/releases/20260922-130256-70c2ec4`，保留同次源码、工具与输入，独立冻结检查器exit0；两包均nlink1，转存和复验临时目录已清理，index现为11个候选。OTA SHA-256 `df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b`；target-files `1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed`。OTA与r5的OTA字节相同：r5的OTA日期原本正确，发生漂移的是第二阶段target-files；r7原生重建后已通过全部分区和日期检查，没有沿用r5失败结论或手工改签名包。r5两份拒绝包继续单独保留。70c2ec4现已完成上文安装与回读；用户已确认WPA3能启动并被Mac扫描，Mac连接失败；当前仍未通过客户端连接验收。
 
 构建后主机收尾已纳入主线 `tools/host/vm-guard.py`、`build-invocation.py` 与统一入口：启动前准备仅匹配本轮build/guard完整名称的临时needrestart配置；守护单例锁、服务与递归cgroup状态、源码锁共同约束恢复，重启接管保留原始VM值，外部值变化保留并明确报恢复未完成；运行期终止信号不能提前恢复。每个systemd InvocationID在jobs/build-invocations下独立建档，禁止覆盖，记录真实退出/外部信号；Android输入/result关联同一ID。117项主机测试通过。短服务实测覆盖SIGTERM延后、并发守护拒绝、SIGKILL后接管且测试服务不重启、最终VM和精确配置恢复、PID1退出与invocation对应；实际构建入口的缺unzip预检失败也独立留档且未创建Android构建。这次主机改动后168项Android输入及10个受管项目逐字节/提交不变，不另编ROM，冻结工具仍为构建时70c2ec4版本。
 
@@ -80,7 +83,7 @@ r2 guard 于 22:14:31 恢复，终态实读 VM=0/zbud/N/Y，无 OOM，临时 ZIP
 
 活动输出两种同次包的三个路径在与独立冻结候选逐个重读 SHA-256 一致后清理，释放约 3.80 GiB，输出 inode 9437191 不变；记录 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json` 给出已保存冻结路径。历史候选、官方输入、OverlayFS、缓存与 swap 均保留。OverlayFS 合并视图到 releases 直接 rename 实测返回 EXDEV；冻结改为逐包复制、重读 SHA-256 并 fsync 后才移除该包的全部可变硬链接，保存路径映射和独立工具复验；不改 OUT_DIR，不复制第二套输出。
 
-目录迁移构图于 14:56:55 exit 0、01:01:37，guard 14:57:03 退出、VM 0/zbud/N/Y，无 OOM；.top、新路径、inode9437191、161 项原输入和1158个Repo提交未变。整机重启恢复尚未测。`27ea764` 已退役15个 archive/hybrid 文件；旧源码从 Git 历史查阅，当前主线 Python 提取/构建/检查工具继续保留，后续适配只走主线。
+目录迁移构图于 14:56:55 exit 0、01:01:37，guard 14:57:03 退出、VM 0/zbud/N/Y，无 OOM；.top、新路径、inode9437191、161 项原输入和1158个Repo提交未变。整机重启恢复未实测，仅为主机维护边界，不列ROM待办。`27ea764` 已退役15个 archive/hybrid 文件；旧源码从 Git 历史查阅，当前主线 Python 提取/构建/检查工具继续保留，后续适配只走主线。
 
 固定 IMS APK SHA-256 `98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1` 为普通 Git blob，原厂完整依赖配方不足仍是 prebuilt 限制。匹配 Global vendor/kernel/modules、所需 ARM 媒体图形库、官方 Global/CN 输入和历史候选均有恢复及硬件用途，不能删除。原始设备/无线日志与截图只在本机私有目录0600，Git只存脱敏结论；维护、构建、冻结入口见 [LAYOUT](LAYOUT.md)、[BUILD](BUILD.md)、[RESTORE](RESTORE.md)。
 

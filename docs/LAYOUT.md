@@ -65,7 +65,7 @@ project/
 
 系统已启用 `srv-build-gold-source.mount`，对应普通文件由同一配置的 `--print-mount-unit` 生成。`/etc/fstab` 使用 `/srv/build/gold/host/build.swap`，root Git include 使用 `host/git-safe-directories.config`，Repo 的本地 manifest URL 使用 `host/manifest`。Git 信任清单仍为确切路径，没有通配信任。
 
-2026-09-21 在确认无活动构建后正常卸载、迁移并重新挂载 OverlayFS；没有强制/懒卸载，没有重启服务器。swap 停用后同盘重命名，再启用原文件；未清理缓存或重建 swap。新位置的挂载和 swap 已实测，整机重启恢复仍未实测。恢复步骤见 [RESTORE](RESTORE.md)。
+2026-09-21 在确认无活动构建后正常卸载、迁移并重新挂载 OverlayFS；没有强制/懒卸载，没有重启服务器。swap 停用后同盘重命名，再启用原文件；未清理缓存或重建 swap。新位置的挂载和 swap 已实测，整机重启恢复未实测；这是主机维护边界，已按用户要求移出ROM验收待办，不安排本轮重启。恢复步骤见 [RESTORE](RESTORE.md)。
 
 唯一输出保留原目录 inode；仅更新主线归属标记的 source_tree。输出中的 `.top` 与绝对链接交由 Soong 原生搬迁逻辑处理，不批量替换生成的 Ninja 内容。`/srv/build/build-gold.sh --check-build-graph` 在相同输出中执行 `m nothing`，与正式构建共用源码互斥锁；它验证新路径构图，不授予 ROM 构建或实机通过结论。2026-09-21 14:56:55 +08 已 exit 0，构图耗时 01:01:37；guard 退出且 VM 实读恢复 0/zbud/N/Y，输出 inode 9437191、161 项输入与 1158 个 Repo 提交保持，环境检查通过，无 OOM。终态见 [宿主证据](../validation/host-layout-20260920.json)。
 

@@ -623,5 +623,11 @@
     "mutable_package_aliases_removed": true,
     "transfer_and_recheck_directories_absent": true,
     "r5_unvalidated_packages_preserved": true
+  },
+  "rom_acceptance_scope_20260922": {
+    "host_reboot_tested": false,
+    "host_reboot_is_rom_acceptance_requirement": false,
+    "host_reboot_planned_this_round": false,
+    "reason": "Host boot-time mount/swap recovery is a separate maintenance topic, removed from the ROM acceptance backlog after user clarification."
   }
 }
