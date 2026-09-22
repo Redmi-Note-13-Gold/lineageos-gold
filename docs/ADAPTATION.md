@@ -164,3 +164,5 @@ eSIM退出的增量迁移由 `device/xiaomi/gold/CleanSpec.mk` 补齐：r3证明
 r4已证实退役JNI链接由标准CleanSpec移除；其后失败属于主机target-files镜像构造的临时空间峰值。同容量/inode定向生成通过，修复仅扩展私有打包临时目录覆盖范围，未改变设备分区容量和运行时功能；最终包缺席门禁仍须完整通过。
 
 r5实际分区校验拒绝跨UTC零点造成的Lineage版本日期漂移，属于构建确定性问题；最小version.mk补丁将日期固定至同次BUILD_DATETIME，并补product/Recovery包门禁。没有改硬件能力或扩大设备验收。原167项输入未变，新增1项固定日期输入，当前168项/10受管项目；105项主机及7项实际Make检查通过，新包等待r6验证。
+
+2026-09-22 r6配置检查补充：直接读取BUILD_DATETIME被实际Kati判为obsolete；此前GNU Make检查覆盖不足，失败记录保留。现从Soong已提供的BUILD_DATETIME_FILE读取epoch；同文件内更晚才定义的BUILD_DATETIME_FROM_FILE不能用于version.mk包含点。105项主机测试、8项实际Make定向检查及真实Android lunch/dumpvars通过（日期20260921），168项输入仅version.mk变化；等待r7完整构建和原有全部包门禁，不扩大设备结论。

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T01:44:34.839573+00:00",
+  "updated_at": "2026-09-22T02:01:24.135003+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6100,8 +6100,8 @@
     "merged_input_count": 168,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r6",
-    "additional_build_input": "vendor/lineage/config/version.mk fixes UTC version date to BUILD_DATETIME"
+    "build_job_prefix": "no-euicc-r7",
+    "additional_build_input": "vendor/lineage/config/version.mk reads fixed epoch from Soong BUILD_DATETIME_FILE"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -7252,7 +7252,123 @@
         "phone_operated": false
       },
       "artifact_gate": "Product and Recovery Lineage dates must match the build epoch and one another",
-      "device_accepted": false
+      "device_accepted": false,
+      "kati_compatibility_correction": {
+        "previous_make_test_limitation": "GNU Make did not enforce the Android Kati obsolete-variable rule",
+        "epoch_source": "BUILD_DATETIME_FILE supplied by Soong before product configuration",
+        "changed_input": "vendor/lineage/config/version.mk",
+        "previous_other_167_inputs_unchanged": true,
+        "host_tests_passed": 105,
+        "actual_make_tests": {
+          "checked_at": "2026-09-22T01:58:55.129045+00:00",
+          "actual_merged_make_source": "/srv/build/gold/source/vendor/lineage/config/version.mk",
+          "before": [
+            [
+              "20260921",
+              "23.2-20260921-UNOFFICIAL-gold",
+              "23-20260921-UNOFFICIAL-gold"
+            ],
+            [
+              "20260922",
+              "23.2-20260922-UNOFFICIAL-gold",
+              "23-20260922-UNOFFICIAL-gold"
+            ]
+          ],
+          "after": [
+            [
+              "20260921",
+              "23.2-20260921-UNOFFICIAL-gold",
+              "23-20260921-UNOFFICIAL-gold"
+            ],
+            [
+              "20260921",
+              "23.2-20260921-UNOFFICIAL-gold",
+              "23-20260921-UNOFFICIAL-gold"
+            ]
+          ],
+          "checks": {
+            "original_fixed_epoch_still_crossed_midnight": true,
+            "timestamp_file_both_clocks_match": true,
+            "fixed_utc_date": true,
+            "append_time_fixed": true,
+            "default_clock_unchanged": true,
+            "empty_file_variable_default_unchanged": true,
+            "host_timezone_does_not_change_utc": true,
+            "timestamp_file_path_with_spaces_and_obsolete_variable_guard": true
+          },
+          "phone_operated": false
+        },
+        "actual_android_configuration": {
+          "checked_at": "2026-09-22T01:59:30.567520+00:00",
+          "command": [
+            "bash",
+            "-c",
+            "set -e; source build/envsetup.sh; lunch lineage_gold-bp4a-userdebug; build/soong/soong_ui.bash --dumpvars-mode --vars=\"TARGET_PRODUCT TARGET_BUILD_VARIANT LINEAGE_BUILD_DATE LINEAGE_VERSION LINEAGE_DISPLAY_VERSION BUILD_DATETIME_FILE\""
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 6.8575146198272705,
+          "checks": {
+            "TARGET_PRODUCT='lineage_gold'": true,
+            "TARGET_BUILD_VARIANT='userdebug'": true,
+            "LINEAGE_BUILD_DATE='20260921'": true,
+            "LINEAGE_VERSION='23.2-20260921-UNOFFICIAL-gold'": true,
+            "LINEAGE_DISPLAY_VERSION='23-20260921-UNOFFICIAL-gold'": true
+          },
+          "android_kati_obsolete_variable_error_absent": true,
+          "output_inode": 9437191,
+          "phone_operated": false
+        },
+        "new_rom_package_verified": false
+      }
+    },
+    "sixth_build_terminal": {
+      "record": "jobs/gold-mainline-20260920/no-euicc-r6-terminal.json",
+      "entry_exit_code": 1,
+      "android_compile_started": false,
+      "root_cause": "Kati marks BUILD_DATETIME obsolete; standalone GNU Make test did not cover the Android variable restrictions",
+      "started_at": 1790041852.2427983,
+      "finished_at": 1790041881.6632164,
+      "build_invocation_id": "e324dbf9456a43b9a30985677cad4b21",
+      "guard_lifecycle": {
+        "status": "restored",
+        "unit": "gold-no-euicc-20260922-r6.service",
+        "guard_unit": "gold-no-euicc-vm-guard-20260922-r6.service",
+        "needrestart_conf_path": "/etc/needrestart/conf.d/99-gold-no-euicc-r6-temporary.conf",
+        "needrestart_conf_sha256": "a3bee100b7d3ebf22e89ed23f7036cb3008d2d7c7341283c7dea0e9917d354de",
+        "restart_deferral_scope_verified": true,
+        "phone_operated": false,
+        "prepared_before_build_start": true,
+        "guard_invocation_id": "16d1d75de9de432eb9bec6df7f4c86ce",
+        "active_at": "2026-09-22T01:50:52.264250+00:00",
+        "vm_temporary": [
+          "60",
+          "zsmalloc",
+          "Y",
+          "N"
+        ],
+        "build_invocation_ids": [
+          "e324dbf9456a43b9a30985677cad4b21"
+        ],
+        "build_terminal_observed_at": "2026-09-22T01:51:25.299778+00:00",
+        "restored_at": "2026-09-22T01:51:25.317081+00:00",
+        "vm_live_after_restoration": [
+          "0",
+          "zbud",
+          "N",
+          "Y"
+        ],
+        "temporary_tools_absent": true,
+        "temporary_scratch_absent": true,
+        "needrestart_conf_removed": true
+      },
+      "vm_readback": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "kernel_oom_lines": [],
+      "phone_operated": false
     }
   }
 }

@@ -1,6 +1,6 @@
 更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r5两个Android阶段均成功，但最终门禁拒绝OTA/target-files分区不一致；实际镜像文件差异为跨UTC零点生成的Lineage版本日期，已将版本日期绑定BUILD_DATETIME并补包门禁，准备原输出r6续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r5两个Android阶段均成功，但最终门禁拒绝OTA/target-files分区不一致；实际镜像文件差异为跨UTC零点生成的Lineage版本日期，已补版本日期与包门禁；r6在配置检查中暴露Kati禁用变量，现改为Soong提供的BUILD_DATETIME_FILE，真实lunch/dumpvars及定向检查通过，准备原输出r7续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -46,7 +46,11 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 ## 构建与工程证据
 
-r5 当前有效 invocation 于 06:55:31 启动，bacon 01:21:45、target-files-package 55:30 均 exit 0；入口 09:14:35 exit 1。14 个分区中 product、vendor_boot 和关联 vbmeta/vbmeta_system 哈希不一致。真实 payload 提取哈希通过，product 的 606 项文件仅 etc/build.prop 不同，vendor_boot 的 Recovery ramdisk 仅 prop.default 不同，两处均为 ro.lineage.version / display.version 的 20260921→20260922；固定 Android timestamp 没有约束上游实时 UTC 版本日期。最小 vendor/lineage 补丁现在使普通日期及可选时分秒均服从 BUILD_DATETIME；默认/空值仍保持原行为。包门禁同时核对 product/Recovery 版本日期与 epoch。105 项主机测试、7 项实际 Make 跨午夜/时区检查通过；原 167 项合并输入逐字节未变，仅新增 version.mk，当前 168 项/10 个受管项目，1158 项 Repo 提交不变。最终 ROM 包尚未通过，未生成新候选。
+r6 于 09:50:52 启动、09:51:21 入口 exit 1，未进入 Android 编译：Kati 在 version.mk 报 `BUILD_DATETIME is obsolete. Use BUILD_DATETIME_FROM_FILE.`。Soong 在配置前已生成 `out-gold-standard/build_date.txt` 并提供 `BUILD_DATETIME_FILE`，而 `BUILD_DATETIME_FROM_FILE` 在此 version.mk 包含点尚未定义。最小补丁改为从前者读取固定 epoch；不用被禁变量，也不放宽 Kati。真实 `lunch lineage_gold-bp4a-userdebug` 和 `soong_ui --dumpvars-mode` exit 0，实际版本为 `23.2-20260921-UNOFFICIAL-gold`；105 项主机测试及 8 项日期/UTC/路径空格/过时变量定向检查通过。168 项输入中仅 version.mk 相比 ecdbab1 改变，另 167 项未变。r7 的 ROM 与包门禁仍待验证。
+
+r6 独立 guard 于 09:51:25 有匹配 invocation 的 PID1 成功退出；实读 VM 0/zbud/N/Y，临时 ZIP 工具、OTA scratch 和两服务精确 needrestart 配置均删除，宿主 zip/unzip 安装状态未改变，无 OOM。失败保存在 `jobs/gold-mainline-20260920/no-euicc-r6-terminal.json`；该轮预先准备的保护、独立 VM 原值记录及按 invocation 分开的 job 结果已实际工作，后续仍需将其固化到现有主线主机流程。没有操作手机。
+
+r5 当前有效 invocation 于 06:55:31 启动，bacon 01:21:45、target-files-package 55:30 均 exit 0；入口 09:14:35 exit 1。14 个分区中 product、vendor_boot 和关联 vbmeta/vbmeta_system 哈希不一致。真实 payload 提取哈希通过，product 的 606 项文件仅 etc/build.prop 不同，vendor_boot 的 Recovery ramdisk 仅 prop.default 不同，两处均为 ro.lineage.version / display.version 的 20260921→20260922；固定 Android timestamp 没有约束上游实时 UTC 版本日期。ecdbab1 首次补丁将普通日期及可选时分秒绑定 BUILD_DATETIME，但其 GNU Make 测试未覆盖 Kati 的过时变量限制，后续 r6 启动检查真实拒绝；现已按上文修正。包门禁同时核对 product/Recovery 版本日期与 epoch。105 项主机测试、7 项实际 Make 跨午夜/时区检查通过；原 167 项合并输入逐字节未变，仅新增 version.mk，当前 168 项/10 个受管项目，1158 项 Repo 提交不变。最终 ROM 包尚未通过，未生成新候选。
 
 本轮 06:55 的宿主 unattended-upgrades/needrestart 外部重启与 Android 终态分开记录；原 guard 因既有记录退出 1，rescue 安全接管后于 09:14:52 有 PID1 成功退出证据。实读 VM 0/zbud/N/Y、无 OOM；ZIP 工具、OTA scratch 与精确临时 needrestart 配置均清理，宿主未安装 zip/unzip。失败原结果保持，详见 jobs/gold-mainline-20260920/no-euicc-r5-terminal.json、mismatch-diagnostic.json、guard-recovery.json。两份拒绝包逐字节校验/fsync 后暂存 /tmp/gold-no-euicc-r5-unvalidated-packages，任务记录 package-preservation.json 关联旧路径；保留失败包原字节，未删历史候选或输入，不可刷写。
 

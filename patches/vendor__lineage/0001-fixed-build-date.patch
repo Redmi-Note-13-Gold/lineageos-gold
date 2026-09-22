@@ -5,10 +5,10 @@
  
  ifeq ($(LINEAGE_VERSION_APPEND_TIME_OF_DAY),true)
 -    LINEAGE_BUILD_DATE := $(shell date -u +%Y%m%d_%H%M%S)
-+    LINEAGE_BUILD_DATE := $(shell date -u $(if $(BUILD_DATETIME),-d "@$(BUILD_DATETIME)") +%Y%m%d_%H%M%S)
++    LINEAGE_BUILD_DATE := $(shell date -u $(if $(BUILD_DATETIME_FILE),-d "@$$(cat "$(BUILD_DATETIME_FILE)")") +%Y%m%d_%H%M%S)
  else
 -    LINEAGE_BUILD_DATE := $(shell date -u +%Y%m%d)
-+    LINEAGE_BUILD_DATE := $(shell date -u $(if $(BUILD_DATETIME),-d "@$(BUILD_DATETIME)") +%Y%m%d)
++    LINEAGE_BUILD_DATE := $(shell date -u $(if $(BUILD_DATETIME_FILE),-d "@$$(cat "$(BUILD_DATETIME_FILE)")") +%Y%m%d)
  endif
  
  # Set LINEAGE_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
