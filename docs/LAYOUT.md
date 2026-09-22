@@ -79,7 +79,7 @@ project/
 
 用 `python3 /srv/build/gold/project/tools/index-candidates.py /srv/build/gold/releases --verify-hashes` 生成 JSON 清单，再原子替换 `index.json`。省略校验参数只读记录和大小。索引不根据目录名授予验收状态；安装与硬件结论以 [STATUS](STATUS.md) 和对应 validation 为准。
 
-旧局部输出 `source/out-gold-betterr-20260917` 和空诊断输出仍保留，不用作日常输出。本次未删除历史镜像或唯一输入，没有复制大目录或释放大文件空间。现场硬件为 8 vCPU、约 14 GiB 可见 RAM、23 GiB 可见 swap，数据盘 344 GiB；剩余容量以实时检查为准。
+旧局部输出 `source/out-gold-betterr-20260917` 当时原位保留，9月22日晚核验后已按用户明确授权删除；空诊断输出保留，均不用作日常输出。9月21日目录搬迁时未删除历史镜像或唯一输入、未复制大目录；9月22日晚的旧输出清理见下节。现场硬件为 8 vCPU、约 14 GiB 可见 RAM、23 GiB 可见 swap，数据盘 344 GiB；剩余容量以实时检查为准。
 
 执行明细在 `/srv/build/gold/jobs/gold-mainline-20260920/physical-layout-20260921.json`；脱敏结论统一更新 [host-layout-20260920.json](../validation/host-layout-20260920.json)。
 
@@ -98,3 +98,9 @@ project/
 2026-09-22晚只在原OUT中定向编译两个APK，inode9437191不变；独立APK、构图/工具哈希与源码片段保存在jobs/gold-mainline-20260920/focused-apks-20260922，不属于新的releases候选或第二工程。官方vendor单分区诊断在/tmp专属目录完成后已卸载并删除，只保留必要插件/哈希证据于同一jobs根。历史输入和11个冻结候选未删除。
 
 认证绑定和属性诊断仅在现有jobs根的keymint-auth-probe-20260922、keymint-property-probe-20260922保留测试APK/DEX与来源哈希，不是第二套ROM工程或新冻结候选。CN原厂只读分区审计临时展开在/tmp自有目录，完成后卸载并删除临时镜像，原官方归档保留。原始CSR/DICE与设备日志仅存本机0600私有证据，Git只含脱敏结论。
+
+### 用户授权清理的旧输出
+
+9月22日晚先对旧非活动 `source/out-gold-betterr-20260917` 及活动OUT中的两份旧日期OTA（20260919、20260920）完成逐文件SHA-256、类型/权限/所有者/mtime/符号链接核对和系统盘迁存。用户随后明确“旧的没用的ota和局部输出可以直接删”，已删除这三项及空的临时保留目录；原位置和迁存位置均缺席，不恢复。
+
+逐项清单和中间迁存事实保存在 `jobs/gold-mainline-20260920/followup-build-space-preservation.json` 及manifest-0/1/2.json；最终删除范围与授权记录为 `followup-obsolete-output-cleanup.json`，history/layout-moves-20260921.json追加清理结果。11个冻结候选及其candidate.json、官方输入、唯一out-gold-standard inode9437191、ccache和swap保留。所有源码侧删除均经合并source执行，未直接修改活动挂载底层；没有创建第二构建输出。数据盘现余约8.26GB、系统盘约22.05GB，实际启动前另做空间预检。

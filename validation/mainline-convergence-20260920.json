@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T14:57:33.006214+00:00",
+  "updated_at": "2026-09-22T23:31:46+08:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6083,14 +6083,14 @@
   "current_pending_android_delta": {
     "source_revision": "f6b67d402c66574cb8103d4450ca6501d2d3184b",
     "merged_input_count": 169,
-    "state": "targeted_apks_built_diagnostics_live_updated_other_changes_not_installed",
+    "state": "full_incremental_product_build_prepared",
     "source_supports_esim": false,
     "rom_built": false,
     "device_accepted": false,
     "diagnostics_apk_installed_and_28_cases_passed": true,
     "aod_overlay_compiled_but_static_update_rejected": true,
     "mpeg4_vendor_plugin_recipe_restored_not_packaged_or_installed": true,
-    "required_next_step": "Use the standard single-output incremental product build for new vendor/framework inputs; no reboot or framework/APEX restart in this session."
+    "required_next_step": "Start the single-output full product build; validate/freeze artifacts before a separate installation window."
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -8865,5 +8865,106 @@
       "Trust anchor and revocation verification were not performed.",
       "No biometric-only/per-operation authorization, credential-change invalidation or reboot-persistence claim is made from the timed device-credential test."
     ]
+  },
+  "followup_build_preparation_20260922": {
+    "prepared_at": "2026-09-22T23:31:46+08:00",
+    "production_fix_revision": "f6b67d402c66574cb8103d4450ca6501d2d3184b",
+    "state": "prepared_not_yet_started",
+    "build_unit": "gold-followup-20260922-r1.service",
+    "guard_unit": "gold-followup-vm-guard-20260922-r1.service",
+    "request_record": "/srv/build/gold/jobs/gold-mainline-20260920/followup-r1-build-request.json",
+    "source_input_count": 169,
+    "managed_project_count": 10,
+    "source_matches_focused_fix": true,
+    "included_fixes": [
+      "AOD SystemUI DozeService",
+      "MPEG4 Global ARM plugin",
+      "DeviceDiagnostics cycle filtering"
+    ],
+    "unproven_excluded": [
+      "WPA3 Mac client connection",
+      "TCP RST natural BPF cleanup",
+      "KeyMint device attribute attestation"
+    ],
+    "output_inode": 9437191,
+    "space_preservation": {
+      "status": "preserved",
+      "created_at": "2026-09-22T15:27:14.955277+00:00",
+      "reason": "Preserve unused historical output and dated OTA bytes on existing system disk before next full incremental build",
+      "destination": "/var/lib/gold-preserved-artifacts/20260922-build-space",
+      "active_output": "/srv/build/gold/source/out-gold-standard",
+      "active_output_inode": 9437191,
+      "data_free_before": 1787752448,
+      "system_free_before": 22051266560,
+      "finished_at": "2026-09-22T15:29:36.376865+00:00",
+      "data_free_after": 8257589248,
+      "system_free_after": 15568711680,
+      "output_inode_after": 9437191,
+      "items": [
+        {
+          "source": "/srv/build/gold/source/out-gold-betterr-20260917",
+          "preserved_path": "/var/lib/gold-preserved-artifacts/20260922-build-space/out-gold-betterr-20260917",
+          "manifest_sha256": "3cb164bceb842c93c2296ed6f872318eca211ad03c571d5a2e862f0c91772cf7",
+          "entries": 48288,
+          "status": "preserved",
+          "source_absent": true
+        },
+        {
+          "source": "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage-23.2-20260919-UNOFFICIAL-gold.zip",
+          "preserved_path": "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260919-UNOFFICIAL-gold.zip",
+          "manifest_sha256": "2c2f18c4d8ac116359908a037f517bf3a39108f8b28f2a22bbf2b743ea3b3c08",
+          "entries": 1,
+          "status": "preserved",
+          "source_absent": true
+        },
+        {
+          "source": "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+          "preserved_path": "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+          "manifest_sha256": "6b2b5a253603185af5cb7dcc405fb749a2a6e527f132d34e62fc2b526f32717a",
+          "entries": 1,
+          "status": "preserved",
+          "source_absent": true
+        }
+      ]
+    },
+    "host_test_count": 124,
+    "device_operated": false,
+    "automatic_install": false,
+    "rom_built": false,
+    "device_accepted": false,
+    "space_cleanup": {
+      "status": "deleted",
+      "user_authorized": true,
+      "user_instruction": "旧的没用的ota和局部输出可以直接删。",
+      "at": "2026-09-22T15:33:16.586163+00:00",
+      "deleted_paths": [
+        "/var/lib/gold-preserved-artifacts/20260922-build-space/out-gold-betterr-20260917",
+        "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260919-UNOFFICIAL-gold.zip",
+        "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260920-UNOFFICIAL-gold.zip"
+      ],
+      "retained": "All 11 frozen candidates, official inputs, active OUT, ccache, swap, validation manifests and logs",
+      "preservation_record": "/srv/build/gold/jobs/gold-mainline-20260920/followup-build-space-preservation.json",
+      "all_paths_absent": true,
+      "data_free_bytes": 8256208896,
+      "system_free_bytes": 22051237888,
+      "output_inode": 9437191
+    }
+  },
+  "obsolete_output_cleanup_20260922": {
+    "status": "deleted",
+    "user_authorized": true,
+    "user_instruction": "旧的没用的ota和局部输出可以直接删。",
+    "at": "2026-09-22T15:33:16.586163+00:00",
+    "deleted_paths": [
+      "/var/lib/gold-preserved-artifacts/20260922-build-space/out-gold-betterr-20260917",
+      "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260919-UNOFFICIAL-gold.zip",
+      "/var/lib/gold-preserved-artifacts/20260922-build-space/lineage-23.2-20260920-UNOFFICIAL-gold.zip"
+    ],
+    "retained": "All 11 frozen candidates, official inputs, active OUT, ccache, swap, validation manifests and logs",
+    "preservation_record": "/srv/build/gold/jobs/gold-mainline-20260920/followup-build-space-preservation.json",
+    "all_paths_absent": true,
+    "data_free_bytes": 8256208896,
+    "system_free_bytes": 22051237888,
+    "output_inode": 9437191
   }
 }

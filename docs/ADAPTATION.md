@@ -195,3 +195,5 @@ TCP/BPF原“/proc无匹配所以内核已消失、BPF孤立”推断撤回：�
 用户设置安全锁屏后，70c2ec4上的普通应用以15秒DEVICE_CREDENTIAL授权生成自有EC P-256和AES-256-GCM密钥。认证前两者均UserNotAuthenticatedException；本人在系统BiometricPrompt完成认证后签名/验证、AES往返及两类篡改拒绝通过；等待17秒后两者再次拒绝使用。KeyInfo报告TEE与硬件认证执行；EC证明的hardwareEnforced含userAuthType=1、authTimeout=15，挑战及4证书链内签名一致。DeviceLocked=false、VerifiedBootState=2保留真实引导状态，不能把“已设锁屏”解释为重新锁定bootloader。没有导出用户密钥、请求用户PIN或更改凭据；自有密钥与探针已清理。此项无需修改ROM。
 
 设备属性证明没有因此修复。普通应用仍无属性成功/带属性-66；直接KeyStore2测试对当前brand/device/product/manufacturer/model分别请求及一起请求均-66，当前普通平台五项组合也-66。固定CN归档全文SHA核对后，只读提取vendor/odm/product的属性及初始化规则。vendor/odm与Global同为Redmi/gold/vnd_gold/Xiaomi/gold；product是Xiaomi/missi/miproduct模板、name=gold。这些不是该台设备的工厂预置身份，不拿模板值替换手机属性；专属临时镜像已卸载清理。MiTEE启动代码读取普通ro.product属性并发送配置命令0x48，其“deviceinfo success”字符串不是工厂ID读取证据。本地RKP v3空key CSR的签名、挑战和链内签名通过，包含的仍是当前平台属性，不能据此写入或伪造证明ID。没有调用certify、上传CSR或修改TEE持久配置。完整分层结论及原厂输入哈希在聚合validation的keymint_followup_20260922；信任根/吊销仍未审计。
+
+下一版整包构建准备保留f6b67d4的169项实际输入。新增MPEG4预置模块需要正常产品构图，不能沿用只支持既存APK源码变化的定向Ninja模式。BPF源码复查确认TCP SYN/FIN/RST交回内核、用户态每60秒对最近使用的映射刷新已建立连接超时；现有证据未证明该刷新就是RST残留的完整根因，本轮没有凭假说修改BPF/APEX。WPA3 Mac认证/DHCP失败阶段也仍需独立复现，不纳入本轮已修复清单。

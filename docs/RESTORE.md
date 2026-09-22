@@ -69,3 +69,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 2026-09-22新增的MPEG4运行依赖在proprietary-files.txt的Media (MPEG4 runtime)节维护：固定Global vendor中的ARM libmp4enc_sa.ca7.so由v3avpud动态加载，不能仅按ELF NEEDED闭包删掉。正式恢复仍使用上面的固定官方镜像提取；历史dump不是可信输入替代。此次仅把已按锁定vendor镜像重验的该文件通过extract-utils --no-cleanup --section定向提取，未清理已有vendor、未重写无关生成项。设备上的临时DeviceDiagnostics数据更新不代替源码恢复；后续OTA需核对实际活动APK，不能将源修复自动当作设备更新成功。
 
 认证绑定验证只使用自有普通应用与本人系统认证；不更改持久KeyMint/TEE存储、锁屏凭据或引导状态。恢复测试环境时删除本次探针和自有密钥即可，不删除用户KeyAttestation。70c2ec4上认证绑定已通过而设备属性仍-66，二者不得混作同一验收结论；原厂分区属性与本地RKP当前DeviceInfo均不能直接冒充工厂预置ID。
+
+9月22日晚的两个旧日期OTA与非活动局部输出已按用户明确授权删除，不恢复其原路径或临时迁存路径。历史清单保留在jobs的followup-build-space-preservation与followup-obsolete-output-cleanup记录；冻结候选和官方输入仍从现有releases/inputs入口取得。

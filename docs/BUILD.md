@@ -209,3 +209,7 @@ adb -s <已核验的transport> shell run-as org.lineageos.gold.hardwareprobe cat
 `tests/android/GoldAttestationParameters.java`使用同次OUT的framework-minus-apex combined/framework.jar及公开SDK编译，再由既有d8生成DEX，通过普通shell/app_process调用KeyStore2。只访问Domain.APP下UUID命名的自有别名，不接受用户提供的身份值，不请求IMEI/serial/MEID、唯一ID或更改provisioning。无属性为控制组，五个当前非唯一属性逐项及组合，再对正常平台属性组合；输出原生错误码，finally删除自己的密钥。将DEX放本次专属目录，执行后按哈希核对并删除它及空目录，原始错误/证书留在0600私有目录。
 
 如需诊断RKP，先核对实际ShellCommand实现：本轮的`cmd remote_provisioning csr --challenge <随机挑战的base64> default`只用空keys数组在本地生成CSR，不调用`certify`或联网申请证书。CBOR包含可识别设备的DICE材料，必须仅在私有本机校验；核对挑战和COSE链内/请求签名并做坏签名拒绝，公开记录只放非唯一属性及布尔结论。签名后的当前DeviceInfo不是工厂证明ID查询接口，不能据此重置TEE或猜写属性。
+
+### 9月22日晚完整ROM构建准备
+
+AOD覆盖和新增MPEG4 vendor模块使用正常产品入口，保留顺序bacon/target-files-package与同一epoch。`followup-r1`任务在启动前要求数据盘至少7GiB、系统盘至少12GiB；两份最终包、模块/镜像变化与构图峰值留有余量。所有打包临时副本使用本次0700系统盘scratch；ZIP工具只临时认证解包。独立job wrapper直接调用主线vm-guard的单例/原值接管/精确needrestart保护和invocation流程，终态后核实VM恢复，才按本轮owner/marker清理工具与scratch；历史保留区不属于其清理范围。没有自动刷机或手机重启步骤。

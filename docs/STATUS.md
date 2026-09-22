@@ -1,8 +1,16 @@
-更新于2026-09-22T23:03:29+08:00：70c2ec4基线未换ROM；用户设置安全锁屏并本人认证后，TEE认证绑定EC/AES已完成真实验证。设备属性证明仍-66，详情与已验收子项分开列出；DeviceDiagnostics在线更新保留。固定基线为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器仍为事实来源。
+更新于2026-09-22T23:31:46+08:00：已准备下一版完整ROM增量构建，纳入已确认的AOD、MPEG4及电池界面修复；实际启动、终态与产物以本轮jobs记录为准。手机仍为70c2ec4及DeviceDiagnostics在线更新，未重启或切网。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。本次系统更新已移除设备上的OpenEUICC与eUICC特性，没有操作SIM或清除用户数据；历史记录不改写。
+
+## 下一版完整ROM构建准备
+
+用户同意安排准备构建后，已只读核对无其他Gold构建/guard、两把共享锁可取得、服务器与本机源码一致。169项合并输入与f6b67d4生产修复一致，10个受管项目未变，复用124项主机测试。构建范围是AOD标准DozeService、原厂ARM MPEG4插件与DeviceDiagnostics负循环值过滤；WPA3 Mac连接、TCP RST自然回收、设备属性证明未新增已证实修复，继续单列待办。
+
+本次计划经唯一入口启动 `gold-followup-20260922-r1.service`，独立守护为 `gold-followup-vm-guard-20260922-r1.service`，顺序bacon再target-files-package、jobs2和原资源上限不变。启动记录在 `jobs/gold-mainline-20260920/followup-r1-build-request.json`，每次真实执行另存 `jobs/build-invocations/<ID>.json`；本段是准备记录，不把尚未出现的退出或包门禁预记为通过。完成后冻结全量OTA/target-files，另等手机安装窗口。
+
+空间清理按用户随后明确授权完成：删除已停用的局部输出及两份旧日期OTA，数据盘由1.79GB增至8.26GB，系统盘恢复约22.05GB可用。删除前的逐项校验清单和任务映射保留；11个冻结候选、官方输入、缓存/swap及唯一活动OUT保留。当前没有操作手机、网络或SIM。
 
 ## 未完成与当前限制
 
