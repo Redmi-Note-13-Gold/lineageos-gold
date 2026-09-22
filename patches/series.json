@@ -72,5 +72,13 @@
     "patches": [
       "patches/packages__apps__Settings/0001-device-maintainer.patch"
     ]
+  },
+  {
+    "path": "vendor/lineage",
+    "url": "https://github.com/LineageOS/android_vendor_lineage",
+    "revision": "d747e9abec858434d4967eb5fa9cd3e87c5cc7b0",
+    "patches": [
+      "patches/vendor__lineage/0001-fixed-build-date.patch"
+    ]
   }
 ]

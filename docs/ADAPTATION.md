@@ -162,3 +162,5 @@ OTA打包临时空间：`patches/build__make/0001-ota-temporary-directory.patch`
 eSIM退出的增量迁移由 `device/xiaomi/gold/CleanSpec.mk` 补齐：r3证明普通旧文件清理漏掉JNI悬空链接，实际镜像仍有残留。标准一次性步骤处理退役安装路径及受影响镜像/列表，源码支持撤回和最终镜像缺席分别验收；不能把原门禁拒绝改称空目录误报。
 
 r4已证实退役JNI链接由标准CleanSpec移除；其后失败属于主机target-files镜像构造的临时空间峰值。同容量/inode定向生成通过，修复仅扩展私有打包临时目录覆盖范围，未改变设备分区容量和运行时功能；最终包缺席门禁仍须完整通过。
+
+r5实际分区校验拒绝跨UTC零点造成的Lineage版本日期漂移，属于构建确定性问题；最小version.mk补丁将日期固定至同次BUILD_DATETIME，并补product/Recovery包门禁。没有改硬件能力或扩大设备验收。原167项输入未变，新增1项固定日期输入，当前168项/10受管项目；105项主机及7项实际Make检查通过，新包等待r6验证。

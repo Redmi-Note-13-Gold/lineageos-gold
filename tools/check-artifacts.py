@@ -6,6 +6,7 @@ Android's own validators handle VINTF and signatures. This helper does not
 inspect source checkouts or generated vendor inputs. Python 3.9+.
 """
 import argparse
+import datetime
 import hashlib
 import json
 from pathlib import Path
@@ -117,6 +118,25 @@ def verify_payload_images(target, package, parts):
     return rows
 
 
+def verify_lineage_dates(target, timestamp):
+    """Bind Lineage's product and Recovery version dates to the build epoch."""
+    utc = datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc)
+    dates = {utc.strftime('%Y%m%d'), utc.strftime('%Y%m%d_%H%M%S')}
+    versions = None
+    for member in ('PRODUCT/etc/build.prop', 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/prop.default'):
+        props = key_values(target.read(member).decode())
+        values = {name: props.get(name, '') for name in
+                  ('ro.lineage.version', 'ro.lineage.display.version')}
+        for value in values.values():
+            fields = value.split('-')
+            if len(fields) < 3 or fields[1] not in dates:
+                raise ValueError('Lineage version date differs from build timestamp: ' + member)
+        if versions is not None and values != versions:
+            raise ValueError('Product and Recovery Lineage versions differ')
+        versions = values
+    return versions
+
+
 def verify_artifacts(target_files, ota, timestamp, expected_parts=None):
     """Small product contract check; Android's own tools validate images/signatures."""
     with zipfile.ZipFile(target_files) as target, zipfile.ZipFile(ota) as package:
@@ -160,11 +180,13 @@ def verify_artifacts(target_files, ota, timestamp, expected_parts=None):
         vbmeta = target.read('IMAGES/vbmeta.img')
         if vbmeta[:4] != b'AVB0' or len(vbmeta) < 124 or struct.unpack('>I', vbmeta[120:124])[0] != 0:
             raise ValueError('Top-level AVB image disables verification/hashtree or is invalid')
+        lineage_versions = verify_lineage_dates(target, timestamp)
         payload_images = verify_payload_images(target, package, parts)
     return {'artifact_contract_verified': True, 'target_files_sha256': digest(target_files), 'ota_sha256': digest(ota),
             'partitions': parts, 'dynamic_partitions': dynamics['dynamic_partition_list'].split(),
             'post_timestamp': timestamp, 'signing_tag': metadata.get('post-build', '').rsplit('/', 1)[-1],
             'payload_images_verified': True, 'payload_images': payload_images,
+            'lineage_version_date_verified': True, 'lineage_versions': lineage_versions,
             'device_accepted': False}
 
 

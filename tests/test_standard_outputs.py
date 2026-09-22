@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import contextlib
+import datetime
 import hashlib
 import importlib.util
 import io
@@ -34,7 +35,8 @@ class OutputContractTest(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
 
-    def fixture(self, timestamp=123, flags=0, partition='system', extra_metadata='', radio=False, bad_payload=False):
+    def fixture(self, timestamp=123, flags=0, partition='system', extra_metadata='', radio=False, bad_payload=False,
+                lineage_date=None, recovery_lineage_date=None, omit_lineage_properties=False):
         target, ota = self.root / 'target.zip', self.root / 'ota.zip'
         vbmeta = bytearray(256)
         vbmeta[:4] = b'AVB0'
@@ -57,7 +59,15 @@ class OutputContractTest(unittest.TestCase):
             info = field(1, len(data)) + field(2, hashlib.sha256(data if not bad_payload else b'wrong').digest())
             manifest += field(13, field(1, name.encode()) + field(7, info))
         payload = struct.pack('>4sQQI', b'CrAU', 2, len(manifest), 0) + manifest
+        date = lineage_date or datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc).strftime('%Y%m%d')
+        def lineage_props(date):
+            if omit_lineage_properties:
+                return ''
+            return ('ro.lineage.version=23.2-' + date + '-UNOFFICIAL-gold\n'
+                    'ro.lineage.display.version=23-' + date + '-UNOFFICIAL-gold\n')
         with zipfile.ZipFile(target, 'w') as archive:
+            archive.writestr('PRODUCT/etc/build.prop', lineage_props(date))
+            archive.writestr('VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/prop.default', lineage_props(recovery_lineage_date or date))
             archive.writestr('META/misc_info.txt', 'ab_update=true\navb_enable=true\nuse_dynamic_partitions=true\nvintf_enforce=true\navb_building_vbmeta_image=true\n')
             archive.writestr('META/ab_partitions.txt', 'vbmeta\n' + partition + '\n' + ('lk\n' if radio else ''))
             archive.writestr('META/dynamic_partitions_info.txt', 'dynamic_partition_list=' + partition + '\n')
@@ -78,6 +88,26 @@ class OutputContractTest(unittest.TestCase):
         self.assertNotIn('ota_and_payload_signatures_verified', result)
         self.assertFalse(result['device_accepted'])
         self.assertTrue(result['payload_images_verified'])
+
+    def test_matching_payloads_with_wrong_utc_version_day_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Lineage version date differs'):
+            CHECK.verify_artifacts(*self.fixture(timestamp=1790008554, lineage_date='20260922'), 1790008554)
+
+    def test_recovery_date_cannot_drift_from_product(self):
+        with self.assertRaisesRegex(ValueError, 'recovery/RAMDISK'):
+            CHECK.verify_artifacts(*self.fixture(timestamp=1790008554, recovery_lineage_date='20260922'), 1790008554)
+
+    def test_fixed_time_of_day_version_is_accepted(self):
+        result = CHECK.verify_artifacts(*self.fixture(timestamp=1790008554, lineage_date='20260921_163554'), 1790008554)
+        self.assertTrue(result['lineage_version_date_verified'])
+
+    def test_time_of_day_must_match_the_fixed_epoch(self):
+        with self.assertRaisesRegex(ValueError, 'Lineage version date differs'):
+            CHECK.verify_artifacts(*self.fixture(timestamp=1790008554, lineage_date='20260921_163555'), 1790008554)
+
+    def test_missing_lineage_properties_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Lineage version date differs'):
+            CHECK.verify_artifacts(*self.fixture(omit_lineage_properties=True), 123)
 
     def test_payload_cannot_reference_different_images(self):
         with self.assertRaisesRegex(ValueError, 'differs from target-files'):

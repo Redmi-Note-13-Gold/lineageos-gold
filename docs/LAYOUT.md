@@ -87,3 +87,5 @@ project/
 2026-09-21夜间，releases/index.json含9个冻结候选，最新6e7c418已安装B槽。完成独立冻结包的SHA-256重读后，清理活动输出中同次OTA两硬链接路径及target-files一个路径，释放约3.80GiB，output inode9437191保留。原路径到现存冻结包的映射在 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json`；不修改冻结candidate.json，不删除历史候选或官方输入。后续实测OverlayFS合并视图与releases虽使用同一物理盘，跨挂载rename仍返回EXDEV。应在源码锁空闲后逐包复制到同一个冻结staging，校验SHA-256并fsync后才移除该包的全部活动输出硬链接；过程峰值需容纳当前这一包，工具、输入、结果与哈希完整冻结并独立复验。不得修改活动挂载的upper底层绕过跨挂载限制。
 
 2026-09-22 89ae983 已冻结为第10个候选，未安装。OpenEUICC/eSIM 按用户决定退出支持，两个独立 external/openeuicc* 检出已从合并视图移除；原1158项Repo清单未变，无第二套可运行工程。
+
+本轮系统盘暂存的r5未验收包：/tmp/gold-no-euicc-r5-unvalidated-packages。两份原包完整复制、SHA-256复读及fsync后才移除活动输出别名，映射在jobs/gold-mainline-20260920/no-euicc-r5-package-preservation.json。此目录保留失败证据，独立于每轮OTA scratch和冻结bridge；不是第二输出或可发布候选，不能被下一轮guard当临时工具清理。

@@ -1,6 +1,6 @@
 更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r4已执行CleanSpec并清除旧JNI链接，但target-files生成system镜像时因数据盘临时副本峰值失败；同输入、容量和inode参数在系统盘定向生成成功，已将该步骤纳入既有私有临时目录，准备原输出r5续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r5两个Android阶段均成功，但最终门禁拒绝OTA/target-files分区不一致；实际镜像文件差异为跨UTC零点生成的Lineage版本日期，已将版本日期绑定BUILD_DATETIME并补包门禁，准备原输出r6续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -45,6 +45,10 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 | TCP 状态 | 已装 parser/event 13 项，USB NCM 真连接 ESTABLISHED→TIME_WAIT；未证明 BPF 规则回收 |
 
 ## 构建与工程证据
+
+r5 当前有效 invocation 于 06:55:31 启动，bacon 01:21:45、target-files-package 55:30 均 exit 0；入口 09:14:35 exit 1。14 个分区中 product、vendor_boot 和关联 vbmeta/vbmeta_system 哈希不一致。真实 payload 提取哈希通过，product 的 606 项文件仅 etc/build.prop 不同，vendor_boot 的 Recovery ramdisk 仅 prop.default 不同，两处均为 ro.lineage.version / display.version 的 20260921→20260922；固定 Android timestamp 没有约束上游实时 UTC 版本日期。最小 vendor/lineage 补丁现在使普通日期及可选时分秒均服从 BUILD_DATETIME；默认/空值仍保持原行为。包门禁同时核对 product/Recovery 版本日期与 epoch。105 项主机测试、7 项实际 Make 跨午夜/时区检查通过；原 167 项合并输入逐字节未变，仅新增 version.mk，当前 168 项/10 个受管项目，1158 项 Repo 提交不变。最终 ROM 包尚未通过，未生成新候选。
+
+本轮 06:55 的宿主 unattended-upgrades/needrestart 外部重启与 Android 终态分开记录；原 guard 因既有记录退出 1，rescue 安全接管后于 09:14:52 有 PID1 成功退出证据。实读 VM 0/zbud/N/Y、无 OOM；ZIP 工具、OTA scratch 与精确临时 needrestart 配置均清理，宿主未安装 zip/unzip。失败原结果保持，详见 jobs/gold-mainline-20260920/no-euicc-r5-terminal.json、mismatch-diagnostic.json、guard-recovery.json。两份拒绝包逐字节校验/fsync 后暂存 /tmp/gold-no-euicc-r5-unvalidated-packages，任务记录 package-preservation.json 关联旧路径；保留失败包原字节，未删历史候选或输入，不可刷写。
 
 eSIM 移除时，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-21T21:43:39.217131+00:00",
+  "updated_at": "2026-09-22T01:44:34.839573+00:00",
   "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -6097,10 +6097,11 @@
       "device/xiaomi/gold/device.mk"
     ],
     "reason": "Stock-backed WPA3 SoftAP SAE fix plus user-requested OpenEUICC/eSIM removal",
-    "merged_input_count": 167,
+    "merged_input_count": 168,
     "source_supports_esim": false,
     "device_accepted": false,
-    "build_job_prefix": "no-euicc-r5"
+    "build_job_prefix": "no-euicc-r6",
+    "additional_build_input": "vendor/lineage/config/version.mk fixes UTC version date to BUILD_DATETIME"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6691,6 +6692,567 @@
       "other_166_inputs_unchanged": true,
       "partition_capacity_changed": false,
       "final_package_accepted": false
+    },
+    "fifth_build_terminal": {
+      "checked_at": "2026-09-22T01:28:16.334914+00:00",
+      "job_result": {
+        "status": "failed",
+        "started_at": 1790031331.534822,
+        "source_revision": "828dc20201537a780f04c0d9ff7c4284ab75940f",
+        "build_datetime": 1790008554,
+        "device_accepted": false,
+        "entry_exit_code": 1,
+        "build_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790031331708947880",
+        "android_result": {
+          "build_exit_code": 0,
+          "artifact_contract_verified": false,
+          "android_validators_passed": false,
+          "release_signing_verified": false,
+          "device_accepted": false,
+          "build_stages": [
+            {
+              "targets": [
+                "bacon"
+              ],
+              "exit_code": 0
+            },
+            {
+              "targets": [
+                "target-files-package"
+              ],
+              "exit_code": 0
+            }
+          ],
+          "error": "Payload partition differs from target-files image: product"
+        },
+        "error": "1",
+        "finished_at": 1790039675.9018028
+      },
+      "manager_events": [
+        {
+          "__REALTIME_TIMESTAMP": "1790039675928748",
+          "UNIT": "gold-no-euicc-20260922-r5.service",
+          "MESSAGE_ID": "98e322203f7a4ed290d09fe03c09fe15",
+          "MESSAGE": "gold-no-euicc-20260922-r5.service: Main process exited, code=exited, status=1/FAILURE",
+          "INVOCATION_ID": "bbc60d04e2b74eb2b5d5bddd86a6448c"
+        },
+        {
+          "__REALTIME_TIMESTAMP": "1790039675938965",
+          "UNIT": "gold-no-euicc-20260922-r5.service",
+          "MESSAGE_ID": "d9b373ed55a64feb8242e02dbe79a49c",
+          "MESSAGE": "gold-no-euicc-20260922-r5.service: Failed with result 'exit-code'.",
+          "INVOCATION_ID": "bbc60d04e2b74eb2b5d5bddd86a6448c"
+        },
+        {
+          "__REALTIME_TIMESTAMP": "1790039675941588",
+          "UNIT": "gold-no-euicc-20260922-r5.service",
+          "MESSAGE_ID": "ae8f7b866b0347b9af31fe1c80b127c0",
+          "MESSAGE": "gold-no-euicc-20260922-r5.service: Consumed 6h 7min 55.006s CPU time, 12.5G memory peak, 15.3G memory swap peak.",
+          "INVOCATION_ID": "bbc60d04e2b74eb2b5d5bddd86a6448c"
+        },
+        {
+          "__REALTIME_TIMESTAMP": "1790039692758361",
+          "UNIT": "gold-no-euicc-vm-rescue-20260922-r5.service",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-no-euicc-vm-rescue-20260922-r5.service: Deactivated successfully.",
+          "INVOCATION_ID": "06e1c9f12e1b4fac8572bc5c26e35e79"
+        },
+        {
+          "__REALTIME_TIMESTAMP": "1790039692760623",
+          "UNIT": "gold-no-euicc-vm-rescue-20260922-r5.service",
+          "MESSAGE_ID": "ae8f7b866b0347b9af31fe1c80b127c0",
+          "MESSAGE": "gold-no-euicc-vm-rescue-20260922-r5.service: Consumed 1.894s CPU time, 15.8M memory peak, 4.4M memory swap peak.",
+          "INVOCATION_ID": "06e1c9f12e1b4fac8572bc5c26e35e79"
+        }
+      ],
+      "vm_live": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "guard_recovery": {
+        "status": "restored",
+        "detected_at": "2026-09-21T23:23:15.618419+00:00",
+        "cause": "unattended-upgrades libexpat1 update invoked needrestart, which restarted both build and guard",
+        "apt_restart_command": [
+          "systemctl restart gold-no-euicc-20260922-r5.service gold-no-euicc-vm-guard-20260922-r5.service polkit.service tuned.service"
+        ],
+        "manager_events": [
+          "2026-09-22T06:55:20+08:00 build systemd[1]: Stopping gold-no-euicc-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r5.py...",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: Stopping gold-no-euicc-vm-guard-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r5.py...",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: gold-no-euicc-vm-guard-20260922-r5.service: Deactivated successfully.",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: Stopped gold-no-euicc-vm-guard-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r5.py.",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: Started gold-no-euicc-vm-guard-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-vm-guard-r5.py.",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: gold-no-euicc-vm-guard-20260922-r5.service: Main process exited, code=exited, status=1/FAILURE",
+          "2026-09-22T06:55:20+08:00 build systemd[1]: gold-no-euicc-vm-guard-20260922-r5.service: Failed with result 'exit-code'.",
+          "2026-09-22T06:55:31+08:00 build systemd[1]: gold-no-euicc-20260922-r5.service: Deactivated successfully.",
+          "2026-09-22T06:55:31+08:00 build systemd[1]: Stopped gold-no-euicc-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r5.py.",
+          "2026-09-22T06:55:31+08:00 build systemd[1]: gold-no-euicc-20260922-r5.service: Consumed 2h 3min 59.242s CPU time, 12.5G memory peak, 16.1G memory swap peak.",
+          "2026-09-22T06:55:31+08:00 build systemd[1]: Started gold-no-euicc-20260922-r5.service - /usr/bin/python3 /srv/build/gold/jobs/gold-mainline-20260920/run-no-euicc-build-r5.py."
+        ],
+        "original_guard_unit": "gold-no-euicc-vm-guard-20260922-r5.service",
+        "original_guard_terminal": {
+          "MainPID": "0",
+          "Result": "exit-code",
+          "ExecMainStartTimestamp": "Tue 2026-09-22 06:55:20 CST",
+          "ExecMainExitTimestamp": "Tue 2026-09-22 06:55:20 CST",
+          "ExecMainStatus": "1",
+          "ActiveState": "failed",
+          "SubState": "failed",
+          "InvocationID": "38d59c8cb47142dc95218fa2f6f440d1"
+        },
+        "active_guard_unit": "gold-no-euicc-vm-rescue-20260922-r5.service",
+        "resumed_build_unit": "gold-no-euicc-20260922-r5.service",
+        "resumed_build_state": {
+          "MainPID": "738609",
+          "Result": "success",
+          "ExecMainStartTimestamp": "Tue 2026-09-22 06:55:31 CST",
+          "ExecMainExitTimestamp": "",
+          "ExecMainStatus": "0",
+          "ActiveState": "active",
+          "SubState": "running",
+          "InvocationID": "bbc60d04e2b74eb2b5d5bddd86a6448c"
+        },
+        "resumed_invocation_id": "bbc60d04e2b74eb2b5d5bddd86a6448c",
+        "interrupted_build_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790027233905732315",
+        "resumed_build_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790031331708947880",
+        "original_vm_record": {
+          "build_unit": "gold-no-euicc-20260922-r5.service",
+          "started_at": 1790027233.859255,
+          "status": "active",
+          "settings": [
+            {
+              "path": "/proc/sys/vm/swappiness",
+              "original": "0",
+              "temporary": "60"
+            },
+            {
+              "path": "/sys/module/zswap/parameters/zpool",
+              "original": "zbud",
+              "temporary": "zsmalloc"
+            },
+            {
+              "path": "/sys/module/zswap/parameters/enabled",
+              "original": "N",
+              "temporary": "Y"
+            },
+            {
+              "path": "/sys/module/zswap/parameters/shrinker_enabled",
+              "original": "Y",
+              "temporary": "N"
+            }
+          ]
+        },
+        "vm_before_adoption": [
+          "0",
+          "zsmalloc",
+          "Y",
+          "N"
+        ],
+        "needrestart_conf_path": "/etc/needrestart/conf.d/99-gold-no-euicc-r5-temporary.conf",
+        "needrestart_conf_sha256": "8933e7d9c35e697b87e53a8a80e14a3c44a8e63702488772bbee265d04fca38c",
+        "needrestart_conf_text": "# Temporary restart deferral for this active Gold job only; rescue guard removes it.\n$nrconf{override_rc}->{qr(^gold\\-no\\-euicc\\-20260922\\-r5\\.service$)} = 0;\n$nrconf{override_rc}->{qr(^gold\\-no\\-euicc\\-vm\\-guard\\-20260922\\-r5\\.service$)} = 0;\n$nrconf{override_rc}->{qr(^gold\\-no\\-euicc\\-vm\\-rescue\\-20260922\\-r5\\.service$)} = 0;\n",
+        "restart_deferral_scope_verified": true,
+        "restart_deferral_cleaned_by": "gold-no-euicc-vm-rescue-20260922-r5.service",
+        "script_sha256": "ab79c202bf2c7ad80e1c32a1cc12fe0d9bf954eeb818055348ff1105b16f09bc",
+        "source_revision": "828dc20201537a780f04c0d9ff7c4284ab75940f",
+        "project_or_android_sources_modified": false,
+        "build_restarted_by_this_recovery": false,
+        "phone_operated": false,
+        "adopted_at": "2026-09-21T23:23:15.684283+00:00",
+        "vm_after_adoption": [
+          "60",
+          "zsmalloc",
+          "Y",
+          "N"
+        ],
+        "build_terminal_observed_at": "2026-09-22T01:14:52.382567+00:00",
+        "restored_at": "2026-09-22T01:14:52.631614+00:00",
+        "vm_live_after_restoration": [
+          "0",
+          "zbud",
+          "N",
+          "Y"
+        ],
+        "temporary_tools_absent": true,
+        "temporary_scratch_absent": true,
+        "needrestart_conf_removed": true
+      },
+      "kernel_oom_events": [],
+      "temporary_content_absent": {
+        "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r5-host-tools": true,
+        "/tmp/gold-no-euicc-r5-ota": true,
+        "/etc/needrestart/conf.d/99-gold-no-euicc-r5-temporary.conf": true
+      },
+      "payload_comparison": [
+        {
+          "partition": "boot",
+          "payload_bytes": 67108864,
+          "payload_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "target_files_bytes": 67108864,
+          "target_files_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+          "match": true
+        },
+        {
+          "partition": "dtbo",
+          "payload_bytes": 8388608,
+          "payload_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "target_files_bytes": 8388608,
+          "target_files_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+          "match": true
+        },
+        {
+          "partition": "odm_dlkm",
+          "payload_bytes": 348160,
+          "payload_sha256": "06c422f67cabe739251bc1893d0652065e4d4447844e54e5ea733c626b10c293",
+          "target_files_bytes": 348160,
+          "target_files_sha256": "06c422f67cabe739251bc1893d0652065e4d4447844e54e5ea733c626b10c293",
+          "match": true
+        },
+        {
+          "partition": "product",
+          "payload_bytes": 510750720,
+          "payload_sha256": "96ac937d066236356f0a75d4164cdf105ce236b5456b9ba78e089472e093a16f",
+          "target_files_bytes": 510750720,
+          "target_files_sha256": "fa238718e9852951abb0aa9b1e5c8084e528f06b04c7a9e6ae5f8601e442bd89",
+          "match": false
+        },
+        {
+          "partition": "scp",
+          "payload_bytes": 1200128,
+          "payload_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "target_files_bytes": 1200128,
+          "target_files_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+          "match": true
+        },
+        {
+          "partition": "system",
+          "payload_bytes": 1048506368,
+          "payload_sha256": "2ab7b06f2945b59aaa7ae7e7de066559ab17d7ebf3cbb9e17c3d7317b4c9f900",
+          "target_files_bytes": 1048506368,
+          "target_files_sha256": "2ab7b06f2945b59aaa7ae7e7de066559ab17d7ebf3cbb9e17c3d7317b4c9f900",
+          "match": true
+        },
+        {
+          "partition": "system_dlkm",
+          "payload_bytes": 7303168,
+          "payload_sha256": "a04b514ea042fe37597a6530459f4ce037f2de0a117b094a0fc341ad9a669895",
+          "target_files_bytes": 7303168,
+          "target_files_sha256": "a04b514ea042fe37597a6530459f4ce037f2de0a117b094a0fc341ad9a669895",
+          "match": true
+        },
+        {
+          "partition": "system_ext",
+          "payload_bytes": 444014592,
+          "payload_sha256": "8ebf93a648121504f08102fa45ed3227c9bd8e532704de45512ca1fe56470e37",
+          "target_files_bytes": 444014592,
+          "target_files_sha256": "8ebf93a648121504f08102fa45ed3227c9bd8e532704de45512ca1fe56470e37",
+          "match": true
+        },
+        {
+          "partition": "vbmeta",
+          "payload_bytes": 8192,
+          "payload_sha256": "3f7b2842b8d63952aecacd0912d2001f8c699e3259c5e2c5ae4f42e66d550a03",
+          "target_files_bytes": 8192,
+          "target_files_sha256": "4c194a5232f13995150ac322e88b94c424f03a09f46386c7efb3895a09bb7c04",
+          "match": false
+        },
+        {
+          "partition": "vbmeta_system",
+          "payload_bytes": 4096,
+          "payload_sha256": "dd5eba38ab14218c9502d0105ade6ac6b4327f3e0481e8768303bc7e50aaa062",
+          "target_files_bytes": 4096,
+          "target_files_sha256": "dc41d551615e55fd671f531fbbb6a9833df881a8ed34ff2ba725e0556e7db83d",
+          "match": false
+        },
+        {
+          "partition": "vbmeta_vendor",
+          "payload_bytes": 4096,
+          "payload_sha256": "22071da10771e4ab9f31f86bf1840829fc5b65fd29da02eee854b27c4d3a1fb9",
+          "target_files_bytes": 4096,
+          "target_files_sha256": "22071da10771e4ab9f31f86bf1840829fc5b65fd29da02eee854b27c4d3a1fb9",
+          "match": true
+        },
+        {
+          "partition": "vendor",
+          "payload_bytes": 483647488,
+          "payload_sha256": "e7b240fd3f207da65a2a2b3fbde8c157252f679203dcfa98588b08cdaafe6feb",
+          "target_files_bytes": 483647488,
+          "target_files_sha256": "e7b240fd3f207da65a2a2b3fbde8c157252f679203dcfa98588b08cdaafe6feb",
+          "match": true
+        },
+        {
+          "partition": "vendor_boot",
+          "payload_bytes": 67108864,
+          "payload_sha256": "a7c07a886dff432b35f164e981b55f7c4a0b8386bcc92fd61d575ee76fc90d04",
+          "target_files_bytes": 67108864,
+          "target_files_sha256": "6fdbc93295096d992edd02dc6b105929c578cad3d4fe65d4477ffe8bfa593166",
+          "match": false
+        },
+        {
+          "partition": "vendor_dlkm",
+          "payload_bytes": 13967360,
+          "payload_sha256": "bc62c4612015421d9d0c1c5e9ec5b0a0d915630c419ca79d6e08eff246e19ece",
+          "target_files_bytes": 13967360,
+          "target_files_sha256": "bc62c4612015421d9d0c1c5e9ec5b0a0d915630c419ca79d6e08eff246e19ece",
+          "match": true
+        }
+      ],
+      "ota": {
+        "path": "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+        "bytes": 1170005319,
+        "sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b"
+      },
+      "target_files": {
+        "path": "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip",
+        "bytes": 2889534208,
+        "sha256": "c6cf26582ff6f691a4c3f214d037cdbb149f339d05e3bf4b21dae5187d369174"
+      },
+      "phone_operated": false,
+      "candidate_frozen": false
+    },
+    "fifth_build_partition_diagnostic": {
+      "created_at": "2026-09-22T01:31:21.204537+00:00",
+      "temporary_directory": "/tmp/gold-no-euicc-r5-mismatch-8gvknj6s",
+      "phone_operated": false,
+      "partitions": {
+        "product": {
+          "ota_sha256": "96ac937d066236356f0a75d4164cdf105ce236b5456b9ba78e089472e093a16f",
+          "target_files_sha256": "fa238718e9852951abb0aa9b1e5c8084e528f06b04c7a9e6ae5f8601e442bd89",
+          "extracted_ota_hash_matches_manifest": true
+        },
+        "vendor_boot": {
+          "ota_sha256": "a7c07a886dff432b35f164e981b55f7c4a0b8386bcc92fd61d575ee76fc90d04",
+          "target_files_sha256": "6fdbc93295096d992edd02dc6b105929c578cad3d4fe65d4477ffe8bfa593166",
+          "extracted_ota_hash_matches_manifest": true
+        }
+      },
+      "product_file_differences": {
+        "etc/build.prop": {
+          "ota": {
+            "mode": 384,
+            "sha256": "32dca65f6679e86804a51566e9555d34f4336424d20e4d21ac56b829ca7d7a6b"
+          },
+          "target": {
+            "mode": 384,
+            "sha256": "91eddc656321d5679e4bc76ac3833b564fe3105dfb494c945fce4273520f84c8"
+          }
+        }
+      },
+      "product_files_checked": 606,
+      "vendor_boot_ota": {
+        "header": "boot magic: VNDRBOOT\nvendor boot image header version: 4\npage size: 0x00001000\nkernel load address: 0x40080000\nramdisk load address: 0x51100000\nvendor ramdisk total size: 34413686\nvendor command line args: bootopt=64S3,32N2,64N2\nkernel tags load address: 0x47c80000\nproduct name: \nvendor boot image header size: 2128\ndtb size: 194935\ndtb address: 0x0000000047c80000\nvendor ramdisk table size: 324\nvendor ramdisk table: [\n    vendor_ramdisk00: {\n        size: 12364150\n        offset: 0\n        type: 0x1\n        name: \n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n    vendor_ramdisk01: {\n        size: 19114876\n        offset: 12364150\n        type: 0x2\n        name: recovery\n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n    vendor_ramdisk02: {\n        size: 2934660\n        offset: 31479026\n        type: 0x1\n        name: init_boot\n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n]\nvendor bootconfig size: 0\n",
+        "files": {
+          "vendor-ramdisk-by-name": {
+            "mode": 493,
+            "type": 16384
+          },
+          "vendor_ramdisk00": {
+            "mode": 420,
+            "sha256": "a89f6c4c641c339352333999917b03e0e5d80f1ba2b85ed83ae92124a8e97f9b"
+          },
+          "vendor_ramdisk01": {
+            "mode": 420,
+            "sha256": "6a3361abe9742da5ae261fe28c9d02d2d7fbc23f952af9ddd2349cf46f8185f6"
+          },
+          "dtb": {
+            "mode": 420,
+            "sha256": "cc1f8d9a8a7c7977d0de44e7c16b3cea9b2224b5fbd8a8c272b5db1625bfc6fc"
+          },
+          "vendor_ramdisk02": {
+            "mode": 420,
+            "sha256": "19af55fdd779a3e7d3a1a313dd1acdb7258663c8d90ab5ce87350e052a943a6a"
+          },
+          "bootconfig": {
+            "mode": 420,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "vendor-ramdisk-by-name/ramdisk_init_boot": {
+            "mode": 511,
+            "link": "../vendor_ramdisk02"
+          },
+          "vendor-ramdisk-by-name/ramdisk_recovery": {
+            "mode": 511,
+            "link": "../vendor_ramdisk01"
+          },
+          "vendor-ramdisk-by-name/ramdisk_": {
+            "mode": 511,
+            "link": "../vendor_ramdisk00"
+          }
+        }
+      },
+      "vendor_boot_target": {
+        "header": "boot magic: VNDRBOOT\nvendor boot image header version: 4\npage size: 0x00001000\nkernel load address: 0x40080000\nramdisk load address: 0x51100000\nvendor ramdisk total size: 34413686\nvendor command line args: bootopt=64S3,32N2,64N2\nkernel tags load address: 0x47c80000\nproduct name: \nvendor boot image header size: 2128\ndtb size: 194935\ndtb address: 0x0000000047c80000\nvendor ramdisk table size: 324\nvendor ramdisk table: [\n    vendor_ramdisk00: {\n        size: 12364150\n        offset: 0\n        type: 0x1\n        name: \n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n    vendor_ramdisk01: {\n        size: 19114876\n        offset: 12364150\n        type: 0x2\n        name: recovery\n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n    vendor_ramdisk02: {\n        size: 2934660\n        offset: 31479026\n        type: 0x1\n        name: init_boot\n        board_id: [\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n            0x00000000, 0x00000000, 0x00000000, 0x00000000,\n        ]\n    }\n]\nvendor bootconfig size: 0\n",
+        "files": {
+          "vendor-ramdisk-by-name": {
+            "mode": 493,
+            "type": 16384
+          },
+          "vendor_ramdisk00": {
+            "mode": 420,
+            "sha256": "a89f6c4c641c339352333999917b03e0e5d80f1ba2b85ed83ae92124a8e97f9b"
+          },
+          "vendor_ramdisk01": {
+            "mode": 420,
+            "sha256": "3e3cbeb5630478eb4af16802d445c03471783a4915a2cb5d60f21665f0410d3e"
+          },
+          "dtb": {
+            "mode": 420,
+            "sha256": "cc1f8d9a8a7c7977d0de44e7c16b3cea9b2224b5fbd8a8c272b5db1625bfc6fc"
+          },
+          "vendor_ramdisk02": {
+            "mode": 420,
+            "sha256": "19af55fdd779a3e7d3a1a313dd1acdb7258663c8d90ab5ce87350e052a943a6a"
+          },
+          "bootconfig": {
+            "mode": 420,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "vendor-ramdisk-by-name/ramdisk_init_boot": {
+            "mode": 511,
+            "link": "../vendor_ramdisk02"
+          },
+          "vendor-ramdisk-by-name/ramdisk_recovery": {
+            "mode": 511,
+            "link": "../vendor_ramdisk01"
+          },
+          "vendor-ramdisk-by-name/ramdisk_": {
+            "mode": 511,
+            "link": "../vendor_ramdisk00"
+          }
+        }
+      },
+      "status": "diagnosed",
+      "product_property_diff": [
+        "--- OTA/product/etc/build.prop\n",
+        "+++ target-files/product/etc/build.prop\n",
+        "@@ -80,8 +80,8 @@\n",
+        " debug.sf.enable_transaction_tracing=false",
+        " setupwizard.theme=glif_v4",
+        " setupwizard.feature.day_night_mode_enabled=true",
+        "-ro.lineage.version=23.2-20260921-UNOFFICIAL-gold",
+        "-ro.lineage.display.version=23-20260921-UNOFFICIAL-gold",
+        "+ro.lineage.version=23.2-20260922-UNOFFICIAL-gold",
+        "+ro.lineage.display.version=23-20260922-UNOFFICIAL-gold",
+        " ro.lineage.build.version=23.2",
+        " ro.lineage.releasetype=UNOFFICIAL",
+        " ro.config.notification_sound=Argon.ogg"
+      ],
+      "recovery_file_differences": {
+        "prop.default": {
+          "ota": {
+            "sha256": "716485857563869eba3c36b9a463269f76944b7e28985121a86e2d043dae79fe",
+            "size": 24485,
+            "mode": 33188,
+            "mtime": 0
+          },
+          "target": {
+            "sha256": "ee4485f7a1d7a974963f0ac29aae6706483a74c352beea001082a190f4e030b4",
+            "size": 24485,
+            "mode": 33188,
+            "mtime": 0
+          }
+        }
+      },
+      "recovery_property_diff": [
+        "--- OTA/recovery/prop.default\n",
+        "+++ target-files/recovery/prop.default\n",
+        "@@ -582,8 +582,8 @@\n",
+        " debug.sf.enable_transaction_tracing=false",
+        " setupwizard.theme=glif_v4",
+        " setupwizard.feature.day_night_mode_enabled=true",
+        "-ro.lineage.version=23.2-20260921-UNOFFICIAL-gold",
+        "-ro.lineage.display.version=23-20260921-UNOFFICIAL-gold",
+        "+ro.lineage.version=23.2-20260922-UNOFFICIAL-gold",
+        "+ro.lineage.display.version=23-20260922-UNOFFICIAL-gold",
+        " ro.lineage.build.version=23.2",
+        " ro.lineage.releasetype=UNOFFICIAL",
+        " ro.config.notification_sound=Argon.ogg"
+      ],
+      "cause": "Lineage config/version.mk reads live UTC date; separate make invocations crossed UTC midnight despite fixed BUILD_DATETIME",
+      "temporary_directory_cleaned": true
+    },
+    "fifth_build_package_preservation": {
+      "created_at": "2026-09-22T01:41:30.174591+00:00",
+      "status": "preserved",
+      "directory": "/tmp/gold-no-euicc-r5-unvalidated-packages",
+      "purpose": "Preserve both rejected r5 packages byte for byte on the existing system disk while reusing the only Android output. Not a candidate; do not flash or automatically delete.",
+      "phone_operated": false,
+      "packages": {
+        "ota": {
+          "original_paths": [
+            "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage_gold-ota.zip",
+            "/srv/build/gold/source/out-gold-standard/target/product/gold/lineage-23.2-20260922-UNOFFICIAL-gold.zip"
+          ],
+          "preserved_path": "/tmp/gold-no-euicc-r5-unvalidated-packages/lineage_gold-ota.zip",
+          "sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+          "bytes": 1170005319,
+          "verified_and_fsynced": true,
+          "mutable_aliases_removed": true
+        },
+        "target_files": {
+          "original_paths": [
+            "/srv/build/gold/source/out-gold-standard/target/product/gold/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip"
+          ],
+          "preserved_path": "/tmp/gold-no-euicc-r5-unvalidated-packages/lineage_gold-target_files.zip",
+          "sha256": "c6cf26582ff6f691a4c3f214d037cdbb149f339d05e3bf4b21dae5187d369174",
+          "bytes": 2889534208,
+          "verified_and_fsynced": true,
+          "mutable_aliases_removed": true
+        }
+      },
+      "data_free_bytes": 4849029120,
+      "system_free_bytes": 22062841856
+    },
+    "fixed_lineage_date": {
+      "patch": "patches/vendor__lineage/0001-fixed-build-date.patch",
+      "pinned_project": "vendor/lineage",
+      "pinned_revision": "d747e9abec858434d4967eb5fa9cd3e87c5cc7b0",
+      "merged_source_inputs": 168,
+      "managed_projects": 10,
+      "previous_167_input_hashes_unchanged": true,
+      "host_tests_passed": 105,
+      "actual_make_tests": {
+        "checked_at": "2026-09-22T01:38:21.111285+00:00",
+        "actual_merged_make_source": "/srv/build/gold/source/vendor/lineage/config/version.mk",
+        "before": [
+          [
+            "20260921",
+            "23.2-20260921-UNOFFICIAL-gold",
+            "23-20260921-UNOFFICIAL-gold"
+          ],
+          [
+            "20260922",
+            "23.2-20260922-UNOFFICIAL-gold",
+            "23-20260922-UNOFFICIAL-gold"
+          ]
+        ],
+        "after": [
+          [
+            "20260921",
+            "23.2-20260921-UNOFFICIAL-gold",
+            "23-20260921-UNOFFICIAL-gold"
+          ],
+          [
+            "20260921",
+            "23.2-20260921-UNOFFICIAL-gold",
+            "23-20260921-UNOFFICIAL-gold"
+          ]
+        ],
+        "checks": {
+          "original_fixed_epoch_still_crossed_midnight": true,
+          "fixed_epoch_both_clocks_match": true,
+          "fixed_utc_date": true,
+          "append_time_fixed": true,
+          "default_clock_unchanged": true,
+          "empty_epoch_default_unchanged": true,
+          "host_timezone_does_not_change_utc": true
+        },
+        "phone_operated": false
+      },
+      "artifact_gate": "Product and Recovery Lineage dates must match the build epoch and one another",
+      "device_accepted": false
     }
   }
 }
