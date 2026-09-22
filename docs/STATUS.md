@@ -1,4 +1,4 @@
-更新于2026-09-22T20:43:48+08:00：70c2ec4已装机；补入用户Wi-Fi反馈与中国联通上行的真实TCP/BPF验证。唯一主线仍为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器为源码、构建和产物事实来源。
+更新于2026-09-22T21:55:26+08:00：70c2ec4基线未换ROM；f6b67d4定向APK增量构建完成，DeviceDiagnostics已在线更新并通过28项边界，其他结果和限制见下文。固定基线为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器仍为事实来源。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
@@ -9,15 +9,30 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 项目 | 当前事实及下一步 |
 |---|---|
 | WPA3 热点 | 70c2ec4的SAE资源true、框架能力127含bit4已核验；用户已确认热点可以开启、Mac可以扫描到，但Mac连接失败，具体失败阶段尚未抓到。原“无法启动”问题与当前“客户端连接失败”分开；不记整个WPA3热点通过。当前保留正常使用的WPA2热点；后续需稳定的独立控制链及允许短时断网的复现窗口 |
-| 设备属性证明 / 认证密钥 | 6e7c418 实测 Key Attestation 仍报 -66 CANNOT_ATTEST_IDS；70c2ec4本轮未复测该请求。vnd_gold/gold 两项专用属性未获 TEE 接受。实机 SKU=gold_cn，已核验 Global vendor 与 product 镜像的通用属性不足以证明实际预置身份。不得继续把 vendor 值假说写成已修复；需核对真实变体与 TEE 请求。引导状态仍 orange；安全锁屏未设置，认证绑定密钥未测，不代用户设锁或导入 keybox |
-| TCP/BPF | 真实FIN关闭的双向回收与活动连接隔离通过；未发送应用数据的RST也可及时回收。有应用数据的RST仍存在自然清理缺口：一轮140秒后双向规则仍在，253秒时内核表无对应连接但规则保留，后续超过5分钟仍见两条。收到实际DELETE事件的另一轮能正确删除，不能把该子项扩大为全部RST通过；只使用用户允许的中国联通现有上行，未改流量/默认订阅/漫游设置，未关闭热点。全热点关闭/卸载未测试 |
+| 设备属性证明 / 认证密钥 | 70c2ec4普通应用不请求设备属性时，TEE密钥/证明级别均1、32字节挑战及4证书链内签名通过，锁定false/VerifiedBootState2（orange）如实报告；未做信任根/吊销审计。请求设备属性仍报-66 CANNOT_ATTEST_IDS，Global属性假说未获TEE接受。认证绑定密钥因未设安全锁屏未测，需用户本人配置并认证；不设锁、不导入keybox |
+| TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
-| DeviceDiagnostics / AOD / 媒体 | 电池未知值界面旧版已测，非法边界注入未测；AOD/doze 与必要扩展媒体场景尚未完整验收，不把短 AVC 片段扩大为全格式通过 |
+| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁，依赖列表检查通过；只读EROFS vendor未替换，修复未实机验收 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
 | 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
 
 2026-09-22用户明确要求“开刷”，本轮已执行保数据安装及必要正常重启；这不扩大为额外Recovery或网络切换测试。未操作SIM、拨号或短信，当时只记录旧的全局mobile_data=0，不能据此判定双卡实际数据开关；本轮按订阅与真实上行核实中国联通已开启、漫游eSIM数据关闭，原设置不变。正式双击设置仍1。手机端两份专属OTA暂存文件及其目录已清理，临时root已恢复UID2000、Enforcing。用户Key Attestation 1.8.4/code198保留，没有授予额外权限。
+
+## 9月22日晚免重启定向结果
+
+源码修复提交 `f6b67d4`。统一入口新增受限 `--module-apks`，复用同一OUT的已核验Ninja图、源码/输出锁及原资源限制；只允许已存在源文件或资源变化，产品/配方/文件列表变化拒绝复用。DeviceDiagnostics与FrameworkResOverlayGold共13项Ninja任务、125.73秒、exit0；签名及独立APK哈希通过，构建/guard的实际InvocationID退出均确认，VM实读0/zbud/N/Y。124项主机回归通过。不是新ROM或新冻结候选，APK工具/选定源码/169项输入记录在 `jobs/gold-mainline-20260920/focused-apks-20260922`。
+
+**本轮已完成子项**
+
+| 子项 | 已完成证据 |
+|---|---|
+| DeviceDiagnostics负循环次数 | 旧APK的28项实际Activity边界用例有3项失败；主线同时修生产者与界面过滤，新APK在线更新后28/28通过。健康值、日期、循环次数含缺失/负值/极值与Android版本差异；未注入全局BatteryService。活动APK SHA-256为6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2，位于data应用更新；后续OTA须核对实际活动APK |
+| KeyMint普通证明 | 本候选TEE级别/挑战/链内签名及真实orange引导状态如上；自建密钥已删。设备属性与认证绑定仍在未完成项中 |
+| HEVC短往返 | c2.mtk.hevc.encoder/decoder，1280×720，120帧编码、120帧解码和EOS；不扩展为长时/全格式验收 |
+| 交还状态 | 未重启手机或改变热点；联通数据开启、漫游eSIM关闭且未操作。鉴权网络ADB优先，已恢复UID2000/Enforcing；两canary一致，双击1。自有探针APK、DEX、片段和临时Doze覆盖均清理，用户KeyAttestation保留 |
+
+当前手机是70c2ec4/A/1790008554加上述DeviceDiagnostics数据分区更新。AOD静态覆盖、MPEG4插件尚未安装，TCP/BPF未修改运行中的APEX；不能把这些源码修复并入当前ROM已验收结论。原始截图/无线/设备日志仅在本机0600私有目录；Git只含脱敏结论，详见聚合validation的 `focused_followup_20260922`。
 
 ## 70c2ec4 本次已验收子项
 

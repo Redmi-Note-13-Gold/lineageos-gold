@@ -174,3 +174,22 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 设备网络验证前必须同时核对实际默认/活动数据订阅、逐订阅mobile_data值及实际上行；旧全局mobile_data=0不能替代双卡判断。本次授权仅中国联通，漫游eSIM不可操作。USB线缆不稳定时，正常系统内应及时连接鉴权网络ADB并核对同一硬件身份，后续优先网络控制；端点与硬件标识只存私有记录。网络ADB依赖当前热点，不能因此随意切热点或重启设备。TCP验收须区分FIN、RST、内核状态/过期和两方向规则，记录采样间隔及观察动作，不能只凭解析器测试或瞬时规则存在判为全部通过。
 
 `tests/android/GoldConntrackObserver.java`沿用上述javac/d8方法，是有1..180秒期限的只接收netlink多播事件探针。参数为已安装Tethering APEX APK、明确的测试客户端/服务端IPv4、自己的测试源端口列表和期限；需要已授权的临时ADB root，不发送conntrack查询/更新/删除，不写BPF map。使用已安装APK的真实parser与事件过滤器，记录原始消息是否被识别为建立/删除事件，可区分内核未发通知与框架丢弃。输出含受控连接原始字节，只落0600私有文件，不进Git。协调者必须另观察真实双向规则与终态；读取/proc连接表后的清理时序不冒充自然到期。实际70c2ec4运行exit0，观察到TCP状态仍ESTABLISHED的合法DELETE被接受并删除两条规则；另有自然RST残留复现，探针成功不等于BPF全面通过。执行后删除本次DEX/专属目录、恢复普通鉴权网络ADB；不改SELinux或网络设置。
+
+## 已有构图上的定向APK增量
+
+仅在此前完整构建成功、当前修改限于现存源文件/资源时使用：
+
+```sh
+/srv/build/build-gold.sh --module-apks \
+  --baseline /srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-source-build-inputs.json \
+  --record /srv/build/gold/jobs/<本次唯一记录目录> \
+  DeviceDiagnostics FrameworkResOverlayGold
+```
+
+入口仍由原资源限制的systemd服务及独立VM guard包裹，持同一源码/OUT锁；核验两次源审计、固定项目提交、允许的改动集合、OUT/.top与Ninja环境，保存既有图及环境哈希。产品/Android.bp/新增模块/其他配方变化必须回到标准Soong流程，不能用旧图绕过。此模式不需要本轮未使用的宿主zip/unzip，不产生OTA或ROM验收；APK经签名验证后独立复制/哈希/fsync到record。当前MPEG4新prebuilt已改变提取配方，不能对这个后续增量误用仅三个源文件变化的旧baseline。
+
+本轮13项Ninja任务125.73秒exit0，DeviceDiagnostics通过PackageManager普通更新并按实际活动APK回读hash；FrameworkResOverlayGold是static，普通ADB及root均拒绝升级。root不会解除静态RRO、只读EROFS vendor或非rebootless Tethering APEX的生命周期限制。不要因此重启framework/APEX、关SELinux、remount或改AVB。新的vendor插件后续随正常增量产品构建和受控OTA验证。
+
+`build-device-probe.py --probe diagnostics`用公开AOSP platform测试证书构建target com.android.devicediagnostics的instrumentation，以自有protobuf验证真实Activity，不改全局电池值；执行`am instrument -w org.lineageos.gold.diagnosticsprobe/.GoldDiagnosticsInstrumentation`后核对结果JSON的failed/count并卸载探针。`--probe hardware`生成的自有应用以`--es mode security`选择普通应用证明测试；输出错误链可能含请求参数，原始输出只入0600私有证据。未设锁或未获本人认证时不替用户配置认证。`GoldMediaDecodeProbe --extended <专属目录>`依次测HEVC与MPEG4，崩溃也必须收集服务日志并清理自己生成的文件，不循环触发已知崩溃。
+
+`GoldConntrackQuery.java`仅对最多8条明确的自有IPv4/TCP四元组发CT_GET（无dump、timeout更新或删除），检查响应序号与实际四元组，使用已安装Tethering的真实解析器；需要已获准的root。query可能触发内核对已过期项的回收，记录观察边界，不能把它说成无观察自然到期。所有地址和端口留在私有日志。`GoldDozeOverlay.java`只用系统OverlayManager注销固定命名的自有临时覆盖，用于有恢复方案的短时验证；注销和设置复位后才交还。

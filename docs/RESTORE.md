@@ -65,3 +65,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 
 
 当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。该候选已于2026-09-22保数据安装到A / 1790008554，安装器与独立各14分区哈希、正常启动和数据核验通过；本轮只执行必要正常重启，没有Recovery或网络切换测试。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过；这些主机测试当时未重启科研机或手机，后续手机安装重启单独记录。
+
+2026-09-22新增的MPEG4运行依赖在proprietary-files.txt的Media (MPEG4 runtime)节维护：固定Global vendor中的ARM libmp4enc_sa.ca7.so由v3avpud动态加载，不能仅按ELF NEEDED闭包删掉。正式恢复仍使用上面的固定官方镜像提取；历史dump不是可信输入替代。此次仅把已按锁定vendor镜像重验的该文件通过extract-utils --no-cleanup --section定向提取，未清理已有vendor、未重写无关生成项。设备上的临时DeviceDiagnostics数据更新不代替源码恢复；后续OTA需核对实际活动APK，不能将源修复自动当作设备更新成功。
