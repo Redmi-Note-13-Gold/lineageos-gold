@@ -213,3 +213,7 @@ adb -s <已核验的transport> shell run-as org.lineageos.gold.hardwareprobe cat
 ### 9月22日晚完整ROM构建准备
 
 AOD覆盖和新增MPEG4 vendor模块使用正常产品入口，保留顺序bacon/target-files-package与同一epoch。`followup-r1`任务在启动前要求数据盘至少7GiB、系统盘至少12GiB；两份最终包、模块/镜像变化与构图峰值留有余量。所有打包临时副本使用本次0700系统盘scratch；ZIP工具只临时认证解包。独立job wrapper直接调用主线vm-guard的单例/原值接管/精确needrestart保护和invocation流程，终态后核实VM恢复，才按本轮owner/marker清理工具与scratch；历史保留区不属于其清理范围。没有自动刷机或手机重启步骤。
+
+### 9月23日 MPEG4 ABI续编
+
+followup-r1的bacon在01:13:50退出1，第二阶段未运行；原实际invocation和独立guard成功恢复在followup-r1-terminal.json。源码按四项真实符号版本冲突修复后，followup-r2继续原OUT及epoch1790091429，不清理或跳过检查。主机回归环境指定GOLD_ANDROID_TREE为合并源码、GOLD_MPEG4_STOCK_LIBRARY为已锁定Global原厂ARM插件、GOLD_MPEG4_ELF_COMMAND为真实失败命令的JSON数组；tests/test_mpeg4_runtime.py要求三者全部提供，否则明确跳过这三项实文件测试。本次全部127项运行且通过，没有跳过。包门禁同时记录原输入和修复后哈希；构建完成仍需全部签名/VINTF/SELinux、14分区一致性和39项实际镜像文件检查。

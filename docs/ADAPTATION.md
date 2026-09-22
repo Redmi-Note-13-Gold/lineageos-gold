@@ -186,7 +186,7 @@ AOD原配置声明可用却缺config_dozeComponent，主线补标准SystemUI Doz
 
 普通应用在70c2ec4的无设备属性请求得到TEE级别1证明、匹配挑战及4证书链内签名，DeviceLocked=false/VerifiedBootState=2如实保留；这不是信任根/吊销审计。包含设备属性仍-66；该轮当时未设置安全锁屏，认证绑定未测。用户随后设锁并本人认证后的通过记录见下节；未伪造CN身份、引导状态或导入keybox。
 
-HEVC硬件720p/120帧往返及EOS通过。MPEG4实际路径在v3avpud的EncMp4SeqHeader+198空函数指针崩溃；其驱动动态加载/vendor/lib/libmp4enc_sa.ca7.so，原清单漏掉该ARM插件。重新从锁定Global OTA提取vendor镜像，SHA9110c8fc…与pin一致；插件SHA c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576。仅在原清单增加该32位运行依赖，extract-utils --no-cleanup按专属节生成一个prebuilt和一个PRODUCT_PACKAGES项；没有恢复32位应用或双zygote。手机linker --list的依赖解析exit0；它不是HAL编码验收。EROFS vendor仍只读，未remount或改验证状态，插件未装入运行服务；新包门禁要求原厂哈希/ARM ELF及实际镜像成员。
+HEVC硬件720p/120帧往返及EOS通过。MPEG4实际路径在v3avpud的EncMp4SeqHeader+198空函数指针崩溃；其驱动动态加载/vendor/lib/libmp4enc_sa.ca7.so，原清单漏掉该ARM插件。重新从锁定Global OTA提取vendor镜像，SHA9110c8fc…与pin一致；插件SHA c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576。仅在原清单增加该32位运行依赖，extract-utils --no-cleanup按专属节生成一个prebuilt和一个PRODUCT_PACKAGES项；没有恢复32位应用或双zygote。手机linker --list的依赖解析exit0；它不是HAL编码验收。EROFS vendor仍只读，未remount或改验证状态，插件未装入运行服务；当时包门禁要求原厂哈希/ARM ELF；下述9月23日真实构建随后发现符号版本兼容问题，当前要求修复后精确哈希及实际镜像成员。
 
 TCP/BPF原“/proc无匹配所以内核已消失、BPF孤立”推断撤回：只读CT_GET逐四元组验证两条旧连接仍为ESTABLISHED且长超时。新一轮RST仍ESTABLISHED但缩到9秒，12秒查询观察到内核与双向规则删除；FIN到TIME_WAIT并清理双向规则。查询可促成过期项回收，不能代替无观察自然到期。Linux6.6在RST序列未精确匹配时允许保持ESTABLISHED并使用短超时；现有BpfCoordinator每60秒可能向最近使用的连接写432000秒超时，二者竞态是待核验假说，尚未证明或热更生产修复。参考[Linux v6.6 conntrack实现](https://github.com/torvalds/linux/blob/v6.6/net/netfilter/nf_conntrack_proto_tcp.c)；保留原始私有观察及后续更正，不用手删规则冒充修复。
 
@@ -197,3 +197,9 @@ TCP/BPF原“/proc无匹配所以内核已消失、BPF孤立”推断撤回：�
 设备属性证明没有因此修复。普通应用仍无属性成功/带属性-66；直接KeyStore2测试对当前brand/device/product/manufacturer/model分别请求及一起请求均-66，当前普通平台五项组合也-66。固定CN归档全文SHA核对后，只读提取vendor/odm/product的属性及初始化规则。vendor/odm与Global同为Redmi/gold/vnd_gold/Xiaomi/gold；product是Xiaomi/missi/miproduct模板、name=gold。这些不是该台设备的工厂预置身份，不拿模板值替换手机属性；专属临时镜像已卸载清理。MiTEE启动代码读取普通ro.product属性并发送配置命令0x48，其“deviceinfo success”字符串不是工厂ID读取证据。本地RKP v3空key CSR的签名、挑战和链内签名通过，包含的仍是当前平台属性，不能据此写入或伪造证明ID。没有调用certify、上传CSR或修改TEE持久配置。完整分层结论及原厂输入哈希在聚合validation的keymint_followup_20260922；信任根/吊销仍未审计。
 
 下一版整包构建准备保留f6b67d4的169项实际输入。新增MPEG4预置模块需要正常产品构图，不能沿用只支持既存APK源码变化的定向Ninja模式。BPF源码复查确认TCP SYN/FIN/RST交回内核、用户态每60秒对最近使用的映射刷新已建立连接超时；现有证据未证明该刷新就是RST残留的完整根因，本轮没有凭假说修改BPF/APEX。WPA3 Mac认证/DHCP失败阶段也仍需独立复现，不纳入本轮已修复清单。
+
+### 9月23日 MPEG4 实际ELF检查修复
+
+followup-r1在完整构建中拒绝原厂插件的__aeabi_memclr/__aeabi_memcpy/__aeabi_memset/__gnu_Unwind_Find_exidx四项LIBC_PRIVATE导入。实际平台vendor libc提供同名LIBC_N公共导出；同目录libvcodec_oal的既有配方已对同类符号清版本。此次在原extract-files.py增加四项定向clear_symbol_version，原输入SHA c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576，修复后SHA d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b。206748字节中仅.gnu.version的4字节由3变1，代码和全部其他字节不变；原Android.bp及依赖声明不变，ELF检查未关闭。
+
+tests/test_mpeg4_runtime.py在原厂实文件上运行正式提取配方，按ELF节/动态符号表核对改动范围；复用真实失败命令证明原文件四项拒绝、修复文件通过；包门禁接受精确修复文件并拒绝原文件/篡改文件。全部127项回归通过。原有llvm-readobj的section index警告仍记录，不能把依赖检查通过扩大成v3avpud实际编码或长时稳定性通过；需新ROM安装后验收MPEG4。

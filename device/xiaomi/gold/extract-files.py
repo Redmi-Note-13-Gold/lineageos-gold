@@ -100,6 +100,15 @@ blob_fixups: blob_fixups_user_type = {
         .clear_symbol_version('AHardwareBuffer_release')
         .clear_symbol_version('AHardwareBuffer_unlock'),
 
+    # Match the existing MTK OAL compatibility fix: these four ARM helpers
+    # are public LIBC_N exports in the platform vendor libc. Keep their names
+    # and implementations, clearing only the old LIBC_PRIVATE requirements.
+    'vendor/lib/libmp4enc_sa.ca7.so': blob_fixup()
+        .clear_symbol_version('__aeabi_memclr')
+        .clear_symbol_version('__aeabi_memcpy')
+        .clear_symbol_version('__aeabi_memset')
+        .clear_symbol_version('__gnu_Unwind_Find_exidx'),
+
     'vendor/lib/libvcodec_oal.so': blob_fixup()
         .clear_symbol_version('__aeabi_memcpy')
         .clear_symbol_version('__aeabi_memset')

@@ -89,9 +89,15 @@ def verify_mpeg4_runtime(archive):
     data = archive.read(name)
     require(data[:6] == b'\x7fELF\x01\x01' and struct.unpack_from('<H', data, 18)[0] == 40,
             'MPEG4 runtime must retain the matched ARM ABI')
-    expected = 'c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576'
-    require(sha256(data) == expected, 'MPEG4 runtime differs from locked Global vendor')
-    return {'path': name, 'sha256': expected, 'stock_version': 'OS3.0.5.0.VNQMIXM'}
+    # The locked stock plugin needs the same narrow ARM symbol-version fix
+    # as libvcodec_oal. Its code is unchanged; four .gnu.version bytes differ.
+    source_sha = 'c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576'
+    expected = 'd3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b'
+    require(sha256(data) == expected, 'MPEG4 runtime differs from reviewed Global compatibility fixup')
+    return {'path': name, 'sha256': expected, 'source_sha256': source_sha,
+            'stock_version': 'OS3.0.5.0.VNQMIXM',
+            'cleared_symbol_versions': ['__aeabi_memclr', '__aeabi_memcpy', '__aeabi_memset',
+                                        '__gnu_Unwind_Find_exidx']}
 
 
 def verify_vintf_fragment(packaged, source, assembler):

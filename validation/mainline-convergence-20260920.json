@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T23:31:46+08:00",
+  "updated_at": "2026-09-23T01:05:21+08:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6083,14 +6083,14 @@
   "current_pending_android_delta": {
     "source_revision": "f6b67d402c66574cb8103d4450ca6501d2d3184b",
     "merged_input_count": 169,
-    "state": "full_incremental_product_build_prepared",
+    "state": "full_incremental_r1_failed_mpeg4_abi_fixed_r2_prepared",
     "source_supports_esim": false,
     "rom_built": false,
     "device_accepted": false,
     "diagnostics_apk_installed_and_28_cases_passed": true,
     "aod_overlay_compiled_but_static_update_rejected": true,
     "mpeg4_vendor_plugin_recipe_restored_not_packaged_or_installed": true,
-    "required_next_step": "Start the single-output full product build; validate/freeze artifacts before a separate installation window."
+    "required_next_step": "Resume the same-output full product build with the reviewed MPEG4 symbol-version fix; retain full package gates before freezing or installation."
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -8966,5 +8966,66 @@
     "data_free_bytes": 8256208896,
     "system_free_bytes": 22051237888,
     "output_inode": 9437191
+  },
+  "followup_mpeg4_abi_20260923": {
+    "recorded_at": "2026-09-23T01:05:21+08:00",
+    "failed_build": "gold-followup-20260922-r1.service",
+    "failed_invocation": "6eab6cfb7d2540d0ab7765911c89a4ad",
+    "build_exit_code": 1,
+    "bacon_duration": "01:13:50",
+    "target_files_stage_started": false,
+    "failed_at": "2026-09-23T00:52:03+08:00",
+    "guard_restored_at": "2026-09-23T00:52:08+08:00",
+    "vm_live_after_r1": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "kernel_oom": false,
+    "temporary_contents_cleaned": true,
+    "original_and_fixed_blob": {
+      "source_sha256": "c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576",
+      "fixed_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+      "same_size": true,
+      "changed_bytes": [
+        {
+          "offset": 13302,
+          "before": 3,
+          "after": 1
+        },
+        {
+          "offset": 13306,
+          "before": 3,
+          "after": 1
+        },
+        {
+          "offset": 13340,
+          "before": 3,
+          "after": 1
+        },
+        {
+          "offset": 13342,
+          "before": 3,
+          "after": 1
+        }
+      ],
+      "check_elf_file_exit_code": 0,
+      "check_elf_file_stderr": "prebuilts/clang/host/linux-x86/clang-r563880c/bin/llvm-readobj: warning: '/tmp/gold-mpeg4-fixup-vto6vs_1/libmp4enc_sa.ca7.so': invalid section index: 32\n",
+      "phone_operated": false
+    },
+    "android_bp_unchanged": true,
+    "source_input_count": 169,
+    "managed_project_count": 10,
+    "host_tests_passed": 127,
+    "real_elf_regressions": 3,
+    "followup_unit": "gold-followup-20260923-r2.service",
+    "followup_guard": "gold-followup-vm-guard-20260923-r2.service",
+    "build_datetime": 1790091429,
+    "followup_state": "prepared_not_started",
+    "request_record": "/srv/build/gold/jobs/gold-mainline-20260920/followup-r2-build-request.json",
+    "new_candidate_created": false,
+    "device_accepted": false,
+    "phone_operated": false
   }
 }

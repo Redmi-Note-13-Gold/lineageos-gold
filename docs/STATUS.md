@@ -1,16 +1,18 @@
-更新于2026-09-22T23:31:46+08:00：已准备下一版完整ROM增量构建，纳入已确认的AOD、MPEG4及电池界面修复；实际启动、终态与产物以本轮jobs记录为准。手机仍为70c2ec4及DeviceDiagnostics在线更新，未重启或切网。
+更新于2026-09-23T01:05:21+08:00：下一版ROM首轮在MPEG4 ELF依赖检查失败；四个ARM符号版本已按实测兼容处理，127项主机回归通过，准备从原OUT续编。手机仍70c2ec4加DeviceDiagnostics在线更新，无新候选。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。本次系统更新已移除设备上的OpenEUICC与eUICC特性，没有操作SIM或清除用户数据；历史记录不改写。
 
-## 下一版完整ROM构建准备
+## 下一版完整ROM构建与续编
 
-用户同意安排准备构建后，已只读核对无其他Gold构建/guard、两把共享锁可取得、服务器与本机源码一致。169项合并输入与f6b67d4生产修复一致，10个受管项目未变，复用124项主机测试。构建范围是AOD标准DozeService、原厂ARM MPEG4插件与DeviceDiagnostics负循环值过滤；WPA3 Mac连接、TCP RST自然回收、设备属性证明未新增已证实修复，继续单列待办。
+首轮 `gold-followup-20260922-r1.service` 于9月23日00:52:03退出1，bacon耗时01:13:50，target-files阶段未开始。失败是新增MPEG4插件的四个ARM运行库符号请求旧LIBC_PRIVATE版本，与平台vendor libc的公共LIBC_N导出不匹配；不是空间不足或OOM。独立guard于00:52:08成功退出，VM实读0/zbud/N/Y，临时ZIP工具、scratch及精确needrestart保护均已清理。原日志、实际invocation和terminal.json保留，不生成候选。
 
-本次计划经唯一入口启动 `gold-followup-20260922-r1.service`，独立守护为 `gold-followup-vm-guard-20260922-r1.service`，顺序bacon再target-files-package、jobs2和原资源上限不变。启动记录在 `jobs/gold-mainline-20260920/followup-r1-build-request.json`，每次真实执行另存 `jobs/build-invocations/<ID>.json`；本段是准备记录，不把尚未出现的退出或包门禁预记为通过。完成后冻结全量OTA/target-files，另等手机安装窗口。
+主线提取配方沿用libvcodec_oal已有的clear_symbol_version方式，仅对libmp4enc_sa.ca7.so的四个指定导入操作。实际二进制只改.gnu.version的4字节，代码与其他字节完全保留；真实Android ELF检查先拒绝原文件、再接受修复文件。新包要求修复后精确哈希，同时记录原厂输入哈希；没有allow_undefined_symbols或跳过ELF检查。新增三项真实二进制/依赖/包门禁回归，合计127项通过。169项合并源码中仅extract-files.py相对首轮变化，生成的Android.bp未改写。
 
-空间清理按用户随后明确授权完成：删除已停用的局部输出及两份旧日期OTA，数据盘由1.79GB增至8.26GB，系统盘恢复约22.05GB可用。删除前的逐项校验清单和任务映射保留；11个冻结候选、官方输入、缓存/swap及唯一活动OUT保留。当前没有操作手机、网络或SIM。
+准备续编 `gold-followup-20260923-r2.service`，独立守护 `gold-followup-vm-guard-20260923-r2.service`；仍通过唯一入口、唯一OUT、顺序bacon再target-files-package、jobs2及原资源上限，沿用BUILD_DATETIME=1790091429。实际启动及终态以 `jobs/gold-mainline-20260920/followup-r2-build-request.json` 与 `jobs/build-invocations/<ID>.json` 为准；本段没有预记构建成功。范围仍是AOD标准DozeService、MPEG4运行库和电池界面，WPA3 Mac连接、TCP RST自然回收、设备属性证明没有新增已证实修复。
+
+按用户明确授权，旧非活动局部输出及两份旧日期OTA已删除，释放约6.47GB；11个冻结候选、官方输入、ccache/swap和唯一活动OUT保留。本轮未操作手机或网络，完成包门禁与冻结后再安排设备验收。
 
 ## 未完成与当前限制
 
@@ -20,7 +22,7 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 设备属性证明 | 70c2ec4普通应用无设备属性的TEE证明通过；设置安全锁屏后，包含属性仍为-66。五项当前属性分别请求、五项一起请求、正常平台五项一起请求均被拒绝；CN原厂分区检查与本地RKP诊断见keymint_followup记录。RKP签名和当前系统信息不等于工厂ID已获验证；信任根/吊销未审计。认证绑定EC/AES已移到已验收；不猜身份、不导入keybox或重置安全存储 |
 | TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
-| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁，依赖列表检查通过；只读EROFS vendor未替换，修复未实机验收 |
+| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁；首轮完整构建又发现四项LIBC_PRIVATE版本不兼容，现已作4字节定向兼容且实际ELF检查通过；只读EROFS vendor未替换，修复未实机验收 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
 | 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
