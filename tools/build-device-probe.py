@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build an owned permission-free device probe with the existing Android SDK tools.
+"""Build an owned device probe with the existing Android SDK tools.
 
 This builds only a disposable test APK, never a ROM or a modified system image.
 The public AOSP test certificate is used on the build host, not copied elsewhere.
@@ -18,12 +18,12 @@ def main():
     parser.add_argument("--android-root", type=Path, required=True)
     parser.add_argument("--android-out", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--probe", choices=["performance", "hardware"], required=True)
+    parser.add_argument("--probe", choices=["performance", "hardware", "diagnostics"], required=True)
     args = parser.parse_args()
     root, out = args.android_root.resolve(), args.android_out.resolve()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
-    name = {"performance": "GoldPerfProbe", "hardware": "GoldHardwareProbe"}[args.probe]
+    name = {"performance": "GoldPerfProbe", "hardware": "GoldHardwareProbe", "diagnostics": "GoldDiagnosticsProbe"}[args.probe]
     source = Path(__file__).resolve().parents[1] / "tests/android" / name
     jdk = root / "prebuilts/jdk/jdk21/linux-x86"
     sdk = root / "prebuilts/sdk/current/public/android.jar"
@@ -42,7 +42,7 @@ def main():
     classes, dex = output / "classes", output / "dex"
     classes.mkdir()
     dex.mkdir()
-    run([jdk / "bin/javac", "--release", "8", "-cp", sdk, "-d", classes, source / "MainActivity.java"])
+    run([jdk / "bin/javac", "--release", "8", "-cp", sdk, "-d", classes, *sorted(source.glob("*.java"))])
     run([jdk / "bin/jar", "cf", output / "classes.jar", "-C", classes, "."])
     run([host / "d8", "--min-api", "35", "--lib", sdk, "--output", dex, output / "classes.jar"])
     unsigned = output / "unsigned.apk"
@@ -52,14 +52,15 @@ def main():
     aligned, apk = output / "aligned.apk", output / (name + ".apk")
     run([host / "zipalign", "-p", "4", unsigned, aligned])
     keys = root / "build/make/target/product/security"
-    run([host / "apksigner", "sign", "--key", keys / "testkey.pk8", "--cert",
-         keys / "testkey.x509.pem", "--out", apk, aligned])
+    certificate = "platform" if args.probe == "diagnostics" else "testkey"
+    run([host / "apksigner", "sign", "--key", keys / (certificate + ".pk8"), "--cert",
+         keys / (certificate + ".x509.pem"), "--out", apk, aligned])
     run([host / "apksigner", "verify", "--verbose", "--print-certs", apk])
     run([host / "aapt2", "dump", "badging", apk])
     result = {
         "apk": str(apk), "apk_sha256": hashlib.sha256(apk.read_bytes()).hexdigest(),
         "source_hashes": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(source.iterdir())},
-        "commands": commands, "certificate": "public AOSP testkey", "compiled_and_signature_verified": True,
+        "commands": commands, "certificate": "public AOSP " + certificate, "compiled_and_signature_verified": True,
     }
     (output / "build.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({k: v for k, v in result.items() if k != "commands"}))

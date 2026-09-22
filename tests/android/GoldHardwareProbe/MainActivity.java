@@ -188,6 +188,10 @@ public final class MainActivity extends Activity {
         try {
             result.put("schema_version", 1);
             store = KeyStore.getInstance("AndroidKeyStore"); store.load(null);
+            if ("security".equals(getIntent().getStringExtra("mode"))) {
+                result.put("security", GoldSecurityChecks.run(this)).put("completed", true);
+                return;
+            }
             JSONArray crypto = new JSONArray();
             crypto.put(sign("EC")); crypto.put(sign("RSA")); crypto.put(aes());
             result.put("keystore", crypto);

@@ -1808,6 +1808,10 @@ vendor/lib/libvcodec_utility_v3a.so
 vendor/lib/libvcodec_oal.so
 vendor/lib/libvpudv3a_vcodec.so
 
+# Media (MPEG4 runtime)
+# v3avpud loads this ARM plugin by absolute path; it is not an ELF NEEDED edge.
+vendor/lib/libmp4enc_sa.ca7.so
+
 # Media (Codec2)
 # The service entrypoint is source-built; keep the matching codec libraries,
 # service identity, AIDL-only manifest and stock syscall policies.

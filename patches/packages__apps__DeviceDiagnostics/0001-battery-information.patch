@@ -1,5 +1,5 @@
 diff --git a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
-index 4f51691..d2e92fe 100644
+index 4f51691..a8979d3 100644
 --- a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
 +++ b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt
 @@ -50,21 +50,23 @@ class BatteryInfoFragment(private val diagnostics: BatteryInfo, private val laun
@@ -29,7 +29,7 @@ index 4f51691..d2e92fe 100644
                  it.isVisible = false
              } else {
                  it.summary = getString(legacyHealthToStringId(diagnostics.legacyHealth))
-@@ -73,20 +75,22 @@ class BatteryInfoFragment(private val diagnostics: BatteryInfo, private val laun
+@@ -73,25 +75,27 @@ class BatteryInfoFragment(private val diagnostics: BatteryInfo, private val laun
          }
  
          findPreference<Preference>("manufacture_date")!!.also {
@@ -55,4 +55,24 @@ index 4f51691..d2e92fe 100644
 +                it.isVisible = false
              }
          }
+ 
+         findPreference<Preference>("cycle_count")!!.also {
+-            if (diagnostics.hasCycleCount()) {
++            if (diagnostics.hasCycleCount() && diagnostics.cycleCount >= 0) {
+                 it.summary = formatter.format(diagnostics.cycleCount).toString()
+             } else {
+                 it.summary = getString(R.string.unknown)
+diff --git a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/evaluated/BatteryUtilities.kt b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/evaluated/BatteryUtilities.kt
+index f77f2ed..4a8de82 100644
+--- a/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/evaluated/BatteryUtilities.kt
++++ b/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/evaluated/BatteryUtilities.kt
+@@ -59,7 +59,8 @@ fun getBatteryInfo(context: Context): BatteryInfo {
+     val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+     val batteryStatus = context.registerReceiver(null, filter)
+     if (batteryStatus != null) {
+-        builder.setCycleCount(batteryStatus.getIntExtra("android.os.extra.CYCLE_COUNT", -1))
++        val cycleCount = batteryStatus.getIntExtra("android.os.extra.CYCLE_COUNT", -1)
++        if (cycleCount >= 0) builder.setCycleCount(cycleCount)
+         builder.setLegacyHealth(batteryStatus.getIntExtra(BatteryManager.EXTRA_HEALTH, -1))
+     }
  

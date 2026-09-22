@@ -12,6 +12,25 @@ import java.nio.ByteBuffer;
 /** Hardware codec exercise; synthetic roundtrips never read user media. */
 public final class GoldMediaDecodeProbe {
     public static void main(String[] args) throws Exception {
+        if (args.length == 2 && args[0].equals("--extended")) {
+            File directory = new File(args[1]);
+            if (!directory.isDirectory()) throw new IllegalArgumentException("owned directory required");
+            for (String mime : new String[]{"video/hevc", "video/mp4v-es"}) {
+                File clip = File.createTempFile("gold-extended-", ".mp4", directory);
+                try {
+                    boolean hevc = mime.equals("video/hevc");
+                    int encoded = encode(clip.getAbsolutePath(), mime,
+                            hevc ? "c2.mtk.hevc.encoder" : "c2.mtk.mpeg4.encoder",
+                            hevc ? 1280 : 640, hevc ? 720 : 480, hevc ? 120 : 60);
+                    int decoded = decode(clip.getAbsolutePath());
+                    if (encoded != decoded) throw new IllegalStateException("extended frame loss");
+                    System.out.println("PASS extended_mime=" + mime + " frames=" + decoded);
+                } finally {
+                    if (!clip.delete()) throw new IllegalStateException("own extended clip cleanup failed");
+                }
+            }
+            return;
+        }
         if (args.length == 3 && args[0].equals("--roundtrip")) {
             File directory = new File(args[1]);
             int cycles = Integer.parseInt(args[2]);
@@ -40,18 +59,22 @@ public final class GoldMediaDecodeProbe {
     }
 
     private static int encode(String path) throws Exception {
-        final int width = 640, height = 360, frameCount = 24;
+        return encode(path, "video/avc", "c2.mtk.avc.encoder", 640, 360, 24);
+    }
+
+    private static int encode(String path, String mime, String encoder, int width, int height,
+            int frameCount) throws Exception {
         MediaCodec codec = null;
         MediaMuxer muxer = null;
         boolean muxerStarted = false;
         int inputFrames = 0, outputFrames = 0, track = -1;
         try {
-            codec = MediaCodec.createByCodecName("c2.mtk.avc.encoder");
+            codec = MediaCodec.createByCodecName(encoder);
             System.out.println("encoder=" + codec.getName());
             if (!codec.getCodecInfo().isHardwareAccelerated()) {
                 throw new IllegalStateException("test requires hardware encoder");
             }
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", width, height);
+            MediaFormat format = MediaFormat.createVideoFormat(mime, width, height);
             format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                     MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
             format.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
@@ -61,7 +84,7 @@ public final class GoldMediaDecodeProbe {
             muxer = new MediaMuxer(path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             codec.start();
             boolean inputEnded = false, outputEnded = false;
-            long deadline = SystemClock.elapsedRealtime() + 20000;
+            long deadline = SystemClock.elapsedRealtime() + 60000;
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             while (!outputEnded && SystemClock.elapsedRealtime() < deadline) {
                 if (!inputEnded) {
@@ -165,7 +188,7 @@ public final class GoldMediaDecodeProbe {
             boolean outputEnded = false;
             int frames = 0;
             long start = SystemClock.elapsedRealtime();
-            long deadline = start + 20000;
+            long deadline = start + 60000;
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             while (!outputEnded && SystemClock.elapsedRealtime() < deadline) {
                 if (!inputEnded) {

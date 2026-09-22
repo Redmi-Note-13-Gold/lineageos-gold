@@ -19,6 +19,13 @@ if [ -n "${INVOCATION_ID:-}" ] && [ "${GOLD_RECORDED_INVOCATION:-}" != "$INVOCAT
         "$project_root/tools/host/build-research.sh" "$@"
 fi
 
+# Source-only APK updates reuse the verified graph and the same locks/resources.
+# This explicit mode does not build or accept an OTA.
+if [ "${1:-}" = --module-apks ]; then
+    shift
+    exec python3 "$project_root/tools/build-module-apks.py" --tree "$source_tree" "$@"
+fi
+
 # Hidden-API encoding and packaging use these allowed, non-hermetic host tools.
 # Check before graph/configuration work; temporary job-local tools may be on PATH.
 for host_tool in unzip zip; do

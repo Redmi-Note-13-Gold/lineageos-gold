@@ -82,6 +82,18 @@ def verify_euicc_image_removed(image):
     return list(REMOVED_EUICC_IMAGE_PATHS)
 
 
+def verify_mpeg4_runtime(archive):
+    # v3avpud dlopens this ARM library; ELF NEEDED scanning cannot retain it.
+    name = 'VENDOR/lib/libmp4enc_sa.ca7.so'
+    require(name in archive.namelist(), 'Missing v3avpud MPEG4 runtime: ' + name)
+    data = archive.read(name)
+    require(data[:6] == b'\x7fELF\x01\x01' and struct.unpack_from('<H', data, 18)[0] == 40,
+            'MPEG4 runtime must retain the matched ARM ABI')
+    expected = 'c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576'
+    require(sha256(data) == expected, 'MPEG4 runtime differs from locked Global vendor')
+    return {'path': name, 'sha256': expected, 'stock_version': 'OS3.0.5.0.VNQMIXM'}
+
+
 def verify_vintf_fragment(packaged, source, assembler):
     # Soong's android/defs.go processes fragments with this flag. Rebuild the
     # expected XML with the same host tool: its schema version is not the HAL
@@ -105,6 +117,7 @@ def verify_images(target, host_bin, scratch_parent=None):
         'vendor': ['build.prop', 'etc/selinux/vendor_property_contexts',
                    'lib/hw/mapper.mediatek.so', 'lib/libgpud.so', 'lib/libgralloc_metadata.so',
                    'lib/libgralloctypes_mtk.so', 'lib/arm.graphics-V5-ndk.so',
+                   'lib/libmp4enc_sa.ca7.so',
                    'bin/hw/android.hardware.health-service.gold',
                    'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
                    'etc/vintf/manifest/android.hardware.health-service.gold.xml',
@@ -401,6 +414,8 @@ def verify(target, aapt2, readelf, profile):
         require(archive.read(codec_policy) == (profile.parents[4] / 'codec2/gold-codec2-crash.policy').read_bytes(),
                 'Codec2 crash-report syscall addition differs from mainline')
 
+        mpeg4_runtime = verify_mpeg4_runtime(archive)
+
         settings_name = 'SYSTEM_EXT/priv-app/Settings/Settings.apk'
         settings = dump(settings_name, 'resources')
 
@@ -428,6 +443,9 @@ def verify(target, aapt2, readelf, profile):
                 'Untuned sustained-performance capability still advertised')
         require('() true' in resource(framework, 'bool/config_supportDoubleTapWake')[1],
                 'Double-tap wake not exposed by the Gold framework overlay')
+        require('com.android.systemui/com.android.systemui.doze.DozeService' in
+                resource(framework, 'string/config_dozeComponent')[1],
+                'Gold ambient display service component is missing')
         require(b'double-tap wake request failed' in archive.read(
                 'VENDOR/bin/hw/android.hardware.power-service.gold'), 'Missing touch wake Power HAL path')
         require(any(len(parts := line.split()) >= 2 and parts[0] == '/dev/xiaomi-touch'
@@ -483,6 +501,7 @@ def verify(target, aapt2, readelf, profile):
                 'power': {'single_resource_owner': True, 'native_clients': clients,
                           'runtime_verified': False, 'performance_benefit_verified': False},
                 'codec2': {'source_frontend_marker_verified': True, 'sha256': sha256(codec),
+                           'mpeg4_runtime': mpeg4_runtime,
                            'single_vendor_service': True, 'matched_vendor_store_retained': True,
                            'runtime_verified': False},
                 'touch_wake': {'framework_switch': True, 'power_path': True,
