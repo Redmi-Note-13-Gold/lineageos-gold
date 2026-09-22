@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T05:22:00.359672+00:00",
-  "task_state": "no_euicc_wpa3_candidate_frozen_not_installed",
+  "updated_at": "2026-09-22T11:42:12.554089+00:00",
+  "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
   "latest_source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6054,13 +6054,13 @@
     }
   },
   "current_installed_candidate": {
-    "rom_revision": "6e7c4186bd1bb264dd1db24c96589aa1b0d802a8",
-    "incremental": "1789977174",
-    "slot": "b",
-    "candidate": "/srv/build/gold/releases/20260921-224022-6e7c418",
-    "ota_sha256": "22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb",
-    "target_files_sha256": "7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c",
-    "evidence_key": "non_ims_followup_20260921.functional_candidate_6e7c418_device"
+    "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "incremental": "1790008554",
+    "slot": "a",
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "ota_sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+    "target_files_sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
+    "evidence_key": "candidate_70c2ec4_device"
   },
   "current_pending_android_delta": {
     "files": [
@@ -6073,10 +6073,15 @@
     "device_accepted": false,
     "build_job_prefix": "no-euicc-r7",
     "additional_build_input": "vendor/lineage/config/version.mk reads fixed epoch from Soong BUILD_DATETIME_FILE",
-    "state": "package_frozen_device_not_installed",
+    "state": "installed_partition_and_boot_verified_feature_validation_partial",
     "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
     "build_verified": true,
-    "next_build_pending": false
+    "next_build_pending": false,
+    "installation_verified": true,
+    "wifi_softap_framework_capability_verified": true,
+    "wifi_softap_runtime_verified": false,
+    "esim_removal_device_verified": true,
+    "remaining": "WPA3 actual hotspot start and client SAE authentication are not tested; other feature limits remain in STATUS."
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -7526,7 +7531,8 @@
     "wifi_softap_sae_compiled": true,
     "wifi_softap_device_verified": false,
     "retired_system_ext_paths_absent": true,
-    "phone_operated": false
+    "phone_operated": false,
+    "device_followup_key": "candidate_70c2ec4_device"
   },
   "host_lifecycle_followup_20260922": {
     "recorded_at": "2026-09-22T05:22:00.359672+00:00",
@@ -7593,5 +7599,78 @@
     "rebuild_required_for_host_only_changes": false,
     "no_persistent_dependencies_installed": true,
     "phone_operated": false
+  },
+  "candidate_70c2ec4_device": {
+    "recorded_at": "2026-09-22T11:42:12.554089+00:00",
+    "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "incremental": "1790008554",
+    "slot": "a",
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "ota_sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+    "target_files_sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
+    "authorization": "User explicitly requested flashing after previously requesting local download only; preserved-data OTA and necessary reboot performed. Unrelated network and SIM operations remain excluded.",
+    "installation": {
+      "status": "passed",
+      "method": "Standard signed full A/B update_engine OTA, preserving data",
+      "from_slot": "b",
+      "to_slot": "a",
+      "started_at": "2026-09-22T11:33:52.246208+00:00",
+      "finished_at": "2026-09-22T11:37:16.225052+00:00",
+      "installer_exit": "kSuccess(0)",
+      "installer_host_exit": 0,
+      "installer_final_partition_hashes_matched": 14,
+      "independent_active_partition_hashes_matched": 14,
+      "first_boot_stable_seconds": 25.4,
+      "normal_reboots_performed": 1,
+      "selinux": "Enforcing",
+      "data_persist_mounted": true,
+      "snapshot": "none",
+      "canaries_matched": 2,
+      "recovery_roundtrip": "not run on this candidate"
+    },
+    "removed_esim_support": {
+      "package_absent": true,
+      "framework_feature_absent": true,
+      "retired_system_ext_paths_absent": 6,
+      "sim_operations": false
+    },
+    "wpa3_softap": {
+      "resource_value": true,
+      "framework_capability": 127,
+      "framework_sae_bit": 4,
+      "framework_sae_capability_present": true,
+      "start_and_client_authentication_tested": false,
+      "status": "installed_resource_and_framework_capability_verified_only"
+    },
+    "handoff": {
+      "recorded_at": "2026-09-22T11:42:12.554089+00:00",
+      "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+      "incremental": "1790008554",
+      "slot": "a",
+      "hardware_identity_verified": true,
+      "root_uid": "2000",
+      "selinux": "Enforcing",
+      "mobile_data": 0,
+      "double_tap_setting": "1",
+      "boot_completed": true,
+      "temporary_root_restored": true,
+      "own_ota_stage_removed": true,
+      "sim_operations": false,
+      "validation_network_toggles": false
+    },
+    "user_keyattestation": {
+      "retained": true,
+      "version_name": "1.8.4",
+      "version_code": 198,
+      "extra_privileges_granted": false
+    },
+    "cleanup": {
+      "owned_staged_files_removed": 2,
+      "owned_stage_directory_removed": true,
+      "adb_uid": 2000
+    },
+    "all_hardware_features_accepted": false,
+    "prior_candidate_feature_results_inherited": false,
+    "raw_evidence": "Private local runtime-70c2ec4-20260922 only; files mode 0600; no hardware identifiers, endpoints or wireless logs committed."
   }
 }

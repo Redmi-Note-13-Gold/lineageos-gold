@@ -168,3 +168,5 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 `vm-guard.py`默认从同一物理布局定位source，其他已核验位置需显式`--source-tree`。准备步骤必须先于两个服务；不启用全局needrestart排除，也不关闭安全更新。启动失败或守护异常时先核对实际服务/cgroup和原记录；仅守护需要接管时使用同一unit与record重新启动，不能重启Android构建。`--restore-only`同样拒绝活动服务或被占用的源码锁；确认构建全部停止后才用它恢复原值和精确配置。若其他管理者改变了VM值或配置内容，工具保留变化并报告未恢复，不伪称成功。
 
 每次统一入口的systemd执行在`/srv/build/gold/jobs/build-invocations/<InvocationID>.json`单独记录。外部信号记interrupted，即使PID1记录外部stop成功也不能算构建成功；SIGKILL来不及写终态的running记录保持未完成，后续启动使用新的ID。终态需同时核对对应Android result、入口退出及PID1的UNIT/InvocationID/开始后时间。guard只有服务/cgroup稳定空闲且取得源码锁才恢复，退出后实读0/zbud/N/Y。临时zip/unzip和OTA目录仍按本次job的精确路径、归属、marker与哈希记录清理，不能把其他轮保留的失败包包含进去；主线guard只自动移除自己记录且字节一致的needrestart配置。
+
+2026-09-22设备安装记录：冻结70c2ec4的全量OTA按上述标准update_engine流程完成B→A保数据更新，手机端包哈希、证书/适用性、安装器及独立各14项最终分区哈希一致。A / 1790008554正常启动、Enforcing/data/persist/snapshot none/两canary通过。手机端OTA暂存已清理，ADB已恢复UID2000。本次没有重编ROM、修改冻结包或做Recovery OTA；详细边界见STATUS及candidate_70c2ec4_device。

@@ -59,9 +59,9 @@ systemctl enable "$mount_unit"
 后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；状态栏修复由当前 patches/series.json 恢复。OpenEUICC/eSIM 已按用户决定移除，不再恢复它的项目、子模块、应用或 feature XML。证明专用属性曾按 firmware 锁定的原厂 vendor/build.prop 设置，但 6e7c418 实机仍报 -66；该通用 vendor 身份不能当作 TEE 实际预置身份已获验证，需继续核对 gold_cn 变体，不用猜测值或 keybox 掩盖失败。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
 
 
-Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。当前用户禁止进一步设备重启，恢复/安装操作不得沿用此前重启授权越过这一最新限制。
+Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。用户2026-09-22明确开刷已授权本次保数据安装和必要正常重启；其他Recovery与网络切换测试仍须符合当前实际授权范围。
 
 若宿主安全更新重启构建/守护，先按systemd InvocationID分开保存中断与恢复后的记录；外部stop的Deactivated successfully不等于Android成功。r5既有原始VM记录由独立rescue接管，终态后实读0/zbud/N/Y并清理临时工具/scratch及精确needrestart配置；不覆盖原guard失败。r5两份未验收包现保存在/tmp/gold-no-euicc-r5-unvalidated-packages，SHA和原路径映射见jobs/gold-mainline-20260920/no-euicc-r5-package-preservation.json。它们是失败证据，不是候选，不可安装；不要由r6 guard或清理脚本删除。
 
 
-当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。设备尚未安装，沿用不重启/不切网限制。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过，未重启科研机或手机。
+当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。该候选已于2026-09-22保数据安装到A / 1790008554，安装器与独立各14分区哈希、正常启动和数据核验通过；本轮只执行必要正常重启，没有Recovery或网络切换测试。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过；这些主机测试当时未重启科研机或手机，后续手机安装重启单独记录。

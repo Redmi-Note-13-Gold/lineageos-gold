@@ -155,7 +155,7 @@ Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完�
 
 用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和包门禁现已通过；WPA3启动/客户端认证仍待设备验证。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
 
-用户最新要求不再重启手机以保持网络连接；Recovery往返及后续安装暂不执行，移动数据仍保持关闭，IMS仍最后处理。
+当时用户要求不再重启以保持网络连接；随后2026-09-22明确“开刷”，已完成下述70c2ec4安装及一次必要正常重启。没有扩大为额外Recovery或网络切换测试，移动数据保持关闭，IMS仍最后处理。
 
 OTA打包临时空间：`patches/build__make/0001-ota-temporary-directory.patch` 在固定build/make提交上为OTA命令增加可选 `GOLD_OTA_TMPDIR`，由主机入口校验私有目录；不改变分区内容或输出位置。未设置时保持上游TMPDIR。新增一个实际构建输入后为166项/9个受管项目，原165项功能输入字节不变；新包和设备验收仍以同次证据为准。
 
@@ -171,3 +171,7 @@ r5实际分区校验拒绝跨UTC零点造成的Lineage版本日期漂移，属�
 2026-09-22 r7 于12:57:15 +08入口 exit 0；bacon 01:15:23、target-files-package 01:36:32 均 exit 0。168项合并输入、14个payload分区与target-files镜像全部一致；签名、VINTF、SELinux、Gold内容与版本日期门禁通过。真实镜像核对38项文件，system_ext六个退役路径缺席，eSIM支持为false，WPA3 SAE编译资源为true。product与Recovery均为UTC epoch对应的20260921版本日期。独立guard12:57:20退出，VM实读0/zbud/N/Y，无OOM，本轮ZIP工具、OTA scratch与精确needrestart配置均已清理；宿主zip/unzip仍未安装。
 
 构建后主机收尾已纳入主线 `tools/host/vm-guard.py`、`build-invocation.py` 与统一入口：启动前准备仅匹配本轮build/guard完整名称的临时needrestart配置；守护单例锁、服务与递归cgroup状态、源码锁共同约束恢复，重启接管保留原始VM值，外部值变化保留并明确报恢复未完成；运行期终止信号不能提前恢复。每个systemd InvocationID在jobs/build-invocations下独立建档，禁止覆盖，记录真实退出/外部信号；Android输入/result关联同一ID。117项主机测试通过。短服务实测覆盖SIGTERM延后、并发守护拒绝、SIGKILL后接管且测试服务不重启、最终VM和精确配置恢复、PID1退出与invocation对应；实际构建入口的缺unzip预检失败也独立留档且未创建Android构建。这次主机改动后168项Android输入及10个受管项目逐字节/提交不变，不另编ROM，冻结工具仍为构建时70c2ec4版本。
+
+## 70c2ec4 保数据安装结果
+
+2026-09-22用户明确开刷后，冻结全量OTA通过手机SHA-256、信任证书和适用性核对，标准update_engine完成B→A更新。安装器及独立各14分区哈希一致，A / 1790008554稳定观察25.40秒，Enforcing、data/persist、snapshot none、两canary通过。OpenEUICC包、eUICC特性和system_ext六条旧路径已在设备上确认缺席，没有操作SIM。WPA3 SAE资源true和框架capability127实际生效，但热点开启/客户端认证未测。暂存文件清理、UID2000恢复，移动数据0、双击设置1、用户KeyAttestation保留。完整脱敏结果见validation的candidate_70c2ec4_device；不继承旧硬件验收。

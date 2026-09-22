@@ -92,3 +92,5 @@ project/
 
 
 最新冻结为第11个候选 `/srv/build/gold/releases/20260922-130256-70c2ec4`，两份全量包均独立文件，SHA复读/fsync及冻结工具复验通过。唯一out inode9437191保留；本轮bridge与recheck目录已清理，r5拒绝包继续保留。`jobs/build-invocations/<ID>.json`是统一入口的独立执行记录；`/run/lock/gold-vm-guard.lock`防止两个守护同时改全局VM。临时needrestart配置只在对应任务活跃时存在，恢复后移除，不建立另一工程或常驻构建服务。
+
+70c2ec4的设备安装后续于2026-09-22完成：本机OTA副本位于当前任务work/candidate-70c2ec4，服务器冻结候选和candidate.json原字节保持。脱敏安装记录位于jobs/gold-mainline-20260920/no-euicc-r7-device-installation.json及主线聚合validation；原始设备/无线日志仅本机私有目录0600。手机端OTA暂存文件已清理，服务器唯一输出和冻结目录未变。
