@@ -56,7 +56,7 @@ systemctl enable "$mount_unit"
 历史归档原路径通过 `/srv/build/gold/history/layout-moves-20260921.json` 定位。恢复只使用主线工具、固定原厂输入和当前提取配方，不运行历史迁移目录里的旧 Python 流程。
 
 
-后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；状态栏修复由当前 patches/series.json 恢复。OpenEUICC/eSIM 已按用户决定移除，不再恢复它的项目、子模块、应用或 feature XML。证明专用属性曾按 firmware 锁定的原厂 vendor/build.prop 设置，但 6e7c418 实机仍报 -66；该通用 vendor 身份不能当作 TEE 实际预置身份已获验证，需继续核对 gold_cn 变体，不用猜测值或 keybox 掩盖失败。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
+后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；状态栏修复由当前 patches/series.json 恢复。OpenEUICC/eSIM 已按用户决定移除，不再恢复它的项目、子模块、应用或 feature XML。证明专用属性曾按 firmware 锁定的原厂 vendor/build.prop 设置，但 6e7c418 实机仍报 -66；该通用 vendor 身份不能当作 TEE 实际预置身份已获验证，后续已核对固定CN输入的vendor/odm通用属性与Global一致，product也只含通用模板而非该台工厂ID；设备属性证明仍需继续定位；不用猜测值或keybox掩盖失败。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
 
 
 Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。用户2026-09-22明确开刷已授权本次保数据安装和必要正常重启；其他Recovery与网络切换测试仍须符合当前实际授权范围。
@@ -67,3 +67,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。该候选已于2026-09-22保数据安装到A / 1790008554，安装器与独立各14分区哈希、正常启动和数据核验通过；本轮只执行必要正常重启，没有Recovery或网络切换测试。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过；这些主机测试当时未重启科研机或手机，后续手机安装重启单独记录。
 
 2026-09-22新增的MPEG4运行依赖在proprietary-files.txt的Media (MPEG4 runtime)节维护：固定Global vendor中的ARM libmp4enc_sa.ca7.so由v3avpud动态加载，不能仅按ELF NEEDED闭包删掉。正式恢复仍使用上面的固定官方镜像提取；历史dump不是可信输入替代。此次仅把已按锁定vendor镜像重验的该文件通过extract-utils --no-cleanup --section定向提取，未清理已有vendor、未重写无关生成项。设备上的临时DeviceDiagnostics数据更新不代替源码恢复；后续OTA需核对实际活动APK，不能将源修复自动当作设备更新成功。
+
+认证绑定验证只使用自有普通应用与本人系统认证；不更改持久KeyMint/TEE存储、锁屏凭据或引导状态。恢复测试环境时删除本次探针和自有密钥即可，不删除用户KeyAttestation。70c2ec4上认证绑定已通过而设备属性仍-66，二者不得混作同一验收结论；原厂分区属性与本地RKP当前DeviceInfo均不能直接冒充工厂预置ID。

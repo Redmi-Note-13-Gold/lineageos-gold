@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T13:52:11.042659+00:00",
+  "updated_at": "2026-09-22T14:57:33.006214+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -5336,7 +5336,7 @@
     "actual_image_files": 35,
     "payload_partitions": 14
   },
-  "latest_test_revision": "3dcd92224d20b81ffb7ab9b9cd94423b59cd7482",
+  "latest_test_revision": "3ff17c96791512bffef2e411dc062b91a335772b",
   "mainline_test_sync": {
     "at": "2026-09-21T03:19:16.180146+00:00",
     "previous_project_commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
@@ -8254,7 +8254,8 @@
       "device_properties_accepted": false,
       "secure_lock_configured": false,
       "authentication_bound_test": "not_run_no_secure_lock",
-      "all_owned_keys_deleted": true
+      "all_owned_keys_deleted": true,
+      "subsequent_authentication_result": "keymint_followup_20260922.authentication_bound; earlier no-lock observation is historical"
     },
     "tcp_bpf": {
       "old_flow_direct_kernel_queries": [
@@ -8536,5 +8537,333 @@
     "wifi_softap_runtime_verified": false,
     "esim_removal_device_verified": true,
     "remaining": "WPA3 starts and is visible by user testing, but the Mac cannot connect; exact connection failure stage pending. TCP teardown boundaries are recorded in network_followup_20260922. Wi-Fi auto recovery is user-confirmed."
+  },
+  "keymint_followup_20260922": {
+    "recorded_at": "2026-09-22T14:57:33.006214+00:00",
+    "task_number": 4,
+    "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "slot": "a",
+    "incremental": "1790008554",
+    "production_android_source_changed": false,
+    "rom_built_or_installed": false,
+    "authentication_bound": {
+      "schema_version": 1,
+      "device_secure": true,
+      "initially_device_locked": false,
+      "credential_changed_by_probe": false,
+      "ec_key": {
+        "security_level": 1,
+        "authentication_required": true,
+        "authentication_type": 1,
+        "authentication_timeout_seconds": 15,
+        "authentication_enforced_by_secure_hardware": true
+      },
+      "ec_attestation": {
+        "chain_length": 4,
+        "chain_links_verified": true,
+        "challenge_matches": true,
+        "attestation_security_level": 1,
+        "keymint_security_level": 1,
+        "trust_anchor_audited": false,
+        "software_enforced": {},
+        "hardware_enforced": {
+          "user_auth_type": 1,
+          "auth_timeout_seconds": 15,
+          "device_locked": false,
+          "verified_boot_state": 2
+        }
+      },
+      "aes_key": {
+        "security_level": 1,
+        "authentication_required": true,
+        "authentication_type": 1,
+        "authentication_timeout_seconds": 15,
+        "authentication_enforced_by_secure_hardware": true
+      },
+      "before_authentication": {
+        "ec_rejected": true,
+        "aes_rejected": true
+      },
+      "authentication_succeeded": true,
+      "authentication_type": 1,
+      "authentication_error": -1,
+      "after_authentication": {
+        "ec_sign_verify_tamper_rejection": true,
+        "aes_gcm_round_trip_tamper_rejection": true,
+        "operations_elapsed_ms": 41
+      },
+      "after_expiry": {
+        "ec_rejected": true,
+        "aes_rejected": true
+      },
+      "completed": true,
+      "owned_keys_deleted": true,
+      "owned_key_count": 2
+    },
+    "device_properties": {
+      "completed": true,
+      "properties_changed": false,
+      "unique_ids_requested": false,
+      "trials": [
+        {
+          "mask": 0,
+          "property_source": "current_attestation",
+          "requested_properties": [],
+          "generated": true,
+          "chain_links_verified": true,
+          "challenge_matches": true,
+          "requested_values_attested": true,
+          "keymint_security_level": 1,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 1,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "brand"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 2,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "device"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 4,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "name"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 8,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "manufacturer"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 16,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "model"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 31,
+          "property_source": "current_attestation",
+          "requested_properties": [
+            "brand",
+            "device",
+            "name",
+            "manufacturer",
+            "model"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        },
+        {
+          "mask": 31,
+          "property_source": "current_platform",
+          "requested_properties": [
+            "brand",
+            "device",
+            "name",
+            "manufacturer",
+            "model"
+          ],
+          "generated": false,
+          "keymint_error": -66,
+          "owned_key_deleted": true
+        }
+      ],
+      "conclusion": "Current attestation properties fail singly and together; current platform property combination also fails. Generic CN vendor/odm/product values and signed current RKP DeviceInfo do not establish factory attestation IDs. No production property or provisioning mutation was made."
+    },
+    "rkp_local_csr": {
+      "rkp_version": 3,
+      "command": "cmd remote_provisioning csr --challenge <random> default",
+      "requested_key_count": 0,
+      "certificate_provisioning_requested": false,
+      "network_request_made": false,
+      "challenge_matches": true,
+      "dice_chain_links_verified": 1,
+      "csr_signature_verified": true,
+      "modified_signature_rejected": true,
+      "trust_anchor_audited": false,
+      "uds_certificate_chains": 0,
+      "device_info": {
+        "brand": "Redmi",
+        "manufacturer": "Xiaomi",
+        "product": "lineage_gold",
+        "model": "2312DRAABG",
+        "device": "gold",
+        "vb_state": "orange",
+        "bootloader_state": "unlocked",
+        "security_level": "tee",
+        "os_version": "160000",
+        "system_patch_level": 202608,
+        "boot_patch_level": 20260201,
+        "vendor_patch_level": 20260201,
+        "fused": 1
+      },
+      "device_info_is_factory_id_evidence": false,
+      "private_identity_fields_exported": false
+    },
+    "handoff": {
+      "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+      "slot": "a",
+      "incremental": "1790008554",
+      "selinux": "Enforcing",
+      "adb_uid": 2000,
+      "boot_id_unchanged": true,
+      "phone_rebooted": false,
+      "adbd_restarted": false,
+      "temporary_root_used": false,
+      "both_canaries_match": true,
+      "owned_probe_apk_absent": true,
+      "owned_dex_directory_absent": true,
+      "owned_keys_deleted": true,
+      "user_keyattestation_retained": true,
+      "authenticated_network_adb_connected": true,
+      "network_settings_changed": false,
+      "unicom_data_on": true,
+      "roaming_esim_data_on": false,
+      "raw_ip_upstream_present": true,
+      "double_tap_wake": "1",
+      "diagnostics_apk_sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
+      "system_credential_set_or_changed_by_probe": false
+    },
+    "device_properties_fixed": false,
+    "raw_evidence": {
+      "location": "local private runtime-70c2ec4-20260922",
+      "mode": "0600",
+      "uploaded_to_git": false,
+      "sha256": {
+        "keymint-auth-result.json": "215a945910a4601b0a62678f7fa3a3c7515d6400313db6261dec6bcd35812cec",
+        "keymint-properties-platform.stdout": "24e3bfc6592f569aab23ee5deae8136348a527cd69e34dc2ab6b80d197c2d340",
+        "keymint-secure-cold-result.stdout": "9e9a5470136f78b052a8fe6c20d1efa61b34c7dd23cf64f9ba5d9cee4fc5b71e",
+        "keymint-rkp-verified.json": "6dbb3744c7fe8590e5381909e20c3c450b01ec37eed7b16f03de79d351e4211b",
+        "keymint-handoff-result.json": "63558b32356f225f02ded72fa4ba51aeeae626c15cdbd937249f92f4cfa16fd7"
+      }
+    },
+    "excluded_observation": {
+      "keymint-secure-properties-result.json": "An existing MainActivity task ran the general mode. Only the later force-stopped cold security launch is used for the ordinary-app attestation result."
+    },
+    "verification_script_sha256": "e725b1a110f5218b0be1aa9e89568ad2369b467b62d3ca320b1260a21ea5e7ad",
+    "test_source_revision": "3ff17c96791512bffef2e411dc062b91a335772b",
+    "source_audit": {
+      "android_baseline": "f6b67d402c66574cb8103d4450ca6501d2d3184b",
+      "files": 169,
+      "managed_projects": 10,
+      "merged_inputs_match_mainline": true,
+      "unchanged_from_previous_android_inputs": true
+    },
+    "probe_builds": {
+      "auth": {
+        "apk_sha256": "6d0fdffe9f395f2dd5738de25b6a58448595560d91fe7879290f3f4f3167430a",
+        "source_hashes": {
+          "AndroidManifest.xml": "0b225fd737641eb649de70c0e0eb4a348d3168c1eebbae92bc5da288c32c92d0",
+          "GoldAuthActivity.java": "6b13a8212973bbd456014e3646d703bdbe87487e1da4a42555e4219d17418077",
+          "GoldSecurityChecks.java": "9c203c0735f0c08cda7f1123fcb76fe2b237c4ad49180dc699b2e1c202a39cf9",
+          "MainActivity.java": "b61a0d70d27a502dc354b578c42646820f7525140938c2636377e9dc2f2487c2"
+        },
+        "compiled_and_signature_verified": true,
+        "certificate": "public AOSP testkey"
+      },
+      "properties": {
+        "dex_sha256": "1510d80a126109984afdf890dd8541b22b6d05caf3bc7c98f0d791fbab1e2032",
+        "source_sha256": "ce836d9fbaf5d29109f2ac3d4f31039bd45329e2f39d70f76fe8dd193ea45e6c",
+        "framework_classes_sha256": "efdede2b5bf5b8721508d3df2299b0bdef85558596e06157507aed0874c71444",
+        "build_exit": 0
+      }
+    },
+    "official_cn_inspection": {
+      "vendor_odm": {
+        "stock_version": "OS3.0.10.0.VNQCNXM",
+        "archive_sha256": "82e2eecdf09fef867de8f8285dc3f027c9d6c9d5fcde8217301631e9078814a9",
+        "images": {
+          "vendor_a.img": {
+            "sha256": "9da58fbc1dff85d1dfe30a1e296273fa404aa15181a4ee7f135b8b2f959f9a27",
+            "bytes": 1371250688
+          }
+        },
+        "general_properties": {
+          "build.prop": [
+            "ro.product.vendor.brand=Redmi",
+            "ro.product.vendor.device=gold",
+            "ro.product.vendor.manufacturer=Xiaomi",
+            "ro.product.vendor.model=gold",
+            "ro.product.vendor.name=vnd_gold"
+          ],
+          "odm/etc/build.prop": [
+            "ro.product.odm.brand=Redmi",
+            "ro.product.odm.device=gold",
+            "ro.product.odm.manufacturer=Xiaomi",
+            "ro.product.odm.model=gold",
+            "ro.product.odm.name=vnd_gold"
+          ]
+        },
+        "temporary_images_removed": true,
+        "official_archive_retained": true,
+        "is_factory_tee_identity_proof": false
+      },
+      "product": {
+        "stock_version": "OS3.0.10.0.VNQCNXM",
+        "archive_sha256": "82e2eecdf09fef867de8f8285dc3f027c9d6c9d5fcde8217301631e9078814a9",
+        "images": {
+          "product_a.img": {
+            "sha256": "d008ebd04c5b55b13f54bbc746e2f25308f2831dabd899bec39e419505accc78",
+            "bytes": 4376674304
+          }
+        },
+        "general_properties": {
+          "etc/build.prop": [
+            "ro.product.product.brand=Xiaomi",
+            "ro.product.product.device=missi",
+            "ro.product.product.manufacturer=Xiaomi",
+            "ro.product.product.model=miproduct",
+            "ro.product.product.name=gold"
+          ]
+        },
+        "temporary_images_removed": true,
+        "official_archive_retained": true,
+        "is_factory_tee_identity_proof": false
+      }
+    },
+    "host_state": {
+      "vm": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "gold_build_active": false,
+      "output_inode": 9437191,
+      "no_new_android_output": true,
+      "temporary_stock_images_removed": true
+    },
+    "remaining_conditions": [
+      "Determine whether the original secure-world identity records are available and which verified factory variant identity was provisioned; generic firmware values and current CSR information do not establish this.",
+      "Trust anchor and revocation verification were not performed.",
+      "No biometric-only/per-operation authorization, credential-change invalidation or reboot-persistence claim is made from the timed device-credential test."
+    ]
   }
 }

@@ -96,3 +96,5 @@ project/
 70c2ec4的设备安装后续于2026-09-22完成：本机OTA副本位于当前任务work/candidate-70c2ec4，服务器冻结候选和candidate.json原字节保持。脱敏安装记录位于jobs/gold-mainline-20260920/no-euicc-r7-device-installation.json及主线聚合validation；原始设备/无线日志仅本机私有目录0600。手机端OTA暂存文件已清理，服务器唯一输出和冻结目录未变。
 
 2026-09-22晚只在原OUT中定向编译两个APK，inode9437191不变；独立APK、构图/工具哈希与源码片段保存在jobs/gold-mainline-20260920/focused-apks-20260922，不属于新的releases候选或第二工程。官方vendor单分区诊断在/tmp专属目录完成后已卸载并删除，只保留必要插件/哈希证据于同一jobs根。历史输入和11个冻结候选未删除。
+
+认证绑定和属性诊断仅在现有jobs根的keymint-auth-probe-20260922、keymint-property-probe-20260922保留测试APK/DEX与来源哈希，不是第二套ROM工程或新冻结候选。CN原厂只读分区审计临时展开在/tmp自有目录，完成后卸载并删除临时镜像，原官方归档保留。原始CSR/DICE与设备日志仅存本机0600私有证据，Git只含脱敏结论。

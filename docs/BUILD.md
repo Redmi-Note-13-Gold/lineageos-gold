@@ -110,7 +110,7 @@ Power 构建附加 `gold_power_requests_test gold_power_nodes_test`。无参数�
 
 `--client-exit` 申请 2000 ms 的 uclamp=10 后主动退出且不调用 release；协调者应记录进程退出时间，并确认 HAL 在超时之前恢复 0，区分所有者回收和普通超时。`--client-restart` 输出 READY 后最多等 10 秒；协调者受控重启 `vendor.power-hal-gold`，确认新 PID、屏幕／温控许可及节点复位后向探针标准输入写 `G`。探针要求旧 Binder 返回传输错误，然后用独立新请求验证旧 C 句柄不能释放新 HAL 的票值。两种探针仍须没有竞争负载，完成后确认 0 票值和服务恢复。探针退出码不替代协调者对条件和动作的记录。
 
-`tools/build-device-probe.py --probe performance --android-root <源码根> --android-out <唯一输出> --output <新的专属测试目录>` 在科研机用已有 JDK／SDK／aapt2／d8／apksigner 编译 `tests/android/GoldPerfProbe/`，只生成临时测试 APK，不修改产品源码或镜像。`--probe hardware` 同样生成 `GoldHardwareProbe`，验证自己创建的 EC／RSA／AES 密钥运算、安全级别及删除，逐项请求实际支持的显示模式，读取有效状态栏尺寸并展示横竖屏合成画面；不请求用户认证密钥、远程证明、相机或网络权限。两个包的 `testOnly=true`，安装前确认同名包不存在，核对源文件和 APK 哈希；保留安装后 APK 读回哈希，结束时卸载本次包。
+`tools/build-device-probe.py --probe performance --android-root <源码根> --android-out <唯一输出> --output <新的专属测试目录>` 在科研机用已有 JDK／SDK／aapt2／d8／apksigner 编译 `tests/android/GoldPerfProbe/`，只生成临时测试 APK，不修改产品源码或镜像。`--probe hardware` 同样生成 `GoldHardwareProbe`，验证自己创建的 EC／RSA／AES 密钥运算、安全级别及删除，逐项请求实际支持的显示模式，读取有效状态栏尺寸并展示横竖屏合成画面；默认硬件模式不请求认证绑定密钥、远程证明、相机或网络权限；独立security/Auth入口的范围见下文。两个包的 `testOnly=true`，安装前确认同名包不存在，核对源文件和 APK 哈希；保留安装后 APK 读回哈希，结束时卸载本次包。
 
 性能对照入口是 `tools/measure-power-strategies.py`，参数明确指定 `--adb`、`--serial`（可为网络 transport）、`--hardware-serial`、`--incremental`、`--apk-sha256` 和新的 `--output`。先取得设备操作许可、完成网络 ADB 并确认 USB／其他充电均断开；入口再次核验身份、Enforcing、温控 0、省电关闭和默认策略。默认采集 12 组冷进程启动与 4 组各 60 秒滚动，0／20 策略按 AB／BA 交替；只 force-stop 自有合成应用，保留文件缓存、固定窗口亮度 0.35、记录真实滑动次数。首先实读框架启动造成的 uclamp 投票与释放，退出路径经 HAL 的 root Binder 入口恢复 0／0 并重启核验；异常时必须另核对恢复结果，不把进程退出当作恢复成功。
 
@@ -193,3 +193,19 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 `build-device-probe.py --probe diagnostics`用公开AOSP platform测试证书构建target com.android.devicediagnostics的instrumentation，以自有protobuf验证真实Activity，不改全局电池值；执行`am instrument -w org.lineageos.gold.diagnosticsprobe/.GoldDiagnosticsInstrumentation`后核对结果JSON的failed/count并卸载探针。`--probe hardware`生成的自有应用以`--es mode security`选择普通应用证明测试；输出错误链可能含请求参数，原始输出只入0600私有证据。未设锁或未获本人认证时不替用户配置认证。`GoldMediaDecodeProbe --extended <专属目录>`依次测HEVC与MPEG4，崩溃也必须收集服务日志并清理自己生成的文件，不循环触发已知崩溃。
 
 `GoldConntrackQuery.java`仅对最多8条明确的自有IPv4/TCP四元组发CT_GET（无dump、timeout更新或删除），检查响应序号与实际四元组，使用已安装Tethering的真实解析器；需要已获准的root。query可能触发内核对已过期项的回收，记录观察边界，不能把它说成无观察自然到期。所有地址和端口留在私有日志。`GoldDozeOverlay.java`只用系统OverlayManager注销固定命名的自有临时覆盖，用于有恢复方案的短时验证；注销和设置复位后才交还。
+
+## KeyMint认证和属性定向探针
+
+`--probe hardware`现在还构建 `GoldAuthActivity`，使用普通公开AOSP testkey，非platform权限；testOnly=true、allowBackup=false不变，debuggable仅供run-as读取自己的结果。先确认同名包属于本次测试、手机空闲且用户已经自己配置安全锁屏；不替用户设锁或索取PIN。通过已核验身份的优先网络ADB安装该APK并启动：
+
+```sh
+adb -s <已核验的transport> shell am force-stop org.lineageos.gold.hardwareprobe
+adb -s <已核验的transport> shell am start -n org.lineageos.gold.hardwareprobe/.GoldAuthActivity
+adb -s <已核验的transport> shell run-as org.lineageos.gold.hardwareprobe cat files/auth-result.json
+```
+
+等待初始17秒认证过期，再请本人操作系统BiometricPrompt。探针创建的EC/AES均为15秒凭据授权：认证前拒绝、认证后真实运算/篡改拒绝、过期再次拒绝分别记录。核对KeyInfo安全级别、hardwareEnforced认证标签、挑战和链内签名；`completed`不能代替这些字段，链内签名不等于信任根/吊销验收。核对`owned_keys_deleted`，结束后卸载自己的包。切换MainActivity的`--es mode security`前同样force-stop本测试包，避免已有Activity只在onCreate读取extra而误把一般模式结果记为证明测试；不停止用户应用。
+
+`tests/android/GoldAttestationParameters.java`使用同次OUT的framework-minus-apex combined/framework.jar及公开SDK编译，再由既有d8生成DEX，通过普通shell/app_process调用KeyStore2。只访问Domain.APP下UUID命名的自有别名，不接受用户提供的身份值，不请求IMEI/serial/MEID、唯一ID或更改provisioning。无属性为控制组，五个当前非唯一属性逐项及组合，再对正常平台属性组合；输出原生错误码，finally删除自己的密钥。将DEX放本次专属目录，执行后按哈希核对并删除它及空目录，原始错误/证书留在0600私有目录。
+
+如需诊断RKP，先核对实际ShellCommand实现：本轮的`cmd remote_provisioning csr --challenge <随机挑战的base64> default`只用空keys数组在本地生成CSR，不调用`certify`或联网申请证书。CBOR包含可识别设备的DICE材料，必须仅在私有本机校验；核对挑战和COSE链内/请求签名并做坏签名拒绝，公开记录只放非唯一属性及布尔结论。签名后的当前DeviceInfo不是工厂证明ID查询接口，不能据此重置TEE或猜写属性。

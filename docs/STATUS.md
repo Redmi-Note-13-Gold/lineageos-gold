@@ -1,4 +1,4 @@
-更新于2026-09-22T21:55:26+08:00：70c2ec4基线未换ROM；f6b67d4定向APK增量构建完成，DeviceDiagnostics已在线更新并通过28项边界，其他结果和限制见下文。固定基线为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器仍为事实来源。
+更新于2026-09-22T23:03:29+08:00：70c2ec4基线未换ROM；用户设置安全锁屏并本人认证后，TEE认证绑定EC/AES已完成真实验证。设备属性证明仍-66，详情与已验收子项分开列出；DeviceDiagnostics在线更新保留。固定基线为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器仍为事实来源。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
@@ -9,7 +9,7 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 项目 | 当前事实及下一步 |
 |---|---|
 | WPA3 热点 | 70c2ec4的SAE资源true、框架能力127含bit4已核验；用户已确认热点可以开启、Mac可以扫描到，但Mac连接失败，具体失败阶段尚未抓到。原“无法启动”问题与当前“客户端连接失败”分开；不记整个WPA3热点通过。当前保留正常使用的WPA2热点；后续需稳定的独立控制链及允许短时断网的复现窗口 |
-| 设备属性证明 / 认证密钥 | 70c2ec4普通应用不请求设备属性时，TEE密钥/证明级别均1、32字节挑战及4证书链内签名通过，锁定false/VerifiedBootState2（orange）如实报告；未做信任根/吊销审计。请求设备属性仍报-66 CANNOT_ATTEST_IDS，Global属性假说未获TEE接受。认证绑定密钥因未设安全锁屏未测，需用户本人配置并认证；不设锁、不导入keybox |
+| 设备属性证明 | 70c2ec4普通应用无设备属性的TEE证明通过；设置安全锁屏后，包含属性仍为-66。五项当前属性分别请求、五项一起请求、正常平台五项一起请求均被拒绝；CN原厂分区检查与本地RKP诊断见keymint_followup记录。RKP签名和当前系统信息不等于工厂ID已获验证；信任根/吊销未审计。认证绑定EC/AES已移到已验收；不猜身份、不导入keybox或重置安全存储 |
 | TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
 | AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁，依赖列表检查通过；只读EROFS vendor未替换，修复未实机验收 |
@@ -28,11 +28,20 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 子项 | 已完成证据 |
 |---|---|
 | DeviceDiagnostics负循环次数 | 旧APK的28项实际Activity边界用例有3项失败；主线同时修生产者与界面过滤，新APK在线更新后28/28通过。健康值、日期、循环次数含缺失/负值/极值与Android版本差异；未注入全局BatteryService。活动APK SHA-256为6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2，位于data应用更新；后续OTA须核对实际活动APK |
-| KeyMint普通证明 | 本候选TEE级别/挑战/链内签名及真实orange引导状态如上；自建密钥已删。设备属性与认证绑定仍在未完成项中 |
+| KeyMint普通证明 | 本候选TEE级别/挑战/链内签名及真实orange引导状态如上；自建密钥已删。设备属性证明仍在未完成项中，认证绑定追加结果见下一行 |
+| 认证绑定EC/AES | 用户自己设置安全锁屏并在系统窗口认证；普通应用的EC P-256与AES-256-GCM在认证前及15秒授权到期后均拒绝使用，认证后签名/加解密和篡改拒绝通过。两把KeyInfo均为TEE且认证约束由安全硬件执行；EC证明的硬件列表含认证类型/15秒期限。密钥和测试APK已清理；安全锁屏不改变bootloader的unlocked/orange事实 |
 | HEVC短往返 | c2.mtk.hevc.encoder/decoder，1280×720，120帧编码、120帧解码和EOS；不扩展为长时/全格式验收 |
 | 交还状态 | 未重启手机或改变热点；联通数据开启、漫游eSIM关闭且未操作。鉴权网络ADB优先，已恢复UID2000/Enforcing；两canary一致，双击1。自有探针APK、DEX、片段和临时Doze覆盖均清理，用户KeyAttestation保留 |
 
 当前手机是70c2ec4/A/1790008554加上述DeviceDiagnostics数据分区更新。AOD静态覆盖、MPEG4插件尚未安装，TCP/BPF未修改运行中的APEX；不能把这些源码修复并入当前ROM已验收结论。原始截图/无线/设备日志仅在本机0600私有目录；Git只含脱敏结论，详见聚合validation的 `focused_followup_20260922`。
+
+## 认证绑定与设备属性证明的后续核对
+
+主线增加普通应用 `GoldAuthActivity` 与只生成自有密钥的 `GoldAttestationParameters`，沿用已有JDK/SDK/唯一OUT工具，单独编译测试APK/DEX；没有编译或安装新ROM，也没有更改生产KeyMint、手机属性或TEE配置。认证窗口由系统处理，探针不获取锁屏凭据。认证绑定的实际先拒绝→本人认证→成功→过期拒绝，以及EC/AES篡改拒绝均通过；不是从“已设锁”或界面成功提示推断通过。
+
+设备属性仍失败：普通应用冷启动确认无属性成功/含属性-66；直接按五个属性拆分及组合后，所有含属性的当前值请求仍-66。当前平台属性组合也失败。固定CN输入的vendor/odm通用身份与Global一致；product仍为Xiaomi/missi/miproduct模板，仅name=gold。以上都不能当作这台设备的TEE预置身份。MiTEE二进制中的“get deviceinfo success”来自普通ro.product属性读取，不能解释为读出了工厂ID。补充的本地RKP v3空key CSR有匹配随机挑战、DICE链内签名及请求签名，修改签名被拒；只证明这条诊断路径工作，没有远程证书申请、网络上传、信任根/吊销验收或证明ID修复。
+
+原始证书、DICE身份、设备和无线输出只保存在本机0600私有目录。服务器与Git记录脱敏结论，详见 `validation/mainline-convergence-20260920.json` 的 `keymint_followup_20260922`。本轮全程普通鉴权网络ADB UID2000，未重启手机/adbd、未改热点或数据/SIM；两canary一致，用户KeyAttestation与已修复DeviceDiagnostics保留，自己的探针APK/DEX/密钥已清理。
 
 ## 70c2ec4 本次已验收子项
 
