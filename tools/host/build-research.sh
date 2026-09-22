@@ -11,6 +11,14 @@ fi
 project_root="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/../.." && pwd)"
 source_tree="${GOLD_SOURCE_TREE:-$(dirname -- "$project_root")/source}"
 
+# Record the whole service invocation, including preflight failures and signals.
+# The recursive entry still performs exactly the same layout/tool/build checks.
+if [ -n "${INVOCATION_ID:-}" ] && [ "${GOLD_RECORDED_INVOCATION:-}" != "$INVOCATION_ID" ]; then
+    exec python3 -B "$project_root/tools/host/build-invocation.py" \
+        --records "$(dirname -- "$project_root")/jobs/build-invocations" -- \
+        "$project_root/tools/host/build-research.sh" "$@"
+fi
+
 # Hidden-API encoding and packaging use these allowed, non-hermetic host tools.
 # Check before graph/configuration work; temporary job-local tools may be on PATH.
 for host_tool in unzip zip; do

@@ -30,17 +30,33 @@ python3 /srv/build/gold/project/tools/build-source.py \
 
 日常实际工作区是 `/srv/build/gold`；唯一输出随源码同盘迁移，文件和缓存继续复用。每次进入构建脚本都先运行 `tools/host/check-research-layout.py`，核对数据盘 UUID、准确的 overlay 挂载和三层路径；缺失或不匹配则在写输出前退出。宿主路径由 `tools/host/research-layout.json` 维护。
 
-先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、输出目录归属、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建通过 root systemd 服务启动，保留资源上限：
+先执行 `/srv/build/build-gold.sh --check-environment`，检查实际 UID、HOME、源码路径、输出目录归属、完整固定清单导出和缓存读写。清单导出失败也会在正常构建的 `result.json` 中留下失败记录。长期构建先准备本次精确重启保护，再通过root systemd服务启动原入口及独立guard，保留资源上限：
 
 ```sh
-unit=gold-build-$(date +%Y%m%d-%H%M%S)
+unit="gold-build-$(date +%Y%m%d-%H%M%S).service"
+guard="${unit%.service}-vm-guard.service"
+record_dir="/srv/build/gold/jobs/${unit%.service}"
+epoch=$(date +%s)
+install -d -m 0700 "$record_dir"
+# PATH须已包含本轮认证的zip/unzip；临时盘须按本次job记录准备并负责清理。
+: "${GOLD_OTA_TMPDIR:?先准备本次0700私有打包临时目录}"
+python3 -B /srv/build/gold/project/tools/host/vm-guard.py \
+  --unit "$unit" --guard-unit "$guard" --record "$record_dir/vm.json" \
+  --protection-record "$record_dir/needrestart.json" --prepare-restart-protection
 systemd-run --unit="$unit" -p User=root -p Group=root \
-  -p WorkingDirectory=/srv/build/gold/source \
-  -p Environment=HOME=/root \
+  -p WorkingDirectory=/srv/build/gold/source -p Environment=HOME=/root \
+  -p "Environment=PATH=$PATH" -p "Environment=BUILD_DATETIME=$epoch" \
+  -p "Environment=GOLD_OTA_TMPDIR=$GOLD_OTA_TMPDIR" \
   -p MemoryHigh=12800M -p MemoryMax=13G -p MemorySwapMax=20G \
   -p OOMPolicy=stop -p Nice=5 \
   -p StandardOutput=append:/srv/build/gold/logs/"$unit".log -p StandardError=inherit \
-  /srv/build/build-gold.sh gold_health_units_test gold_vibrator_contract_test
+  /srv/build/build-gold.sh
+systemd-run --unit="$guard" -p User=root -p MemoryMax=128M \
+  -p OOMScoreAdjust=-900 -p StandardOutput=append:"$record_dir/guard.log" \
+  -p StandardError=inherit \
+  python3 -B /srv/build/gold/project/tools/host/vm-guard.py \
+    --unit "$unit" --record "$record_dir/vm.json" \
+    --protection-record "$record_dir/needrestart.json"
 ```
 
 swap 已在 `/etc/fstab` 持久化；对应 swap 单元依赖 `srv-build.mount`。原 `goldbuild` 账户仅保留历史用途，其 HOME 已更新为 `/srv/build/gold/history/retired-build-home`；日常构建仍由 root 执行，HOME 为 `/root`。迁移完成后的 IMS 修正版已以实际 UID 0 完成完整构建及验证，见 [最终记录](../validation/ims-build-20260920.json)。迁移前已安装的首次候选按其原构建身份和独立 OTA 路径保留。
@@ -140,6 +156,15 @@ WPA3 SoftAP 的当前Gold门禁要求实际编译的 `VENDOR/overlay/WifiOverlay
 
 移除版r4补充覆盖了target-files图片生成阶段：`add_img_to_target_files`也使用可选`GOLD_OTA_TMPDIR`。前版只覆盖OTA与最后镜像检查，漏算build_image合并root/system时约1GB临时副本；本轮以原输入、原容量和inode参数在既有系统盘实测成功后修复。该变量现用于target-files镜像构造、OTA打包及最终镜像检查，保持唯一OUT；未设置时保留原生Soong临时目录。真实Make命令的默认、空值和带空格私有目录共六项通过，所有临时内容仍由独立guard在构建终态后清理。
 
-2026-09-22 r5补充：BUILD_DATETIME固定仍不足以约束上游Lineage的实时UTC日期；两次make跨零点导致product与Recovery版本属性不同，最终分区门禁已真实拒绝。固定vendor/lineage提交d747e9abec858434d4967eb5fa9cd3e87c5cc7b0上的最小补丁使两种LINEAGE_BUILD_DATE格式均取BUILD_DATETIME；未设置或空值保留原行为。包检查增加PRODUCT/etc/build.prop与VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/prop.default日期及相互一致性检查，不能只比较顶层OTA时间戳。105项主机测试与7项真实Make时钟/时区检查通过。继续原OUT、jobs2顺序打包及全部原门禁。宿主自动更新的精确临时服务重启保护应在后续job启动前准备，任务结束核对并清理；不得全局停用安全更新。
+2026-09-22 r5历史诊断：BUILD_DATETIME固定仍不足以约束上游Lineage的实时UTC日期；两次make跨零点导致product与Recovery版本属性不同，最终分区门禁已真实拒绝。固定vendor/lineage提交d747e9abec858434d4967eb5fa9cd3e87c5cc7b0上的最小补丁使两种LINEAGE_BUILD_DATE格式均取BUILD_DATETIME；未设置或空值保留原行为。包检查增加PRODUCT/etc/build.prop与VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/prop.default日期及相互一致性检查，不能只比较顶层OTA时间戳。105项主机测试与7项真实Make时钟/时区检查通过。继续原OUT、jobs2顺序打包及全部原门禁。宿主自动更新的精确临时服务重启保护应在后续job启动前准备，任务结束核对并清理；不得全局停用安全更新。
 
-2026-09-22 r6配置检查补充：直接读取BUILD_DATETIME被实际Kati判为obsolete；此前GNU Make检查覆盖不足，失败记录保留。现从Soong已提供的BUILD_DATETIME_FILE读取epoch；同文件内更晚才定义的BUILD_DATETIME_FROM_FILE不能用于version.mk包含点。105项主机测试、8项实际Make定向检查及真实Android lunch/dumpvars通过（日期20260921），168项输入仅version.mk变化；等待r7完整构建和原有全部包门禁，不扩大设备结论。
+2026-09-22 r6配置检查补充：直接读取BUILD_DATETIME被实际Kati判为obsolete；此前GNU Make检查覆盖不足，失败记录保留。现从Soong已提供的BUILD_DATETIME_FILE读取epoch；同文件内更晚才定义的BUILD_DATETIME_FROM_FILE不能用于version.mk包含点。105项主机测试、8项实际Make定向检查及真实Android lunch/dumpvars通过（日期20260921），168项输入仅version.mk变化；r7随后完整构建、日期与原有全部包门禁均通过，设备验收仍独立。
+
+
+2026-09-22 r7 于12:57:15 +08入口 exit 0；bacon 01:15:23、target-files-package 01:36:32 均 exit 0。168项合并输入、14个payload分区与target-files镜像全部一致；签名、VINTF、SELinux、Gold内容与版本日期门禁通过。真实镜像核对38项文件，system_ext六个退役路径缺席，eSIM支持为false，WPA3 SAE编译资源为true。product与Recovery均为UTC epoch对应的20260921版本日期。独立guard12:57:20退出，VM实读0/zbud/N/Y，无OOM，本轮ZIP工具、OTA scratch与精确needrestart配置均已清理；宿主zip/unzip仍未安装。
+
+构建后主机收尾已纳入主线 `tools/host/vm-guard.py`、`build-invocation.py` 与统一入口：启动前准备仅匹配本轮build/guard完整名称的临时needrestart配置；守护单例锁、服务与递归cgroup状态、源码锁共同约束恢复，重启接管保留原始VM值，外部值变化保留并明确报恢复未完成；运行期终止信号不能提前恢复。每个systemd InvocationID在jobs/build-invocations下独立建档，禁止覆盖，记录真实退出/外部信号；Android输入/result关联同一ID。117项主机测试通过。短服务实测覆盖SIGTERM延后、并发守护拒绝、SIGKILL后接管且测试服务不重启、最终VM和精确配置恢复、PID1退出与invocation对应；实际构建入口的缺unzip预检失败也独立留档且未创建Android构建。这次主机改动后168项Android输入及10个受管项目逐字节/提交不变，不另编ROM，冻结工具仍为构建时70c2ec4版本。
+
+`vm-guard.py`默认从同一物理布局定位source，其他已核验位置需显式`--source-tree`。准备步骤必须先于两个服务；不启用全局needrestart排除，也不关闭安全更新。启动失败或守护异常时先核对实际服务/cgroup和原记录；仅守护需要接管时使用同一unit与record重新启动，不能重启Android构建。`--restore-only`同样拒绝活动服务或被占用的源码锁；确认构建全部停止后才用它恢复原值和精确配置。若其他管理者改变了VM值或配置内容，工具保留变化并报告未恢复，不伪称成功。
+
+每次统一入口的systemd执行在`/srv/build/gold/jobs/build-invocations/<InvocationID>.json`单独记录。外部信号记interrupted，即使PID1记录外部stop成功也不能算构建成功；SIGKILL来不及写终态的running记录保持未完成，后续启动使用新的ID。终态需同时核对对应Android result、入口退出及PID1的UNIT/InvocationID/开始后时间。guard只有服务/cgroup稳定空闲且取得源码锁才恢复，退出后实读0/zbud/N/Y。临时zip/unzip和OTA目录仍按本次job的精确路径、归属、marker与哈希记录清理，不能把其他轮保留的失败包包含进去；主线guard只自动移除自己记录且字节一致的needrestart配置。

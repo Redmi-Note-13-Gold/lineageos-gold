@@ -1,6 +1,6 @@
-更新于 2026-09-22 主线移除 eSIM 支持。唯一主线仍为 Global OS3.0.5.0.VNQMIXM / kernel 6.6.118 / LineageOS 23.2，目标 `lineage_gold-bp4a-userdebug`；服务器为事实来源。
+更新于2026-09-22 13:18 +08：WPA3修复与eSIM移除候选已构建、校验并冻结，主机守护收尾通过。唯一主线仍为Global OS3.0.5.0.VNQMIXM / kernel6.6.118 / LineageOS23.2，目标lineage_gold-bp4a-userdebug；服务器为事实来源。
 
-**6e7c418 已保数据安装到 B 槽，incremental 1789977174；WPA3 修复 89ae983 已完整构建及冻结，未安装；用户随后决定移除 OpenEUICC/eSIM，主线已移除，移除版r5两个Android阶段均成功，但最终门禁拒绝OTA/target-files分区不一致；实际镜像文件差异为跨UTC零点生成的Lineage版本日期，已补版本日期与包门禁；r6在配置检查中暴露Kati禁用变量，现改为Soong提供的BUILD_DATETIME_FILE，真实lunch/dumpvars及定向检查通过，准备原输出r7续编。** 已安装候选为 `/srv/build/gold/releases/20260921-224022-6e7c418`。下面分别列出剩余工作与已验收子项。冻结时的 candidate.json 保留当时未安装的原始事实，安装结论另见 [聚合证据](../validation/mainline-convergence-20260920.json) 中 `non_ims_followup_20260921.functional_candidate_6e7c418_device`，不能把冻结记录直接改成全部设备通过。
+**最新候选70c2ec4已完整构建及冻结，未安装；最后已装版本仍为6e7c418 / B槽 / 1789977174。** 新候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，同时包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。手机与网络保持原状；设备验收不会从旧候选继承。冻结candidate.json保持当时事实，安装记录仍见聚合validation中的functional_candidate_6e7c418_device。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。未卸载当前手机的应用或改变 SIM，历史记录不改写。
 
@@ -8,7 +8,7 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 
 | 项目 | 当前事实及下一步 |
 |---|---|
-| WPA3 热点 | 本机开启 WPA3 失败已复现：框架 capability=123，缺 SAE bit 4，记录 `Error, SAE requires HAL support`，在 native hostapd 前拒绝。匹配 Global 原厂两份 Wi-Fi RRO 均开启 `config_wifi_softap_sae_supported`，hostapd 已有 CONFIG_SAE。主线补同一资源为 true；168 个 Android 输入中仅此 XML 改变，91 项 Python 测试、实际编译资源检查通过，旧候选被新增资源门禁正确拒绝。89ae983 已构建及包门禁通过；合并 eSIM 移除的下一候选仍需实测启动、WPA3 客户端认证及关闭，当前手机尚未安装修复 |
+| WPA3 热点 | 本机开启 WPA3 失败已复现：框架 capability=123，缺 SAE bit 4，记录 `Error, SAE requires HAL support`，在 native hostapd 前拒绝。匹配 Global 原厂两份 Wi-Fi RRO 均开启 `config_wifi_softap_sae_supported`，hostapd 已有 CONFIG_SAE。该次源码修复仅补Wi-Fi XML同一资源为true，91项Python测试、编译资源检查通过，旧候选被新增资源门禁正确拒绝。70c2ec4已合并eSIM移除且全部包门禁通过；仍需安装后实测热点启动、WPA3客户端认证及关闭，当前手机尚未安装修复 |
 | Wi-Fi 自动恢复 | 已安装正式探测 RRO，但之前批准的保存网络不在当前扫描范围；需该热点重新可见后核对自动关联、真实 TLS/204 和框架判定，不强制 VALIDATED |
 | 设备属性证明 / 认证密钥 | 新 ROM 的 Key Attestation 仍报 -66 CANNOT_ATTEST_IDS；vnd_gold/gold 两项专用属性未获 TEE 接受。实机 SKU=gold_cn，已核验 Global vendor 与 product 镜像的通用属性不足以证明实际预置身份。不得继续把 vendor 值假说写成已修复；需核对真实变体与 TEE 请求。引导状态仍 orange；安全锁屏未设置，认证绑定密钥未测，不代用户设锁或导入 keybox |
 | TCP/BPF | parser/event 和真实 TCP 状态变化已有旧版证据，IPv4 双向规则删除仍未证明；用户明确保持移动数据关闭，缺允许的 raw-IP 上行条件 |
@@ -46,19 +46,27 @@ ROM `bd50b19ef82575790eb455c6cb1d712a482d62b7`、A 槽 / 1789938387 的冻结候
 
 ## 构建与工程证据
 
-r6 于 09:50:52 启动、09:51:21 入口 exit 1，未进入 Android 编译：Kati 在 version.mk 报 `BUILD_DATETIME is obsolete. Use BUILD_DATETIME_FROM_FILE.`。Soong 在配置前已生成 `out-gold-standard/build_date.txt` 并提供 `BUILD_DATETIME_FILE`，而 `BUILD_DATETIME_FROM_FILE` 在此 version.mk 包含点尚未定义。最小补丁改为从前者读取固定 epoch；不用被禁变量，也不放宽 Kati。真实 `lunch lineage_gold-bp4a-userdebug` 和 `soong_ui --dumpvars-mode` exit 0，实际版本为 `23.2-20260921-UNOFFICIAL-gold`；105 项主机测试及 8 项日期/UTC/路径空格/过时变量定向检查通过。168 项输入中仅 version.mk 相比 ecdbab1 改变，另 167 项未变。r7 的 ROM 与包门禁仍待验证。
+2026-09-22 r7 于12:57:15 +08入口 exit 0；bacon 01:15:23、target-files-package 01:36:32 均 exit 0。168项合并输入、14个payload分区与target-files镜像全部一致；签名、VINTF、SELinux、Gold内容与版本日期门禁通过。真实镜像核对38项文件，system_ext六个退役路径缺席，eSIM支持为false，WPA3 SAE编译资源为true。product与Recovery均为UTC epoch对应的20260921版本日期。独立guard12:57:20退出，VM实读0/zbud/N/Y，无OOM，本轮ZIP工具、OTA scratch与精确needrestart配置均已清理；宿主zip/unzip仍未安装。
 
-r6 独立 guard 于 09:51:25 有匹配 invocation 的 PID1 成功退出；实读 VM 0/zbud/N/Y，临时 ZIP 工具、OTA scratch 和两服务精确 needrestart 配置均删除，宿主 zip/unzip 安装状态未改变，无 OOM。失败保存在 `jobs/gold-mainline-20260920/no-euicc-r6-terminal.json`；该轮预先准备的保护、独立 VM 原值记录及按 invocation 分开的 job 结果已实际工作，后续仍需将其固化到现有主线主机流程。没有操作手机。
+完整全量OTA与target-files已独立冻结至 `/srv/build/gold/releases/20260922-130256-70c2ec4`，保留同次源码、工具与输入，独立冻结检查器exit0；两包均nlink1，转存和复验临时目录已清理，index现为11个候选。OTA SHA-256 `df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b`；target-files `1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed`。OTA与r5的OTA字节相同：r5的OTA日期原本正确，发生漂移的是第二阶段target-files；r7原生重建后已通过全部分区和日期检查，没有沿用r5失败结论或手工改签名包。r5两份拒绝包继续单独保留。新候选未安装，WPA3设备验收未通过。
 
-r5 当前有效 invocation 于 06:55:31 启动，bacon 01:21:45、target-files-package 55:30 均 exit 0；入口 09:14:35 exit 1。14 个分区中 product、vendor_boot 和关联 vbmeta/vbmeta_system 哈希不一致。真实 payload 提取哈希通过，product 的 606 项文件仅 etc/build.prop 不同，vendor_boot 的 Recovery ramdisk 仅 prop.default 不同，两处均为 ro.lineage.version / display.version 的 20260921→20260922；固定 Android timestamp 没有约束上游实时 UTC 版本日期。ecdbab1 首次补丁将普通日期及可选时分秒绑定 BUILD_DATETIME，但其 GNU Make 测试未覆盖 Kati 的过时变量限制，后续 r6 启动检查真实拒绝；现已按上文修正。包门禁同时核对 product/Recovery 版本日期与 epoch。105 项主机测试、7 项实际 Make 跨午夜/时区检查通过；原 167 项合并输入逐字节未变，仅新增 version.mk，当前 168 项/10 个受管项目，1158 项 Repo 提交不变。最终 ROM 包尚未通过，未生成新候选。
+构建后主机收尾已纳入主线 `tools/host/vm-guard.py`、`build-invocation.py` 与统一入口：启动前准备仅匹配本轮build/guard完整名称的临时needrestart配置；守护单例锁、服务与递归cgroup状态、源码锁共同约束恢复，重启接管保留原始VM值，外部值变化保留并明确报恢复未完成；运行期终止信号不能提前恢复。每个systemd InvocationID在jobs/build-invocations下独立建档，禁止覆盖，记录真实退出/外部信号；Android输入/result关联同一ID。117项主机测试通过。短服务实测覆盖SIGTERM延后、并发守护拒绝、SIGKILL后接管且测试服务不重启、最终VM和精确配置恢复、PID1退出与invocation对应；实际构建入口的缺unzip预检失败也独立留档且未创建Android构建。这次主机改动后168项Android输入及10个受管项目逐字节/提交不变，不另编ROM，冻结工具仍为构建时70c2ec4版本。
+
+以下保留各轮失败原因与当时边界，当前终态以上面的r7记录为准。
+
+r6 于 09:50:52 启动、09:51:21 入口 exit 1，未进入 Android 编译：Kati 在 version.mk 报 `BUILD_DATETIME is obsolete. Use BUILD_DATETIME_FROM_FILE.`。Soong 在配置前已生成 `out-gold-standard/build_date.txt` 并提供 `BUILD_DATETIME_FILE`，而 `BUILD_DATETIME_FROM_FILE` 在此 version.mk 包含点尚未定义。最小补丁改为从前者读取固定 epoch；不用被禁变量，也不放宽 Kati。真实 `lunch lineage_gold-bp4a-userdebug` 和 `soong_ui --dumpvars-mode` exit 0，实际版本为 `23.2-20260921-UNOFFICIAL-gold`；105 项主机测试及 8 项日期/UTC/路径空格/过时变量定向检查通过。168 项输入中仅 version.mk 相比 ecdbab1 改变，另 167 项未变。该配置检查阶段尚无新包；r7随后已通过，见本节首段。
+
+r6 独立 guard 于 09:51:25 有匹配 invocation 的 PID1 成功退出；实读 VM 0/zbud/N/Y，临时 ZIP 工具、OTA scratch 和两服务精确 needrestart 配置均删除，宿主 zip/unzip 安装状态未改变，无 OOM。失败保存在 `jobs/gold-mainline-20260920/no-euicc-r6-terminal.json`；该轮预先准备的保护、独立 VM 原值记录及按 invocation 分开的 job 结果已实际工作，现已完成主线主机流程固化和定向验证，见本节首段。没有操作手机。
+
+r5 当前有效 invocation 于 06:55:31 启动，bacon 01:21:45、target-files-package 55:30 均 exit 0；入口 09:14:35 exit 1。14 个分区中 product、vendor_boot 和关联 vbmeta/vbmeta_system 哈希不一致。真实 payload 提取哈希通过，product 的 606 项文件仅 etc/build.prop 不同，vendor_boot 的 Recovery ramdisk 仅 prop.default 不同，两处均为 ro.lineage.version / display.version 的 20260921→20260922；固定 Android timestamp 没有约束上游实时 UTC 版本日期。ecdbab1 首次补丁将普通日期及可选时分秒绑定 BUILD_DATETIME，但其 GNU Make 测试未覆盖 Kati 的过时变量限制，后续 r6 启动检查真实拒绝；现已按上文修正。包门禁同时核对 product/Recovery 版本日期与 epoch。105 项主机测试、7 项实际 Make 跨午夜/时区检查通过；原 167 项合并输入逐字节未变，仅新增 version.mk，当前 168 项/10 个受管项目，1158 项 Repo 提交不变。当时最终ROM包未通过，未生成候选；后续r7已完成。
 
 本轮 06:55 的宿主 unattended-upgrades/needrestart 外部重启与 Android 终态分开记录；原 guard 因既有记录退出 1，rescue 安全接管后于 09:14:52 有 PID1 成功退出证据。实读 VM 0/zbud/N/Y、无 OOM；ZIP 工具、OTA scratch 与精确临时 needrestart 配置均清理，宿主未安装 zip/unzip。失败原结果保持，详见 jobs/gold-mainline-20260920/no-euicc-r5-terminal.json、mismatch-diagnostic.json、guard-recovery.json。两份拒绝包逐字节校验/fsync 后暂存 /tmp/gold-no-euicc-r5-unvalidated-packages，任务记录 package-preservation.json 关联旧路径；保留失败包原字节，未删历史候选或输入，不可刷写。
 
-eSIM 移除时，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。新的最终镜像和增量构建尚待完成。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
+eSIM 移除时，实际合并输入 165 项与主线一致；保留的输入只改 device.mk，删除 3 项 OpenEUICC 补丁输入及两个独立检出。原 1158 个 Repo 项目清单未变；受管完整 manifest 从 1160 项变为 1158 项，8 个保留受管项目提交未变。包检查在旧 target-files 和旧 system_ext 实际镜像上均正确拒绝残留。该源码移除阶段尚未验证最终镜像；后续r7已通过实际镜像缺席检查。首轮02:11:40入口exit1，直接错误为target-files soong_zip的ENOSPC；guard02:11:54退出，VM实读0/zbud/N/Y、无OOM、临时ZIP工具清理。保留失败结果，不将随后完成的OTA单包冒充候选。
 
 本次已装候选的 Android r2 构建成功，02:36:40；原入口于 22:14:26 +08 exit 1，因检查器固定四空格缩进误拒绝正确 OpenEUICC 路由。`00be34a` 修正层级解析，91 项测试、原 ZIP 和冻结工具独立复验均通过，未改 Android 输入或 ZIP，也未改写原失败结果。168 项输入一致，签名/VINTF/SELinux、14 payload / 38 实际镜像文件通过。OTA SHA-256 `22f5937ef97ed7073e57c357c0302bf77bbdd6cddb2b474aab7073a38e79f6cb`；target-files `7e8cc241b97b73beef1dacdd0948af6271c4c1d5bc1b64d786e142317256f98c`。
 
-r2 guard 于 22:14:31 恢复，终态实读 VM=0/zbud/N/Y，无 OOM，临时 ZIP 工具清理；r1 缺 unzip 失败及 6e7c418 前置检查修复记录保留。WPA3 补丁只改一个实际 Android XML；89ae983 于 2026-09-22 00:20:25 +08 入口 exit 0，Android 编译打包 12:33，签名/VINTF/SELinux、14 payload / 39 实际镜像文件通过。guard 00:20:29 恢复 VM=0/zbud/N/Y，临时 ZIP 工具清理、无 OOM。冻结候选 `/srv/build/gold/releases/20260922-002433-89ae983` 已独立复验，包含撤回之前的 OpenEUICC，未安装；下一版本合并移除后重新构建，不继承设备结论。
+r2 guard 于 22:14:31 恢复，终态实读 VM=0/zbud/N/Y，无 OOM，临时 ZIP 工具清理；r1 缺 unzip 失败及 6e7c418 前置检查修复记录保留。WPA3 补丁只改一个实际 Android XML；89ae983 于 2026-09-22 00:20:25 +08 入口 exit 0，Android 编译打包 12:33，签名/VINTF/SELinux、14 payload / 39 实际镜像文件通过。guard 00:20:29 恢复 VM=0/zbud/N/Y，临时 ZIP 工具清理、无 OOM。冻结候选 `/srv/build/gold/releases/20260922-002433-89ae983` 已独立复验，包含撤回之前的 OpenEUICC，未安装；已由70c2ec4移除版取代，旧包仍保留且未安装。
 
 活动输出两种同次包的三个路径在与独立冻结候选逐个重读 SHA-256 一致后清理，释放约 3.80 GiB，输出 inode 9437191 不变；记录 `jobs/gold-mainline-20260920/wpa3-active-package-duplicates.json` 给出已保存冻结路径。历史候选、官方输入、OverlayFS、缓存与 swap 均保留。OverlayFS 合并视图到 releases 直接 rename 实测返回 EXDEV；冻结改为逐包复制、重读 SHA-256 并 fsync 后才移除该包的全部可变硬链接，保存路径映射和独立工具复验；不改 OUT_DIR，不复制第二套输出。
 

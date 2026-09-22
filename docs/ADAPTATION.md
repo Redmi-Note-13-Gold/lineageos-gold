@@ -153,7 +153,7 @@ Recovery 真实签名侧载使用无 payload／updater 的专用 fixture，完�
 
 6e7c418 / B / 1789977174 已完成保数据安装、安装器和独立各14分区回读、正常启动及 canary。正式双击物理两轮、设置 Off/On、Power HAL 重启和既有正常重启保持通过；横屏 LTR/RTL 两方向实际左右55px，OpenEUICC 管理路由和无 launcher 快捷方式崩溃修复通过只读列表测试，后续已只读确认第二实体槽 physical1→port0→phone1 为 eUICC；2026-09-22 用户决定移除该支持，以上仅为旧候选历史验收。设备属性证明仍报 -66，vendor 的 vnd_gold/gold 假说未通过 TEE；Global product镜像核验只证明其通用属性，不能替代 gold_cn 实机预置身份。以上与旧版已验收分开，详见 STATUS 和聚合 JSON。
 
-用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和WPA3启动/客户端认证仍待进行。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
+用户报告的是本机开启 WPA3 热点失败。缺少 `config_wifi_softap_sae_supported` 使框架 capability缺bit4，在native启动前报 SAE requires HAL support。锁定 Global vendor SHA-256 9110c8fcb33803e61008ed3e73bb8a58bdf040154b5ecf115ae4f29e447ec47f 中 WifiResMainlineOverlay 与 WifiResOverlay 均编译该值为true，原生hostapd也启用SAE。主线只补Gold WifiOverlay同一布尔值，保持凭据/认证和框架校验；新增实际包与镜像门禁。91项工具测试与编译资源检查通过，旧候选按新增要求正确失败；正式构建和包门禁现已通过；WPA3启动/客户端认证仍待设备验证。临时FRRO重启未保留、静态RRO更新被平台拒绝，未绕过限制或修改现有vendor镜像。提取出的临时stock镜像已正常卸载并清理，官方输入保留。
 
 用户最新要求不再重启手机以保持网络连接；Recovery往返及后续安装暂不执行，移动数据仍保持关闭，IMS仍最后处理。
 
@@ -163,6 +163,11 @@ eSIM退出的增量迁移由 `device/xiaomi/gold/CleanSpec.mk` 补齐：r3证明
 
 r4已证实退役JNI链接由标准CleanSpec移除；其后失败属于主机target-files镜像构造的临时空间峰值。同容量/inode定向生成通过，修复仅扩展私有打包临时目录覆盖范围，未改变设备分区容量和运行时功能；最终包缺席门禁仍须完整通过。
 
-r5实际分区校验拒绝跨UTC零点造成的Lineage版本日期漂移，属于构建确定性问题；最小version.mk补丁将日期固定至同次BUILD_DATETIME，并补product/Recovery包门禁。没有改硬件能力或扩大设备验收。原167项输入未变，新增1项固定日期输入，当前168项/10受管项目；105项主机及7项实际Make检查通过，新包等待r6验证。
+r5实际分区校验拒绝跨UTC零点造成的Lineage版本日期漂移，属于构建确定性问题；最小version.mk补丁将日期固定至同次BUILD_DATETIME，并补product/Recovery包门禁。没有改硬件能力或扩大设备验收。原167项输入未变，新增1项固定日期输入，当前168项/10受管项目；105项主机及7项实际Make检查通过，该次修正尚未验证新包；后续Kati兼容修正及r7完整结果如下。
 
-2026-09-22 r6配置检查补充：直接读取BUILD_DATETIME被实际Kati判为obsolete；此前GNU Make检查覆盖不足，失败记录保留。现从Soong已提供的BUILD_DATETIME_FILE读取epoch；同文件内更晚才定义的BUILD_DATETIME_FROM_FILE不能用于version.mk包含点。105项主机测试、8项实际Make定向检查及真实Android lunch/dumpvars通过（日期20260921），168项输入仅version.mk变化；等待r7完整构建和原有全部包门禁，不扩大设备结论。
+2026-09-22 r6配置检查补充：直接读取BUILD_DATETIME被实际Kati判为obsolete；此前GNU Make检查覆盖不足，失败记录保留。现从Soong已提供的BUILD_DATETIME_FILE读取epoch；同文件内更晚才定义的BUILD_DATETIME_FROM_FILE不能用于version.mk包含点。105项主机测试、8项实际Make定向检查及真实Android lunch/dumpvars通过（日期20260921），168项输入仅version.mk变化；r7随后完整构建和全部包门禁通过，不扩大设备结论。
+
+
+2026-09-22 r7 于12:57:15 +08入口 exit 0；bacon 01:15:23、target-files-package 01:36:32 均 exit 0。168项合并输入、14个payload分区与target-files镜像全部一致；签名、VINTF、SELinux、Gold内容与版本日期门禁通过。真实镜像核对38项文件，system_ext六个退役路径缺席，eSIM支持为false，WPA3 SAE编译资源为true。product与Recovery均为UTC epoch对应的20260921版本日期。独立guard12:57:20退出，VM实读0/zbud/N/Y，无OOM，本轮ZIP工具、OTA scratch与精确needrestart配置均已清理；宿主zip/unzip仍未安装。
+
+构建后主机收尾已纳入主线 `tools/host/vm-guard.py`、`build-invocation.py` 与统一入口：启动前准备仅匹配本轮build/guard完整名称的临时needrestart配置；守护单例锁、服务与递归cgroup状态、源码锁共同约束恢复，重启接管保留原始VM值，外部值变化保留并明确报恢复未完成；运行期终止信号不能提前恢复。每个systemd InvocationID在jobs/build-invocations下独立建档，禁止覆盖，记录真实退出/外部信号；Android输入/result关联同一ID。117项主机测试通过。短服务实测覆盖SIGTERM延后、并发守护拒绝、SIGKILL后接管且测试服务不重启、最终VM和精确配置恢复、PID1退出与invocation对应；实际构建入口的缺unzip预检失败也独立留档且未创建Android构建。这次主机改动后168项Android输入及10个受管项目逐字节/提交不变，不另编ROM，冻结工具仍为构建时70c2ec4版本。

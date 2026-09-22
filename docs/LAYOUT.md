@@ -89,3 +89,6 @@ project/
 2026-09-22 89ae983 已冻结为第10个候选，未安装。OpenEUICC/eSIM 按用户决定退出支持，两个独立 external/openeuicc* 检出已从合并视图移除；原1158项Repo清单未变，无第二套可运行工程。
 
 本轮系统盘暂存的r5未验收包：/tmp/gold-no-euicc-r5-unvalidated-packages。两份原包完整复制、SHA-256复读及fsync后才移除活动输出别名，映射在jobs/gold-mainline-20260920/no-euicc-r5-package-preservation.json。此目录保留失败证据，独立于每轮OTA scratch和冻结bridge；不是第二输出或可发布候选，不能被下一轮guard当临时工具清理。
+
+
+最新冻结为第11个候选 `/srv/build/gold/releases/20260922-130256-70c2ec4`，两份全量包均独立文件，SHA复读/fsync及冻结工具复验通过。唯一out inode9437191保留；本轮bridge与recheck目录已清理，r5拒绝包继续保留。`jobs/build-invocations/<ID>.json`是统一入口的独立执行记录；`/run/lock/gold-vm-guard.lock`防止两个守护同时改全局VM。临时needrestart配置只在对应任务活跃时存在，恢复后移除，不建立另一工程或常驻构建服务。

@@ -1,55 +1,41 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-22T02:01:24.135003+00:00",
-  "task_state": "mainline_functional_candidate_installed_wpa3_softap_fix_prepared",
+  "updated_at": "2026-09-22T05:22:00.359672+00:00",
+  "task_state": "no_euicc_wpa3_candidate_frozen_not_installed",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
-  "completed_candidate_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
-  "latest_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+  "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+  "latest_source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
   "latest_candidate_build": {
-    "unit": "gold-codec-r5-20260921.service",
-    "guard": "gold-codec-r5-vm-guard-20260921.service",
-    "commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
-    "build_datetime": 1789938387,
-    "source": "/srv/build/migration/gold-architecture-20260914/source",
-    "out": "out-gold-standard",
-    "log": "/srv/build/logs/gold-codec-r5-20260921.log",
-    "records_before": [
-      "1789353186009140661",
-      "1789355968059835540",
-      "1789356597523890222",
-      "1789397823611175488",
-      "1789401150371178312",
-      "1789403686745335883",
-      "1789404209822755068",
-      "1789436071622690739",
-      "1789438870571140872",
-      "1789442945709903724",
-      "1789870292199957320",
-      "1789870972867912990",
-      "1789893347560759279",
-      "1789894178297235723",
-      "1789894861622125711",
-      "1789911389192271607",
-      "1789914079640672965",
-      "1789918353346734747",
-      "1789925665663472655",
-      "1789933740204304290",
-      "1789936650390776063"
-    ],
-    "phase": "Compile current-platform Codec2 AIDL frontend to remove reproduced 336 vs 352 byte allocation mismatch; preserve matched vendor store and policies",
-    "device_accepted": false,
-    "terminal_result": "success",
-    "source_audit_inputs": 161,
-    "source_audit_matches": true,
-    "resource_limits_verified": true,
-    "expected_actual_image_files": 35,
+    "commit": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "unit": "gold-no-euicc-20260922-r7.service",
+    "guard": "gold-no-euicc-vm-guard-20260922-r7.service",
+    "phase": "completed_and_frozen",
     "build_exit_code": 0,
-    "android_elapsed": "01:27:20",
-    "record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
-    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+    "source": "/srv/build/gold/source",
+    "out": "out-gold-standard",
+    "build_datetime": 1790008554,
+    "source_audit_inputs": 168,
+    "source_audit_matches": true,
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790042544358880970",
+    "device_accepted": false,
     "guard_restored_live": true,
-    "actual_image_files": 35,
-    "payload_partitions": 14
+    "android_stages": [
+      {
+        "targets": [
+          "bacon"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:15:23"
+      },
+      {
+        "targets": [
+          "target-files-package"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:36:32"
+      }
+    ]
   },
   "legacy_platform_patch_comparison": [
     {
@@ -1247,7 +1233,7 @@
     "write_authorization": "User approved current session full scoped OTA and subsequent same-baseline revisions, Recovery/reboot/readback, temporary adb root and test programs, Wi-Fi reconnect/network debugging. No wipe, SIM changes, calls or SMS.",
     "last_installed_incremental": "1789938387",
     "last_installed_slot": "a",
-    "latest_candidate_installed": true,
+    "latest_candidate_installed": false,
     "before_install_snapshot_state": "none; metadata OTA state and snapshots empty",
     "installed_ota_certificate_matches": true,
     "root_diagnostics_executed": true,
@@ -2185,7 +2171,7 @@
       "exit_code": 0,
       "end": "2026-09-20T14:44:29.679501+00:00"
     },
-    "latest_source_installed": true,
+    "latest_source_installed": false,
     "recovery_final_status_scope": "2cca323 installed by normal-system update_engine; Recovery status 0 is not an applicable installation claim. Recovery boot/ADB/return tested separately.",
     "whole_candidate_unaided_boot_revision": "bd50b19",
     "installation_2cca323": {
@@ -4870,78 +4856,61 @@
       "fix_revision": "c36757a561fe563181e41b8b857c3e8460486ed8"
     }
   ],
-  "latest_android_source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+  "latest_android_source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
   "latest_candidate_validation": {
-    "source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
-    "validator_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
-    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
-    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+    "source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "validator_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "original_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790042544358880970",
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "build_datetime": 1790008554,
     "validation_completed": true,
     "device_accepted": false,
+    "android_build_exit_code": 0,
+    "entry_exit_code": 0,
+    "merged_input_count": 168,
+    "payload_partitions": 14,
+    "actual_image_files": 38,
+    "guard_restored_live": true,
+    "temporary_host_tools_cleaned": true,
+    "temporary_ota_scratch_cleaned": true,
+    "release_signing_verified": false,
     "ota": {
-      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-ota.zip",
-      "sha256": "dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4",
-      "bytes": 1174891230
+      "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-ota.zip",
+      "sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+      "bytes": 1170005319
     },
     "target_files": {
-      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-target_files.zip",
-      "sha256": "60a6521e89d36e99a3394fb81030d3e3f83da959f519869ab164409f97ef83df",
-      "bytes": 2903016483
+      "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-target_files.zip",
+      "sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
+      "bytes": 2889534212
     },
-    "frozen_source_hashes": {
-      "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
-      "tools/check-gold-package.py": "2770e2c322079c422ef469ead3e200fc95affda8d423f623920c501d1cb856e4",
-      "device/xiaomi/gold/codec2/Android.bp": "d2cff48f4d4d7ebe4f51710d201a1b9d72f8513b33733c1672877d959020577d",
-      "device/xiaomi/gold/codec2/gold-codec2-crash.policy": "a66ff0845e63e97d907792bcee057390c395fe94e0af56722d36bbb8ff5e4a6c",
-      "device/xiaomi/gold/codec2/service.cpp": "758fb36815a32e70534c7afd79b0845a91d745400e4dc72a5ff49684567712eb",
-      "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
-      "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
-      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
-      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
-      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
-      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
-      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626"
-    },
-    "host_tool_hashes": {
-      "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
-      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
-      "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
-      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669",
-      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
-      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
-      "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
-      "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
-      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
-      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875"
-    },
-    "host_library_hashes": {
-      "libvintf.so": "b7ec738659d20cf9644bdf7209219b2ba032b1e2a044a9dc050852d4c1dcbf32",
-      "libz-host.so": "db58a2e3aef638cf68b7ed3dde5ad70ceb1566ddbd84c6157d871ed695983ec3",
-      "libselinux.so": "7efcadf7e700573ec4b4bbf8757661a97c64b105da6e13767162421c7d125758",
-      "libpcre2.so": "6bb5df766288ad1a535913ebb07fe8c2c49f540f5ede092bd61410a06904f144",
-      "libbase.so": "873c30ca9cc59f925a8a414d3937c9cea174ec46dbe6a950c72ecca4f267d737",
-      "libtinyxml2.so": "a3bc9b798d3507f8e524fe8416c1ac1f8268f9cd3fc25751243907edfe63efb6",
-      "liblog.so": "5bdd1193cc34fbe37fdd6f640b7cb16359ae92c1b4993f9e55cd390d5d15bebb",
-      "libc++.so": "aab89aa18f9bec8e01c632b4230f4544fb6128b5d3df7ce6971c52b8c77bb11c"
-    },
-    "system_tool_hashes": {
-      "readelf": "64c58e15274bbbb5153f31078e455e9e77ee5f51489e709bba5bb788ce9df2b0",
-      "debugfs": "1e83118cc9582afcad2711fbb7f40f56668adccb386d988cb6d9ad5c2d001049"
-    },
-    "test_binary_hashes": {
-      "arm/gold_power_requests_test": "664971f2e8d1fa6563cc74f452741d952bb5a66245d37663fd5afa80fcee5225",
-      "arm/gold_power_nodes_test": "b89532dd825addd27386958b206320b493a3668299d23aeffd7a47a285465c6d",
-      "arm64/gold_power_requests_test": "a3eb83896583cf84572c7d018ee30a5704c8072c14cf9962cdf90b67ffb6c2ca",
-      "arm64/gold_power_nodes_test": "342714469661a39f6cb8b8ba0ec71d582ad5b7e09dee122e69fd2ff0aafffdc9"
-    },
-    "linux_native_tests_observed": {
-      "gold_power_requests_test": 27,
-      "gold_power_nodes_test": 32
-    },
-    "actual_image_files": 35,
-    "payload_partitions": 14,
-    "guard_restored_live": true,
-    "completed_at": "2026-09-21T01:07:44.570210+00:00"
+    "lineage_version_date_verified": true,
+    "esim_support": false,
+    "completed_at": "2026-09-22T05:04:24.046061+00:00",
+    "android_stages": [
+      {
+        "targets": [
+          "bacon"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:15:23"
+      },
+      {
+        "targets": [
+          "target-files-package"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:36:32"
+      }
+    ],
+    "build_invocation_id": "0ea4021d6c3e4a4a917a1166bed82485",
+    "guard_invocation_id": "a28fe6a7cdfe494fa930701433415bce",
+    "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-terminal.json",
+    "freeze_verification": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-frozen-hash-verification.json",
+    "wifi_softap_sae_compiled": true,
+    "wifi_softap_device_verified": false,
+    "retired_system_ext_paths_absent": true,
+    "phone_operated": false
   },
   "latest_completed_candidate_build_c36757a": {
     "unit": "gold-power-ims-r2-20260921.service",
@@ -5033,12 +5002,12 @@
     }
   },
   "source_audit_latest": {
-    "project_commit": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "project_commit": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
     "merged_inputs_match_mainline": true,
-    "files_checked": 161,
+    "files_checked": 168,
     "failures": [],
-    "record": "/srv/build/build-jobs/gold-mainline-20260920/source-audit-codec-r5.json",
-    "sha256": "0806a667486d94628b5e7e09672c014fa415d7d7446e5a1e51eed64ffd6fdbab"
+    "record": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-post-host-source-audit.json",
+    "sha256": "7568136d9e106ed68631d3fc8f03f6ab85d0f7ec2cb03a62efcdc6995c2dacc4"
   },
   "latest_completed_candidate_build_2cca323": {
     "unit": "gold-power-runtime-r3-20260921.service",
@@ -5876,7 +5845,9 @@
       "compiled_source_resource_verified": true,
       "old_candidate_rejected_by_new_requirement": true,
       "python_tests_passed": 91,
-      "runtime_start_client_and_security_validation": "not yet passed"
+      "runtime_start_client_and_security_validation": "not yet passed",
+      "current_frozen_candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+      "new_candidate_device_verified": false
     },
     "current_user_constraints": {
       "no_further_device_reboots": true,
@@ -6101,7 +6072,11 @@
     "source_supports_esim": false,
     "device_accepted": false,
     "build_job_prefix": "no-euicc-r7",
-    "additional_build_input": "vendor/lineage/config/version.mk reads fixed epoch from Soong BUILD_DATETIME_FILE"
+    "additional_build_input": "vendor/lineage/config/version.mk reads fixed epoch from Soong BUILD_DATETIME_FILE",
+    "state": "package_frozen_device_not_installed",
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "build_verified": true,
+    "next_build_pending": false
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -6143,13 +6118,13 @@
     "repo_project_count": 1158,
     "frozen_wpa3_candidate": "/srv/build/gold/releases/20260922-002433-89ae983",
     "phone_operated": false,
-    "new_candidate_built": false,
+    "new_candidate_built": true,
     "source_removal_complete": true,
     "target_files_and_image_negative_tests": {
       "old_target_files_rejected": "Retired eSIM file still packaged: SYSTEM_EXT/etc/permissions/android.hardware.telephony.euicc.xml",
       "old_system_ext_image_rejected": "Cannot prove retired eSIM path absent from system_ext image: priv-app/OpenEUICC"
     },
-    "next_build_pending": true,
+    "next_build_pending": false,
     "runtime_removal_not_applied": true,
     "host_tests_passed": 92,
     "first_build_terminal": {
@@ -7318,7 +7293,7 @@
           "output_inode": 9437191,
           "phone_operated": false
         },
-        "new_rom_package_verified": false
+        "new_rom_package_verified": true
       }
     },
     "sixth_build_terminal": {
@@ -7369,6 +7344,254 @@
       ],
       "kernel_oom_lines": [],
       "phone_operated": false
+    },
+    "seventh_build_terminal": {
+      "source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+      "validator_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+      "original_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790042544358880970",
+      "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+      "build_datetime": 1790008554,
+      "validation_completed": true,
+      "device_accepted": false,
+      "android_build_exit_code": 0,
+      "entry_exit_code": 0,
+      "merged_input_count": 168,
+      "payload_partitions": 14,
+      "actual_image_files": 38,
+      "guard_restored_live": true,
+      "temporary_host_tools_cleaned": true,
+      "temporary_ota_scratch_cleaned": true,
+      "release_signing_verified": false,
+      "ota": {
+        "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-ota.zip",
+        "sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+        "bytes": 1170005319
+      },
+      "target_files": {
+        "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-target_files.zip",
+        "sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
+        "bytes": 2889534212
+      },
+      "lineage_version_date_verified": true,
+      "esim_support": false,
+      "completed_at": "2026-09-22T05:04:24.046061+00:00",
+      "android_stages": [
+        {
+          "targets": [
+            "bacon"
+          ],
+          "exit_code": 0,
+          "elapsed": "01:15:23"
+        },
+        {
+          "targets": [
+            "target-files-package"
+          ],
+          "exit_code": 0,
+          "elapsed": "01:36:32"
+        }
+      ],
+      "build_invocation_id": "0ea4021d6c3e4a4a917a1166bed82485",
+      "guard_invocation_id": "a28fe6a7cdfe494fa930701433415bce",
+      "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-terminal.json",
+      "freeze_verification": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-frozen-hash-verification.json",
+      "wifi_softap_sae_compiled": true,
+      "wifi_softap_device_verified": false,
+      "retired_system_ext_paths_absent": true,
+      "phone_operated": false
     }
+  },
+  "candidate_validation_bd50b19": {
+    "source_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "validator_revision": "bd50b19ef82575790eb455c6cb1d712a482d62b7",
+    "original_record": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/gold-build-records/1789938387361437416",
+    "candidate": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19",
+    "validation_completed": true,
+    "device_accepted": false,
+    "ota": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-ota.zip",
+      "sha256": "dc2edec257034194959c86e7bb003c56b6c7129628ca35c8e47e0ba02fb32ff4",
+      "bytes": 1174891230
+    },
+    "target_files": {
+      "path": "/srv/build/migration/gold-architecture-20260914/source/out-gold-standard/target/product/gold/verified-candidates/20260921-090452-bd50b19/lineage_gold-target_files.zip",
+      "sha256": "60a6521e89d36e99a3394fb81030d3e3f83da959f519869ab164409f97ef83df",
+      "bytes": 2903016483
+    },
+    "frozen_source_hashes": {
+      "tools/check-artifacts.py": "75f4254c3c5a276d7d7b71069ce7e62de0276637b80c8b54e5e0a0ebc9b22638",
+      "tools/check-gold-package.py": "2770e2c322079c422ef469ead3e200fc95affda8d423f623920c501d1cb856e4",
+      "device/xiaomi/gold/codec2/Android.bp": "d2cff48f4d4d7ebe4f51710d201a1b9d72f8513b33733c1672877d959020577d",
+      "device/xiaomi/gold/codec2/gold-codec2-crash.policy": "a66ff0845e63e97d907792bcee057390c395fe94e0af56722d36bbb8ff5e4a6c",
+      "device/xiaomi/gold/codec2/service.cpp": "758fb36815a32e70534c7afd79b0845a91d745400e4dc72a5ff49684567712eb",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.rc": "0ab58f4837a379a43b34d4aa1d587f28fd04423fddde1542fcb5af450232007e",
+      "device/xiaomi/gold/power/android.hardware.power-service.gold.xml": "b75a94d1b90a30eb0b4e7c9636db4e54b74ad8811b69496d4a78ac52ed97a1c8",
+      "device/xiaomi/gold/init/init.recovery.mt6833.rc": "0f4a29b60836e61956d7523683a03eefac9fff2bea96e951da855fde8f827734",
+      "device/xiaomi/gold/overlay/FrameworksResOverlayGold/res/xml/power_profile.xml": "972e1853cacc6129b4afe5714344d6429d4a438824aa45fb00a645f2271c11cf",
+      "vendor/xiaomi/gold/ims/ImsService.apk": "98ca5f5c26293a7c37fafeada31e068d2658adf6813d8b123ebb46529bb292c1",
+      "vendor/xiaomi/gold/ims/input.json": "b40b0570733c82237615c9841a02d68bc2fc7c83a46550ac4a0b10886516694f",
+      "vendor/xiaomi/gold/ims/privapp-permissions-com.mediatek.ims.xml": "0594260898afbd552a632ea8a7955471f88c9c05aa17976b3d40ab316b2d8626"
+    },
+    "host_tool_hashes": {
+      "assemble_vintf": "e4249c5aeafdf794450ecfaa4a3a67b855ddb7177ac64f3885dc7fe51c6e3ff0",
+      "aapt2": "d86cc3787d8f088b9b87b752e991d5d491ca7d0ca3d3042aabecb4e524f93d4f",
+      "unpack_bootimg": "398f00d0dc632c986b97534cde4a5f4da21efeeadf95715bc06f372bb45fe922",
+      "sepolicy-analyze": "a271e82042286276651db28a34928bd149c745ccb6ba7cacf18b51258b909669",
+      "validate_target_files": "1dab34c8db9288d474e967b83027a6f8063602de3af87b657391d8d4be0e78b2",
+      "fsck.erofs": "b33b383b9399ea51899d21cf17ab760246370eb9fab4a58c6711dd7f831499c1",
+      "check_target_files_vintf": "1499601d30322e1cc04e6cb87a2777636abb3a3b21a181b9a88a91ba22e0b212",
+      "check_ota_package_signature": "32b99d7f799029e5cbc498dad223af494b6a46af5388d1886dcffeb287d04d24",
+      "lz4": "0579e7bad94188dc59b0ac48e95bb91732a305e6d25141fe6861a19cce434389",
+      "checkvintf": "5863bcc7f6705e7643b67861490003aff292bad0aa1203e6b7db20123c61d875"
+    },
+    "host_library_hashes": {
+      "libvintf.so": "b7ec738659d20cf9644bdf7209219b2ba032b1e2a044a9dc050852d4c1dcbf32",
+      "libz-host.so": "db58a2e3aef638cf68b7ed3dde5ad70ceb1566ddbd84c6157d871ed695983ec3",
+      "libselinux.so": "7efcadf7e700573ec4b4bbf8757661a97c64b105da6e13767162421c7d125758",
+      "libpcre2.so": "6bb5df766288ad1a535913ebb07fe8c2c49f540f5ede092bd61410a06904f144",
+      "libbase.so": "873c30ca9cc59f925a8a414d3937c9cea174ec46dbe6a950c72ecca4f267d737",
+      "libtinyxml2.so": "a3bc9b798d3507f8e524fe8416c1ac1f8268f9cd3fc25751243907edfe63efb6",
+      "liblog.so": "5bdd1193cc34fbe37fdd6f640b7cb16359ae92c1b4993f9e55cd390d5d15bebb",
+      "libc++.so": "aab89aa18f9bec8e01c632b4230f4544fb6128b5d3df7ce6971c52b8c77bb11c"
+    },
+    "system_tool_hashes": {
+      "readelf": "64c58e15274bbbb5153f31078e455e9e77ee5f51489e709bba5bb788ce9df2b0",
+      "debugfs": "1e83118cc9582afcad2711fbb7f40f56668adccb386d988cb6d9ad5c2d001049"
+    },
+    "test_binary_hashes": {
+      "arm/gold_power_requests_test": "664971f2e8d1fa6563cc74f452741d952bb5a66245d37663fd5afa80fcee5225",
+      "arm/gold_power_nodes_test": "b89532dd825addd27386958b206320b493a3668299d23aeffd7a47a285465c6d",
+      "arm64/gold_power_requests_test": "a3eb83896583cf84572c7d018ee30a5704c8072c14cf9962cdf90b67ffb6c2ca",
+      "arm64/gold_power_nodes_test": "342714469661a39f6cb8b8ba0ec71d582ad5b7e09dee122e69fd2ff0aafffdc9"
+    },
+    "linux_native_tests_observed": {
+      "gold_power_requests_test": 27,
+      "gold_power_nodes_test": 32
+    },
+    "actual_image_files": 35,
+    "payload_partitions": 14,
+    "guard_restored_live": true,
+    "completed_at": "2026-09-21T01:07:44.570210+00:00"
+  },
+  "candidate_validation_70c2ec4": {
+    "source_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "validator_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "original_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790042544358880970",
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "build_datetime": 1790008554,
+    "validation_completed": true,
+    "device_accepted": false,
+    "android_build_exit_code": 0,
+    "entry_exit_code": 0,
+    "merged_input_count": 168,
+    "payload_partitions": 14,
+    "actual_image_files": 38,
+    "guard_restored_live": true,
+    "temporary_host_tools_cleaned": true,
+    "temporary_ota_scratch_cleaned": true,
+    "release_signing_verified": false,
+    "ota": {
+      "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-ota.zip",
+      "sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+      "bytes": 1170005319
+    },
+    "target_files": {
+      "path": "/srv/build/gold/releases/20260922-130256-70c2ec4/lineage_gold-target_files.zip",
+      "sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
+      "bytes": 2889534212
+    },
+    "lineage_version_date_verified": true,
+    "esim_support": false,
+    "completed_at": "2026-09-22T05:04:24.046061+00:00",
+    "android_stages": [
+      {
+        "targets": [
+          "bacon"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:15:23"
+      },
+      {
+        "targets": [
+          "target-files-package"
+        ],
+        "exit_code": 0,
+        "elapsed": "01:36:32"
+      }
+    ],
+    "build_invocation_id": "0ea4021d6c3e4a4a917a1166bed82485",
+    "guard_invocation_id": "a28fe6a7cdfe494fa930701433415bce",
+    "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-terminal.json",
+    "freeze_verification": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-frozen-hash-verification.json",
+    "wifi_softap_sae_compiled": true,
+    "wifi_softap_device_verified": false,
+    "retired_system_ext_paths_absent": true,
+    "phone_operated": false
+  },
+  "host_lifecycle_followup_20260922": {
+    "recorded_at": "2026-09-22T05:22:00.359672+00:00",
+    "android_source_unchanged": true,
+    "files_checked": 168,
+    "managed_projects_checked": 10,
+    "host_tests_passed": 117,
+    "host_tests_log": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-mainline-host-tests.log",
+    "live_test": {
+      "started_at": "2026-09-22T05:14:58.137920+00:00",
+      "build_unit": "gold-host-lifecycle-probe-20260922-131458.service",
+      "guard_unit": "gold-host-lifecycle-probe-guard-20260922-131458.service",
+      "phone_operated": false,
+      "android_build_started": false,
+      "checks": {
+        "temporary_vm_applied": true,
+        "signal_during_live_build_did_not_restore": true,
+        "second_guard_rejected_by_singleton": true,
+        "guard_restart_adopted_original_values_without_build_restart": true,
+        "vm_restored_and_exact_restart_config_removed": true,
+        "real_systemd_invocation_record_matches": true,
+        "matching_pid1_success_events": true,
+        "actual_entry_records_preflight_failure_without_build": true
+      },
+      "build_invocation": "71467323809f41d4b3a3e383c5a21832",
+      "first_guard_invocation": "6051543e462547898232f61cd73787a5",
+      "second_guard_invocation": "1ef8a9355b024351bbee72f889cd2d3d",
+      "status": "passed",
+      "vm_live": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "terminal_events": [
+        {
+          "UNIT": "gold-host-lifecycle-probe-20260922-131458.service",
+          "INVOCATION_ID": "71467323809f41d4b3a3e383c5a21832",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-host-lifecycle-probe-20260922-131458.service: Deactivated successfully.",
+          "__REALTIME_TIMESTAMP": "1790054133252926"
+        },
+        {
+          "UNIT": "gold-host-lifecycle-probe-guard-20260922-131458.service",
+          "INVOCATION_ID": "1ef8a9355b024351bbee72f889cd2d3d",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-host-lifecycle-probe-guard-20260922-131458.service: Deactivated successfully.",
+          "__REALTIME_TIMESTAMP": "1790054136781628"
+        }
+      ],
+      "finished_at": "2026-09-22T05:15:36.965264+00:00",
+      "entry_preflight_probe": {
+        "unit": "gold-entry-preflight-probe-20260922-131734.service",
+        "invocation_record": "/srv/build/gold/jobs/build-invocations/86a52057adac481c890fe25cbb5098a6.json",
+        "invocation_id": "86a52057adac481c890fe25cbb5098a6",
+        "expected_exit": 1,
+        "actual_exit": 1,
+        "missing_zip_preflight_rejected": true,
+        "no_android_record_created": true,
+        "output_inode": 9437191
+      }
+    },
+    "frozen_build_tools_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "rebuild_required_for_host_only_changes": false,
+    "no_persistent_dependencies_installed": true,
+    "phone_operated": false
   }
 }

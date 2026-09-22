@@ -170,6 +170,8 @@ def main():
     out = output_path(tree, args.out)
     plan = {'source_tree': str(tree), 'out_dir': str(out), 'out_dir_env': out.relative_to(tree).as_posix(), 'lunch': args.lunch, 'jobs': args.jobs,
             'build_datetime': args.build_datetime,
+            'systemd_invocation_id': os.environ.get('INVOCATION_ID'),
+            'host_invocation_record': os.environ.get('GOLD_HOST_INVOCATION_RECORD'),
             'targets': ['bacon', 'target-files-package', *args.extra_target], 'execute': args.execute,
             'target_batches': product_build_batches(args.extra_target),
             'output_role': 'standard Android target-files and full A/B OTA',
@@ -201,7 +203,10 @@ def main():
         env = os.environ.copy()
         env.update(OUT_DIR=plan['out_dir_env'], BUILD_DATETIME=str(args.build_datetime), SOURCE_DATE_EPOCH=str(args.build_datetime))
         env.pop('OUT_DIR_COMMON_BASE', None)
-        result_record = {'build_exit_code': None, 'artifact_contract_verified': False, 'android_validators_passed': False,
+        result_record = {'systemd_invocation_id': plan['systemd_invocation_id'],
+                         'host_invocation_record': plan['host_invocation_record'],
+                         'started_at': time.time(),
+                         'build_exit_code': None, 'artifact_contract_verified': False, 'android_validators_passed': False,
                          'release_signing_verified': False, 'device_accepted': False}
         try:
             with (record_dir / 'manifest.xml').open('w') as manifest:
@@ -272,6 +277,7 @@ def main():
             result_record['error'] = str(error)
             raise
         finally:
+            result_record['finished_at'] = time.time()
             (record_dir / 'result.json').write_text(json.dumps(result_record, indent=2) + '\n')
             print('Build record:', record_dir)
         print('Standard OTA/target-files passed Android validators. Certificate identity is recorded; release-key trust and device acceptance remain separate.')

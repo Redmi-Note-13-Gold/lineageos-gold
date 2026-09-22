@@ -170,7 +170,7 @@
     "cache_not_symlink": true,
     "no_rebuild_performed": true
   },
-  "entry_sha256": "c96264ea44c0d63e8e7b5902b9ba3da3e84db242715f03c2abbfb4969ce230e4",
+  "entry_sha256": "985e5d22effbe714d26a06fb97a43eb584ab43aa72e58c722fd81ed67b41bd36",
   "candidate_file_sizes_and_mtimes_unchanged": {
     "ota": true,
     "target_files": true,
@@ -544,5 +544,84 @@
     ],
     "temporary_zip_tools_removed": true,
     "server_reboot_tested": false
+  },
+  "mainline_host_lifecycle_20260922": {
+    "recorded_at": "2026-09-22T05:22:00.359672+00:00",
+    "android_source_unchanged": true,
+    "files_checked": 168,
+    "managed_projects_checked": 10,
+    "host_tests_passed": 117,
+    "host_tests_log": "/srv/build/gold/jobs/gold-mainline-20260920/no-euicc-r7-mainline-host-tests.log",
+    "live_test": {
+      "started_at": "2026-09-22T05:14:58.137920+00:00",
+      "build_unit": "gold-host-lifecycle-probe-20260922-131458.service",
+      "guard_unit": "gold-host-lifecycle-probe-guard-20260922-131458.service",
+      "phone_operated": false,
+      "android_build_started": false,
+      "checks": {
+        "temporary_vm_applied": true,
+        "signal_during_live_build_did_not_restore": true,
+        "second_guard_rejected_by_singleton": true,
+        "guard_restart_adopted_original_values_without_build_restart": true,
+        "vm_restored_and_exact_restart_config_removed": true,
+        "real_systemd_invocation_record_matches": true,
+        "matching_pid1_success_events": true,
+        "actual_entry_records_preflight_failure_without_build": true
+      },
+      "build_invocation": "71467323809f41d4b3a3e383c5a21832",
+      "first_guard_invocation": "6051543e462547898232f61cd73787a5",
+      "second_guard_invocation": "1ef8a9355b024351bbee72f889cd2d3d",
+      "status": "passed",
+      "vm_live": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ],
+      "terminal_events": [
+        {
+          "UNIT": "gold-host-lifecycle-probe-20260922-131458.service",
+          "INVOCATION_ID": "71467323809f41d4b3a3e383c5a21832",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-host-lifecycle-probe-20260922-131458.service: Deactivated successfully.",
+          "__REALTIME_TIMESTAMP": "1790054133252926"
+        },
+        {
+          "UNIT": "gold-host-lifecycle-probe-guard-20260922-131458.service",
+          "INVOCATION_ID": "1ef8a9355b024351bbee72f889cd2d3d",
+          "MESSAGE_ID": "7ad2d189f7e94e70a38c781354912448",
+          "MESSAGE": "gold-host-lifecycle-probe-guard-20260922-131458.service: Deactivated successfully.",
+          "__REALTIME_TIMESTAMP": "1790054136781628"
+        }
+      ],
+      "finished_at": "2026-09-22T05:15:36.965264+00:00",
+      "entry_preflight_probe": {
+        "unit": "gold-entry-preflight-probe-20260922-131734.service",
+        "invocation_record": "/srv/build/gold/jobs/build-invocations/86a52057adac481c890fe25cbb5098a6.json",
+        "invocation_id": "86a52057adac481c890fe25cbb5098a6",
+        "expected_exit": 1,
+        "actual_exit": 1,
+        "missing_zip_preflight_rejected": true,
+        "no_android_record_created": true,
+        "output_inode": 9437191
+      }
+    },
+    "frozen_build_tools_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
+    "rebuild_required_for_host_only_changes": false,
+    "no_persistent_dependencies_installed": true,
+    "phone_operated": false
+  },
+  "candidate_freeze_no_euicc_20260922": {
+    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
+    "package_hashes": {
+      "ota": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
+      "target_files": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed"
+    },
+    "output_inode": 9437191,
+    "candidate_count": 11,
+    "independent_frozen_checker_exit": 0,
+    "mutable_package_aliases_removed": true,
+    "transfer_and_recheck_directories_absent": true,
+    "r5_unvalidated_packages_preserved": true
   }
 }

@@ -62,3 +62,6 @@ systemctl enable "$mount_unit"
 Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。当前用户禁止进一步设备重启，恢复/安装操作不得沿用此前重启授权越过这一最新限制。
 
 若宿主安全更新重启构建/守护，先按systemd InvocationID分开保存中断与恢复后的记录；外部stop的Deactivated successfully不等于Android成功。r5既有原始VM记录由独立rescue接管，终态后实读0/zbud/N/Y并清理临时工具/scratch及精确needrestart配置；不覆盖原guard失败。r5两份未验收包现保存在/tmp/gold-no-euicc-r5-unvalidated-packages，SHA和原路径映射见jobs/gold-mainline-20260920/no-euicc-r5-package-preservation.json。它们是失败证据，不是候选，不可安装；不要由r6 guard或清理脚本删除。
+
+
+当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。设备尚未安装，沿用不重启/不切网限制。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过，未重启科研机或手机。
