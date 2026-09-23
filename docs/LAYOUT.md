@@ -104,3 +104,5 @@ project/
 9月22日晚先对旧非活动 `source/out-gold-betterr-20260917` 及活动OUT中的两份旧日期OTA（20260919、20260920）完成逐文件SHA-256、类型/权限/所有者/mtime/符号链接核对和系统盘迁存。用户随后明确“旧的没用的ota和局部输出可以直接删”，已删除这三项及空的临时保留目录；原位置和迁存位置均缺席，不恢复。
 
 逐项清单和中间迁存事实保存在 `jobs/gold-mainline-20260920/followup-build-space-preservation.json` 及manifest-0/1/2.json；最终删除范围与授权记录为 `followup-obsolete-output-cleanup.json`，history/layout-moves-20260921.json追加清理结果。11个冻结候选及其candidate.json、官方输入、唯一out-gold-standard inode9437191、ccache和swap保留。所有源码侧删除均经合并source执行，未直接修改活动挂载底层；没有创建第二构建输出。数据盘现余约8.26GB、系统盘约22.05GB，实际启动前另做空间预检。
+
+9月23日新增第12个冻结候选 `20260923-090824-60e90a7`。两份ZIP经过自有系统盘bridge完整复制、SHA复读/fsync后才移除活动OUT同inode别名，再复制至同一releases staging并独立复验；不直接改OverlayFS upper，最终候选每包nlink=1。路径映射在候选package-path-map.json，完整转存状态在jobs/gold-mainline-20260920/followup-r2-freeze-state.json；其本次/tmp bridge和复验目录已清理。唯一OUT inode9437191、官方输入、11个既有候选、cache/swap保留。

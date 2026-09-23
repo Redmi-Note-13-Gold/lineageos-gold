@@ -670,7 +670,7 @@
       }
     ]
   },
-  "updated_at": "2026-09-22T23:31:46+08:00",
+  "updated_at": "2026-09-23T09:12:06+08:00",
   "obsolete_output_cleanup_20260922": {
     "status": "deleted",
     "user_authorized": true,
@@ -687,5 +687,79 @@
     "data_free_bytes": 8256208896,
     "system_free_bytes": 22051237888,
     "output_inode": 9437191
+  },
+  "followup_r2_completion_20260923": {
+    "recorded_at": "2026-09-23T09:12:06+08:00",
+    "source_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
+    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
+    "build_unit": "gold-followup-20260923-r2.service",
+    "systemd_invocation": "ab447bf1dced4329b97c84373ba23f86",
+    "build_started_at": "2026-09-23T01:06:29+08:00",
+    "build_finished_at": "2026-09-23T03:16:41+08:00",
+    "guard_finished_at": "2026-09-23T03:16:47+08:00",
+    "entry_exit_code": 0,
+    "stage_durations": [
+      "01:10:26 (hh:mm:ss)",
+      "56:41 (mm:ss)"
+    ],
+    "source_input_count": 169,
+    "managed_projects": 10,
+    "repo_project_count": 1158,
+    "output_inode": 9437191,
+    "android_validators_passed": true,
+    "ota_payload_signatures_verified": true,
+    "payload_partition_images_matched": 14,
+    "actual_image_files_matched": 39,
+    "frozen_artifacts_and_gold_rechecks_passed": true,
+    "host_tests_passed": 127,
+    "aod_compiled_doze_component": "com.android.systemui/com.android.systemui.doze.DozeService",
+    "mpeg4_runtime": {
+      "path": "VENDOR/lib/libmp4enc_sa.ca7.so",
+      "sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+      "source_sha256": "c12266e17f3c282c7f74f1778cfccc39f607082a30fe7c8c3449fc8a2b30d576",
+      "stock_version": "OS3.0.5.0.VNQMIXM",
+      "cleared_symbol_versions": [
+        "__aeabi_memclr",
+        "__aeabi_memcpy",
+        "__aeabi_memset",
+        "__gnu_Unwind_Find_exidx"
+      ]
+    },
+    "diagnostics_apk_sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
+    "diagnostics_matches_previously_tested_apk": true,
+    "ota": {
+      "path": "/srv/build/gold/releases/20260923-090824-60e90a7/lineage_gold-ota.zip",
+      "sha256": "09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a",
+      "bytes": 1169771845
+    },
+    "target_files": {
+      "path": "/srv/build/gold/releases/20260923-090824-60e90a7/lineage_gold-target_files.zip",
+      "sha256": "56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63",
+      "bytes": 2889675961
+    },
+    "vm_restored_live": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "temporary_contents_cleaned": true,
+    "kernel_oom_observed": false,
+    "release_signing_verified": false,
+    "device_accepted": false,
+    "phone_operated": false,
+    "downloaded_to_local": false,
+    "pending_device_checks": [
+      "data-preserving install/readback and boot",
+      "AOD actual DOZE, brightness, wake and power",
+      "MPEG4 encode/decode EOS and daemon stability",
+      "Diagnostics active APK check after OTA",
+      "Recovery remaining directed checks when appropriate"
+    ],
+    "not_fixed_by_this_candidate": [
+      "WPA3 Mac client connection",
+      "TCP RST natural BPF cleanup",
+      "KeyMint device attribute attestation"
+    ]
   }
 }

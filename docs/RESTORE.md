@@ -73,3 +73,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 9月22日晚的两个旧日期OTA与非活动局部输出已按用户明确授权删除，不恢复其原路径或临时迁存路径。历史清单保留在jobs的followup-build-space-preservation与followup-obsolete-output-cleanup记录；冻结候选和官方输入仍从现有releases/inputs入口取得。
 
 9月23日MPEG4兼容处理在现有extract-files.py中维护，仅清除四个指定ARM导入的旧LIBC_PRIVATE版本，不重写函数或引入空shim。恢复仍从锁定Global原始库提取，再由标准extract-utils执行该fixup；不要把未修复的c12266e1…原库直接当作可交付文件。当前包门禁要求d3ed8edc…修复后哈希并另记原始哈希。定向恢复本次只更新合并源中的提取配方与该插件4字节，未重写Android.bp或重提其他vendor文件。
+
+60e90a7本次可安装包和恢复核对入口为 `/srv/build/gold/releases/20260923-090824-60e90a7`，含全量OTA/target-files、candidate.json及原Android结果。verification-source保存构建时全部主线受管文件，merged-inputs保存169项实际输入；源码后的文档记录提交不改变此候选。check-artifacts与check-gold-package的冻结副本复验通过，MPEG4修复后精确哈希和Diagnostics APK哈希已记录。可变OUT中的旧ZIP名称已转为package-path-map映射，不能因其缺席判产物丢失，也不能用旧候选的设备结果代替本候选验收。

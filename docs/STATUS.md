@@ -1,18 +1,23 @@
-更新于2026-09-23T01:05:21+08:00：下一版ROM首轮在MPEG4 ELF依赖检查失败；四个ARM符号版本已按实测兼容处理，127项主机回归通过，准备从原OUT续编。手机仍70c2ec4加DeviceDiagnostics在线更新，无新候选。
+更新于2026-09-23T09:12:06+08:00：60e90a7完整ROM增量构建及全包检查通过，已冻结并独立复验；当前手机仍70c2ec4加DeviceDiagnostics在线更新，新候选未下载、未安装。
 
 **当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
 
 OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。本次系统更新已移除设备上的OpenEUICC与eUICC特性，没有操作SIM或清除用户数据；历史记录不改写。
 
-## 下一版完整ROM构建与续编
+## 新候选已构建并冻结，待设备安装
 
-首轮 `gold-followup-20260922-r1.service` 于9月23日00:52:03退出1，bacon耗时01:13:50，target-files阶段未开始。失败是新增MPEG4插件的四个ARM运行库符号请求旧LIBC_PRIVATE版本，与平台vendor libc的公共LIBC_N导出不匹配；不是空间不足或OOM。独立guard于00:52:08成功退出，VM实读0/zbud/N/Y，临时ZIP工具、scratch及精确needrestart保护均已清理。原日志、实际invocation和terminal.json保留，不生成候选。
+ROM源码 `60e90a7eafcc42bf72d64b2aad83160a2d22e1e1`，候选实际目录 `/srv/build/gold/releases/20260923-090824-60e90a7`。r2于9月23日01:06:29启动、03:16:41入口exit0，bacon01:10:26、target-files-package56:41均成功；仍是唯一OUT增量编译生成全量OTA和全量target-files，不是从空目录全编译。169项合并输入、10个受管项目和1158项Repo提交已冻结，输出inode9437191保留。
 
-主线提取配方沿用libvcodec_oal已有的clear_symbol_version方式，仅对libmp4enc_sa.ca7.so的四个指定导入操作。实际二进制只改.gnu.version的4字节，代码与其他字节完全保留；真实Android ELF检查先拒绝原文件、再接受修复文件。新包要求修复后精确哈希，同时记录原厂输入哈希；没有allow_undefined_symbols或跳过ELF检查。新增三项真实二进制/依赖/包门禁回归，合计127项通过。169项合并源码中仅extract-files.py相对首轮变化，生成的Android.bp未改写。
+同次签名、VINTF、SELinux、固定UTC版本日期、14个payload分区与target-files镜像一致性以及39项实际镜像文件检查通过。冻结副本逐包复制、SHA-256复读和fsync后才移除可变输出别名；使用冻结工具再次检查payload/日期/Gold实际镜像，全部通过。AOD编译资源为标准SystemUI DozeService，MPEG4库为四项符号兼容后的d3ed8edc…，DeviceDiagnostics APK与此前28/28通过的在线版本SHA完全一致。eSIM缺席和SAE资源门禁仍通过；这些不等于新版本的设备验收。
 
-准备续编 `gold-followup-20260923-r2.service`，独立守护 `gold-followup-vm-guard-20260923-r2.service`；仍通过唯一入口、唯一OUT、顺序bacon再target-files-package、jobs2及原资源上限，沿用BUILD_DATETIME=1790091429。实际启动及终态以 `jobs/gold-mainline-20260920/followup-r2-build-request.json` 与 `jobs/build-invocations/<ID>.json` 为准；本段没有预记构建成功。范围仍是AOD标准DozeService、MPEG4运行库和电池界面，WPA3 Mac连接、TCP RST自然回收、设备属性证明没有新增已证实修复。
+- 全量OTA：1169771845字节，SHA-256 `09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a`。
+- 全量target-files：2889675961字节，SHA-256 `56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63`。
 
-按用户明确授权，旧非活动局部输出及两份旧日期OTA已删除，释放约6.47GB；11个冻结候选、官方输入、ccache/swap和唯一活动OUT保留。本轮未操作手机或网络，完成包门禁与冻结后再安排设备验收。
+独立guard于03:16:47实际成功退出，VM现场实读0/zbud/N/Y；临时ZIP工具、OTA scratch和精确needrestart保护已清理，无内核OOM记录，宿主zip/unzip未持久安装。冻结传输/复验临时目录也已清理，当前无构建占用。127项主机回归沿用同次已通过记录，不把编译和包检查计作手机通过。原首轮四项MPEG4符号版本失败与修复证据继续保存在followup-r1-terminal/ABI记录，检查未绕过。
+
+新候选没有下载到本机或安装。当前待验证范围是安装/回读/启动、AOD实际DOZE/亮度/唤醒/功耗、MPEG4真实编解码与服务稳定性、OTA后Diagnostics活动APK及适当Recovery检查。WPA3 Mac连接、TCP RST自然回收、设备属性证明没有新增修复；IMS仍按用户安排最后。本轮未操作手机、热点、联通或漫游eSIM。
+
+用户授权删除的旧局部输出和两份旧日期OTA已释放约6.47GB；本轮新增候选后共12个冻结目录，官方输入、cache/swap和唯一OUT保留。冻结candidate.json保持构建时工具与事实，后续记录提交不改写它。
 
 ## 未完成与当前限制
 
@@ -22,7 +27,7 @@ OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品�
 | 设备属性证明 | 70c2ec4普通应用无设备属性的TEE证明通过；设置安全锁屏后，包含属性仍为-66。五项当前属性分别请求、五项一起请求、正常平台五项一起请求均被拒绝；CN原厂分区检查与本地RKP诊断见keymint_followup记录。RKP签名和当前系统信息不等于工厂ID已获验证；信任根/吊销未审计。认证绑定EC/AES已移到已验收；不猜身份、不导入keybox或重置安全存储 |
 | TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
 | Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
-| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁；首轮完整构建又发现四项LIBC_PRIVATE版本不兼容，现已作4字节定向兼容且实际ELF检查通过；只读EROFS vendor未替换，修复未实机验收 |
+| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁；首轮完整构建又发现四项LIBC_PRIVATE版本不兼容，现已作4字节定向兼容且实际ELF检查通过；只读EROFS vendor未替换，60e90a7已完整构建并冻结，修复未安装或实机验收 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
 | 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
