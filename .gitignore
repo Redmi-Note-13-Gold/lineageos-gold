@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 *.apk
+!vendor/xiaomi/gold/ims/ImsService.apk
 *.ko
 *.img
 *.pem

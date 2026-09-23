@@ -1193,7 +1193,4 @@
   <project name="trusty/vendor/google/aosp" remote="aosp" revision="d7d9290a95487f224042ff08a374c4261940b15d" upstream="refs/tags/android-16.0.0_r4" dest-branch="refs/tags/android-16.0.0_r4" groups="pdk,trusty">
     <copyfile src="lk_inc.mk" dest="lk_inc.mk" />
   </project>
-  <remote name="openeuicc" fetch="https://gitea.angry.im/PeterCxy/" />
-  <project name="OpenEUICC" path="external/openeuicc" remote="openeuicc" revision="9a537a25163c5159899260fb6191a5da35a692bd" />
-  <project name="android_prebuilts_openeuicc-deps" path="external/openeuicc-deps" remote="openeuicc" revision="67a341e9cfbaed43da7e5a281f5cc7b8893fdc55" />
 </manifest>

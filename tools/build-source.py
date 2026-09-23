@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Plan or run the pinned standard Android product and full OTA build.
 
-Default is a plan. Execution builds bacon and target-files-package together,
+Default is a plan. Execution builds bacon, then target-files-package,
 then validates their final partition contract. No post-build image rewriting,
 release signing, publishing or device operations. Linux x86_64 host only.
 """
@@ -14,7 +14,9 @@ import os
 from pathlib import Path
 import platform
 import re
+import shutil
 import subprocess
+import tempfile
 import time
 import zipfile
 
@@ -49,6 +51,32 @@ def verify_config(config, variant):
         raise ValueError('Resolved kernel command line makes the complete device permissive')
     if not config['AB_OTA_PARTITIONS'].split():
         raise ValueError('No A/B OTA partitions in resolved product')
+
+
+
+def host_zip_tools():
+    """Fail before touching output when non-hermetic Android ZIP tools are absent."""
+    tools = {}
+    for name in ('unzip', 'zip'):
+        executable = shutil.which(name)
+        if executable is None:
+            raise ValueError('Required Android host tool is missing from PATH: ' + name)
+        tools[name] = {'path': executable, 'sha256': CHECK.digest(Path(executable))}
+    return tools
+
+
+
+def ota_temp_directory():
+    """Optional private host scratch; lifecycle belongs to the invoking job."""
+    value = os.environ.get('GOLD_OTA_TMPDIR')
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_absolute() or path.is_symlink() or not path.is_dir():
+        raise ValueError('GOLD_OTA_TMPDIR must be an existing absolute real directory')
+    if path.stat().st_uid != os.geteuid() or path.stat().st_mode & 0o077:
+        raise ValueError('GOLD_OTA_TMPDIR must be private and owned by the build user')
+    return str(path.resolve())
 
 
 def output_path(tree, requested=None):
@@ -86,6 +114,44 @@ def single(paths, description):
     return paths[0]
 
 
+def detach_shared_output(path):
+    """Keep dated OTA hardlinks intact when Android rewrites its mutable OTA."""
+    if not path.exists() or path.stat().st_nlink == 1:
+        return False
+    if path.is_symlink():
+        raise ValueError('Mutable OTA must not be a symlink: ' + str(path))
+    # Copy on the same filesystem, then replace only the mutable directory
+    # entry. Unlinking the old file first would lose the last good build if
+    # copying fails or the host runs out of space.
+    with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.gold-ota-', delete=False) as temp:
+        temporary = Path(temp.name)
+    try:
+        shutil.copy2(path, temporary)
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return True
+
+
+def product_build_batches(extra_targets):
+    # OTA uses the extracted target-files directory, not target-files.zip.
+    # Finish its temporary payload/signing ZIPs before compressing that archive.
+    extra = list(dict.fromkeys(target for target in extra_targets
+                               if target not in ('bacon', 'target-files-package')))
+    return [['bacon', *extra], ['target-files-package']]
+
+
+def run_product_build(tree, env, lunch, jobs, batches, stages):
+    command = 'set -e; source build/envsetup.sh; lunch "$1"; jobs="$2"; shift 2; m -j"$jobs" "$@"'
+    for targets in batches:
+        result = subprocess.run(['bash', '-c', command, 'gold-build', lunch, str(jobs), *targets],
+                                cwd=tree, env=env)
+        stages.append({'targets': targets, 'exit_code': result.returncode})
+        if result.returncode:
+            return result.returncode
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--tree', required=True, type=Path)
@@ -94,6 +160,8 @@ def main():
     parser.add_argument('--build-datetime', type=int, help='Fixed Unix timestamp; required for execution')
     parser.add_argument('--out', type=Path, help='Managed output inside source; relative paths are relative to TREE; default out-gold-standard')
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--extra-target', action='append', default=[],
+                        help='Also build a test/module target; full OTA validation remains required')
     args = parser.parse_args()
     match = re.fullmatch(r'lineage_gold-[A-Za-z0-9_]+-(user|userdebug)', args.lunch)
     if not match or args.jobs < 1:
@@ -102,7 +170,10 @@ def main():
     out = output_path(tree, args.out)
     plan = {'source_tree': str(tree), 'out_dir': str(out), 'out_dir_env': out.relative_to(tree).as_posix(), 'lunch': args.lunch, 'jobs': args.jobs,
             'build_datetime': args.build_datetime,
-            'targets': ['bacon', 'target-files-package'], 'execute': args.execute,
+            'systemd_invocation_id': os.environ.get('INVOCATION_ID'),
+            'host_invocation_record': os.environ.get('GOLD_HOST_INVOCATION_RECORD'),
+            'targets': ['bacon', 'target-files-package', *args.extra_target], 'execute': args.execute,
+            'target_batches': product_build_batches(args.extra_target),
             'output_role': 'standard Android target-files and full A/B OTA',
             'release_signing_verified': False, 'device_accepted': False}
     print(json.dumps(plan, indent=2), flush=True)
@@ -117,6 +188,8 @@ def main():
     for name in ('SELINUX_IGNORE_NEVERALLOWS', 'ALLOW_MISSING_DEPENDENCIES', 'BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES'):
         if enabled(os.environ.get(name, '')):
             parser.error('Remove build bypass environment flag: ' + name)
+    plan['host_zip_tools'] = host_zip_tools()
+    plan['ota_temp_dir'] = ota_temp_directory()
     with (tree / '.repo/gold-source-build.lock').open('a') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -127,25 +200,34 @@ def main():
         config_dir = record_dir / 'config'
         config_dir.mkdir(parents=True)
         (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
-        with (record_dir / 'manifest.xml').open('w') as manifest:
-            subprocess.run(['repo', 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
         env = os.environ.copy()
         env.update(OUT_DIR=plan['out_dir_env'], BUILD_DATETIME=str(args.build_datetime), SOURCE_DATE_EPOCH=str(args.build_datetime))
         env.pop('OUT_DIR_COMMON_BASE', None)
-        result_record = {'build_exit_code': None, 'artifact_contract_verified': False, 'android_validators_passed': False,
+        result_record = {'systemd_invocation_id': plan['systemd_invocation_id'],
+                         'host_invocation_record': plan['host_invocation_record'],
+                         'started_at': time.time(),
+                         'build_exit_code': None, 'artifact_contract_verified': False, 'android_validators_passed': False,
                          'release_signing_verified': False, 'device_accepted': False}
         try:
+            with (record_dir / 'manifest.xml').open('w') as manifest:
+                # A migrated tree can fail Git ownership checks before lunch.
+                # Preserve that failure in result.json just like build errors.
+                repo = shutil.which('repo') or str(tree / '.repo/repo/repo')
+                subprocess.run([repo, 'manifest', '-r'], cwd=tree, stdout=manifest, check=True)
             configure = 'set -e; source build/envsetup.sh; lunch "$1"; config_dir="$2"; shift 2; for name in "$@"; do get_build_var "$name" > "$config_dir/$name"; done'
             subprocess.run(['bash', '-c', configure, 'gold-config', args.lunch, str(config_dir), *CONFIG_VARS], cwd=tree, env=env, check=True)
             config = {name: (config_dir / name).read_text().strip() for name in CONFIG_VARS}
             verify_config(config, match.group(1))
             plan['resolved_config'] = config
+            plan['preserved_previous_ota_links'] = detach_shared_output(
+                out / 'target/product/gold/lineage_gold-ota.zip')
             (record_dir / 'inputs.json').write_text(json.dumps(plan, indent=2) + '\n')
-            command = 'set -e; source build/envsetup.sh; lunch "$1"; jobs="$2"; shift 2; m -j"$jobs" "$@"'
-            result = subprocess.run(['bash', '-c', command, 'gold-build', args.lunch, str(args.jobs), *plan['targets']], cwd=tree, env=env)
-            result_record['build_exit_code'] = result.returncode
-            if result.returncode:
-                raise ValueError('Android product build failed: ' + str(result.returncode))
+            result_record['build_stages'] = []
+            code = run_product_build(tree, env, args.lunch, args.jobs,
+                                     plan['target_batches'], result_record['build_stages'])
+            result_record['build_exit_code'] = code
+            if code:
+                raise ValueError('Android product build failed: ' + str(code))
             product = out / 'target/product/gold'
             target = single((product / 'obj/PACKAGING/target_files_intermediates').glob('*-target_files.zip'), 'target-files archive')
             ota = single(product.glob('lineage_gold*-ota.zip'), 'standard OTA archive')
@@ -183,10 +265,19 @@ def main():
             result_record['android_validators_passed'] = True
             result_record['ota_and_payload_signatures_verified'] = True
             result_record.update(target_files=str(target), ota=str(ota))
+            # The unique product entry also enforces device-specific content;
+            # a separate historical job wrapper must not be required for this.
+            with (record_dir / 'gold-package.json').open('w') as report:
+                subprocess.run(['python3', str(REPO / 'tools/check-gold-package.py'),
+                                '--target-files', str(target), '--aapt2', str(host_bin / 'aapt2'),
+                                '--image-tools', str(host_bin), '--scratch-parent', plan['ota_temp_dir'] or str(record_dir)],
+                               cwd=tree, env=verify_env, stdout=report, check=True)
+            result_record['gold_package_verified'] = True
         except (ValueError, OSError, KeyError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:
             result_record['error'] = str(error)
             raise
         finally:
+            result_record['finished_at'] = time.time()
             (record_dir / 'result.json').write_text(json.dumps(result_record, indent=2) + '\n')
             print('Build record:', record_dir)
         print('Standard OTA/target-files passed Android validators. Certificate identity is recorded; release-key trust and device acceptance remain separate.')

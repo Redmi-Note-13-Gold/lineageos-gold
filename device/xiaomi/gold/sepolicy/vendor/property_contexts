@@ -19,3 +19,6 @@ persist.vendor.camera.depth u:object_r:vendor_mtk_camera_prop:s0 exact string
 persist.vendor.camera.macro u:object_r:vendor_mtk_camera_prop:s0 exact string
 persist.vendor.camera.mi.dualcal.state u:object_r:vendor_mtk_camera_prop:s0 exact string
 persist.vendor.cam.dualcal u:object_r:vendor_mtk_camera_prop:s0 exact string
+
+vendor.gold.power.launch_uclamp u:object_r:vendor_gold_power_prop:s0 exact int
+vendor.gold.power.interaction_uclamp u:object_r:vendor_gold_power_prop:s0 exact int

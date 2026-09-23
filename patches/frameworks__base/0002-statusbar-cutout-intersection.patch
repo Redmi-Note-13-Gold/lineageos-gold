@@ -1,0 +1,135 @@
+diff --git a/packages/SystemUI/multivalentTests/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProviderTest.kt b/packages/SystemUI/multivalentTests/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProviderTest.kt
+index eacd6f848..eba9518ca 100644
+--- a/packages/SystemUI/multivalentTests/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProviderTest.kt
++++ b/packages/SystemUI/multivalentTests/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProviderTest.kt
+@@ -218,7 +218,7 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+ 
+         targetRotation = ROTATION_LANDSCAPE
+         expectedBounds =
+-            Rect(dcBounds.height(), 0, screenBounds.height() - minRightPadding, sbHeightLandscape)
++            Rect(minLeftPadding, 0, screenBounds.height() - minRightPadding, sbHeightLandscape)
+ 
+         bounds =
+             calculateInsetsForRotationWithRotatedResources(
+@@ -332,7 +332,7 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+         targetRotation = ROTATION_LANDSCAPE
+         expectedBounds =
+             Rect(
+-                protectionBounds.bottom,
++                minLeftPadding,
+                 0,
+                 screenBounds.height() - minRightPadding,
+                 sbHeightLandscape,
+@@ -648,7 +648,7 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+             Rect(
+                 minLeftPadding,
+                 0,
+-                screenBounds.height() - protectionBounds.bottom - dotWidth,
++                screenBounds.height() - minRightPadding,
+                 sbHeightLandscape,
+             )
+ 
+@@ -763,8 +763,8 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+         setCameraProtectionBounds(protectionBounds)
+         setCutoutBounds(top = dcBounds)
+ 
+-        // THEN only the landscape/seascape rotations should avoid the cutout area because of the
+-        // potential letterboxing
++        // The centered cutout never intersects the side strips used by landscape
++        // status bars. Their windows use cutout mode ALWAYS, so there is no letterbox.
+         var targetRotation = ROTATION_NONE
+         var expectedBounds =
+             Rect(minLeftPadding, 0, screenBounds.right - minRightPadding, sbHeightPortrait)
+@@ -788,7 +788,7 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+ 
+         targetRotation = ROTATION_LANDSCAPE
+         expectedBounds =
+-            Rect(dcBounds.height(), 0, screenBounds.height() - minRightPadding, sbHeightLandscape)
++            Rect(minLeftPadding, 0, screenBounds.height() - minRightPadding, sbHeightLandscape)
+ 
+         bounds =
+             calculateInsetsForRotationWithRotatedResources(
+@@ -833,7 +833,7 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+             Rect(
+                 minLeftPadding,
+                 0,
+-                screenBounds.height() - dcBounds.height() - dotWidth,
++                screenBounds.height() - minRightPadding,
+                 sbHeightLandscape,
+             )
+ 
+@@ -855,6 +855,29 @@ class StatusBarContentInsetsProviderTest : SysuiTestCase() {
+         assertRects(expectedBounds, bounds, currentRotation, targetRotation)
+     }
+ 
++    @Test
++    fun centeredSideCutout_keepsSymmetricLandscapeInsetsInBothLayoutDirections() {
++        for (currentRotation in listOf(ROTATION_LANDSCAPE, ROTATION_SEASCAPE)) {
++            val cutout = if (currentRotation == ROTATION_LANDSCAPE) {
++                Rect(0, 512, 111, 568)
++            } else {
++                Rect(2289, 512, 2400, 568)
++            }
++            setCutoutBounds(
++                left = if (currentRotation == ROTATION_LANDSCAPE) cutout else Rect(),
++                right = if (currentRotation == ROTATION_SEASCAPE) cutout else Rect(),
++            )
++            for (isRtl in listOf(false, true)) {
++                val bounds = calculateInsetsForRotationWithRotatedResources(
++                    currentRotation, currentRotation, sysUICutout,
++                    Rect(0, 0, 2400, 1080), 111, 55, 55, isRtl, 10,
++                    BOTTOM_ALIGNED_MARGIN_NONE, 55,
++                )
++                assertThat(bounds).isEqualTo(Rect(55, 0, 2345, 111))
++            }
++        }
++    }
++
+     @Test
+     fun testCalculateInsetsForRotationWithRotatedResources_noCutout() {
+         // GIVEN device in portrait mode, where width < height and no cutout
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProvider.kt b/packages/SystemUI/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProvider.kt
+index 6806cfdc9..b01dfe3fc 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProvider.kt
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/layout/StatusBarContentInsetsProvider.kt
+@@ -615,10 +615,11 @@ private fun getStatusBarContentBounds(
+             } else {
+                 cutoutRect
+             }
+-        // There is at most one non-functional area per short edge of the device. So if the status
+-        // bar doesn't share a short edge with the cutout, we can ignore its insets because there
+-        // will be no letter-boxing to worry about
+-        if (!shareShortEdge(sbRect, actualCutoutRect, cWidth, cHeight)) {
++        // The status bar window always lays out into display cutouts. Only reserve
++        // cutouts (including camera protection) that intersect its actual strip.
++        // Extending a centered hole along the entire short edge adds a spurious
++        // asymmetric inset in landscape, even though no status icon can overlap it.
++        if (!sbRect.intersects(actualCutoutRect)) {
+             continue
+         }
+ 
+@@ -705,24 +706,6 @@ private fun sbRect(
+     }
+ }
+ 
+-private fun shareShortEdge(
+-    sbRect: Rect,
+-    cutoutRect: Rect,
+-    currentWidth: Int,
+-    currentHeight: Int,
+-): Boolean {
+-    if (currentWidth < currentHeight) {
+-        // Check top/bottom edges by extending the width of the display cutout rect and checking
+-        // for intersections
+-        return sbRect.intersects(0, cutoutRect.top, currentWidth, cutoutRect.bottom)
+-    } else if (currentWidth > currentHeight) {
+-        // Short edge is the height, extend that one this time
+-        return sbRect.intersects(cutoutRect.left, 0, cutoutRect.right, currentHeight)
+-    }
+-
+-    return false
+-}
+-
+ private fun Rect.touchesRightEdge(@Rotation rot: Int, width: Int, height: Int): Boolean {
+     return when (rot) {
+         ROTATION_NONE -> right >= width

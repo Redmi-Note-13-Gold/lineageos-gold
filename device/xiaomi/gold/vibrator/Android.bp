@@ -1,25 +1,31 @@
-Common_CFlags = ["-Wall"]
-Common_CFlags += ["-Werror"]
-
-cc_binary {
-    name: "vendor.qti.hardware.vibrator.service.gold",
+cc_defaults {
+    name: "gold_vibrator_defaults",
     vendor: true,
-    relative_install_path: "hw",
-    init_rc: ["vendor.qti.hardware.vibrator.service.gold.rc"],
-    vintf_fragments: [
-        "vendor.qti.hardware.vibrator.service.gold.xml",
-    ],
-    cflags: Common_CFlags,
-    srcs: [
-        "service.cpp",
-        "Vibrator.cpp",
-    ],
+    cflags: ["-Wall", "-Werror"],
+    srcs: ["Vibrator.cpp"],
     shared_libs: [
-        "libcutils",
-        "libutils",
         "libbase",
         "libbinder_ndk",
         "liblog",
         "android.hardware.vibrator-V1-ndk",
     ],
+}
+
+cc_binary {
+    name: "vendor.qti.hardware.vibrator.service.gold",
+    defaults: ["gold_vibrator_defaults"],
+    relative_install_path: "hw",
+    init_rc: ["vendor.qti.hardware.vibrator.service.gold.rc"],
+    vintf_fragments: [
+        "vendor.qti.hardware.vibrator.service.gold.xml",
+    ],
+    srcs: ["service.cpp"],
+}
+
+// No valid on/off calls: these contract checks do not drive the motor.
+cc_test {
+    name: "gold_vibrator_contract_test",
+    defaults: ["gold_vibrator_defaults"],
+    srcs: ["VibratorTest.cpp"],
+    test_suites: ["device-tests"],
 }

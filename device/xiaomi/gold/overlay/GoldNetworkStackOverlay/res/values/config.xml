@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Both URLs use the standard authenticated HTTPS 204 probe. -->
+    <string-array name="config_captive_portal_https_urls" translatable="false">
+        <item>https://www.google.com/generate_204</item>
+        <item>https://connectivitycheck.gstatic.com/generate_204</item>
+    </string-array>
+</resources>

@@ -1,0 +1,8 @@
+service vendor.health-gold /vendor/bin/hw/android.hardware.health-service.gold
+    class hal
+    user system
+    group system
+    capabilities WAKE_ALARM BLOCK_SUSPEND
+    file /dev/kmsg w
+
+# Charger startup is defined once, in gold-charger.rc, after driver readiness.

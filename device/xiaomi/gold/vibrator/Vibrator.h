@@ -38,7 +38,7 @@ namespace vibrator {
 
 class LedVibratorDevice {
 public:
-    LedVibratorDevice();
+    LedVibratorDevice() = default;
     int on(int32_t timeoutMs);
     int off();
 private:

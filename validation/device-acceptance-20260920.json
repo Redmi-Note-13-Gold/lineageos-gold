@@ -1,0 +1,362 @@
+{
+  "date": "2026-09-20",
+  "recorded_at": "2026-09-20T09:13:37.227120+00:00",
+  "candidate_source_revision": "4cdee4a4bc782aa70fb978eb0cd7a7a5898d17e9",
+  "candidate_incremental": "1789870972",
+  "ota_sha256": "e35824385ab2e6e915f6ea33be37ac2aa58296de1d9a877cd407f922cbc8f0a4",
+  "installation": {
+    "checked_at": "2026-09-20T08:14:43.540592+00:00",
+    "recovery_install_status": 0,
+    "update_engine_result": "kSuccess",
+    "installed_target_slot": "a",
+    "installer_readback_matches_all_14": true,
+    "independent_physical_readback_count": 7,
+    "partitions": [
+      {
+        "partition": "boot",
+        "entry": "IMAGES/boot.img",
+        "image_bytes": 67108864,
+        "sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "installer_readback_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/boot_a",
+        "independent_readback_sha256": "28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "dtbo",
+        "entry": "IMAGES/dtbo.img",
+        "image_bytes": 8388608,
+        "sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "installer_readback_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/dtbo_a",
+        "independent_readback_sha256": "027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "odm_dlkm",
+        "entry": "IMAGES/odm_dlkm.img",
+        "image_bytes": 348160,
+        "sha256": "ed9980a6bcdc7d83f00cbe6ad3aa80178b0521fa361176748723b5311a34958f",
+        "installer_readback_sha256": "ed9980a6bcdc7d83f00cbe6ad3aa80178b0521fa361176748723b5311a34958f",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-4"
+      },
+      {
+        "partition": "product",
+        "entry": "IMAGES/product.img",
+        "image_bytes": 510750720,
+        "sha256": "7983c4d51f6223853db195caf45cf0a5119a83498d36121b0752f76bb012b43f",
+        "installer_readback_sha256": "7983c4d51f6223853db195caf45cf0a5119a83498d36121b0752f76bb012b43f",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-7"
+      },
+      {
+        "partition": "scp",
+        "entry": "RADIO/scp.img",
+        "image_bytes": 1200128,
+        "sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+        "installer_readback_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/scp_a",
+        "independent_readback_sha256": "8b19c2c3b3a4e0eee13d3a55435790e28e6112221d3e7395f0b8ee202414566c",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "system",
+        "entry": "IMAGES/system.img",
+        "image_bytes": 1048506368,
+        "sha256": "cb9e2fbc79e264afa43a228007bd8849f53b20ab0a3b911f70901f9fa048c9ea",
+        "installer_readback_sha256": "cb9e2fbc79e264afa43a228007bd8849f53b20ab0a3b911f70901f9fa048c9ea",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-10"
+      },
+      {
+        "partition": "system_dlkm",
+        "entry": "IMAGES/system_dlkm.img",
+        "image_bytes": 7303168,
+        "sha256": "aa26dba1e2bbd07fd29461fd60c0e0328dc5114f04b1daffbd0110e398f31892",
+        "installer_readback_sha256": "aa26dba1e2bbd07fd29461fd60c0e0328dc5114f04b1daffbd0110e398f31892",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-13"
+      },
+      {
+        "partition": "system_ext",
+        "entry": "IMAGES/system_ext.img",
+        "image_bytes": 461287424,
+        "sha256": "8b5892ba586de92a64efd494fb83bbac8e0ece72e8e2be30129bdf4ef87c3189",
+        "installer_readback_sha256": "8b5892ba586de92a64efd494fb83bbac8e0ece72e8e2be30129bdf4ef87c3189",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-16"
+      },
+      {
+        "partition": "vbmeta",
+        "entry": "IMAGES/vbmeta.img",
+        "image_bytes": 8192,
+        "sha256": "34c808ae914c12a323e79afd78ff7471f6e37d6e6b7186377fad35caf1c5a52e",
+        "installer_readback_sha256": "34c808ae914c12a323e79afd78ff7471f6e37d6e6b7186377fad35caf1c5a52e",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/vbmeta_a",
+        "independent_readback_sha256": "34c808ae914c12a323e79afd78ff7471f6e37d6e6b7186377fad35caf1c5a52e",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "vbmeta_system",
+        "entry": "IMAGES/vbmeta_system.img",
+        "image_bytes": 4096,
+        "sha256": "726388a74473e70b1ccef1a07d7e016400581ac36b1178bbdf3a7e7cef8a50fa",
+        "installer_readback_sha256": "726388a74473e70b1ccef1a07d7e016400581ac36b1178bbdf3a7e7cef8a50fa",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/vbmeta_system_a",
+        "independent_readback_sha256": "726388a74473e70b1ccef1a07d7e016400581ac36b1178bbdf3a7e7cef8a50fa",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "vbmeta_vendor",
+        "entry": "IMAGES/vbmeta_vendor.img",
+        "image_bytes": 4096,
+        "sha256": "fddd6f4c326594efbd9d7a6a1494913cd4fdcfaec65993b3076a4544ca276868",
+        "installer_readback_sha256": "fddd6f4c326594efbd9d7a6a1494913cd4fdcfaec65993b3076a4544ca276868",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/vbmeta_vendor_a",
+        "independent_readback_sha256": "fddd6f4c326594efbd9d7a6a1494913cd4fdcfaec65993b3076a4544ca276868",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "vendor",
+        "entry": "IMAGES/vendor.img",
+        "image_bytes": 483954688,
+        "sha256": "aded405cabf2739f9744594b5062a939b789912f27b1c0a3868c6f51c00e237c",
+        "installer_readback_sha256": "aded405cabf2739f9744594b5062a939b789912f27b1c0a3868c6f51c00e237c",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-19"
+      },
+      {
+        "partition": "vendor_boot",
+        "entry": "IMAGES/vendor_boot.img",
+        "image_bytes": 67108864,
+        "sha256": "033f547c42244f754b02436972e4992efa20098e6057d77965b547b53fe4b837",
+        "installer_readback_sha256": "033f547c42244f754b02436972e4992efa20098e6057d77965b547b53fe4b837",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/by-name/vendor_boot_a",
+        "independent_readback_sha256": "033f547c42244f754b02436972e4992efa20098e6057d77965b547b53fe4b837",
+        "independent_readback_matches": true
+      },
+      {
+        "partition": "vendor_dlkm",
+        "entry": "IMAGES/vendor_dlkm.img",
+        "image_bytes": 13967360,
+        "sha256": "6599e201c26759f64ed616b2d8b51af3a94db7489669f18e8a3b1d8baf748065",
+        "installer_readback_sha256": "6599e201c26759f64ed616b2d8b51af3a94db7489669f18e8a3b1d8baf748065",
+        "installer_readback_matches": true,
+        "installer_device": "/dev/block/dm-22"
+      }
+    ],
+    "wipe_scheduled": false,
+    "raw_install_log_sha256": "d7aba24d9a426e670d50d5910c32d792a97a56a1d67ae7c7074a3aa9c86098b1",
+    "notes": [
+      "Recovery otapreopt detects boot-complete is absent and exits; postinstall action completed kSuccess.",
+      "Logical partitions were unmapped by the installer after its readback verification."
+    ]
+  },
+  "boot": {
+    "slot": "a",
+    "lineage_version": "23.2-20260920-UNOFFICIAL-gold",
+    "boot_completed": true,
+    "selinux": "Enforcing",
+    "kernel": "6.6.118",
+    "file_based_encrypted": true,
+    "credential_encrypted_data_available": true,
+    "data_mounted": true,
+    "persist_mounted": true,
+    "first_uptime_seconds": 187.72,
+    "late_uptime_seconds": 786.55,
+    "same_boot_id": true,
+    "user_reported_home_or_lockscreen": true,
+    "adb_restored": true,
+    "adb_root_command_used": false,
+    "critical_error_counts_in_captured_windows": {
+      "java_fatal": 0,
+      "native_fatal_signal": 0,
+      "application_anr": 0,
+      "system_watchdog_kill": 0
+    }
+  },
+  "data_preservation": {
+    "format_or_wipe_used": false,
+    "task_owned_userdata_and_shared_storage_canaries_match": true,
+    "canary_count": 2,
+    "user_provisioning_retained": true,
+    "canaries_cleanup_pending": false,
+    "no_claim_about_unread_personal_file_contents": true,
+    "canaries_removed_after_recovery_roundtrip": true
+  },
+  "runtime": {
+    "health": {
+      "kernel_charge_counter_mah": 4952,
+      "framework_charge_counter_uah": 4952000,
+      "full_charge_uah": 4952200,
+      "gold_service_running": true,
+      "service_domain": "hal_health_default",
+      "mediatek_health_service_running": false
+    },
+    "overlays": {
+      "framework_gold_enabled": true,
+      "settings_gold_enabled": true,
+      "peak_refresh_selector_enabled": true,
+      "sustained_performance_advertised": false,
+      "maintainer": "Betterr",
+      "supported_refresh_hz": [
+        60,
+        90,
+        120
+      ]
+    },
+    "vibrator_contract": {
+      "ran_at": "2026-09-20T08:22:26.575313+00:00",
+      "results": [
+        {
+          "abi": "arm64",
+          "exit_code": 0,
+          "passed_tests": 4,
+          "execution_uid": 2000,
+          "motor_driven": false,
+          "dependency_from_same_build": true,
+          "dependency_sha256": "26df96afaef0f251f95359670e881f17016edf574e06673774255ff86178909a",
+          "executable_sha256": "c71f9af230356e46223b637b0a361e2caf7008208597208fba8e2faf63c4d03b",
+          "temporary_files_removed": true
+        },
+        {
+          "abi": "arm",
+          "exit_code": 0,
+          "passed_tests": 4,
+          "execution_uid": 2000,
+          "motor_driven": false,
+          "dependency_from_same_build": true,
+          "dependency_sha256": "43413631a8bd3e9c8bdf95dc19199f093743199996511e115a954539ca4fb2df",
+          "executable_sha256": "93c6dadc42606195b23a5e0305d8eefb67cc29cad3195c88bca96f19670d9547",
+          "temporary_files_removed": true
+        }
+      ],
+      "scope": "Direct contract unit tests, not physical motor acceptance. Same-build AIDL library staged temporarily because shell cannot read the vendor library; no SELinux or system-library change."
+    },
+    "camera": {
+      "application": "org.lineageos.aperture",
+      "front": {
+        "camera_id": "1",
+        "preview_frames_observed": 4602,
+        "preview_image_visually_checked": true,
+        "photo_capture_verified": false
+      },
+      "rear": {
+        "camera_id": "0",
+        "preview_frames_observed": 33,
+        "user_confirmed_preview_and_photo_capture": true
+      },
+      "device_or_service_error_tokens_in_post_test_dump": 0,
+      "temporary_ui_dump_removed": true,
+      "raw_images_and_logs_kept_private": true,
+      "all_camera_modes_auxiliary_lenses_video_and_quality_accepted": false
+    },
+    "vibrator_motor_probe": {
+      "oneshot_duration_ms": 300,
+      "oneshot_framework_status": "finished",
+      "prebaked_click_with_fallback_framework_status": "finished",
+      "both_shell_commands_exit_code": 0,
+      "physical_sensation_user_confirmation": "normal sensation confirmed on two repeated 300 ms probes",
+      "raw_dump_sha256": "f6200868c08b2c30f39ef9a2b5018cecb4d6a26b8a9223188bd13261d94e4920",
+      "repeated_oneshot_count": 2,
+      "repeated_oneshot_duration_ms": 300,
+      "repeated_framework_status": "both finished",
+      "repeated_dump_sha256": "4d27afd98ef3d2df3d4d2d85b9b771349ae5ccc71d62ac78095b656ed751620d"
+    },
+    "fingerprint": {
+      "previously_enrolled": true,
+      "unlock_user_confirmed_working": true,
+      "new_enrollment_tested": false
+    }
+  },
+  "cellular": {
+    "user_reported": "One inserted eSIM card in roaming",
+    "sim_slot_1based": 2,
+    "sim_loaded": true,
+    "voice_registration": "IN_SERVICE",
+    "data_registration": "IN_SERVICE",
+    "access_technology": "LTE",
+    "roaming": "INTERNATIONAL",
+    "test_call_or_sms_placed": false,
+    "internet_transfer_test_performed": false,
+    "ims_registered": false
+  },
+  "ims_blocker": {
+    "feature_advertised_on_device": false,
+    "feature_present_in_target_files": false,
+    "configured_ims_package": "com.mediatek.ims",
+    "device_ims_service_binding_query": "empty",
+    "framework_gate": [
+      "frameworks/opt/telephony/src/java/com/android/internal/telephony/PhoneFactory.java:239",
+      "packages/services/Telephony/src/com/android/phone/PhoneGlobals.java:550"
+    ],
+    "cause": "Missing android.hardware.telephony.ims prevents standard framework initialization of ImsPhone and ImsResolver.",
+    "adjacent_reference": "Dhterech 3dce0bbc device.mk includes android.hardware.telephony.ims.prebuilt.xml",
+    "fix": "Install the standard AOSP IMS feature XML and require it in final Gold package verification.",
+    "fix_candidate_installed": false,
+    "carrier_registration_not_proven_by_fix": true
+  },
+  "remaining": [
+    "Build and install IMS feature correction; verify actual service binding, then carrier registration where supported.",
+    "Full camera modes/video/quality and auxiliary lenses, new fingerprint enrollment, audio, Wi-Fi/hotspot, Bluetooth audio, GNSS, sensors, USB modes, offline charging and sustained thermal/power acceptance.",
+    "No full hardware, carrier IMS call, or long-duration stability claim."
+  ],
+  "privacy": "Raw device logs, SIM identifiers, boot IDs, process IDs and user data are not included in this record.",
+  "updated_recovery": {
+    "checked_at": "2026-09-20T08:52:48.753214+00:00",
+    "candidate_incremental": "1789870972",
+    "slot": "a",
+    "booted": true,
+    "selinux": "Enforcing",
+    "health_service_running": true,
+    "health_service_domain": "hal_health_default",
+    "health_instance": "android.hardware.health.IHealth/default",
+    "legacy_mediatek_health_running": false,
+    "health_battery_status": "Charging",
+    "health_battery_capacity_percent": 100,
+    "kernel_charge_counter_and_full_zero_in_recovery": true,
+    "charge_counter_recovery_conversion_not_physically_verified": true,
+    "raw_recovery_log_sha256": "dd1bf20dfdc5a292efc671f1ee87658e28cab571a48c66929ea6b1c0bc26fccb",
+    "adb_enabled_by_user": true,
+    "adb_root_command_used": false
+  },
+  "virtual_ab_merge": {
+    "checked_at": "2026-09-20T08:52:48.753214+00:00",
+    "misc_merge_status": 0,
+    "misc_merge_status_name": "NONE",
+    "misc_source_slot": 0,
+    "metadata_ota_state_bytes": 0,
+    "metadata_snapshot_directory_empty": true,
+    "metadata_mounted_read_only_noload_then_unmounted": true,
+    "merge_complete_verified": true
+  },
+  "after_recovery_return": {
+    "slot": "a",
+    "candidate_incremental": "1789870972",
+    "boot_completed": true,
+    "selinux": "Enforcing",
+    "data_mounted": true,
+    "persist_mounted": true,
+    "normal_adb_uid": 2000,
+    "first_collected_uptime_seconds": 84.46,
+    "health_charge_counter_uah": 4957000,
+    "credential_encrypted_shared_storage": "unlocked; canary hash matched",
+    "critical_error_counts_in_captured_windows": {
+      "java_fatal": 0,
+      "native_fatal_signal": 0,
+      "application_anr": 0,
+      "system_watchdog_kill": 0
+    },
+    "shared_storage_canary_matches": true,
+    "checked_after_unlock_at": "2026-09-20T08:58:35.436558+00:00",
+    "latest_observed_uptime_seconds": 1157.37
+  }
+}

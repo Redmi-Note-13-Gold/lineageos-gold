@@ -74,7 +74,8 @@ blob_fixups: blob_fixups_user_type = {
         .replace_needed('android.hardware.camera.common-V2-ndk.so', 'android.hardware.camera.common-V1-ndk.so'),
 
     # Android 15 vendor AIDL interfaces against the Lineage 23.2 platform.
-    ('vendor/lib64/hw/mapper.mediatek.so',
+    ('vendor/lib/hw/mapper.mediatek.so',
+     'vendor/lib64/hw/mapper.mediatek.so',
      'vendor/lib64/egl/libGLES_mali.so',
      'vendor/bin/hw/android.hardware.graphics.allocator-V2-service-mediatek',
      'vendor/lib64/vendor.mediatek.hardware.camera.isphal-V1-ndk.so',
@@ -86,6 +87,7 @@ blob_fixups: blob_fixups_user_type = {
      'vendor/lib64/libmtkcam_grallocutils.so',
      'vendor/lib64/libcodec2_fsr.so',
      'vendor/lib/libcodec2_fsr.so',
+     'vendor/lib/libgpud.so',
      'vendor/lib64/libgpud.so'): blob_fixup()
         .replace_needed('android.hardware.graphics.common-V5-ndk.so', 'android.hardware.graphics.common-V7-ndk.so'),
 
@@ -97,6 +99,15 @@ blob_fixups: blob_fixups_user_type = {
         .clear_symbol_version('AHardwareBuffer_lockPlanes')
         .clear_symbol_version('AHardwareBuffer_release')
         .clear_symbol_version('AHardwareBuffer_unlock'),
+
+    # Match the existing MTK OAL compatibility fix: these four ARM helpers
+    # are public LIBC_N exports in the platform vendor libc. Keep their names
+    # and implementations, clearing only the old LIBC_PRIVATE requirements.
+    'vendor/lib/libmp4enc_sa.ca7.so': blob_fixup()
+        .clear_symbol_version('__aeabi_memclr')
+        .clear_symbol_version('__aeabi_memcpy')
+        .clear_symbol_version('__aeabi_memset')
+        .clear_symbol_version('__gnu_Unwind_Find_exidx'),
 
     'vendor/lib/libvcodec_oal.so': blob_fixup()
         .clear_symbol_version('__aeabi_memcpy')

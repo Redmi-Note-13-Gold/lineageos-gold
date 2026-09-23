@@ -8,6 +8,14 @@
     ]
   },
   {
+    "path": "build/make",
+    "url": "https://github.com/LineageOS/android_build",
+    "revision": "5a841be38fec92de9a8a408cf5812ca748ccc02e",
+    "patches": [
+      "patches/build__make/0001-ota-temporary-directory.patch"
+    ]
+  },
+  {
     "path": "build/soong",
     "url": "https://github.com/LineageOS/android_build_soong",
     "revision": "9aa045a2aef10b8089e32e847fed26d9aa3d61be",
@@ -28,7 +36,8 @@
     "url": "https://github.com/LineageOS/android_frameworks_base",
     "revision": "35ad1f68539dce0857d25154dacb1116100737e9",
     "patches": [
-      "patches/frameworks__base/0001-status-icon-packing-r2.patch"
+      "patches/frameworks__base/0001-status-icon-packing-r2.patch",
+      "patches/frameworks__base/0002-statusbar-cutout-intersection.patch"
     ]
   },
   {
@@ -48,29 +57,28 @@
     ]
   },
   {
-    "path": "external/openeuicc",
-    "url": "https://gitea.angry.im/PeterCxy/OpenEUICC",
-    "revision": "9a537a25163c5159899260fb6191a5da35a692bd",
-    "patches": [
-      "patches/external__openeuicc/0001-service-slot-integration.patch"
-    ],
-    "submodules": {
-      "libs/lpac-jni/src/main/jni/lpac": "d214738fa0bdb23faf5833d3d798963079a00468",
-      "libs/lpac-jni/src/main/jni/cjson/cjson": "c859b25da02955fef659d658b8f324b5cde87be3"
-    }
-  },
-  {
-    "path": "external/openeuicc-deps",
-    "url": "https://gitea.angry.im/PeterCxy/android_prebuilts_openeuicc-deps",
-    "revision": "67a341e9cfbaed43da7e5a281f5cc7b8893fdc55",
-    "patches": []
-  },
-  {
     "path": "hardware/mediatek",
     "url": "https://github.com/LineageOS/android_hardware_mediatek",
     "revision": "3c04cf3997a30621966da9cf40f8b98ab453ebe3",
     "patches": [
-      "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch"
+      "patches/hardware__mediatek/0001-thermal-missing-cooling-diagnostic.patch",
+      "patches/hardware__mediatek/0002-perf-client-forwarding.patch"
+    ]
+  },
+  {
+    "path": "packages/apps/Settings",
+    "url": "https://github.com/LineageOS/android_packages_apps_Settings",
+    "revision": "9a102220cb80941628685585b6818e5715271cf0",
+    "patches": [
+      "patches/packages__apps__Settings/0001-device-maintainer.patch"
+    ]
+  },
+  {
+    "path": "vendor/lineage",
+    "url": "https://github.com/LineageOS/android_vendor_lineage",
+    "revision": "d747e9abec858434d4967eb5fa9cd3e87c5cc7b0",
+    "patches": [
+      "patches/vendor__lineage/0001-fixed-build-date.patch"
     ]
   }
 ]

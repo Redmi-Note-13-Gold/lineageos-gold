@@ -1,0 +1,28 @@
+# The existing MediaTek domain already owns the PPM and cgroup vote nodes.
+# Read the real thermal HAL; missing/stale severity blocks performance requests.
+hal_client_domain(mtk_hal_power, hal_thermal)
+
+# Non-secret, bounded, transient strategy controls for matched-device trials.
+vendor_public_prop(vendor_gold_power_prop)
+get_prop(mtk_hal_power, vendor_gold_power_prop)
+# The vendor service owns its strategy properties. Debug trials enter through
+# its root-only Binder diagnostic command, not a coredomain property writer.
+set_prop(mtk_hal_power, vendor_gold_power_prop)
+
+# dumpsys passes a shell-owned output pipe to the HAL. Allow diagnostics to
+# write that pipe without granting shell access to vendor strategy properties.
+allow mtk_hal_power shell:fifo_file write;
+
+# The authorized root C ABI diagnostic runs in su on userdebug. Authenticate its
+# process generation via /proc/PID/stat just as for real native media callers.
+# No ptrace, process-memory access or production su access is granted.
+userdebug_or_eng(`
+    allow mtk_hal_power su:dir search;
+    allow mtk_hal_power su:file { getattr open read };
+')
+
+# Only the fixed double-tap request reaches this original touch ioctl. Apps and
+# shell gain no direct access; DAC remains root:root 0600.
+type vendor_gold_touch_device, dev_type;
+allow mtk_hal_power vendor_gold_touch_device:chr_file { getattr open read write ioctl };
+allowxperm mtk_hal_power vendor_gold_touch_device:chr_file ioctl { 0x5400 };

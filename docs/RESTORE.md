@@ -8,11 +8,9 @@
 repo init -u https://github.com/Redmi-Note-13-Gold/lineageos-gold \
   -b main -m manifests/lineage-23.2-gold.xml
 repo sync -c -j8
-
-git -C external/openeuicc submodule update --init --recursive
 ```
 
-本仓库 manifest 固定 1160 个项目的提交。设备树的历史起点仍保留，应用本仓库完整 device 源码后成为当前维护版本；避免同时维护另一份 device 补丁。厂商文件不由 Repo 自动取得。
+本仓库 manifest 固定 1158 个项目的提交。设备树的历史起点仍保留，应用本仓库完整 device 源码后成为当前维护版本；避免同时维护另一份 device 补丁。厂商文件不由 Repo 自动取得。
 
 ## 应用本项目源码
 
@@ -23,12 +21,57 @@ python3 /path/to/lineageos-gold/tools/apply-patches.py /path/to/android --apply
 
 默认只检查；显式应用前检查各目标项目固定提交、工作区及补丁。执行后，device 采用本仓库完整源码，平台只应用 `patches/series.json` 中的差异，vendor 仅复制本项目 IMS 集成源码。已有未记录文件不应被覆盖；被中断的应用需先检查工作区，不要直接重复套补丁或清理。
 
-本项目目录中已没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁归档在 `archive/hybrid/`，不属于源码恢复步骤。
+必要的只读启动观察工具及回归测试已归入 `tools/capture_boot.py` 和 `tests/test_capture_boot.py`。本项目目录中没有安装到设备树的 `hybrid_*` 主机工具。旧工具与镜像补丁已退出工作树；追溯时读取 Git 提交 `0fed0d2e8f5d60fa1c7e5a3ecbe4a18377e5964f` 的 `archive/hybrid/` 原路径，恢复和构建均不需要检出或执行它们。
 
 ## 准备厂商组件并构建
 
-按 [BUILD.md](BUILD.md) 从固定 Global Recovery 准备 vendor/firmware/kernel，再运行标准完整产品构建。IMS 必须提供指定哈希的兼容 APK；缺少它时入口明确失败，不能通过缺依赖开关绕过。
+按 [BUILD.md](BUILD.md) 从固定 Global Recovery 准备 vendor/firmware/kernel，再运行标准完整产品构建。IMS 的固定兼容 APK 和 `input.json` 已归入主线 Git，恢复步骤直接复制，不需要旧检出或旧镜像；输入不符时入口明确失败。
 
 预编译内核与固件是有来源、版本和校验值的输入；它们与设备树来源分别记录。厂商修改应维护在提取规则中。构建入口已移除额外的源码比对和 vendor receipt 检查。
 
 恢复工具不安装依赖、不刷机、不公开发布。构建是否实际完成，以本次生成的构建记录为准。
+
+## 科研机挂载与路径恢复
+
+仅适用于当前科研机的同一数据盘和物理目录。先核对 `tools/host/research-layout.json`：其中固定数据盘 UUID、source/lower/upper/work 及入口链接；它不负责从空盘恢复源码或厂商输入。`/srv/build/gold` 及 inputs/releases/jobs/logs 都是实际目录，只有外层 `build-gold.sh` 是入口链接。
+
+系统已启用主线生成的 OverlayFS mount 单元。重启后先运行 `/srv/build/build-gold.sh --check-environment`；它不会尝试自动修复错误挂载。如果需要重新安装丢失的单元定义，在确认没有构建、盘已正确挂载、配置路径存在后执行：
+
+```sh
+set -e
+project=/srv/build/gold/project
+source_tree=/srv/build/gold/source
+mount_unit=$(systemd-escape --path --suffix=mount "$source_tree")
+unit_dir=$(mktemp -d)
+python3 -B "$project/tools/host/check-research-layout.py" --print-mount-unit > "$unit_dir/$mount_unit"
+systemd-analyze verify "$unit_dir/$mount_unit"
+test ! -e "/etc/systemd/system/$mount_unit"
+install -m 0644 "$unit_dir/$mount_unit" "/etc/systemd/system/$mount_unit"
+systemctl daemon-reload
+systemctl enable "$mount_unit"
+```
+
+仅当 source 当前未挂载时，再用 `systemctl start "$mount_unit"` 恢复；若已经挂载且与配置不符，应先排查，不能直接 stop/restart 或 remount。确认后删除本次临时单元文件和空目录，运行 `python3 -B "$project/tools/host/check-research-layout.py"` 与 `/srv/build/build-gold.sh --check-environment` 验证。2026-09-21 物理搬迁已正常卸载并重新挂载，挂载与同一 swap 文件在新位置已实测；随后 m nothing 构图与环境检查通过，输出及输入核对未变；整机重启恢复未实测；这是主机维护边界，已按用户要求移出ROM验收待办，不安排本轮重启。同步检查 fstab 中的 `/srv/build/gold/host/build.swap`、root Git include 的 `host/git-safe-directories.config` 与 Repo 本地 manifest URL 的 `host/manifest`，不得重新引入旧物理路径。
+
+历史归档原路径通过 `/srv/build/gold/history/layout-moves-20260921.json` 定位。恢复只使用主线工具、固定原厂输入和当前提取配方，不运行历史迁移目录里的旧 Python 流程。
+
+
+后续 Wi-Fi RRO、双击唤醒 Power 源码／策略与专用 attestation 属性都由主线 device 文件恢复；状态栏修复由当前 patches/series.json 恢复。OpenEUICC/eSIM 已按用户决定移除，不再恢复它的项目、子模块、应用或 feature XML。证明专用属性曾按 firmware 锁定的原厂 vendor/build.prop 设置，但 6e7c418 实机仍报 -66；该通用 vendor 身份不能当作 TEE 实际预置身份已获验证，后续已核对固定CN输入的vendor/odm通用属性与Global一致，product也只含通用模板而非该台工厂ID；设备属性证明仍需继续定位；不用猜测值或keybox掩盖失败。继续保留官方 Global/CN 输入、kernel/modules、闭源 HAL／固件和固定 IMS APK；这些有明确构建或恢复用途，不因旧拼装退役而删除。
+
+
+Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢复合并源码时须核对这一XML的有效内容，避免upper层遮盖；不重写无关Android.bp。新增资源和最终vendor镜像APK门禁通过前不得冻结为可安装WPA3修复候选。用户2026-09-22明确开刷已授权本次保数据安装和必要正常重启；其他Recovery与网络切换测试仍须符合当前实际授权范围。
+
+若宿主安全更新重启构建/守护，先按systemd InvocationID分开保存中断与恢复后的记录；外部stop的Deactivated successfully不等于Android成功。r5既有原始VM记录由独立rescue接管，终态后实读0/zbud/N/Y并清理临时工具/scratch及精确needrestart配置；不覆盖原guard失败。r5两份未验收包现保存在/tmp/gold-no-euicc-r5-unvalidated-packages，SHA和原路径映射见jobs/gold-mainline-20260920/no-euicc-r5-package-preservation.json。它们是失败证据，不是候选，不可安装；不要由r6 guard或清理脚本删除。
+
+
+当前可恢复的完整候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`：168项输入、14payload、38项实际镜像检查及版本日期一致性已过。该候选已于2026-09-22保数据安装到A / 1790008554，安装器与独立各14分区哈希、正常启动和数据核验通过；本轮只执行必要正常重启，没有Recovery或网络切换测试。主线 `tools/host/vm-guard.py`已支持同原记录接管；只允许active/applying状态且未部分恢复的记录，保留最初原值。统一入口按InvocationID分层记录，参照BUILD中的启动前保护与独立guard命令。117项主机测试及真实短服务的终止/接管/最终恢复通过；这些主机测试当时未重启科研机或手机，后续手机安装重启单独记录。
+
+2026-09-22新增的MPEG4运行依赖在proprietary-files.txt的Media (MPEG4 runtime)节维护：固定Global vendor中的ARM libmp4enc_sa.ca7.so由v3avpud动态加载，不能仅按ELF NEEDED闭包删掉。正式恢复仍使用上面的固定官方镜像提取；历史dump不是可信输入替代。此次仅把已按锁定vendor镜像重验的该文件通过extract-utils --no-cleanup --section定向提取，未清理已有vendor、未重写无关生成项。设备上的临时DeviceDiagnostics数据更新不代替源码恢复；后续OTA需核对实际活动APK，不能将源修复自动当作设备更新成功。
+
+认证绑定验证只使用自有普通应用与本人系统认证；不更改持久KeyMint/TEE存储、锁屏凭据或引导状态。恢复测试环境时删除本次探针和自有密钥即可，不删除用户KeyAttestation。70c2ec4上认证绑定已通过而设备属性仍-66，二者不得混作同一验收结论；原厂分区属性与本地RKP当前DeviceInfo均不能直接冒充工厂预置ID。
+
+9月22日晚的两个旧日期OTA与非活动局部输出已按用户明确授权删除，不恢复其原路径或临时迁存路径。历史清单保留在jobs的followup-build-space-preservation与followup-obsolete-output-cleanup记录；冻结候选和官方输入仍从现有releases/inputs入口取得。
+
+9月23日MPEG4兼容处理在现有extract-files.py中维护，仅清除四个指定ARM导入的旧LIBC_PRIVATE版本，不重写函数或引入空shim。恢复仍从锁定Global原始库提取，再由标准extract-utils执行该fixup；不要把未修复的c12266e1…原库直接当作可交付文件。当前包门禁要求d3ed8edc…修复后哈希并另记原始哈希。定向恢复本次只更新合并源中的提取配方与该插件4字节，未重写Android.bp或重提其他vendor文件。
+
+60e90a7本次可安装包和恢复核对入口为 `/srv/build/gold/releases/20260923-090824-60e90a7`，含全量OTA/target-files、candidate.json及原Android结果。verification-source保存构建时全部主线受管文件，merged-inputs保存169项实际输入；源码后的文档记录提交不改变此候选。check-artifacts与check-gold-package的冻结副本复验通过，MPEG4修复后精确哈希和Diagnostics APK哈希已记录。可变OUT中的旧ZIP名称已转为package-path-map映射，不能因其缺席判产物丢失，也不能用旧候选的设备结果代替本候选验收。

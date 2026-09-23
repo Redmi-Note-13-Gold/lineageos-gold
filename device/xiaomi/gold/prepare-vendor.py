@@ -42,7 +42,11 @@ def run(args, **kwargs):
 
 
 def host_tool(tree, name):
-    candidates = [tree / 'out/host/linux-x86/bin' / name]
+    out = Path(os.environ.get('OUT_DIR', 'out-gold-standard'))
+    if not out.is_absolute():
+        out = tree / out
+    candidates = [out / 'host/linux-x86/bin' / name,
+                  tree / 'out/host/linux-x86/bin' / name]
     found = shutil.which(name)
     if found:
         candidates.append(Path(found))
@@ -122,7 +126,7 @@ def prepare(args):
     vendor.mkdir(parents=True, exist_ok=True)
     # Remove the obsolete record left by older preparation scripts.
     (vendor / 'input-receipt.json').unlink(missing_ok=True)
-    work_parent = args.work_dir.resolve() if args.work_dir else tree / 'out/gold-vendor-extraction'
+    work_parent = args.work_dir.resolve() if args.work_dir else tree / '.repo/gold-vendor-extraction'
     work_parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='prepare-', dir=work_parent) as temporary:
         work = Path(temporary)

@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.lineageos.gold.diagnosticsprobe" android:versionCode="1" android:versionName="1">
+  <uses-sdk android:minSdkVersion="35" android:targetSdkVersion="35" />
+  <application android:label="Gold Diagnostics Probe" android:testOnly="true" android:hasCode="true" />
+  <instrumentation android:name="org.lineageos.gold.diagnosticsprobe.GoldDiagnosticsInstrumentation" android:targetPackage="com.android.devicediagnostics" android:functionalTest="true" />
+</manifest>

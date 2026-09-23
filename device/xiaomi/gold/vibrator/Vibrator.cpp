@@ -29,14 +29,13 @@
 
 #define LOG_TAG "vendor.qti.vibrator"
 
-#include <cutils/properties.h>
-#include <dirent.h>
-#include <inttypes.h>
-#include <linux/input.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
 #include <log/log.h>
+#include <stdio.h>
 #include <string.h>
-#include <sys/ioctl.h>
-#include <thread>
+#include <unistd.h>
 
 #include "Vibrator.h"
 
@@ -45,36 +44,23 @@ namespace android {
 namespace hardware {
 namespace vibrator {
 
-#define test_bit(bit, array)    ((array)[(bit)/8] & (1<<((bit)%8)))
-
 static const char LED_DEVICE[] = "/sys/class/leds/vibrator";
-
-LedVibratorDevice::LedVibratorDevice() {
-    char devicename[PATH_MAX];
-    int fd;
-
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE, "activate");
-    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
-    if (fd < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
-        return;
-    }
-}
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
     int fd;
     int ret;
 
-    fd = TEMP_FAILURE_RETRY(open(file, O_WRONLY));
+    fd = TEMP_FAILURE_RETRY(open(file, O_WRONLY | O_CLOEXEC));
     if (fd < 0) {
         ALOGE("open %s failed, errno = %d", file, errno);
         return -errno;
     }
 
-    ret = TEMP_FAILURE_RETRY(write(fd, value, strlen(value) + 1));
-    if (ret == -1) {
+    const size_t length = strlen(value);
+    const ssize_t written = TEMP_FAILURE_RETRY(write(fd, value, length));
+    if (written == -1) {
         ret = -errno;
-    } else if (ret != strlen(value) + 1) {
+    } else if (static_cast<size_t>(written) != length) {
         /* even though EAGAIN is an errno value that could be set
            by write() in some cases, none of them apply here.  So, this return
            value can be clearly identified when debugging and suggests the
@@ -84,7 +70,6 @@ int LedVibratorDevice::write_value(const char *file, const char *value) {
         ret = 0;
     }
 
-    errno = 0;
     close(fd);
 
     return ret;
@@ -101,7 +86,7 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
        goto error;
 
     snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "duration");
-    snprintf(value, sizeof(value), "%u\n", timeoutMs);
+    snprintf(value, sizeof(value), "%d\n", timeoutMs);
     ret = write_value(file, value);
     if (ret < 0)
        goto error;
@@ -129,7 +114,9 @@ int LedVibratorDevice::off()
 }
 
 ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
-    *_aidl_return |= IVibrator::CAP_PERFORM_CALLBACK;
+    // This LED driver implements timed on/off only. Let the framework provide
+    // effect fallback; no hardware completion callback is available.
+    *_aidl_return = 0;
     ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
     return ndk::ScopedAStatus::ok();
 }
@@ -140,7 +127,7 @@ ndk::ScopedAStatus Vibrator::off() {
     ALOGD("QTI Vibrator off");
     ret = ledVib.off();
     if (ret != 0)
-        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_SERVICE_SPECIFIC));
+        return ndk::ScopedAStatus::fromServiceSpecificError(-ret);
 
     return ndk::ScopedAStatus::ok();
 }
@@ -149,22 +136,18 @@ ndk::ScopedAStatus Vibrator::on(int32_t timeoutMs,
                                 const std::shared_ptr<IVibratorCallback>& callback) {
     int ret;
 
+    if (timeoutMs <= 0) {
+        return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_ARGUMENT);
+    }
+    if (callback != nullptr) {
+        return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+    }
+
     ALOGD("Vibrator on for timeoutMs: %d", timeoutMs);
     ret = ledVib.on(timeoutMs);
 
     if (ret != 0)
-        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_SERVICE_SPECIFIC));
-
-    if (callback != nullptr) {
-        std::thread([=] {
-            ALOGD("Starting on on another thread");
-            usleep(timeoutMs * 1000);
-            ALOGD("Notifying on complete");
-            if (!callback->onComplete().isOk()) {
-                ALOGE("Failed to call onComplete");
-            }
-        }).detach();
-    }
+        return ndk::ScopedAStatus::fromServiceSpecificError(-ret);
 
     return ndk::ScopedAStatus::ok();
 }
@@ -174,8 +157,7 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect __unused, EffectStrength es _
 }
 
 ndk::ScopedAStatus Vibrator::getSupportedEffects(std::vector<Effect>* _aidl_return) {
-    *_aidl_return = {Effect::CLICK, Effect::DOUBLE_CLICK, Effect::TICK, Effect::THUD,
-                     Effect::POP, Effect::HEAVY_CLICK};
+    _aidl_return->clear();
 
     return ndk::ScopedAStatus::ok();
 }

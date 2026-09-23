@@ -1,0 +1,17 @@
+diff --git a/ui/build/soong.go b/ui/build/soong.go
+index c9b303c..b425994 100644
+--- a/ui/build/soong.go
++++ b/ui/build/soong.go
+@@ -226,6 +226,12 @@ func (pb PrimaryBuilderFactory) primaryBuilderInvocation(config Config) bootstra
+ 
+ 	commonArgs = append(commonArgs, "-l", filepath.Join(pb.config.FileListDir(), "Android.bp.list"))
+ 	invocationEnv := make(map[string]string)
++	// Honor optional host memory tuning for the bootstrap Go process.
++	for _, key := range []string{"GOGC", "GOMEMLIMIT", "GOMAXPROCS"} {
++		if value, ok := config.Environment().Get(key); ok {
++			invocationEnv[key] = value
++		}
++	}
+ 	if pb.debugPort != "" {
+ 		//debug mode
+ 		commonArgs = append(commonArgs, "--delve_listen", pb.debugPort,

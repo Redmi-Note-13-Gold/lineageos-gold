@@ -1,0 +1,15 @@
+service vendor.power-hal-gold /vendor/bin/hw/android.hardware.power-service.gold
+    class hal
+    user root
+    group system readproc
+    priority -10
+
+on late-fs
+    start vendor.power-hal-gold
+
+on charger
+    start vendor.power-hal-gold
+
+# Framework restart invalidates its controller and every outstanding vote.
+on property:init.svc.zygote=restarting
+    restart vendor.power-hal-gold

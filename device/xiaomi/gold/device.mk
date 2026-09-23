@@ -108,6 +108,11 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.ir-service.example
 
+# Build the Codec2 frontend against this platform's private C++ layout. The
+# matched stock entrypoint allocates an Android 15 ComponentStore object.
+PRODUCT_PACKAGES += \
+    android.hardware.media.c2-service.gold
+
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.consumerir.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.consumerir.xml
 
@@ -151,8 +156,8 @@ PRODUCT_COPY_FILES += \
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health-service.mediatek \
-    android.hardware.health-service.mediatek-recovery
+    android.hardware.health-service.gold \
+    android.hardware.health-service.gold-recovery
 
 # Init
 PRODUCT_PACKAGES += \
@@ -200,6 +205,7 @@ PRODUCT_PACKAGES += \
     GoldAlphaFrameworkOverlay \
     GoldAlphaSettingsOverlay \
     FrameworkResOverlayGold \
+    GoldNetworkStackOverlay \
     TetheringConfigOverlay \
     SettingsResOverlayGold \
     WifiOverlay
@@ -211,8 +217,7 @@ PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power-service.pixel-libperfmgr \
-    vendor.mediatek.hardware.mtkpower@1.2-service.stub
+    android.hardware.power-service.gold
 
 PRODUCT_PACKAGES += \
     init.mt6833.power.rc
@@ -220,13 +225,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libmtkperf_client_vendor
 
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/configs/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json
-
 # Radio
 # The matching stock modem configuration is installed from proprietary-files.
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
+    frameworks/native/data/etc/android.hardware.telephony.ims.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.ims.xml \
     frameworks/native/data/etc/android.software.ipsec_tunnels.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnels.xml \
     frameworks/native/data/etc/android.software.ipsec_tunnel_migration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnel_migration.xml
 
@@ -304,13 +307,9 @@ PRODUCT_COPY_FILES += \
 # Inherit the proprietary files
 $(call inherit-product, vendor/xiaomi/gold/gold-vendor.mk)
 
-# Gold 23.0 validated eUICC integration and shared 20dp status bar insets.
+# Shared 20dp status bar insets.
 PRODUCT_PACKAGES += \
-    OpenEUICC \
     GoldStatusBarOverlay
-
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/android.hardware.telephony.euicc.xml
 
 # Validated MediaTek IMS v5 and VoLTE integration from the 23.0 gold tree.
 PRODUCT_PACKAGES += \

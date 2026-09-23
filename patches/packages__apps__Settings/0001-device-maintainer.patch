@@ -1,0 +1,47 @@
+diff --git a/res/xml/my_device_info.xml b/res/xml/my_device_info.xml
+index 9148a9d..f75543e 100644
+--- a/res/xml/my_device_info.xml
++++ b/res/xml/my_device_info.xml
+@@ -153,6 +153,14 @@
+             android:summary="@string/summary_placeholder"
+             settings:enableCopying="true"
+             settings:controller="com.android.settings.deviceinfo.firmwareversion.LineageVersionDetailPreferenceController"/>
++        <!-- Device maintainer -->
++        <Preference
++            android:key="device_maintainer"
++            android:order="44"
++            android:title="@string/device_maintainer_title"
++            android:summary="@string/device_maintainer_name"
++            android:selectable="false"
++            settings:enableCopying="true"/>
+     </PreferenceCategory>
+ 
+     <PreferenceCategory
+diff --git a/res/values/gold_maintainer.xml b/res/values/gold_maintainer.xml
+new file mode 100644
+--- /dev/null
++++ b/res/values/gold_maintainer.xml
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="device_maintainer_title">Device maintainer</string>
++    <string name="device_maintainer_name" translatable="false">Betterr</string>
++</resources>
+diff --git a/res/values-zh-rCN/gold_maintainer.xml b/res/values-zh-rCN/gold_maintainer.xml
+new file mode 100644
+--- /dev/null
++++ b/res/values-zh-rCN/gold_maintainer.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="device_maintainer_title">设备维护者</string>
++</resources>
+diff --git a/res/values-zh-rTW/gold_maintainer.xml b/res/values-zh-rTW/gold_maintainer.xml
+new file mode 100644
+--- /dev/null
++++ b/res/values-zh-rTW/gold_maintainer.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="device_maintainer_title">裝置維護者</string>
++</resources>
