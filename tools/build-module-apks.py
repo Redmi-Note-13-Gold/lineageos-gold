@@ -19,6 +19,8 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULES = {
+    'GoldStatusBarOverlay': ('device/xiaomi/gold/overlay/GoldStatusBarOverlay/GoldStatusBarOverlay/android_common/signed/GoldStatusBarOverlay.apk', {
+        'device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml'}),
     'DeviceDiagnostics': ('packages/apps/DeviceDiagnostics/app/src/main/DeviceDiagnostics/android_common/DeviceDiagnostics.apk', {
         'packages/apps/DeviceDiagnostics/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/BatteryActivity.kt',
         'packages/apps/DeviceDiagnostics/DeviceDiagnosticsLib/src/main/java/com/android/devicediagnostics/evaluated/BatteryUtilities.kt'}),

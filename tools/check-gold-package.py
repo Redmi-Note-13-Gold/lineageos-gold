@@ -144,6 +144,7 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'overlay/WifiOverlay/WifiOverlay.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
+                       'overlay/GoldStatusBarOverlay.apk',
                        'priv-app/SystemUI/SystemUI.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
     }
@@ -452,6 +453,10 @@ def verify(target, aapt2, readelf, profile):
         require('com.android.systemui/com.android.systemui.doze.DozeService' in
                 resource(framework, 'string/config_dozeComponent')[1],
                 'Gold ambient display service component is missing')
+        doze_overlay = dump('SYSTEM_EXT/overlay/GoldStatusBarOverlay.apk', 'resources')
+        for name in ('doze_display_state_supported', 'doze_suspend_display_state_supported'):
+            require('() true' in resource(doze_overlay, 'bool/' + name)[1],
+                    'Gold AOD low-power display state is disabled: ' + name)
         require(b'double-tap wake request failed' in archive.read(
                 'VENDOR/bin/hw/android.hardware.power-service.gold'), 'Missing touch wake Power HAL path')
         require(any(len(parts := line.split()) >= 2 and parts[0] == '/dev/xiaomi-touch'
@@ -512,6 +517,8 @@ def verify(target, aapt2, readelf, profile):
                            'runtime_verified': False},
                 'touch_wake': {'framework_switch': True, 'power_path': True,
                                'typed_control_device': True, 'runtime_verified': False},
+                'aod': {'doze_component': True, 'display_doze_supported': True,
+                        'display_doze_suspend_supported': True, 'runtime_verified': False},
                 'attestation_identity': {'properties': attestation, 'tee_acceptance_verified': False},
                 'network_probes': {'https_urls': urls, 'runtime_validated': False},
                 'euicc': euicc,
