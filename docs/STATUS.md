@@ -1,4 +1,10 @@
-更新于2026-09-29：8f01656已保数据安装到A槽 / 1790692970 / Enforcing，安装器及独立各14分区、解锁后两canary通过。正式AOD的OFF/DOZE_SUSPEND/程序唤醒已通过，物理亮度与双击体验待用户确认；临时root和安装暂存已清理，普通鉴权网络ADB在线。
+更新于2026-09-30：8f01656已保数据安装到A槽 / 1790692970 / Enforcing，安装器及独立各14分区、解锁后两canary通过。正式AOD的OFF/DOZE_SUSPEND/程序唤醒已通过，物理亮度与双击体验待用户确认；临时root和安装暂存已清理，普通鉴权网络ADB在线。
+
+## GitHub 测试版发布
+
+[Global R1 / lineage-23.2-20260929-r1](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1) 已公开发布为 Pre-release。发布标签固定到实际 ROM 源码 `8f01656dc34564b5157aadfc466bf0180397a461`，日期来自该 ROM 构建。8 个附件包括完整 OTA、同次 boot/dtbo/vendor_boot/vbmeta 镜像、说明、脱敏清单和 SHA256SUMS；逐项 GitHub SHA-256 与科研机文件一致，公开校验文件及 OTA 下载范围请求通过。target-files 保留在科研机，不是手机安装包。
+
+该发布为 userdebug/test-keys 测试版，已验收和待办边界如下；公开发布不等于正式发行密钥、CTS 或全部硬件验收。未改变旧 CN R1 发布，未操作手机或 Mac 网络。
 
 ## 最新AOD候选：正式低功耗路径已通过
 
@@ -42,7 +48,7 @@ AOD服务绑定和时钟绘制在60e90a7生效，但SystemUI默认 `doze_display
 | Recovery | 60e90a7及8f01656均未做Recovery往返；bd50b19缓存/RSS为独立历史证据。Scudo失败注入与完整Recovery OTA仍未测，按实际需要及稳定控制链安排，不为重复验收刷机 |
 | AOD | 已发现并修复两个缺失的面板低功耗开关，临时DOZE/DOZE_SUSPEND与唤醒通过，定向APK已编译。8f01656正式OFF/DOZE_SUSPEND/程序唤醒及两canary已过；剩余物理时钟亮度与双击体验确认，长期功耗未测。截图渲染与硬件状态不代替用户物理观察；MPEG4既有短往返验收按60e90a7保留 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
-| 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
+| 正式发行 | 已公开 Global R1 Pre-release 测试版；正式发行密钥、CTS及完整硬件验收仍未完成 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
 
 2026-09-22用户明确要求“开刷”，本轮已执行保数据安装及必要正常重启；这不扩大为额外Recovery或网络切换测试。未操作SIM、拨号或短信，当时只记录旧的全局mobile_data=0，不能据此判定双卡实际数据开关；本轮按订阅与真实上行核实中国联通已开启、漫游eSIM数据关闭，原设置不变。正式双击设置仍1。手机端两份专属OTA暂存文件及其目录已清理，临时root已恢复UID2000、Enforcing。用户Key Attestation 1.8.4/code198保留，没有授予额外权限。

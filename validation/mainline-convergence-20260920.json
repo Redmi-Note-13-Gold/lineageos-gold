@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-29T15:47:17.128430+00:00",
+  "updated_at": "2026-09-29T16:17:40.896119+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -9450,5 +9450,87 @@
       "runtime_encode_decode_not_repeated_on_this_candidate": true,
       "previous_runtime_evidence_revision": "60e90a7"
     }
+  },
+  "github_release_20260929_r1": {
+    "status": "published_and_verified",
+    "repository": "Redmi-Note-13-Gold/lineageos-gold",
+    "release_id": 399316583,
+    "tag": "lineage-23.2-20260929-r1",
+    "source_commit": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1",
+    "draft": false,
+    "prerelease": true,
+    "published_at": "2026-09-29T16:16:57Z",
+    "verified_at": "2026-09-29T16:17:40.896119+00:00",
+    "signing": "userdebug/test-keys",
+    "asset_verification": "All eight GitHub SHA-256 digests and sizes match authoritative server files.",
+    "assets": [
+      {
+        "id": 598642657,
+        "name": "lineage-23.2-20260929-UNOFFICIAL-gold.zip",
+        "size": 1169771697,
+        "digest": "sha256:a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/lineage-23.2-20260929-UNOFFICIAL-gold.zip"
+      },
+      {
+        "id": 598642149,
+        "name": "boot.img",
+        "size": 67108864,
+        "digest": "sha256:28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/boot.img"
+      },
+      {
+        "id": 598642007,
+        "name": "dtbo.img",
+        "size": 8388608,
+        "digest": "sha256:027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/dtbo.img"
+      },
+      {
+        "id": 598642423,
+        "name": "vendor_boot.img",
+        "size": 67108864,
+        "digest": "sha256:b9fdafe922b4357d8a1dcd56e927611bf4f83d301abea02d824197171646e628",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/vendor_boot.img"
+      },
+      {
+        "id": 598641915,
+        "name": "vbmeta.img",
+        "size": 8192,
+        "digest": "sha256:f4448b308a5919e76102fbc4f3e9ae5f661c448b05f887ea1f2dd2abbd74c550",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/vbmeta.img"
+      },
+      {
+        "id": 598641837,
+        "name": "README.md",
+        "size": 5312,
+        "digest": "sha256:1d59e670c5ff3b020582584a6e69f3102d983933280bfad73988bb5a4dd6cddd",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/README.md"
+      },
+      {
+        "id": 598641735,
+        "name": "release-manifest.json",
+        "size": 2355,
+        "digest": "sha256:08d3dfe59dec157fa57bbd54cae6c14d081211bc82b1941b4096f6a35ce1779b",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/release-manifest.json"
+      },
+      {
+        "id": 598641688,
+        "name": "SHA256SUMS",
+        "size": 581,
+        "digest": "sha256:82991ec98e13906a93881fd4cc280d61644178d40b70bec47314b80079ecf3f4",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/SHA256SUMS"
+      }
+    ],
+    "public_download_checks": {
+      "unauthenticated_release_http": 200,
+      "checksums_sha256_matches": true,
+      "ota_range_http": 206,
+      "ota_content_range": "bytes 0-0/1169771697"
+    },
+    "target_files_published": false,
+    "candidate_device_acceptance": "See candidate_8f01656_device; publication does not extend hardware acceptance.",
+    "phone_operated": false,
+    "mac_network_or_keychain_operated": false
   }
 }
