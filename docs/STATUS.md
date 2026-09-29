@@ -1,4 +1,16 @@
-更新于2026-09-30：静默 USB ADB 复核当前为 8f01656 / B槽 / 1790692970，正常启动。下列 A槽安装与 AOD 记录是此前验收历史；本轮尚未刷写新候选，屏幕、声音、相机实拍等物理验收暂缓。
+更新于 2026-09-30 06:21（UTC+8）：当前安装源码 `52e9435`，A 槽 / incremental `1790709272`。完整构建、保数据安装、启动与静默检查通过；全机硬件验收尚未完成。下文旧版本记录保留其历史范围，不自动继承到新版本。
+
+## 本轮适配与设备交付
+
+源码提交 `48306c6`、`52e9435` 接入现有 FMRadio，补齐统一 Power HAL 的持续音频请求与独立来源释放，修正 Health 无效读取的 AIDL 状态码；Aperture 复用一个后端增加默认关闭的后摄 108MP / 前摄 16MP 捕获入口，按原厂契约将 HDR 属性设为 false，并删除未使用的 libperfmgr 配置和标签。电量单位继续按已确认的 mAh→µAh 契约转换，Codec2 保留按当前平台编译的服务入口。
+
+科研机唯一输出完成 bacon 与 target-files 两阶段构建；签名、VINTF、SELinux、14 个 payload 分区及设备包检查通过，实际 Android 工具链的 Power/Health 测试 33/27/8 项通过。最终包冻结于 `/srv/build/gold/releases/20260930-060158-52e9435`；首轮因本任务误用沙箱只读的 `/var/tmp` 打包目录失败，改用既定 `/tmp` 后成功，没有修改源码或放宽沙箱处理此错误。
+
+已准备并核对基线 Recovery 启动镜像及自动 ADB 配置，随后完整 OTA 单次安装返回 `kSuccess(0)`，B→A 正常重启一次。安装器与独立活动槽回读各 14 项匹配；正常启动、Enforcing、data/persist 挂载、snapshot none、DE/CE 两份 canary 一致。设备没有 `bootctl`，未宣称单独核对 bootloader 的成功槽位标记。Power/Health AIDL 注册、FMRadio/Aperture 包、五项 FM 属性和 HDR=false 实读通过；Power 后端 ready 且无错误。未打开相机、FM 播放或进行屏幕、声音、振动及外部 WPA3 客户端测试。
+
+手机安装暂存已核验清理，ADB 恢复 UID 2000，漫游数据保持关闭。科研机 VM/needrestart 恢复，临时 zip/unzip 和 OTA scratch 已清理，历史原厂输入保留。没有公开推送或发布本候选。脱敏证据见 [本轮记录](../validation/adaptation-20260930.json)；冻结时的 `candidate.json` 保持原字节，安装结果另记。
+
+人像景深仍未接通：原厂 JNI→MiAlgo→bokeh 插件已定位，但 HAL 是否直接返回虚化 JPEG 尚无输出证据。先在获准的相机测试窗口验证这一分叉，再决定薄 Camera2 路径或最小 OEM 后处理接线。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
 
 ## GitHub 测试版发布
 
@@ -6,7 +18,7 @@
 
 该发布为 userdebug/test-keys 测试版，已验收和待办边界如下；公开发布不等于正式发行密钥、CTS 或全部硬件验收。未改变旧 CN R1 发布，未操作手机或 Mac 网络。
 
-## 最新AOD候选：正式低功耗路径已通过
+## 8f01656 历史 AOD 候选：正式低功耗路径已通过
 
 2026-09-29 22:42:50启动，23:05:21入口exit0。bacon11:46、target-files-package07:31均成功；同次169项输入/10受管项目/1158项Repo、签名/VINTF/SELinux/UTC日期、14个payload分区与40个实际镜像文件通过。实际system_ext的GoldStatusBarOverlay含DOZE和DOZE_SUSPEND两个true；MPEG4兼容库、SAE资源、eSIM缺席门禁保留。单一OUT inode9437191未变，内核无OOM。
 

@@ -1,6 +1,6 @@
 # 适配来源与取舍
 
-本轮接手基线 `462fab1`，未回退。当前手机为 bd50b19 原镜像 A 槽、incremental 1789938387：保数据 OTA、安装器与独立回读各 14 项、正常启动、两份 canary 和 Recovery 自动 ADB 往返通过。Codec2 的 336／352 字节 ABI 修复已独立通过 3 次冷服务启动与 11 轮编解码；Power 生命周期、节点和诊断入口复验通过。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`。
+本节记录此前接手基线 `462fab1` 的收敛过程；最新交付见 [STATUS](STATUS.md)。当时手机为 bd50b19 原镜像 A 槽、incremental 1789938387：保数据 OTA、安装器与独立回读各 14 项、正常启动、两份 canary 和 Recovery 自动 ADB 往返通过。Codec2 的 336／352 字节 ABI 修复已独立通过 3 次冷服务启动与 11 轮编解码；Power 生命周期、节点和诊断入口复验通过。参考树固定到 Dhterech `3dce0bbc357c63b28008e329593a412587618edc`；旧版对照为 Git `e14a7fa` 与 `0fed0d2` 中的历史 `archive/hybrid/`。
 
 ## 旧版到主线的完整收敛对照
 
