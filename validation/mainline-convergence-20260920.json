@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-29T15:18:22.401246+00:00",
+  "updated_at": "2026-09-29T15:38:37.291190+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6065,13 +6065,14 @@
     }
   },
   "current_installed_candidate": {
-    "rom_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
-    "incremental": "1790091429",
-    "slot": "b",
-    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
-    "ota_sha256": "09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a",
-    "target_files_sha256": "56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63",
-    "evidence_key": "candidate_60e90a7_device",
+    "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "incremental": "1790692970",
+    "slot": "a",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "evidence_key": "candidate_8f01656_device",
+    "acceptance_scope": "installation_boot_partitions_and_compiled_resources; first_unlock_and_formal_aod_pending",
     "data_app_updates": {
       "com.android.devicediagnostics": {
         "sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
@@ -6082,22 +6083,23 @@
   },
   "current_pending_android_delta": {
     "source_revision": "0737d5f",
-    "state": "full_rom_frozen_waiting_device_install",
+    "state": "installed_waiting_first_unlock_and_formal_aod",
     "merged_input_count": 169,
     "changed_android_inputs": [
       "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml"
     ],
     "rom_built": true,
-    "permanent_device_fix_installed": false,
+    "permanent_device_fix_installed": true,
     "temporary_hardware_doze_and_suspend_probes_passed": true,
     "physical_visibility_confirmation_pending": true,
     "compiled_apk_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/result.json",
-    "required_next_step": "Verify fresh phone availability, identity, data-off, supply and installer state; perform the already authorized data-preserving installation in an idle window, then validate real AOD states, visibility and wake. Never change Mac networking or keychain or enable roaming data.",
+    "required_next_step": "After the user unlocks the phone once, verify both data canaries and formal AOD OFF/DOZE_SUSPEND/wake with the installed resources. Physical visibility still needs confirmation. Keep roaming data off and do not touch Mac networking or keychain.",
     "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
     "candidate_source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
     "build_datetime": 1790692970,
     "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
-    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39"
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "formal_panel_state_test_completed": false
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -9343,5 +9345,74 @@
     "old_ota_absence_annotations_preserved": 4,
     "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-terminal.json",
     "freeze_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-freeze-state.json"
+  },
+  "candidate_8f01656_device": {
+    "recorded_at": "2026-09-29T15:38:37.291190+00:00",
+    "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "incremental": "1790692970",
+    "slot": "a",
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "acceptance_scope": "installation_boot_partitions_and_compiled_resources; first_unlock_and_formal_aod_pending",
+    "installation": {
+      "update_engine_success": true,
+      "host_exit_code": 0,
+      "data_wipe": false,
+      "from_slot": "b",
+      "to_slot": "a",
+      "installer_partition_hashes_matched": 14,
+      "independent_active_partition_hashes_matched": 14,
+      "normal_reboots": 1,
+      "boot_completed": true,
+      "observation_seconds_including_adb_reconnection": 64.0,
+      "not_a_pure_boot_duration": true,
+      "selinux": "Enforcing",
+      "data_persist_mounted": true,
+      "snapshot": "none",
+      "canaries_matched_before_reboot": 2,
+      "canaries_matched_after_unlock": null,
+      "post_reboot_first_unlock_pending": true,
+      "initial_network_reconnect_probe_succeeded": false,
+      "later_authenticated_network_adb_verified": true
+    },
+    "apps": {
+      "diagnostics_active_apk_sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
+      "matches_previously_28_case_accepted_apk": true,
+      "keyattestation_preserved": true,
+      "keyattestation_version": [
+        "versionCode=198",
+        "versionName=1.8.4"
+      ]
+    },
+    "aod": {
+      "permanent_fix_installed": true,
+      "source_fix_revision": "0737d5f",
+      "installed_display_doze_supported": true,
+      "installed_display_doze_suspend_supported": true,
+      "formal_panel_state_test_completed": false,
+      "physical_visibility_user_confirmation_pending": true,
+      "long_term_power_measured": false,
+      "temporary_overlay_or_property_used_for_this_acceptance": false
+    },
+    "boundaries": {
+      "no_cellular_data_calls_sms_or_sim_changes": true,
+      "no_mac_network_or_keychain_operations": true,
+      "ims_deferred": true,
+      "esim_support_withdrawn": true,
+      "wpa3_mac_association_not_retested": true,
+      "old_device_results_not_inherited": true
+    },
+    "handoff": {
+      "adb_uid": 2000,
+      "selinux": "Enforcing",
+      "authenticated_network_adb": true,
+      "mobile_data_off": true,
+      "roaming_subscription_data_off": true,
+      "aod_settings_not_changed": true,
+      "ota_stage_removed": false,
+      "ota_stage_retained_until_post_unlock_data_check": true
+    },
+    "private_raw_evidence": "Local work/runtime-aod-8f01656-20260929; raw device/radio/screenshots remain private and are not copied into Git."
   }
 }

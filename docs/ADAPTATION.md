@@ -215,3 +215,5 @@ AOD的DozeService修复只解决绑定，仍缺SystemUI两个面板低功耗资�
 当前手机禁止任何蜂窝流量、电话、短信或SIM操作；Mac网络/钥匙串禁止操作，WPA3联测停止。设备属性证明、RST自然回收等小众边界先让位于实际功能，IMS仍最后。主线证据见聚合validation的candidate_60e90a7_device；旧版历史验收不继承。
 
 2026-09-29 AOD正式包交付：8f01656在原OUT完成bacon11:46和target-files-package07:31，入口23:05:21 exit0；40项实际镜像检查含新增SystemUI低功耗配置。冻结与独立复验通过于/srv/build/gold/releases/20260929-231337-8f01656，设备尚未安装，不把此前临时DOZE探针扩大为永久修复验收。
+
+2026-09-29 AOD安装追加：8f01656已保数据安装到A/1790692970，安装器与独立各14分区、启动/Enforcing/挂载/snapshot none通过。两个永久SystemUI低功耗资源实读true；正式AOD状态及可见性未测，等待首次解锁后继续两canary和熄屏测试。普通鉴权网络ADB已恢复，漫游流量保持关闭，Mac网络与钥匙串未操作。详见candidate_8f01656_device，冻结历史不改写。

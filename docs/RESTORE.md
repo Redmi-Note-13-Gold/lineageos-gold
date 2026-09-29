@@ -78,4 +78,4 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 
 2026-09-29当前设备：已安装冻结60e90a7到B/1790091429，正常启动、14分区回读、data/persist和两canary通过；MPEG4短往返通过，AOD新增面板低功耗修复尚待正式ROM交付。保留70c2ec4和bd50b19包作为历史回退输入。不要把旧“联通流量允许”沿用到目前仅有漫游卡的设备；禁止蜂窝数据/电话/短信及Mac网络/钥匙串操作。
 
-2026-09-29待安装AOD候选为/srv/build/gold/releases/20260929-231337-8f01656，incremental1790692970，完整OTA与target-files门禁/独立复验通过。当前手机仍60e90a7/B/1790091429；安装与设备验收未执行，不能把新包当作已在手机运行。继续核对身份、槽位、snapshot/安装器、canary、供电和当前空闲；绝不开漫游数据或操作Mac网络。
+2026-09-29当前已装AOD候选为/srv/build/gold/releases/20260929-231337-8f01656，A/1790692970。完整OTA与target-files门禁/独立复验、实际安装器与独立各14分区、正常启动/Enforcing/挂载/snapshot none通过。首次解锁前两canary和正式AOD仍待验收；普通鉴权网络ADB已恢复。保留本地及服务器完整OTA，手机本次安装暂存待数据核对后清理。绝不开漫游数据或操作Mac网络。
