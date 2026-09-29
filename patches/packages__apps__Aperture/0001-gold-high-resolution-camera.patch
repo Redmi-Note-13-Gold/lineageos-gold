@@ -12,7 +12,7 @@ index edae6e0..3004ded 100644
                      else -> {}
                  }
 diff --git a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt b/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
-index 9198171..7e7f0d1 100644
+index 9198171..4e45b8d 100644
 --- a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
 +++ b/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
 @@ -39,6 +39,7 @@ import org.lineageos.aperture.models.PermissionState
@@ -23,7 +23,7 @@ index 9198171..7e7f0d1 100644
  import org.lineageos.aperture.utils.CameraSoundsUtils
  import org.lineageos.aperture.utils.PermissionsManager
  
-@@ -207,6 +208,16 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
+@@ -207,6 +208,26 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
              }
              shutterSound?.isVisible = !CameraSoundsUtils.mustPlaySounds
  
@@ -37,15 +37,25 @@ index 9198171..7e7f0d1 100644
 +                })
 +            }
 +
++            if (GoldHighResolutionCapture.isSupported(requireContext(), "1")) {
++                photoCaptureMode.parent?.addPreference(SwitchPreference(requireContext()).apply {
++                    key = GoldHighResolutionCapture.FRONT_PREFERENCE
++                    setDefaultValue(false)
++                    setTitle(R.string.gold_front_high_resolution_title)
++                    setSummary(R.string.gold_front_high_resolution_summary)
++                    isIconSpaceReserved = false
++                })
++            }
++
              // Photo capture mode
              photoCaptureMode.onPreferenceChangeListener = photoCaptureModePreferenceChangeListener
              enableZsl.isEnabled = photoCaptureMode.value == "minimize_latency"
 diff --git a/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt b/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
 new file mode 100644
-index 0000000..e46fb87
+index 0000000..32ee154
 --- /dev/null
 +++ b/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
-@@ -0,0 +1,266 @@
+@@ -0,0 +1,315 @@
 +/*
 + * SPDX-FileCopyrightText: 2026 The LineageOS Project
 + * SPDX-License-Identifier: Apache-2.0
@@ -89,43 +99,83 @@ index 0000000..e46fb87
 +    class CameraCloseTimeoutException : IllegalStateException("Camera close timed out")
 +
 +    const val PREFERENCE = "gold_high_resolution"
-+    private const val WIDTH = 12000
-+    private const val HEIGHT = 9000
-+    // Matched stock MiuiCamera's SESSION_OPERATION_MODE_ALGO_UP_HD.
-+    private const val SESSION_HD = 0x9004
-+    private val STREAMS = CameraCharacteristics.Key(
-+        "com.xiaomi.scaler.availableSuperResolutionStreamConfigurations", IntArray::class.java
-+    )
++    const val FRONT_PREFERENCE = "gold_front_high_resolution"
++
++    private data class CapturePlan(
++        val cameraId: String,
++        val width: Int,
++        val height: Int,
++        val lensFacing: Int,
++        val sessionMode: Int,
++        val afMode: Int,
++        val streamKey: CameraCharacteristics.Key<IntArray>,
++    ) {
++        val isFront get() = lensFacing == CameraCharacteristics.LENS_FACING_FRONT
++    }
++
++    // Stock ALGO_UP_HD (back) and its non-parallel MIUI_FRONT path (front).
++    private val BACK = CapturePlan("0", 12000, 9000, CameraCharacteristics.LENS_FACING_BACK,
++        0x9004, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE, CameraCharacteristics.Key(
++            "com.xiaomi.scaler.availableSuperResolutionStreamConfigurations", IntArray::class.java))
++    private val FRONT = CapturePlan("1", 4608, 3456, CameraCharacteristics.LENS_FACING_FRONT,
++        0x8005, CaptureRequest.CONTROL_AF_MODE_OFF, CameraCharacteristics.Key(
++            "com.xiaomi.scaler.availableStreamConfigurations", IntArray::class.java))
++    private fun planFor(cameraId: String) = when (cameraId) {
++        "0" -> BACK
++        "1" -> FRONT
++        else -> null
++    }
++
 +    private val REMOSAIC = CaptureRequest.Key("xiaomi.remosaic.enabled", Boolean::class.javaObjectType)
 +    private val REMOSAIC_HINT = CaptureRequest.Key(
 +        "com.mediatek.control.capture.remosaicenable", IntArray::class.java
 +    )
++    private val MIRROR = CaptureRequest.Key("xiaomi.flip.enabled", Boolean::class.javaObjectType)
++    private val FLIP_MODE = CaptureRequest.Key(
++        "com.mediatek.control.capture.flipmode", Int::class.javaObjectType
++    )
++    private val QCFA = CameraCharacteristics.Key("com.xiaomi.qcfa.supported", Byte::class.javaObjectType)
 +
-+    fun isEnabled(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
-+        .getBoolean(PREFERENCE, false)
++    fun isEnabled(context: Context, cameraId: String): Boolean {
++        val key = when (cameraId) {
++            "0" -> PREFERENCE
++            "1" -> FRONT_PREFERENCE
++            else -> return false
++        }
++        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, false)
++    }
 +
 +    fun isSupported(context: Context, cameraId: String = "0"): Boolean = runCatching {
-+        if (Build.DEVICE != "gold" || cameraId != "0") return@runCatching false
++        if (Build.DEVICE != "gold") return@runCatching false
++        val plan = planFor(cameraId) ?: return@runCatching false
 +        val info = context.getSystemService(CameraManager::class.java)
 +            .getCameraCharacteristics(cameraId)
-+        val streams = info[STREAMS]?.toList()?.chunked(4) ?: return@runCatching false
-+        info[CameraCharacteristics.LENS_FACING] == CameraCharacteristics.LENS_FACING_BACK &&
++        val streams = info[plan.streamKey]?.toList()?.chunked(4) ?: return@runCatching false
++        val requestNames = if (plan.isFront) listOf(MIRROR.name, FLIP_MODE.name)
++            else listOf(REMOSAIC.name, REMOSAIC_HINT.name)
++        info[CameraCharacteristics.LENS_FACING] == plan.lensFacing &&
++            info[CameraCharacteristics.SENSOR_ORIENTATION] != null &&
++            info[CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES]?.contains(plan.afMode) == true &&
++            (!plan.isFront || info[QCFA]?.toInt() == 0) &&
 +            // The private table uses HAL formats: BLOB=33, not public JPEG=256.
-+            streams.contains(listOf(33, WIDTH, HEIGHT, 0)) &&
++            streams.contains(listOf(33, plan.width, plan.height, 0)) &&
 +            streams.contains(listOf(ImageFormat.YUV_420_888, 1440, 1080, 0)) &&
-+            listOf(REMOSAIC.name, REMOSAIC_HINT.name).all { name ->
-+                info.availableCaptureRequestKeys.any { it.name == name }
-+            }
++            requestNames.all { name -> info.availableCaptureRequestKeys.any { it.name == name } }
 +    }.getOrDefault(false)
 +
 +    /** The caller must unbind CameraX first and restore it after this returns, even on failure. */
 +    suspend fun capture(
 +        context: Context,
 +        executor: Executor,
-+        orientation: Int,
++        cameraId: String,
++        deviceOrientationDegrees: Int,
 +        output: ImageCapture.OutputFileOptions,
 +        onCaptureStarted: () -> Unit,
 +    ): ImageCapture.OutputFileResults {
++        val plan = requireNotNull(planFor(cameraId))
++        // CameraViewModel passes Rotation.offset, quantized from OrientationEventListener
++        // degrees (0/90/180/270), not a Surface.ROTATION_* enum (0/1/2/3).
++        require(deviceOrientationDegrees in setOf(0, 90, 180, 270))
 +        val closed = CompletableDeferred<Unit>()
 +        val data = try {
 +            withTimeout(20_000) {
@@ -162,8 +212,8 @@ index 0000000..e46fb87
 +                            return@execute
 +                        }
 +                        try {
-+                            val info = manager.getCameraCharacteristics("0")
-+                            jpeg = ImageReader.newInstance(WIDTH, HEIGHT, ImageFormat.JPEG, 2)
++                            val info = manager.getCameraCharacteristics(plan.cameraId)
++                            jpeg = ImageReader.newInstance(plan.width, plan.height, ImageFormat.JPEG, 2)
 +                            preview = ImageReader.newInstance(1440, 1080, ImageFormat.YUV_420_888, 2)
 +                            val handler = Handler(Looper.getMainLooper())
 +                            preview!!.setOnImageAvailableListener({ reader ->
@@ -180,7 +230,7 @@ index 0000000..e46fb87
 +                                        } ?: return@execute
 +                                        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
 +                                        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-+                                        check(setOf(bounds.outWidth, bounds.outHeight) == setOf(WIDTH, HEIGHT)) {
++                                        check(setOf(bounds.outWidth, bounds.outHeight) == setOf(plan.width, plan.height)) {
 +                                            "Camera did not return a full-resolution JPEG"
 +                                        }
 +                                        release()
@@ -200,7 +250,7 @@ index 0000000..e46fb87
 +                                                try {
 +                                                    val request = device.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
 +                                                        addTarget(preview!!.surface)
-+                                                        set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
++                                                        set(CaptureRequest.CONTROL_AF_MODE, plan.afMode)
 +                                                    }
 +                                                    configured.setSingleRepeatingRequest(request.build(), executor,
 +                                                        object : CameraCaptureSession.CaptureCallback() {
@@ -215,11 +265,20 @@ index 0000000..e46fb87
 +                                                                try {
 +                                                                    val still = device.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
 +                                                                        addTarget(jpeg!!.surface)
-+                                                                        set(REMOSAIC, true)
-+                                                                        set(REMOSAIC_HINT, intArrayOf(1))
-+                                                                        set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
-+                                                                        set(CaptureRequest.JPEG_ORIENTATION,
-+                                                                            ((info[CameraCharacteristics.SENSOR_ORIENTATION] ?: 90) + orientation) % 360)
++                                                                        if (plan.isFront) {
++                                                                            // This direct JPEG writer does not use CameraX's image saver:
++                                                                            // HAL owns mirroring, exactly once, using the existing preference.
++                                                                            val mirror = output.metadata.isReversedHorizontal
++                                                                            set(MIRROR, mirror)
++                                                                            set(FLIP_MODE, if (mirror) 1 else 0)
++                                                                        } else {
++                                                                            set(REMOSAIC, true)
++                                                                            set(REMOSAIC_HINT, intArrayOf(1))
++                                                                        }
++                                                                        set(CaptureRequest.CONTROL_AF_MODE, plan.afMode)
++                                                                        val sensorOrientation = checkNotNull(info[CameraCharacteristics.SENSOR_ORIENTATION])
++                                                                        val rotation = if (plan.isFront) -deviceOrientationDegrees else deviceOrientationDegrees
++                                                                        set(CaptureRequest.JPEG_ORIENTATION, (sensorOrientation + rotation + 360) % 360)
 +                                                                        set(CaptureRequest.JPEG_QUALITY, 95.toByte())
 +                                                                        output.metadata.location?.let { set(CaptureRequest.JPEG_GPS_LOCATION, it) }
 +                                                                    }
@@ -239,7 +298,7 @@ index 0000000..e46fb87
 +                                                fail(IllegalStateException("Full-resolution session rejected"))
 +                                            }
 +                                        }
-+                                        device.createCaptureSession(SessionConfiguration(SESSION_HD,
++                                        device.createCaptureSession(SessionConfiguration(plan.sessionMode,
 +                                            listOf(OutputConfiguration(preview!!.surface), OutputConfiguration(jpeg!!.surface)),
 +                                            executor, callback))
 +                                    } catch (error: Exception) { fail(error) }
@@ -260,11 +319,11 @@ index 0000000..e46fb87
 +                            // asking the HAL for our private session, rather than racing openCamera.
 +                            availability = object : CameraManager.AvailabilityCallback() {
 +                                override fun onCameraAvailable(cameraId: String) {
-+                                    if (cameraId != "0" || finished || openRequested) return
++                                    if (cameraId != plan.cameraId || finished || openRequested) return
 +                                    manager.unregisterAvailabilityCallback(this)
 +                                    try {
 +                                        openRequested = true
-+                                        manager.openCamera("0", executor, deviceCallback)
++                                        manager.openCamera(plan.cameraId, executor, deviceCallback)
 +                                    } catch (error: Exception) {
 +                                        closed.complete(Unit)
 +                                        fail(error)
@@ -313,7 +372,7 @@ index 0000000..e46fb87
 +    }
 +}
 diff --git a/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt b/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
-index 9a59c3c..2014ec4 100644
+index 9a59c3c..c37e458 100644
 --- a/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
 +++ b/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
 @@ -30,10 +30,16 @@ import androidx.camera.view.video.AudioConfig
@@ -359,12 +418,13 @@ index 9a59c3c..2014ec4 100644
          // Bail out if a photo is already being taken
          if (cameraState.value == CameraState.TAKING_PHOTO) {
              return
-@@ -1122,6 +1131,68 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
+@@ -1122,6 +1131,71 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
              }
          }
  
-+        if (GoldHighResolutionCapture.isEnabled(applicationContext) &&
-+            _cameraConfiguration.value?.camera?.cameraId == "0" && android.os.Build.DEVICE == "gold"
++        val highResolutionCameraId = _cameraConfiguration.value?.camera?.cameraId
++        if (highResolutionCameraId != null && android.os.Build.DEVICE == "gold" &&
++            GoldHighResolutionCapture.isEnabled(applicationContext, highResolutionCameraId)
 +        ) {
 +            val configuration = _cameraConfiguration.value as? CameraConfiguration.Photo
 +            val compatible = configuration != null &&
@@ -373,10 +433,12 @@ index 9a59c3c..2014ec4 100644
 +                imageOutputFormat == ImageCapture.OUTPUT_FORMAT_JPEG &&
 +                cameraController.flashMode == FlashMode.OFF &&
 +                cameraController.zoomState.value?.zoomRatio == 1f
-+            if (!compatible || !GoldHighResolutionCapture.isSupported(applicationContext)) {
++            if (!compatible || !GoldHighResolutionCapture.isSupported(applicationContext, highResolutionCameraId)) {
 +                onImageSavedCallback.onError(ImageCaptureException(
 +                    ImageCapture.ERROR_CAPTURE_FAILED,
-+                    applicationContext.getString(R.string.gold_high_resolution_requirements), null,
++                    applicationContext.getString(if (highResolutionCameraId == "1")
++                        R.string.gold_front_high_resolution_requirements
++                        else R.string.gold_high_resolution_requirements), null,
 +                ))
 +                return
 +            }
@@ -394,7 +456,7 @@ index 9a59c3c..2014ec4 100644
 +                        try {
 +                            val result = GoldHighResolutionCapture.capture(
 +                                applicationContext, ContextCompat.getMainExecutor(applicationContext),
-+                                screenRotation.value.offset,
++                                highResolutionCameraId, screenRotation.value.offset,
 +                                outputOptions, onImageSavedCallback::onCaptureStarted,
 +                            )
 +                            onImageSavedCallback.onImageSaved(result)
@@ -430,40 +492,49 @@ index 9a59c3c..2014ec4 100644
                  // Create output options object which contains raw file + metadata
 diff --git a/app/src/main/res/values-zh-rCN/gold_camera.xml b/app/src/main/res/values-zh-rCN/gold_camera.xml
 new file mode 100644
-index 0000000..bdc7ed9
+index 0000000..05cea0b
 --- /dev/null
 +++ b/app/src/main/res/values-zh-rCN/gold_camera.xml
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,10 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<!-- SPDX-License-Identifier: Apache-2.0 -->
 +<resources>
 +    <string name="gold_high_resolution_title">1.08 亿像素照片</string>
 +    <string name="gold_high_resolution_summary">使用后置主摄拍摄全分辨率照片。需选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。拍摄耗时稍长。</string>
 +    <string name="gold_high_resolution_requirements">拍摄 1.08 亿像素照片时，请选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。若无法使用，请关闭“1.08 亿像素照片”。</string>
++    <string name="gold_front_high_resolution_title">1600 万像素自拍</string>
++    <string name="gold_front_high_resolution_summary">使用前置摄像头拍摄全分辨率照片。需选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。沿用自拍镜像设置，拍摄耗时稍长。</string>
++    <string name="gold_front_high_resolution_requirements">拍摄 1600 万像素自拍时，请选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。若无法使用，请关闭“1600 万像素自拍”。</string>
 +</resources>
 diff --git a/app/src/main/res/values-zh-rTW/gold_camera.xml b/app/src/main/res/values-zh-rTW/gold_camera.xml
 new file mode 100644
-index 0000000..35c4485
+index 0000000..72bdc2b
 --- /dev/null
 +++ b/app/src/main/res/values-zh-rTW/gold_camera.xml
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,10 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<!-- SPDX-License-Identifier: Apache-2.0 -->
 +<resources>
 +    <string name="gold_high_resolution_title">1.08 億像素相片</string>
 +    <string name="gold_high_resolution_summary">使用後置主鏡頭拍攝完整解析度相片。需選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。拍攝耗時稍長。</string>
 +    <string name="gold_high_resolution_requirements">拍攝 1.08 億像素相片時，請選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。若無法使用，請關閉「1.08 億像素相片」。</string>
++    <string name="gold_front_high_resolution_title">1600 萬像素自拍</string>
++    <string name="gold_front_high_resolution_summary">使用前置鏡頭拍攝完整解析度相片。需選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。沿用自拍鏡像設定，拍攝耗時稍長。</string>
++    <string name="gold_front_high_resolution_requirements">拍攝 1600 萬像素自拍時，請選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。若無法使用，請關閉「1600 萬像素自拍」。</string>
 +</resources>
 diff --git a/app/src/main/res/values/gold_camera.xml b/app/src/main/res/values/gold_camera.xml
 new file mode 100644
-index 0000000..5b1308d
+index 0000000..4a86d66
 --- /dev/null
 +++ b/app/src/main/res/values/gold_camera.xml
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,10 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<!-- SPDX-License-Identifier: Apache-2.0 -->
 +<resources>
 +    <string name="gold_high_resolution_title">108 MP rear photos</string>
 +    <string name="gold_high_resolution_summary">Capture full-resolution photos with the main rear camera. Requires standard JPEG, 4:3, 1× zoom, and flash and photo effects off. Capture takes longer.</string>
 +    <string name="gold_high_resolution_requirements">For 108 MP photos, select standard JPEG, 4:3 and 1× zoom, and turn off flash and photo effects. If unavailable, turn off 108 MP rear photos.</string>
++    <string name="gold_front_high_resolution_title">16 MP selfies</string>
++    <string name="gold_front_high_resolution_summary">Capture full-resolution photos with the front camera. Requires standard JPEG, 4:3, 1× zoom, and flash and photo effects off. Uses your selfie mirror setting. Capture takes longer.</string>
++    <string name="gold_front_high_resolution_requirements">For 16 MP selfies, select standard JPEG, 4:3 and 1× zoom, and turn off flash and photo effects. If unavailable, turn off 16 MP selfies.</string>
 +</resources>
