@@ -6067,7 +6067,7 @@
   "current_installed_candidate": {
     "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
     "incremental": "1790692970",
-    "slot": "a",
+    "slot": "b",
     "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
     "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
     "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
@@ -6079,6 +6079,12 @@
         "matches_system_candidate_apk": true,
         "prior_activity_cases_passed": 28
       }
+    },
+    "last_observation": {
+      "observed_at": "2026-09-29T19:03:59.091684+00:00",
+      "transport": "USB ADB",
+      "boot_completed": true,
+      "evidence": "2026-09-30 quiet adaptation baseline; physical acceptance remains pending"
     }
   },
   "current_pending_android_delta": {

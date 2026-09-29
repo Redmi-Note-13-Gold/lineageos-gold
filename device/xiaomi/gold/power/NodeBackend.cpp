@@ -99,7 +99,7 @@ std::vector<Resource> NodeBackend::resources() const {
             {kCpu1Min, -1, frequencies_[1].front(), -1, true},
             {kCpu1Max, -1, frequencies_[1].front(), -1, false},
             {kTopAppUclamp, 0, 100, 0, true},
-            {kTopAppPreferIdle, 0, 1, 0, true}};
+            {kTopAppPreferIdle, 0, 1, 0, true, true}};
 }
 
 int NodeBackend::index(unsigned cluster, int frequency) const {

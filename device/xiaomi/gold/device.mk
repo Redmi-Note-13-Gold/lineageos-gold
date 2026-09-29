@@ -65,6 +65,18 @@ AB_OTA_POSTINSTALL_CONFIG += \
 # Shipping API level
 PRODUCT_SHIPPING_API_LEVEL := 33
 
+# FM radio (MT6631, wired headset antenna)
+PRODUCT_PACKAGES += \
+    FMRadio
+
+# Platform FMRadio configuration; GETCHIPID is 0x6631, frequencies are 0.1 MHz.
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.fm.chip=26161 \
+    ro.fm.band=1 \
+    ro.fm.low_band=875 \
+    ro.fm.high_band=1080 \
+    ro.fm.seek_space=1
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio.service \

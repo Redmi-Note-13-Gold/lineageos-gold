@@ -87,7 +87,8 @@ void PowerEngine::gate(Inhibit reason, bool blocked, Millis now) {
     changed_.notify_all();
     if (!manager_) return;
     manager_->setInhibit(reason, blocked, now);
-    if (blocked) { leases_.clear(); launch_ = interaction_ = 0; }
+    // A gate cancels modes too; a later enable call must explicitly vote again.
+    if (blocked) { leases_.clear(); launch_ = interaction_ = 0; audio_.fill(0); }
 }
 
 void PowerEngine::tickLocked(Millis now) {
@@ -203,27 +204,34 @@ void PowerEngine::thermal(bool safe, Millis now) {
     std::lock_guard<std::mutex> lock(mutex_); lastThermal_ = now; thermalSafe_ = safe; gate(Inhibit::Thermal, !safe, now);
 }
 
-void PowerEngine::framework(int* handle, bool enabled, int duration, int clamp, Millis now) {
+void PowerEngine::framework(int* handle, bool enabled, int duration, const Values& values, Millis now) {
     changed_.notify_all();
     tickLocked(now);
     if (!manager_) return;
-    if (!enabled || clamp == 0) {
+    if (!enabled) {
         if (*handle > 0) manager_->release(kFramework, *handle, now);
         *handle = 0;
         return;
     }
-    Values values{{kTopAppUclamp, clamp}};
     int result = manager_->acquire(kFramework, *handle, duration, values, now);
     if (result == -ENOENT) result = manager_->acquire(kFramework, 0, duration, values, now);
     if (result > 0) *handle = result;
     if (result > 0) ++accepted_; else ++rejected_;
 }
 void PowerEngine::launch(bool enabled, int clamp, Millis now) {
-    std::lock_guard<std::mutex> lock(mutex_); framework(&launch_, enabled, 500, clamp, now);
+    std::lock_guard<std::mutex> lock(mutex_);
+    framework(&launch_, enabled && clamp > 0, 500, {{kTopAppUclamp, clamp}}, now);
 }
 void PowerEngine::interaction(int duration, int clamp, Millis now) {
     std::lock_guard<std::mutex> lock(mutex_);
-    framework(&interaction_, duration >= 0, duration == 0 ? 120 : std::min<int>(duration, kMaximumDuration), clamp, now);
+    framework(&interaction_, duration >= 0 && clamp > 0,
+              duration == 0 ? 120 : std::min<int>(duration, kMaximumDuration),
+              {{kTopAppUclamp, clamp}}, now);
+}
+void PowerEngine::audioStreaming(unsigned source, bool enabled, Millis now) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (source >= audio_.size()) return;
+    framework(&audio_[source], enabled, 0, {{kTopAppPreferIdle, 1}}, now);
 }
 void PowerEngine::tick(Millis now) { std::lock_guard<std::mutex> lock(mutex_); tickLocked(now); }
 void PowerEngine::waitForWork(Millis now) {

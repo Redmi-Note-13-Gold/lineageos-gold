@@ -434,6 +434,24 @@ int main(int argc, char** argv) {
         engine.tick(168); check(f.backend.effective().at(kTopAppUclamp) == 20);
         engine.tick(169); check(f.backend.effective().at(kTopAppUclamp) == 0);
     });
+    test("audio mode is persistent, idempotent, and explicitly released", [&](auto& f) {
+        PowerEngine engine(f.backend, generation); check(engine.initialize(0));
+        engine.thermal(true, 0); engine.interactive(true, 0);
+        engine.audioStreaming(0, true, 0); engine.audioStreaming(0, true, 100);
+        check(engine.status().requests.requests == 1);
+        engine.tick(2001);
+        check(f.backend.effective().at(kTopAppPreferIdle) == 1);
+        engine.audioStreaming(1, true, 2002);
+        check(engine.status().requests.requests == 2);
+        engine.audioStreaming(1, false, 2002);
+        check(engine.status().requests.requests == 1 && f.backend.effective().at(kTopAppPreferIdle) == 1);
+        engine.audioStreaming(0, false, 2002);
+        check(engine.status().requests.requests == 0 && f.backend.effective().at(kTopAppPreferIdle) == 0);
+        engine.audioStreaming(0, true, 2003); engine.lowPower(true, 2004);
+        check(engine.status().requests.requests == 0 && f.backend.effective().at(kTopAppPreferIdle) == 0);
+        engine.lowPower(false, 2005);
+        check(f.backend.effective().at(kTopAppPreferIdle) == 0);
+    });
     test("display and power restrictions cannot clear each other", [&](auto& f) {
         PowerEngine engine(f.backend, generation); check(engine.initialize(0));
         engine.thermal(true, 0); engine.interactive(true, 0); engine.launch(true, 40, 0);
