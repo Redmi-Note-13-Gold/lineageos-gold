@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-29T15:38:37.291190+00:00",
+  "updated_at": "2026-09-29T15:47:17.128430+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6072,7 +6072,7 @@
     "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
     "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
     "evidence_key": "candidate_8f01656_device",
-    "acceptance_scope": "installation_boot_partitions_and_compiled_resources; first_unlock_and_formal_aod_pending",
+    "acceptance_scope": "installation_boot_partitions_data_and_formal_AOD_states_passed; physical_AOD_visibility_and_double_tap_confirmation_pending",
     "data_app_updates": {
       "com.android.devicediagnostics": {
         "sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
@@ -6083,7 +6083,7 @@
   },
   "current_pending_android_delta": {
     "source_revision": "0737d5f",
-    "state": "installed_waiting_first_unlock_and_formal_aod",
+    "state": "installed_formal_aod_passed_physical_confirmation_pending",
     "merged_input_count": 169,
     "changed_android_inputs": [
       "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml"
@@ -6093,13 +6093,14 @@
     "temporary_hardware_doze_and_suspend_probes_passed": true,
     "physical_visibility_confirmation_pending": true,
     "compiled_apk_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/result.json",
-    "required_next_step": "After the user unlocks the phone once, verify both data canaries and formal AOD OFF/DOZE_SUSPEND/wake with the installed resources. Physical visibility still needs confirmation. Keep roaming data off and do not touch Mac networking or keychain.",
+    "required_next_step": "Obtain physical AOD clock visibility, brightness and double-tap feedback. Installed-resource OFF/DOZE_SUSPEND/programmatic-wake and both data canaries passed; long-term power remains unmeasured. No further ROM build is required for this recorded fix. Keep roaming data off and do not touch Mac networking or keychain.",
     "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
     "candidate_source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
     "build_datetime": 1790692970,
     "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
     "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
-    "formal_panel_state_test_completed": false
+    "formal_panel_state_test_completed": true,
+    "runtime_control_path_verified": true
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -9347,14 +9348,14 @@
     "freeze_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-freeze-state.json"
   },
   "candidate_8f01656_device": {
-    "recorded_at": "2026-09-29T15:38:37.291190+00:00",
+    "recorded_at": "2026-09-29T15:47:17.128430+00:00",
     "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
     "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
     "incremental": "1790692970",
     "slot": "a",
     "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
     "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
-    "acceptance_scope": "installation_boot_partitions_and_compiled_resources; first_unlock_and_formal_aod_pending",
+    "acceptance_scope": "installation_boot_partitions_data_and_formal_AOD_states_passed; physical_AOD_visibility_and_double_tap_confirmation_pending",
     "installation": {
       "update_engine_success": true,
       "host_exit_code": 0,
@@ -9371,8 +9372,8 @@
       "data_persist_mounted": true,
       "snapshot": "none",
       "canaries_matched_before_reboot": 2,
-      "canaries_matched_after_unlock": null,
-      "post_reboot_first_unlock_pending": true,
+      "canaries_matched_after_unlock": 2,
+      "post_reboot_first_unlock_pending": false,
       "initial_network_reconnect_probe_succeeded": false,
       "later_authenticated_network_adb_verified": true
     },
@@ -9390,10 +9391,34 @@
       "source_fix_revision": "0737d5f",
       "installed_display_doze_supported": true,
       "installed_display_doze_suspend_supported": true,
-      "formal_panel_state_test_completed": false,
+      "formal_panel_state_test_completed": true,
       "physical_visibility_user_confirmation_pending": true,
       "long_term_power_measured": false,
-      "temporary_overlay_or_property_used_for_this_acceptance": false
+      "temporary_overlay_or_property_used_for_this_acceptance": false,
+      "runtime_control_path_verified": true,
+      "installed_doze_component_bound": true,
+      "off": {
+        "compositor_power_mode": "Off",
+        "doze_screen_state": 1,
+        "panel_brightness_node": 0
+      },
+      "on": {
+        "compositor_power_mode": "DozeSuspend",
+        "doze_screen_state": 4,
+        "framework_wakefulness": "Dozing",
+        "panel_brightness_node": 16
+      },
+      "wake": {
+        "programmatic_wake_verified": true,
+        "framework_wakefulness": "Awake",
+        "compositor_power_mode": "On"
+      },
+      "screenshot_clock_render_observed": true,
+      "physical_visibility_confirmed": null,
+      "physical_brightness_confirmed": null,
+      "physical_double_tap_wake_confirmed": null,
+      "original_user_settings_restored": true,
+      "brightness_node_is_not_power_measurement": true
     },
     "boundaries": {
       "no_cellular_data_calls_sms_or_sim_changes": true,
@@ -9409,10 +9434,21 @@
       "authenticated_network_adb": true,
       "mobile_data_off": true,
       "roaming_subscription_data_off": true,
-      "aod_settings_not_changed": true,
-      "ota_stage_removed": false,
-      "ota_stage_retained_until_post_unlock_data_check": true
+      "canaries_matched": 2,
+      "ota_stage_removed": true,
+      "temporary_doze_overlay_and_property_absent": true,
+      "original_aod_settings_restored": true,
+      "normal_reboots": 1,
+      "no_mac_network_or_keychain_operations": true,
+      "keyattestation_preserved": true,
+      "handed_back_at": "2026-09-29T15:46:10.872997+00:00"
     },
-    "private_raw_evidence": "Local work/runtime-aod-8f01656-20260929; raw device/radio/screenshots remain private and are not copied into Git."
+    "private_raw_evidence": "Local work/runtime-aod-8f01656-20260929; raw device/radio/screenshots remain private and are not copied into Git.",
+    "media": {
+      "mpeg4_installed_library_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+      "matches_frozen_candidate": true,
+      "runtime_encode_decode_not_repeated_on_this_candidate": true,
+      "previous_runtime_evidence_revision": "60e90a7"
+    }
   }
 }
