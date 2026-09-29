@@ -205,3 +205,11 @@ followup-r1在完整构建中拒绝原厂插件的__aeabi_memclr/__aeabi_memcpy/
 tests/test_mpeg4_runtime.py在原厂实文件上运行正式提取配方，按ELF节/动态符号表核对改动范围；复用真实失败命令证明原文件四项拒绝、修复文件通过；包门禁接受精确修复文件并拒绝原文件/篡改文件。全部127项回归通过。原有llvm-readobj的section index警告仍记录，不能把依赖检查通过扩大成v3avpud实际编码或长时稳定性通过；需新ROM安装后验收MPEG4。
 
 9月23日followup-r2已用同一epoch完整构建并通过全部门禁，冻结到 `/srv/build/gold/releases/20260923-090824-60e90a7`。MPEG4四项符号兼容库已在target-files与实际vendor镜像中核对；AOD的DozeService编译资源存在；DeviceDiagnostics系统APK SHA-256为6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2，与在线28用例通过版本一致。冻结副本重新执行payload/版本日期/Gold镜像检查通过，不继承70c2ec4设备验收。当前没有安装新候选，AOD/MPEG4运行验证及其他待办仍按STATUS执行。
+
+## 2026-09-29 恢复任务：可感知功能修复
+
+60e90a7已保数据安装到B/1790091429，安装器及独立各14分区、数据挂载与两canary通过。缺失插件及四项符号版本兼容修复后，MPEG4实际MTK编码/解码60帧/EOS和服务PID稳定通过，HEVC120帧回归通过；不是所有媒体格式或长时验收。
+
+AOD的DozeService修复只解决绑定，仍缺SystemUI两个面板低功耗资源；默认false会经DozeScreenStatePreventingAdapter将DOZE映射ON。现场临时分别启用后compositor进入Doze/DozeSuspend，亮度节点513→16，正常唤醒成功。0737d5f将两个true写入现有GoldStatusBarOverlay，不改HAL/内核、不伪造状态；定向APK及实际编译值已验，旧包缺值。40项实际镜像门禁纳入该APK。正式ROM交付和物理可见性/长期功耗仍分开记录，临时覆盖/属性已撤销，原用户开关恢复。
+
+当前手机禁止任何蜂窝流量、电话、短信或SIM操作；Mac网络/钥匙串禁止操作，WPA3联测停止。设备属性证明、RST自然回收等小众边界先让位于实际功能，IMS仍最后。主线证据见聚合validation的candidate_60e90a7_device；旧版历史验收不继承。

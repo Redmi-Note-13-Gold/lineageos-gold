@@ -5,4 +5,7 @@
     <dimen name="status_bar_padding_end">0dp</dimen>
     <dimen name="status_bar_clock_starting_padding">0dp</dimen>
     <dimen name="status_bar_icons_padding_end">0dp</dimen>
+    <!-- The panel supports both low-power states; otherwise SystemUI maps AOD to ON. -->
+    <bool name="doze_display_state_supported">true</bool>
+    <bool name="doze_suspend_display_state_supported">true</bool>
 </resources>

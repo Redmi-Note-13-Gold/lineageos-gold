@@ -1,33 +1,34 @@
-更新于2026-09-23T09:12:06+08:00：60e90a7完整ROM增量构建及全包检查通过，已冻结并独立复验；当前手机仍70c2ec4加DeviceDiagnostics在线更新，新候选未下载、未安装。
+更新于2026-09-29：60e90a7已下载、保数据安装并完成14分区回读，手机为B槽 / 1790091429 / Enforcing。MPEG4崩溃修复已实机通过；AOD另查出两个缺失的面板低功耗开关，源码0737d5f及定向APK已修复，完整ROM尚未完成。
 
-**当前已装版本为70c2ec4 / A槽 / 1790008554。** 冻结候选为 `/srv/build/gold/releases/20260922-130256-70c2ec4`，包含WPA3 SAE资源修复与OpenEUICC/eSIM移除。2026-09-22用户明确“开刷”后，标准全量OTA保留数据安装，正常重启一次。冻结candidate.json保留冻结时的未安装事实；本次安装记录见聚合validation的 `candidate_70c2ec4_device`，不继承旧候选硬件结果。
+## 本轮已验收
 
-OpenEUICC/eSIM 已按用户明确决定退出当前支持范围：移除产品包、eUICC feature XML、两个专属源码项目与子模块获取配方、平台补丁和正向验收项；新门禁拒绝旧 APK、权限和原生库残留。普通双卡、IMS 和共享 20dp 状态栏保留。本次系统更新已移除设备上的OpenEUICC与eUICC特性，没有操作SIM或清除用户数据；历史记录不改写。
+| 子项 | 60e90a7实际证据与边界 |
+|---|---|
+| 安装、回读与数据 | 本地/手机OTA SHA-256、信任证书和适用性通过；update_engine成功，A→B正常重启一次；安装器及独立活动槽各14分区哈希匹配。data/persist、snapshot none、解锁后两份canary一致。87.02秒观察包含ADB重连，不作为纯启动时长 |
+| MPEG4真实修复 | 普通ADB UID2000、Enforcing下，c2.mtk.mpeg4编码/解码60帧及EOS通过，v3avpud/Codec2相关PID稳定；交付库SHA与冻结镜像相同。HEVC 720p/120帧往返及EOS回归通过；不扩展为全部格式或长期稳定性 |
+| 应用与清理 | OTA后实际活动Diagnostics APK仍为此前28/28通过的6e64afef…；用户KeyAttestation1.8.4/code198保留。自有DEX/视频、手机OTA暂存和临时Doze覆盖/属性已清理；ADB恢复UID2000 |
 
-## 新候选已构建并冻结，待设备安装
+冻结安装入口仍为 `/srv/build/gold/releases/20260923-090824-60e90a7`，ROM源码60e90a7；全量OTA SHA-256 `09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a`，target-files SHA-256 `56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63`。本机只下载了OTA及元数据，未下载整份target-files。冻结candidate.json保持9月23日当时的事实，后续设备证据见 `candidate_60e90a7_device`，不改写冻结历史。
 
-ROM源码 `60e90a7eafcc42bf72d64b2aad83160a2d22e1e1`，候选实际目录 `/srv/build/gold/releases/20260923-090824-60e90a7`。r2于9月23日01:06:29启动、03:16:41入口exit0，bacon01:10:26、target-files-package56:41均成功；仍是唯一OUT增量编译生成全量OTA和全量target-files，不是从空目录全编译。169项合并输入、10个受管项目和1158项Repo提交已冻结，输出inode9437191保留。
+## 当前修复与边界
 
-同次签名、VINTF、SELinux、固定UTC版本日期、14个payload分区与target-files镜像一致性以及39项实际镜像文件检查通过。冻结副本逐包复制、SHA-256复读和fsync后才移除可变输出别名；使用冻结工具再次检查payload/日期/Gold实际镜像，全部通过。AOD编译资源为标准SystemUI DozeService，MPEG4库为四项符号兼容后的d3ed8edc…，DeviceDiagnostics APK与此前28/28通过的在线版本SHA完全一致。eSIM缺席和SAE资源门禁仍通过；这些不等于新版本的设备验收。
+AOD服务绑定和时钟绘制在60e90a7生效，但SystemUI默认 `doze_display_state_supported=false`、`doze_suspend_display_state_supported=false`，把低功耗请求改成普通ON。现场普通ON时面板亮度节点为513；受控临时验证分别进入真实compositor DOZE和DOZE_SUSPEND、亮度节点16，唤醒回Awake/ON成功，随后完整撤销临时设置。屏幕物理可见性仍待用户确认，长期耗电未测，不把节点读数等同功耗。
 
-- 全量OTA：1169771845字节，SHA-256 `09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a`。
-- 全量target-files：2889675961字节，SHA-256 `56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63`。
+0737d5f在现有GoldStatusBarOverlay资源中补两个开关，169项合并输入仅这一XML变化，10个受管项目提交不变。唯一OUT的定向Ninja共4项、84.59秒exit0，APK签名及两个编译布尔值通过，旧包确实缺少这两个值；21项相关主机测试通过。独立guard与对应InvocationID成功退出，VM实读0/zbud/N/Y。静态系统RRO仍需完整ROM交付，未尝试绕过PackageManager/EROFS/AVB；新包门禁同时要求两个编译值及实际system_ext中的覆盖APK，实际镜像检查增至40项。
 
-独立guard于03:16:47实际成功退出，VM现场实读0/zbud/N/Y；临时ZIP工具、OTA scratch和精确needrestart保护已清理，无内核OOM记录，宿主zip/unzip未持久安装。冻结传输/复验临时目录也已清理，当前无构建占用。127项主机回归沿用同次已通过记录，不把编译和包检查计作手机通过。原首轮四项MPEG4符号版本失败与修复证据继续保存在followup-r1-terminal/ABI记录，检查未绕过。
+当前限制：仅剩漫游卡，手机全局及活动订阅数据均关闭，不拨号、不收发短信、不操作SIM。用户已允许本次正常安装重启，但明确禁止后续操作Mac网络和钥匙串；WPA3 Mac联测停止。此前Mac重连预检造成网络中断，读取密码尝试失败、未保存密码，相关临时工具已删除；未开始手机本地热点测试，不归因ROM认证失败。优先已核对身份的鉴权网络ADB，原始日志只留本机0600私有目录。
 
-新候选没有下载到本机或安装。当前待验证范围是安装/回读/启动、AOD实际DOZE/亮度/唤醒/功耗、MPEG4真实编解码与服务稳定性、OTA后Diagnostics活动APK及适当Recovery检查。WPA3 Mac连接、TCP RST自然回收、设备属性证明没有新增修复；IMS仍按用户安排最后。本轮未操作手机、热点、联通或漫游eSIM。
-
-用户授权删除的旧局部输出和两份旧日期OTA已释放约6.47GB；本轮新增候选后共12个冻结目录，官方输入、cache/swap和唯一OUT保留。冻结candidate.json保持构建时工具与事实，后续记录提交不改写它。
+为下一轮正常增量构建，按用户既有“旧的没用的OTA可直接删”授权删除4份已被新版本取代的OTA，释放4,698,773,097字节；对应target-files、原始记录、官方输入、当前60e90a7及70c2ec4/bd50b19回退包均保留。releases/index标注缺席，清单和删除前SHA在任务记录中。
 
 ## 未完成与当前限制
 
 | 项目 | 当前事实及下一步 |
 |---|---|
-| WPA3 热点 | 70c2ec4的SAE资源true、框架能力127含bit4已核验；用户已确认热点可以开启、Mac可以扫描到，但Mac连接失败，具体失败阶段尚未抓到。原“无法启动”问题与当前“客户端连接失败”分开；不记整个WPA3热点通过。当前保留正常使用的WPA2热点；后续需稳定的独立控制链及允许短时断网的复现窗口 |
+| WPA3 热点 | 用户历史确认可以开启、Mac可扫描但无法连接；当前没有新修复或认证阶段证据。用户禁止操作Mac网络/钥匙串，因此停止Mac联测；后续需要独立且获准的测试客户端，不启用漫游数据 |
 | 设备属性证明 | 70c2ec4普通应用无设备属性的TEE证明通过；设置安全锁屏后，包含属性仍为-66。五项当前属性分别请求、五项一起请求、正常平台五项一起请求均被拒绝；CN原厂分区检查与本地RKP诊断见keymint_followup记录。RKP签名和当前系统信息不等于工厂ID已获验证；信任根/吊销未审计。认证绑定EC/AES已移到已验收；不猜身份、不导入keybox或重置安全存储 |
 | TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
-| Recovery | bd50b19 的往返和缓存设备峰值为既有通过；当前70c2ec4的Recovery往返未执行，本轮授权并完成的是安装所需的正常重启；Scudo 失败注入和完整 Recovery OTA 仍未测，不为重复验收刷机 |
-| AOD / 扩展媒体 | AOD缺少标准DozeService配置，已补并编译；普通/root安装均因静态RRO不可升级被拒。临时RRO解析值改变但DreamManager仍null、未进Doze，已完全撤销。HEVC 720p/120帧编解码及EOS通过；MPEG4触发v3avpud SIGSEGV，确认漏提取原厂ARM插件并补清单/门禁；首轮完整构建又发现四项LIBC_PRIVATE版本不兼容，现已作4字节定向兼容且实际ELF检查通过；只读EROFS vendor未替换，60e90a7已完整构建并冻结，修复未安装或实机验收 |
+| Recovery | 60e90a7未做Recovery往返；bd50b19缓存/RSS为独立历史证据。Scudo失败注入与完整Recovery OTA仍未测，按实际需要及稳定控制链安排，不为重复验收刷机 |
+| AOD | 已发现并修复两个缺失的面板低功耗开关，临时DOZE/DOZE_SUSPEND与唤醒通过，定向APK已编译。完整ROM交付、物理可见性确认和适当功耗验证仍未完成；MPEG4短往返已移至上方已验收 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
 | 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
@@ -48,7 +49,7 @@ ROM源码 `60e90a7eafcc42bf72d64b2aad83160a2d22e1e1`，候选实际目录 `/srv/
 | HEVC短往返 | c2.mtk.hevc.encoder/decoder，1280×720，120帧编码、120帧解码和EOS；不扩展为长时/全格式验收 |
 | 交还状态 | 未重启手机或改变热点；联通数据开启、漫游eSIM关闭且未操作。鉴权网络ADB优先，已恢复UID2000/Enforcing；两canary一致，双击1。自有探针APK、DEX、片段和临时Doze覆盖均清理，用户KeyAttestation保留 |
 
-当前手机是70c2ec4/A/1790008554加上述DeviceDiagnostics数据分区更新。AOD静态覆盖、MPEG4插件尚未安装，TCP/BPF未修改运行中的APEX；不能把这些源码修复并入当前ROM已验收结论。原始截图/无线/设备日志仅在本机0600私有目录；Git只含脱敏结论，详见聚合validation的 `focused_followup_20260922`。
+当时手机是70c2ec4/A/1790008554加上述DeviceDiagnostics数据分区更新。AOD静态覆盖、MPEG4插件尚未安装，TCP/BPF未修改运行中的APEX；不能把这些源码修复并入当前ROM已验收结论。原始截图/无线/设备日志仅在本机0600私有目录；Git只含脱敏结论，详见聚合validation的 `focused_followup_20260922`。
 
 ## 认证绑定与设备属性证明的后续核对
 
