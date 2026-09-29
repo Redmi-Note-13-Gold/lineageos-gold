@@ -219,3 +219,5 @@ AOD覆盖和新增MPEG4 vendor模块使用正常产品入口，保留顺序bacon
 followup-r1的bacon在01:13:50退出1，第二阶段未运行；原实际invocation和独立guard成功恢复在followup-r1-terminal.json。源码按四项真实符号版本冲突修复后，followup-r2继续原OUT及epoch1790091429，不清理或跳过检查。主机回归环境指定GOLD_ANDROID_TREE为合并源码、GOLD_MPEG4_STOCK_LIBRARY为已锁定Global原厂ARM插件、GOLD_MPEG4_ELF_COMMAND为真实失败命令的JSON数组；tests/test_mpeg4_runtime.py要求三者全部提供，否则明确跳过这三项实文件测试。本次全部127项运行且通过，没有跳过。包门禁同时记录原输入和修复后哈希；构建完成仍需全部签名/VINTF/SELinux、14分区一致性和39项实际镜像文件检查。
 
 followup-r2终态为9月23日03:16:41入口exit0，bacon01:10:26、target-files-package56:41，真实InvocationID ab447bf1dced4329b97c84373ba23f86。独立guard03:16:47成功，0/zbud/N/Y与临时内容缺席现场核对。169输入/127主机测试、14分区/39实际文件及全Android门禁通过；全量包已独立复验并冻结到 `/srv/build/gold/releases/20260923-090824-60e90a7`。冻结保存全部228项主线受管文件、169项合并输入、Repo清单、同次检查工具/库及job/invocation记录。后续重新构建继续使用唯一OUT，安装从releases候选读取，不依赖已移除的可变ZIP别名。此userdebug/test-keys候选未作正式发行密钥或设备验收。
+
+2026-09-29补充：受限--module-apks现允许GoldStatusBarOverlay既有dimens.xml资源变化，所有源/图/锁/签名约束不变。4项Ninja84.59秒、两个Doze布尔值和21项相关回归已过，静态RRO未在线升级。新的完整ROM必须校验SystemUI DOZE与DOZE_SUSPEND两个编译值，并在实际system_ext核对覆盖APK，实际文件检查40项。手机已装60e90a7；当前禁止蜂窝数据、电话、短信和Mac网络/钥匙串操作，旧联通数据授权不适用于本次。

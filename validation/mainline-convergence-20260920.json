@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-23T09:12:06+08:00",
+  "updated_at": "2026-09-29T14:33:35.055940+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6065,34 +6065,34 @@
     }
   },
   "current_installed_candidate": {
-    "rom_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
-    "incremental": "1790008554",
-    "slot": "a",
-    "candidate": "/srv/build/gold/releases/20260922-130256-70c2ec4",
-    "ota_sha256": "df868491641dd16021951af2d87b2f3d7a4c8e579d0f20964e7a3cf4203c273b",
-    "target_files_sha256": "1540f7966f681f900b223627aa9dd676adb4ed005aba1c1f1ba6a7549f2c57ed",
-    "evidence_key": "candidate_70c2ec4_device",
+    "rom_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
+    "incremental": "1790091429",
+    "slot": "b",
+    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
+    "ota_sha256": "09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a",
+    "target_files_sha256": "56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63",
+    "evidence_key": "candidate_60e90a7_device",
     "data_app_updates": {
       "com.android.devicediagnostics": {
         "sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
-        "source_revision": "f6b67d402c66574cb8103d4450ca6501d2d3184b",
-        "evidence_key": "focused_followup_20260922"
+        "matches_system_candidate_apk": true,
+        "prior_activity_cases_passed": 28
       }
     }
   },
   "current_pending_android_delta": {
-    "source_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
+    "source_revision": "0737d5f",
+    "state": "aod_panel_modes_apk_built_full_rom_pending",
     "merged_input_count": 169,
-    "state": "rom_frozen_awaiting_device_installation",
-    "source_supports_esim": false,
-    "rom_built": true,
-    "device_accepted": false,
-    "diagnostics_apk_installed_and_28_cases_passed": true,
-    "aod_overlay_compiled_but_static_update_rejected": true,
-    "mpeg4_vendor_plugin_recipe_restored_not_packaged_or_installed": false,
-    "required_next_step": "Wait for a separate permitted installation window, then validate the new candidate on the device; no automatic reboot or network changes.",
-    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
-    "mpeg4_vendor_plugin_packaged_not_installed": true
+    "changed_android_inputs": [
+      "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml"
+    ],
+    "rom_built": false,
+    "permanent_device_fix_installed": false,
+    "temporary_hardware_doze_and_suspend_probes_passed": true,
+    "physical_visibility_confirmation_pending": true,
+    "compiled_apk_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/result.json",
+    "required_next_step": "Complete the standard full-ROM incremental build, freeze and validate its own artifacts before a permitted installation window. Do not touch Mac networking or keychain; phone cellular data, calls and SMS are prohibited."
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -9103,5 +9103,159 @@
       "TCP RST natural BPF cleanup",
       "KeyMint device attribute attestation"
     ]
+  },
+  "candidate_60e90a7_device": {
+    "recorded_at": "2026-09-29T14:33:35.055940+00:00",
+    "rom_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
+    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
+    "incremental": "1790091429",
+    "slot": "b",
+    "ota_sha256": "09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a",
+    "target_files_sha256": "56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63",
+    "installation": {
+      "update_engine_success": true,
+      "host_exit_code": 0,
+      "data_wipe": false,
+      "from_slot": "a",
+      "to_slot": "b",
+      "installer_partition_hashes_matched": 14,
+      "independent_active_partition_hashes_matched": 14,
+      "normal_reboots": 1,
+      "boot_completed": true,
+      "observation_seconds_including_adb_reconnection": 87.02,
+      "not_a_pure_boot_duration": true,
+      "selinux": "Enforcing",
+      "data_persist_mounted": true,
+      "snapshot": "none",
+      "canaries_matched_after_unlock": 2
+    },
+    "media": {
+      "client_uid": 2000,
+      "hevc_encoder": "c2.mtk.hevc.encoder",
+      "hevc_decoder": "c2.mtk.hevc.decoder",
+      "hevc_frames": 120,
+      "mpeg4_encoder": "c2.mtk.mpeg4.encoder",
+      "mpeg4_decoder": "c2.mtk.mpeg4.decoder",
+      "mpeg4_frames": 60,
+      "both_eos_passed": true,
+      "service_pids_stable": true,
+      "mpeg4_runtime_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+      "own_generated_media_and_dex_removed": true,
+      "long_duration_all_formats_not_claimed": true
+    },
+    "apps": {
+      "diagnostics_active_apk_sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
+      "matches_previously_28_case_accepted_apk": true,
+      "keyattestation_preserved": true,
+      "keyattestation_version": [
+        "versionCode=198",
+        "versionName=1.8.4"
+      ]
+    },
+    "aod": {
+      "installed_doze_component_bound": true,
+      "clock_render_observed": true,
+      "installed_display_state": "ON",
+      "installed_doze_display_supported": false,
+      "installed_doze_suspend_supported": false,
+      "installed_panel_brightness_node": 513,
+      "temporary_display_mode_probe": "DOZE",
+      "temporary_suspend_mode_probe": "DOZE_SUSPEND",
+      "temporary_panel_brightness_node": 16,
+      "wake_to_awake_and_compositor_on_verified": true,
+      "temporary_settings_property_overlay_removed": true,
+      "source_fix_revision": "0737d5f",
+      "source_change": "SystemUI doze_display_state_supported and doze_suspend_display_state_supported true",
+      "physical_visibility_user_confirmation_pending": true,
+      "long_term_power_measurement": false,
+      "permanent_fix_installed": false,
+      "compiled_apk": {
+        "path": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/GoldStatusBarOverlay.apk",
+        "source_output": "/srv/build/gold/source/out-gold-standard/soong/.intermediates/device/xiaomi/gold/overlay/GoldStatusBarOverlay/GoldStatusBarOverlay/android_common/signed/GoldStatusBarOverlay.apk",
+        "bytes": 8542,
+        "sha256": "26e1a00b6639f131d994b39499832f57dce393ff6047890e67ebd10be2699272",
+        "signature_verified": true
+      },
+      "compiled_bools_verified": true,
+      "module_build_seconds": 84.59,
+      "targeted_host_tests_passed": 21,
+      "module_vm_restored": [
+        "0",
+        "zbud",
+        "N",
+        "Y"
+      ]
+    },
+    "boundaries": {
+      "no_cellular_data_calls_sms_or_sim_changes": true,
+      "mac_network_and_keychain_operations_prohibited": true,
+      "wpa3_mac_association_not_retested": true,
+      "mac_reconnection_preflight_interrupted_connectivity": true,
+      "credential_read_attempt_failed_no_password_saved": true,
+      "mac_test_helpers_removed_and_script_disabled": true,
+      "no_server_reboot_test": true,
+      "ims_deferred": true,
+      "esim_support_withdrawn": true
+    },
+    "handoff": {
+      "ota_stage_removed": true,
+      "temporary_test_files_removed": true,
+      "temporary_doze_overlay_and_property_removed": true,
+      "adb_uid": 2000,
+      "selinux": "Enforcing",
+      "mobile_data_off": true,
+      "roaming_subscription_data_off": true,
+      "mac_network_operations_prohibited": true
+    },
+    "private_raw_evidence": "Local work/runtime-resume-20260929; raw device/radio/screenshots remain private and are not copied into Git."
+  },
+  "resume_obsolete_ota_cleanup_20260929": {
+    "status": "deleted",
+    "at": "2026-09-29T14:30:36.996986+00:00",
+    "user_authorized": true,
+    "authorization": "Old unused OTA and partial outputs may be deleted; no official inputs/cache/swap or target-files removed.",
+    "items": [
+      {
+        "candidate": "20260920-213629-97969dc",
+        "path": "/srv/build/gold/releases/20260920-213629-97969dc/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+        "bytes": 1174495024,
+        "sha256": "30a753e70b74de6243bdb649972b8d87d11995d40ced7ad877b2ec2793e3d5e6",
+        "retained_target_files": "/srv/build/gold/releases/20260920-213629-97969dc/lineage_gold-target_files.zip",
+        "reason": "Superseded OTA; current 60e90a7 and preceding accepted 70c2ec4/bd50b19 packages retained.",
+        "deleted": true,
+        "deleted_at": "2026-09-29T14:32:01.259367+00:00"
+      },
+      {
+        "candidate": "20260920-222119-2cd2675",
+        "path": "/srv/build/gold/releases/20260920-222119-2cd2675/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+        "bytes": 1174495068,
+        "sha256": "a908222f5162bdc01c18b87634d18f9c433d258199e5292cb7fd3269f55a290d",
+        "retained_target_files": "/srv/build/gold/releases/20260920-222119-2cd2675/lineage_gold-target_files.zip",
+        "reason": "Superseded OTA; current 60e90a7 and preceding accepted 70c2ec4/bd50b19 packages retained.",
+        "deleted": true,
+        "deleted_at": "2026-09-29T14:32:01.259367+00:00"
+      },
+      {
+        "candidate": "20260921-025828-c36757a",
+        "path": "/srv/build/gold/releases/20260921-025828-c36757a/lineage-23.2-20260920-UNOFFICIAL-gold.zip",
+        "bytes": 1174889334,
+        "sha256": "a99afcc0da3fd26fd47537ee3d355abfcf1bec6a42ad262a908c402b1cf455a5",
+        "retained_target_files": "/srv/build/gold/releases/20260921-025828-c36757a/lineage_gold-target_files.zip",
+        "reason": "Superseded OTA; current 60e90a7 and preceding accepted 70c2ec4/bd50b19 packages retained.",
+        "deleted": true,
+        "deleted_at": "2026-09-29T14:32:01.259367+00:00"
+      },
+      {
+        "candidate": "20260922-002433-89ae983",
+        "path": "/srv/build/gold/releases/20260922-002433-89ae983/lineage_gold-ota.zip",
+        "bytes": 1174893671,
+        "sha256": "51cef348f7bd90b73b5d6b04cee176134c5a65f45c3eb7a1b91caef554d1661a",
+        "retained_target_files": "/srv/build/gold/releases/20260922-002433-89ae983/lineage_gold-target_files.zip",
+        "reason": "Superseded OTA; current 60e90a7 and preceding accepted 70c2ec4/bd50b19 packages retained.",
+        "deleted": true,
+        "deleted_at": "2026-09-29T14:32:01.259367+00:00"
+      }
+    ],
+    "freed_bytes": 4698773097
   }
 }
