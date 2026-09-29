@@ -77,3 +77,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 60e90a7本次可安装包和恢复核对入口为 `/srv/build/gold/releases/20260923-090824-60e90a7`，含全量OTA/target-files、candidate.json及原Android结果。verification-source保存构建时全部主线受管文件，merged-inputs保存169项实际输入；源码后的文档记录提交不改变此候选。check-artifacts与check-gold-package的冻结副本复验通过，MPEG4修复后精确哈希和Diagnostics APK哈希已记录。可变OUT中的旧ZIP名称已转为package-path-map映射，不能因其缺席判产物丢失，也不能用旧候选的设备结果代替本候选验收。
 
 2026-09-29当前设备：已安装冻结60e90a7到B/1790091429，正常启动、14分区回读、data/persist和两canary通过；MPEG4短往返通过，AOD新增面板低功耗修复尚待正式ROM交付。保留70c2ec4和bd50b19包作为历史回退输入。不要把旧“联通流量允许”沿用到目前仅有漫游卡的设备；禁止蜂窝数据/电话/短信及Mac网络/钥匙串操作。
+
+2026-09-29待安装AOD候选为/srv/build/gold/releases/20260929-231337-8f01656，incremental1790692970，完整OTA与target-files门禁/独立复验通过。当前手机仍60e90a7/B/1790091429；安装与设备验收未执行，不能把新包当作已在手机运行。继续核对身份、槽位、snapshot/安装器、canary、供电和当前空闲；绝不开漫游数据或操作Mac网络。

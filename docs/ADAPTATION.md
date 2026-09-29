@@ -213,3 +213,5 @@ tests/test_mpeg4_runtime.py在原厂实文件上运行正式提取配方，按EL
 AOD的DozeService修复只解决绑定，仍缺SystemUI两个面板低功耗资源；默认false会经DozeScreenStatePreventingAdapter将DOZE映射ON。现场临时分别启用后compositor进入Doze/DozeSuspend，亮度节点513→16，正常唤醒成功。0737d5f将两个true写入现有GoldStatusBarOverlay，不改HAL/内核、不伪造状态；定向APK及实际编译值已验，旧包缺值。40项实际镜像门禁纳入该APK。正式ROM交付和物理可见性/长期功耗仍分开记录，临时覆盖/属性已撤销，原用户开关恢复。
 
 当前手机禁止任何蜂窝流量、电话、短信或SIM操作；Mac网络/钥匙串禁止操作，WPA3联测停止。设备属性证明、RST自然回收等小众边界先让位于实际功能，IMS仍最后。主线证据见聚合validation的candidate_60e90a7_device；旧版历史验收不继承。
+
+2026-09-29 AOD正式包交付：8f01656在原OUT完成bacon11:46和target-files-package07:31，入口23:05:21 exit0；40项实际镜像检查含新增SystemUI低功耗配置。冻结与独立复验通过于/srv/build/gold/releases/20260929-231337-8f01656，设备尚未安装，不把此前临时DOZE探针扩大为永久修复验收。

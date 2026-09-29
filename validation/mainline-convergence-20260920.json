@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-29T14:33:35.055940+00:00",
+  "updated_at": "2026-09-29T15:18:22.401246+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6082,17 +6082,22 @@
   },
   "current_pending_android_delta": {
     "source_revision": "0737d5f",
-    "state": "aod_panel_modes_apk_built_full_rom_pending",
+    "state": "full_rom_frozen_waiting_device_install",
     "merged_input_count": 169,
     "changed_android_inputs": [
       "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml"
     ],
-    "rom_built": false,
+    "rom_built": true,
     "permanent_device_fix_installed": false,
     "temporary_hardware_doze_and_suspend_probes_passed": true,
     "physical_visibility_confirmation_pending": true,
     "compiled_apk_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/result.json",
-    "required_next_step": "Complete the standard full-ROM incremental build, freeze and validate its own artifacts before a permitted installation window. Do not touch Mac networking or keychain; phone cellular data, calls and SMS are prohibited."
+    "required_next_step": "Verify fresh phone availability, identity, data-off, supply and installer state; perform the already authorized data-preserving installation in an idle window, then validate real AOD states, visibility and wake. Never change Mac networking or keychain or enable roaming data.",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "candidate_source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "build_datetime": 1790692970,
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39"
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -9257,5 +9262,86 @@
       }
     ],
     "freed_bytes": 4698773097
+  },
+  "resume_aod_r1_build_20260929": {
+    "recorded_at": "2026-09-29T15:18:22.401246+00:00",
+    "source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "android_fix_revision": "0737d5f",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "build_datetime": 1790692970,
+    "build_started_at": 1790692970.310636,
+    "entry_finished_at": 1790694321.3603811,
+    "entry_exit_code": 0,
+    "build_stages": [
+      {
+        "targets": [
+          "bacon"
+        ],
+        "exit_code": 0
+      },
+      {
+        "targets": [
+          "target-files-package"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "stage_durations": [
+      "11:46 (mm:ss)",
+      "07:31 (mm:ss)"
+    ],
+    "input_count": 169,
+    "managed_project_count": 10,
+    "repo_project_count": 1158,
+    "artifact_signature_vintf_selinux_and_date_gates_passed": true,
+    "payload_partitions_matched": 14,
+    "actual_image_files_matched": 40,
+    "aod": {
+      "doze_component": true,
+      "display_doze_supported": true,
+      "display_doze_suspend_supported": true,
+      "runtime_verified": false
+    },
+    "mpeg4_runtime_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+    "euicc": {
+      "supported": false,
+      "packaged_files_absent": true,
+      "feature_and_privileged_permission_absent": true
+    },
+    "ota": {
+      "path": "/srv/build/gold/releases/20260929-231337-8f01656/lineage_gold-ota.zip",
+      "sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+      "bytes": 1169771697
+    },
+    "target_files": {
+      "path": "/srv/build/gold/releases/20260929-231337-8f01656/lineage_gold-target_files.zip",
+      "sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+      "bytes": 2889676165
+    },
+    "frozen_independent_rechecks_passed": true,
+    "package_link_counts": {
+      "ota": 1,
+      "target_files": 1
+    },
+    "vm_restored_live": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "guard_restored_at": "2026-09-29T15:05:25.455407+00:00",
+    "temporary_tools_scratch_restart_protection_cleaned": true,
+    "host_zip_unzip_not_installed": true,
+    "kernel_oom_seen": false,
+    "targeted_python_tests_passed": 21,
+    "source_delta_only_existing_overlay_xml": true,
+    "output_inode": 9437191,
+    "device_accepted": false,
+    "automatically_installed": false,
+    "phone_operated": false,
+    "release_key_acceptance": false,
+    "old_ota_absence_annotations_preserved": 4,
+    "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-terminal.json",
+    "freeze_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-freeze-state.json"
   }
 }

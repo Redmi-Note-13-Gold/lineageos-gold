@@ -108,3 +108,5 @@ project/
 9月23日新增第12个冻结候选 `20260923-090824-60e90a7`。两份ZIP经过自有系统盘bridge完整复制、SHA复读/fsync后才移除活动OUT同inode别名，再复制至同一releases staging并独立复验；不直接改OverlayFS upper，最终候选每包nlink=1。路径映射在候选package-path-map.json，完整转存状态在jobs/gold-mainline-20260920/followup-r2-freeze-state.json；其本次/tmp bridge和复验目录已清理。唯一OUT inode9437191、官方输入、11个既有候选、cache/swap保留。
 
 2026-09-29按用户清理授权删除4份已被新版本取代的旧OTA，释放4,698,773,097字节；对应target-files与冻结原始记录保留，releases/index的file_present/removed_at/removal_record标明实际缺席。详见jobs/gold-mainline-20260920/resume-aod-obsolete-ota-cleanup.json。当前/前一验收OTA、官方输入、唯一OUT inode9437191、缓存和swap均保留，不因此建立第二套工程。
+
+2026-09-29新增真实冻结目录/srv/build/gold/releases/20260929-231337-8f01656，全量OTA与target-files各nlink1；index共13个候选目录，另保留4条旧OTA已授权删除的缺席注记。新冻结的/tmp bridge和独立复验临时目录已清理，历史拒绝包与官方输入未动。
