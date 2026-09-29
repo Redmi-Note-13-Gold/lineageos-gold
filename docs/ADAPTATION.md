@@ -217,3 +217,11 @@ AOD的DozeService修复只解决绑定，仍缺SystemUI两个面板低功耗资�
 2026-09-29 AOD正式包交付：8f01656在原OUT完成bacon11:46和target-files-package07:31，入口23:05:21 exit0；40项实际镜像检查含新增SystemUI低功耗配置。冻结与独立复验通过于/srv/build/gold/releases/20260929-231337-8f01656，设备尚未安装，不把此前临时DOZE探针扩大为永久修复验收。
 
 2026-09-29 AOD安装追加：8f01656已保数据安装到A/1790692970，安装器与独立各14分区、启动/Enforcing/挂载/snapshot none通过。两个永久SystemUI低功耗资源实读true；首次解锁后两canary一致。正式开关分别进入Off/DozeSuspend，后者dozeScreenState=4、面板节点16，程序唤醒回Awake/On；截图时钟绘制正常。物理亮度/双击反馈与长期功耗未完成，不扩大通过范围。原设置和普通鉴权网络ADB已恢复，本次手机安装暂存清理，漫游流量保持关闭，Mac网络与钥匙串未操作。详见candidate_8f01656_device，冻结历史不改写。
+
+### 2026-09-30：充电认证与面板配置的后续接线（尚待构建、安装）
+
+`batterysecret` 已在固定 Global 输入中，但缺少启动脚本。补入同版本原文 `init.batterysecret.rc`（SHA-256 `e997598a72ec639aa3a68ef0a531faf001c049ee036db87e003155d6a5b9ef88`）与专用 SELinux 域；只标记实机存在的三个 PD 认证控制叶子，保留共用 USB 电源与状态节点标签。Type-C `data_role` 复用既有 MTK USB 类型，现有 USB HAL 权限保留。精确属性 `persist.vendor.accelerate.charge` 的 get/set(false) 已由原厂代码确认。这只补启动与访问契约，不证明 33W 协商或关机充电验收。
+
+物理显示 ID `4627039422300187648` 与固定 Global 文件一致；52e9435 仍使用通用配置、HBM 数据为空。新设备配置保留原厂亮度曲线、6001 lux、环境光窗口等参数（原文件 SHA-256 `86238956f74269553d4276a6f945dac4b4d3370bc17a180d7f2243e45edec1a1`），仅把当前框架忽略的 `thermalStatusLimit` 换成标准 thermal brightness map：在 critical 时保守限制到普通亮度；它不宣称与 MIUI 未公开的热语义等价。该 cap 为原厂 transition 经当前 min/max 归一化后的框架坐标，向下取 `0.4988989`；修改面板边界时须同步复核。现有 SKIN `mtktsAP` 已确认可读，为其开启 Monitor，保证热状态变化会回调；不改原有温度阈值。
+
+原厂全零 HBM timing 会使当前框架在高亮时反复调度约 1 ms 后的回调。`0003-hbm-zero-timing.patch` 仅对全零三元组清除并跳过预算定时器，非零配额和其他状态门控保持原逻辑；附一项现有显示控制器单元用例。上游等价修复可替代后删除此补丁。编译、配置加载、定时器用例与物理亮度/热保护分别验收。

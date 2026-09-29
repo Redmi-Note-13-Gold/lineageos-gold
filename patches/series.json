@@ -37,7 +37,8 @@
     "revision": "35ad1f68539dce0857d25154dacb1116100737e9",
     "patches": [
       "patches/frameworks__base/0001-status-icon-packing-r2.patch",
-      "patches/frameworks__base/0002-statusbar-cutout-intersection.patch"
+      "patches/frameworks__base/0002-statusbar-cutout-intersection.patch",
+      "patches/frameworks__base/0003-hbm-zero-timing.patch"
     ]
   },
   {

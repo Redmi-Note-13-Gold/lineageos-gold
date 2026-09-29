@@ -1,6 +1,16 @@
 # Use the canonical sysfs path, not the /sys/class symlink.
 genfscon sysfs /devices/virtual/thermal/thermal_message/boost u:object_r:vendor_sysfs_thermal_boost:s0
 
+# Only the three PD authentication control leaves need a dedicated write type.
+# Preserve existing labels on the parent directory and all unrelated readers.
+genfscon sysfs /devices/platform/pd_adapter/Charging_Adapter/pd_adapter/usbpd_verifed u:object_r:vendor_gold_sysfs_usbpd:s0
+genfscon sysfs /devices/platform/pd_adapter/Charging_Adapter/pd_adapter/request_vdm_cmd u:object_r:vendor_gold_sysfs_usbpd:s0
+genfscon sysfs /devices/platform/pd_adapter/Charging_Adapter/pd_adapter/verify_process u:object_r:vendor_gold_sysfs_usbpd:s0
+
+# The OEM daemon opens data_role O_RDWR; reuse MediaTek's Type-C type on this
+# one leaf, keeping the parent port and its other controls unchanged.
+genfscon sysfs /devices/platform/rt-pd-manager/typec/port0/data_role u:object_r:sysfs_usb_nonplat:s0
+
 # Canonical paths for the stock fingerprint control nodes.
 genfscon sysfs /devices/platform/fingerprint/clk_enable u:object_r:vendor_sysfs_fingerprint_control:s0
 genfscon sysfs /devices/platform/fingerprint/irq u:object_r:vendor_sysfs_fingerprint_control:s0

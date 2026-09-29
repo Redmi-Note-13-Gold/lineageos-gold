@@ -285,6 +285,10 @@ PRODUCT_COPY_FILES += \
 # USB
 $(call soong_config_set_bool,mediatek_gadget,use_custom_usb_gadget_rc,true)
 
+# Fixed Global stock PD authentication service; the binary alone does not start.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/init/init.batterysecret.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.batterysecret.rc
+
 PRODUCT_PACKAGES += \
     android.hardware.usb-service.mediatek \
     android.hardware.usb.gadget-service.mediatek
@@ -295,6 +299,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.host.xml
+
+# Display configuration for this physical panel; timing compatibility lives in frameworks/base.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/configs/display/display_id_4627039422300187648.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/displayconfig/display_id_4627039422300187648.xml
 
 # Vibrator
 PRODUCT_PACKAGES += \

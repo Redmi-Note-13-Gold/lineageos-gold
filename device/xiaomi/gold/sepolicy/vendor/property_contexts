@@ -6,6 +6,8 @@ persist.vendor.sys.fp.info u:object_r:vendor_gold_fingerprint_prop:s0 exact stri
 persist.vendor.sys.fp.uid u:object_r:vendor_gold_fingerprint_prop:s0 exact string
 persist.vendor.sys.fp.module u:object_r:vendor_gold_fingerprint_prop:s0 exact string
 
+persist.vendor.accelerate.charge u:object_r:vendor_gold_accelerate_charge_prop:s0 exact string
+
 # Stock camera identity and calibration status, using the existing camera property type.
 vendor.camera.sensor.w.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string
 vendor.camera.sensor.f.fuseID u:object_r:vendor_mtk_camera_prop:s0 exact string

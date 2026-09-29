@@ -126,6 +126,7 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'lib/libmp4enc_sa.ca7.so',
                    'bin/hw/android.hardware.health-service.gold',
                    'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
+                   'bin/batterysecret', 'etc/init/init.batterysecret.rc',
                    'etc/vintf/manifest/android.hardware.health-service.gold.xml',
                    'etc/selinux/vendor_file_contexts', 'etc/permissions/android.hardware.telephony.ims.xml',
                    'etc/wifi/wpa_supplicant.conf', 'etc/wifi/wpa_supplicant_overlay.conf',
@@ -147,6 +148,7 @@ def verify_images(target, host_bin, scratch_parent=None):
                        'overlay/GoldStatusBarOverlay.apk',
                        'priv-app/SystemUI/SystemUI.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
+        'product': ['etc/displayconfig/display_id_4627039422300187648.xml'],
     }
     recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
     recovery_wanted = ['system/bin/hw/android.hardware.health-service.gold-recovery',
@@ -360,6 +362,14 @@ def verify(target, aapt2, readelf, profile):
         require(b'on init && property:ro.build.type=userdebug\n'
                 b'    setprop ro.adb.secure.recovery 0\n' in recovery_rc,
                 'Debug Recovery must enable its own ADB access before userdata is available')
+
+        for packaged, source in [
+            ('VENDOR/etc/init/init.batterysecret.rc', 'init/init.batterysecret.rc'),
+            ('PRODUCT/etc/displayconfig/display_id_4627039422300187648.xml',
+             'configs/display/display_id_4627039422300187648.xml'),
+        ]:
+            require(archive.read(packaged) == (profile.parents[4] / source).read_bytes(),
+                    'Packaged stock device configuration differs from mainline: ' + packaged)
 
         power_rc = 'VENDOR/etc/init/android.hardware.power-service.gold.rc'
         power_xml = 'VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml'

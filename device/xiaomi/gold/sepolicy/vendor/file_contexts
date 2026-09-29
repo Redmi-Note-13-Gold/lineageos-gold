@@ -5,6 +5,9 @@
 # Keep restorecon consistent with the boost genfscon label.
 /sys/devices/virtual/thermal/thermal_message/boost u:object_r:vendor_sysfs_thermal_boost:s0
 
+# The exact Global stock PD authenticator binary; init starts it in its own domain.
+/(vendor|system/vendor)/bin/batterysecret u:object_r:batterysecret_exec:s0
+
 # Extraction dereferences the stock mt6833 symlinks into these flat paths.
 # Keep their original same-process graphics HAL labels.
 /(vendor|system/vendor)/lib(64)?/lib(pq_sec|mml|aal_sec)\.so u:object_r:same_process_hal_file:s0
