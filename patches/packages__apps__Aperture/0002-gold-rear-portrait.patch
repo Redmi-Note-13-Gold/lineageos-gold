@@ -236,7 +236,7 @@ index 32ee154..cc0a8b2 100644
  }
 diff --git a/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt b/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt
 new file mode 100644
-index 0000000..696b4d3
+index 0000000..eb99a85
 --- /dev/null
 +++ b/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt
 @@ -0,0 +1,387 @@
@@ -423,7 +423,7 @@ index 0000000..696b4d3
 +                }
 +                val effect = reader(plan.main, ImageFormat.YUV_420_888)
 +                val original = reader(plan.main, ImageFormat.YUV_420_888)
-+                val depth = reader(plan.depth, 0x20365931)
++                val depth = reader(plan.depth, ImageFormat.Y16)
 +                listOf(original, depth).forEach { r ->
 +                    r.setOnImageAvailableListener({
 +                        if (!finished) try { it.acquireNextImage()?.close() }

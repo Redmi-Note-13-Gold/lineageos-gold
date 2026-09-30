@@ -11,6 +11,7 @@ vendor.audio.spkcal.copy.inhal=true
 vendor.audiohal.telephonytx.type=2
 
 # Camera
+persist.vendor.camera.privapp.list=org.lineageos.aperture
 camera.disable_zsl_mode=1
 persist.vendor.camera3.pipeline.bufnum.base.imgo=4
 persist.vendor.camera3.pipeline.bufnum.base.lcso=4

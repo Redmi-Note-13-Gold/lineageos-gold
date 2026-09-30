@@ -368,7 +368,13 @@ def verify(target, aapt2, readelf, profile):
         aod_support = [line.split('=', 1)[1].strip() for line in vendor_properties
                        if line.startswith('ro.vendor.mtk_aod_support=')]
         require(aod_support == ['1'], 'MTK composer must accept native DOZE modes')
+        camera_clients = [line.split('=', 1)[1].strip() for line in vendor_properties
+                          if line.startswith('persist.vendor.camera.privapp.list=')]
+        require(camera_clients == ['org.lineageos.aperture'], 'Aperture must retain OEM private stream sizes')
         property_contexts = archive.read('VENDOR/etc/selinux/vendor_property_contexts').decode()
+        require(re.search(r'^persist\.vendor\.camera\.privapp\.list\s+'
+                          r'u:object_r:vendor_mtk_camera_prop:s0\s+exact\s+string\s*$',
+                          property_contexts, re.M), 'Missing exact camera private-stream property label')
         for name, context in [('persist.vendor.ims_support', 'vendor_mtk_ims_prop'),
                               ('ro.vendor.md_auto_setup_ims', 'vendor_mtk_ims_prop'),
                               ('persist.vendor.volte_support', 'vendor_mtk_volte_support_prop')]:
@@ -539,6 +545,7 @@ def verify(target, aapt2, readelf, profile):
                 'Incorrect big-core power key')
         return {'gold_package_contents_verified': True, 'graphics_32bit': graphics,
                 'portrait': {'original_libraries': portrait, 'aperture_partition': 'system_ext',
+                             'private_stream_client': camera_clients[0],
                              'runtime_verified': False},
                 'health': health, 'health_vintf': declarations, 'charger_definitions': chargers,
                 'ims': {'feature_permission': ims_feature, 'feature_declared': True,

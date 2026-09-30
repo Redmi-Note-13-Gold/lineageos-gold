@@ -1,6 +1,12 @@
-更新于 2026-09-30 16:27（UTC+8）。**R6 `450d95b` 已保数据安装在 A 槽 / `1790741813`，14 个活动分区回读、DE/CE 两份数据标记、正式 MAC 策略和两次静默运行检查通过。** ADB 已恢复 UID 2000，SELinux 为 Enforcing。功能与长期功耗验收仍未完成。
+更新于 2026-09-30 18:06（UTC+8）。**R7 `f874058` 已保数据安装在 B 槽 / `1790758254`，14 个活动分区回读、DE/CE 标记、正式 MAC 策略和静默运行检查通过。** ADB 已恢复 UID 2000、Enforcing 保持；完整硬件和长期功耗尚未验收。
 
-## 当前 R6：安装与静默检查完成
+## 当前 R7 与下一批相机修复
+
+R7 恢复原厂 `ro.vendor.mtk_aod_support=1`，标准构建和成品检查通过后，只 apply 和正常重启各一次。冻结目录 `/srv/build/gold/releases/20260930-171651-f874058`，安装与边界见 [第七批记录](../validation/adaptation-20260930-r7.json)。旧 AOD 设置已从临时值0恢复为1；一次正常唤醒/锁屏后，系统与 SurfaceFlinger 进入 DOZE_SUSPEND，内核显示唤醒锁在转入后释放。物理时钟可见性等待用户反馈，USB连接时的读数不作放电率验收。
+
+用户两次重试的现场日志已明确相机失败点：108MP 的私有会话类型正确，但框架按标准流表将 JPEG 改为1920×1440，尺寸检查正确拒绝该小图；人像在 JNI 之前因错误 FOURCC `0x20365931` 创建 ImageReader 失败。下一批以最小修改修复：Aperture加入已有私有流精确名单，新增该属性的精确标签并复用现有相机权限，深度格式改用已有 `ImageFormat.Y16`。现有成品校验同步检查名单和标签；不删除尺寸校验、不增加框架分支、权限规则或新测试套件。相机修复尚未编译或实拍通过，待同一批构建验证。
+
+## R6：安装与静默检查记录
 
 R6 在科研机唯一输出完成 bacon 与 target-files 两阶段构建；同次签名、VINTF、SELinux、14 个 payload 分区及 51 个实际镜像文件检查通过。构建记录 `1790741813226865224`，源码 `450d95be388d0b14ea1e3fbd3a261a454a39b1ba`，固定 epoch `1790741813`。没有额外编译测试目标，不把此前 Power/Health 或失败的 DisplayServiceTests 记作本轮通过。冻结目录 `/srv/build/gold/releases/20260930-145258-450d95b`；OTA SHA-256 `3fbce22f9cd185a94b78f978c4df1a56238fbeafb664c87650829c405f0d57f4`，target-files `615d8a149d46ff50247b0734e07f519c212f0d02df79f2e44a1a79079ffefc3d`。冻结 `candidate.json` 保持当时尚未实机验收的原始记录；安装证据另见 [第六批交付记录](../validation/adaptation-20260930-r6.json)。
 
@@ -12,7 +18,7 @@ R6 用设备专用 `@GOLD_APERTURE` 消除 R5 的平台键表重名，仍引用�
 
 用户新报告 AOD 时屏幕发热、掉电明显。batterystats 显示 15:38:26 断电时 80% 至 16:04:28 的 54%，同期持续 `screen_doze` 且无相机活动；OTA daemon 已于 15:40 完成，不能把整段下降归于 OTA。R4 快照为 battery 38°C、skin 41.893°C，healthd/ueventd 各约占一核 13%；框架记录 `DOZE_SUSPEND`、未持有框架 suspend blocker，16:22 Power HAL 请求与 vote 均中性，不支持持续 boost 归因。charge_counter 近似按容量百分比阶梯变化，不能当作真实库仑积分。掉电根因仍需在 R6 上调查，不能把 AOD 状态切换成功写成低功耗验收。WPA3 iPad 关联、33W/关机充电及其他物理功能、设备属性证明 `-66`、最后安排的 IMS 仍未完成。
 
-已定位一个确定的显示配置缺陷：手机 `ro.vendor.mtk_aod_support=0`，而锁定原厂输入与参考设备树均为 `1`。手机 composer SHA 与分析样本相同，其代码在该值为 `0` 时直接拒绝 DOZE/DOZE_SUSPEND；SurfaceFlinger 的状态名称不能证明请求被硬件接受。匹配 DRM/面板已有 doze 实现。本轮最小修复仅恢复原厂值 `1`，并在现有包校验器增加同值检查；不新增框架、权限或节点写入，不绕过硬件 caps 保护。修复尚未编译、安装，底层挂起及实际掉电改善仍待验证。
+已定位一个确定的显示配置缺陷：手机 `ro.vendor.mtk_aod_support=0`，而锁定原厂输入与参考设备树均为 `1`。手机 composer SHA 与分析样本相同，其代码在该值为 `0` 时直接拒绝 DOZE/DOZE_SUSPEND；SurfaceFlinger 的状态名称不能证明请求被硬件接受。匹配 DRM/面板已有 doze 实现。本轮最小修复仅恢复原厂值 `1`，并在现有包校验器增加同值检查；不新增框架、权限或节点写入，不绕过硬件 caps 保护。该修复已随R7编译、安装；本轮正常DOZE路径及显示锁释放已有证据，实际掉电改善仍待验证。
 
 ## R4 / R5 历史失败
 
