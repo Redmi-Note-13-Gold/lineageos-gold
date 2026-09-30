@@ -1,0 +1,106 @@
+{
+  "recorded_at": "2026-09-30T07:30:18.669361+00:00",
+  "source_revision": "450d95be388d0b14ea1e3fbd3a261a454a39b1ba",
+  "build_datetime": 1790741813,
+  "candidate": "/srv/build/gold/releases/20260930-145258-450d95b",
+  "build_record": "/srv/build/gold/source/out-gold-standard/gold-build-records/1790741813226865224",
+  "build_invocation_id": "4974775fd18c46beb8cceeca371ccad1",
+  "guard_invocation_id": "ec1dd20754ba4215b5ca01aea28b1b8b",
+  "build_exit_code": 0,
+  "build_stages": [
+    {
+      "targets": [
+        "bacon"
+      ],
+      "exit_code": 0
+    },
+    {
+      "targets": [
+        "target-files-package"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "build_checks": {
+    "artifact_contract_verified": true,
+    "android_validators_passed": true,
+    "ota_and_payload_signatures_verified": true,
+    "gold_package_verified": true,
+    "payload_images_verified": true
+  },
+  "payload_partitions": [
+    "boot",
+    "dtbo",
+    "odm_dlkm",
+    "product",
+    "scp",
+    "system",
+    "system_dlkm",
+    "system_ext",
+    "vbmeta",
+    "vbmeta_system",
+    "vbmeta_vendor",
+    "vendor",
+    "vendor_boot",
+    "vendor_dlkm"
+  ],
+  "actual_image_files_verified": 51,
+  "ota": {
+    "path": "/srv/build/gold/releases/20260930-145258-450d95b/lineage_gold-ota.zip",
+    "sha256": "3fbce22f9cd185a94b78f978c4df1a56238fbeafb664c87650829c405f0d57f4",
+    "bytes": 1176740493
+  },
+  "target_files": {
+    "path": "/srv/build/gold/releases/20260930-145258-450d95b/lineage_gold-target_files.zip",
+    "sha256": "615d8a149d46ff50247b0734e07f519c212f0d02df79f2e44a1a79079ffefc3d",
+    "bytes": 2906254877
+  },
+  "source_bundle_sha256": "ed7c3fa1fad5c5df2f4d106cffa68b523c2eb3347003af9dacab38dc4743c74b",
+  "local_ota_verified": true,
+  "recovery": {
+    "baseline_source": "ab06d1825a1130d6d07154ccea704ae9a0a96f87",
+    "images_rehashed": true,
+    "automatic_adb_init_verified": true,
+    "actual_boot_tested": false
+  },
+  "installation": {
+    "plan_verified": true,
+    "prepare_exit_code": 1,
+    "stopped_before": "transfer; exact USB identity unavailable",
+    "usb_hardware_present": false,
+    "apply_attempted": false,
+    "reboot_requested": false,
+    "device_mutated_by_r6_installation": false
+  },
+  "device_installed": false,
+  "device_accepted": false,
+  "overall_device_acceptance": false,
+  "camera_root_cause_resolved": false,
+  "physical_acceptance": false,
+  "host_cleanup": {
+    "vm_restored": true,
+    "actual_vm_settings": {
+      "swappiness": "0",
+      "zpool": "zbud",
+      "zswap_enabled": "N",
+      "shrinker_enabled": "Y"
+    },
+    "needrestart_removed": true,
+    "r5_temporary_zip_tools_removed": true,
+    "empty_r5_r6_ota_scratch_removed": true,
+    "release_index_entries": 16,
+    "prior_entries_and_ota_absence_records_preserved": true
+  },
+  "test_evidence": {
+    "r6_extra_targets": "none; bacon and target-files-package only",
+    "DisplayServiceTests": "r3 compile failed on 45 upstream stale-parameter errors; not an r6 target",
+    "native_68_cases": "r2 historical evidence; not run for r6"
+  },
+  "pending": [
+    "Connect USB, revalidate identity and resume prepare for this exact frozen candidate",
+    "Install, read back all 14 partitions, verify formal signer policy and quiet runtime, preserve data, clean own temporary files and restore ordinary ADB",
+    "Diagnose and fix failed 108MP and portrait capture with runtime evidence",
+    "Front 16MP and other physical hardware acceptance; iPad WPA3 association",
+    "Device ID attestation -66; IMS scheduled last"
+  ]
+}

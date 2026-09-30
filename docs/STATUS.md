@@ -1,18 +1,26 @@
-更新于 2026-09-30 12:10（UTC+8）。当前在机 R4 `ab06d18`，B 槽 / `1790727903`。**运行时验收失败，现以临时策略挂载恢复界面；必须由正式修正版替代。**
+更新于 2026-09-30 15:28（UTC+8）。**R6 `450d95b` 已完成构建、包校验、封存与本地下载，尚未安装。** 安装前 USB 检查发现手机断开，流程停在传输前，没有刷写或重启。最后可读状态仍是 R4：B 槽 / `1790727903`，依赖临时策略挂载恢复界面。
 
-## 当前 R4：构建通过，运行时失败，修复中
+## 当前 R6：交付包通过，等待手机重新连接
 
-R4 完成科研机唯一输出的 bacon 与 target-files；签名、VINTF、SELinux、14 个 payload 分区及 51 个实际镜像文件检查通过，随后单次 OTA 返回 `kSuccess(0)`。正常重启后，`system_ext_mac_permissions.xml` 中未展开的 `@RELEASE` 导致整套签名策略加载失败，SystemUI 落入 `priv_app` 并触发救援重启。活动槽只完成 boot、dtbo、odm_dlkm 三项回读，不能声称安装验收通过。
+R6 在科研机唯一输出完成 bacon 与 target-files 两阶段构建；同次签名、VINTF、SELinux、14 个 payload 分区及 51 个实际镜像文件检查通过。构建记录为 `1790741813226865224`，源码 `450d95be388d0b14ea1e3fbd3a261a454a39b1ba`，固定 epoch `1790741813`。没有额外编译测试目标，不把此前 Power/Health 或失败的 DisplayServiceTests 记作本轮通过。详见 [第六批交付记录](../validation/adaptation-20260930-r6.json)。
 
-已在 init 挂载命名空间临时绑定正确展开的完整策略，恢复 SystemUI `platform_app` 和 Aperture `gold_aperture_app`，保留 Enforcing 和两份数据标记。用户确认界面正常、普通后摄可以保存；媒体库核验一张 3000×4000 JPEG 已完成保存。用户实测后摄 108MP 和人像无法保存，失败早期日志已覆盖，正按单一模式留存实时日志定位。前摄 16MP 尚未验收。
+正式修复采用设备专用 `@GOLD_APERTURE`，仍引用同一默认证书；完整平台/system_ext 键表经真实工具验证，system_ext 策略与临时正确 XML 逐字节一致。包检查拒绝未展开或无效 signer，不扩大权限、不硬编码证书。两处特殊拍摄的自身超时作为失败传播，补充简短本地化保存失败提示；页面退出取消和资源关闭规则保留。**这些改动没有证明解决 108MP/人像无法保存。** 应用调用链和实际 CameraX 1.7.0-alpha03 控制器的解绑/重绑复核未发现确定的共用阻断错误，仍需失败时的运行日志。
 
-R5 `7a502f8` 于 12:07 编译失败：system_ext 私有 `keys.conf` 也进入平台键表，新增的 `@RELEASE` 与平台已有定义重复，insertkeys 拒绝生成策略。没有生成或安装 R5 候选；VM 四项原值与 needrestart 清理已实读确认，现有临时 ZIP 工具保留供下一次构建复用。详见 [第五批失败记录](../validation/adaptation-20260930-r5.json)。
+冻结目录 `/srv/build/gold/releases/20260930-145258-450d95b`；OTA SHA-256 `3fbce22f9cd185a94b78f978c4df1a56238fbeafb664c87650829c405f0d57f4`，target-files `615d8a149d46ff50247b0734e07f519c212f0d02df79f2e44a1a79079ffefc3d`。本地 OTA 1,176,740,493 字节及哈希通过，安装计划核对签名记录、payload 元数据和匹配 R4 的四张启动/Recovery 镜像。Recovery 自动 ADB 配置已核对，未实际进入 Recovery。
 
-正式修复改用设备专用 `@GOLD_APERTURE` 别名，仍引用同一默认签名证书，并在包检查中拒绝未展开或无效的 signer；不扩大权限或硬编码证书。R5 中的特殊拍摄超时错误传播和简短本地化失败提示继续保留，资源关闭与页面退出取消规则不变。两模式共用交接流程复核未发现可确定的阻断错误；108MP/人像无法保存的根因仍未确认。已用实际完整平台/system_ext 键表复现旧错误，并通过新别名生成；system_ext XML 与临时正确策略逐字节一致。下一轮完整构建与设备验收尚未完成。临时挂载在重启后失效，ADB root 与本任务的安装/恢复暂存仍待正式修复后清理。
+15:28 的 ADB、fastboot 和 USB 硬件枚举均未发现目标手机。prepare 在首项设备检查失败，未创建本轮设备暂存、未调用 update_engine、未请求重启。接回后从设备预检和 prepare 继续，不能重复计划或盲目重试 OTA。正式安装后须确认策略不再依赖临时挂载、SystemUI 权限域正确、14 分区回读与数据标记一致，再清理 R4/R6 自有暂存和临时策略源、恢复普通 ADB。
 
-R4 冻结目录 `/srv/build/gold/releases/20260930-095751-ab06d18`；OTA SHA-256 `559e3d1b5e5bd2e3727c8fe2b80869a4fc38fbf5881baded2af2c4a2d83ddbde`，target-files `2934f5e4ffad15c18ac8f452686d4e7966fafc665a325b31d0fca0093b0c8f3c`。与 R4 匹配的四张启动/Recovery 镜像已核对 payload 哈希及自动 ADB 配置，未实际进入 Recovery。
+R6 build/guard 均正常终止，VM 四项实读恢复为 `0/zbud/N/Y`，needrestart 临时配置已移除。复用的 R5 临时 zip/unzip 以及 R5/R6 空 OTA scratch 已按标记清理，冻结包、源码、原始输入与失败记录保留。候选索引现有 16 项，旧 OTA 缺席注记保留；没有公开推送或发布本版。当前只等待 USB 重新连接，不重复编译或封存。
 
-科研机 R4 的临时 VM/needrestart 设置、zip/unzip 和 scratch 已恢复或清理。按用户明确批准删除四份 9 月 21 日旧 OTA，释放 4,699,561,841 字节；对应 target-files、源码、记录及其他候选保留。当前约 5.1 GiB 可用。用户已醒来并提供 iPad，WPA3 客户端测试正在协调；移动数据仍关闭，未操作 Mac 网络或钥匙串。详见 [第四批记录](../validation/adaptation-20260930-r4.json)。
+## R4 / R5 失败与当前设备边界
+
+R4 `ab06d18` 的构建和单次 OTA 成功，但未展开的 `@RELEASE` 导致完整签名策略加载失败，SystemUI 落入 `priv_app` 并触发救援重启；仅完成 boot、dtbo、odm_dlkm 三项活动槽回读，设备验收失败。临时绑定正确完整策略后恢复 SystemUI `platform_app`、Aperture `gold_aperture_app`，保留 Enforcing 和两份数据标记。13:28 的只读复核仍正常；**该临时挂载重启后失效，正式修复安装前不能随意重启或切槽。** ADB root 和本任务旧暂存仍有意保留以完成恢复收尾。
+
+用户确认界面正常、普通后摄可保存；媒体库确认 3000×4000 JPEG 保存完成。用户实测后摄 108MP 和人像均无法保存；关键早期日志已覆盖，后续定向日志未捕获新的失败，不能据此归因或宣布修复。前摄 16MP 尚未验收。临时恢复下已静默读到正确面板配置、HBM 控制器和 batterysecret 服务/权限域，不等同物理亮度、33W 或 R6 运行验收。
+
+R5 `7a502f8` 于 12:07 因完整平台键表重复定义 `@RELEASE` 而编译失败，没有生成或安装候选。设备专用别名已在 R6 完成正式构建校验，原失败记录保持不改写。详见 [第四批记录](../validation/adaptation-20260930-r4.json) 和 [第五批失败记录](../validation/adaptation-20260930-r5.json)。
+
+经用户批准删除的四份 9 月 21 日旧 OTA 共释放 4,699,561,841 字节；对应 target-files、源码、记录和其他候选保留。用户可提供 iPad，WPA3 客户端关联仍待协调，移动数据保持关闭，不操作 Mac 网络、钥匙串或 SIM。相机、其余物理验收、设备 ID attestation `-66` 和最后安排的 IMS 仍未完成。
 
 ## 上一批 52e9435：已安装记录
 
