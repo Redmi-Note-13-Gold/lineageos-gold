@@ -12,5 +12,15 @@ r_dir_file(mtk_hal_camera, vendor_gold_camera_cal_file)
 
 # Camera-owned runtime files belong to this vendor HAL, not generic vendor data.
 type vendor_gold_camera_data_file, file_type, data_file_type;
+typeattribute vendor_gold_camera_data_file gold_camera_parent_dir_type;
 allow mtk_hal_camera vendor_gold_camera_data_file:dir create_dir_perms;
 allow mtk_hal_camera vendor_gold_camera_data_file:file create_file_perms;
+allow mtk_hal_camera gold_camera_portrait_dir:dir create_dir_perms;
+allow mtk_hal_camera gold_camera_portrait_file:file create_file_perms;
+# The HAL can recreate the writable primary calibration after init's restorecon.
+type_transition mtk_hal_camera vendor_gold_camera_data_file:file gold_camera_portrait_file "com.xiaomi.dcal.wd.data";
+type_transition mtk_hal_camera vendor_gold_camera_data_file:file gold_camera_portrait_file "com.xiaomi.dcal.wu.data";
+type_transition mtk_hal_camera gold_camera_portrait_dir:file gold_camera_portrait_file "dof_mecp.bin";
+type_transition mtk_hal_camera gold_camera_portrait_dir:file gold_camera_portrait_file "capture_model";
+type_transition mtk_hal_camera gold_camera_portrait_dir:file gold_camera_portrait_file "capture_cache";
+type_transition mtk_hal_camera gold_camera_portrait_dir:file gold_camera_portrait_file "capture_policy";

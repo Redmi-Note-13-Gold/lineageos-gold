@@ -12,4 +12,7 @@ $(call add-clean-step, rm -f "$(PRODUCT_OUT)/system_ext/etc/permissions/android.
 # Rebuild the affected image and its listing, then let the normal target-files
 # recipe recreate its staging tree. Keep the compiled intermediates and caches.
 $(call add-clean-step, rm -f "$(PRODUCT_OUT)/system_ext.img" "$(PRODUCT_OUT)/installed-files-system_ext.txt" "$(PRODUCT_OUT)/installed-files-system_ext.json" "$(PRODUCT_OUT)/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip.list")
+# Aperture uses local platform APIs from system_ext; retire its old product APK.
+$(call add-clean-step, rm -rf "$(PRODUCT_OUT)/product/app/Aperture")
+$(call add-clean-step, rm -f "$(PRODUCT_OUT)/product.img" "$(PRODUCT_OUT)/installed-files-product.txt" "$(PRODUCT_OUT)/installed-files-product.json" "$(PRODUCT_OUT)/obj/PACKAGING/target_files_intermediates/lineage_gold-target_files.zip.list")
 endif

@@ -10,7 +10,9 @@
 
 手机安装暂存已核验清理，ADB 恢复 UID 2000，漫游数据保持关闭。科研机 VM/needrestart 恢复，临时 zip/unzip 和 OTA scratch 已清理，历史原厂输入保留。没有公开推送或发布本候选。脱敏证据见 [本轮记录](../validation/adaptation-20260930.json)；冻结时的 `candidate.json` 保持原字节，安装结果另记。
 
-人像景深仍未接通：原厂 JNI→MiAlgo→bokeh 插件已定位，但 HAL 是否直接返回虚化 JPEG 尚无输出证据。先在获准的相机测试窗口验证这一分叉，再决定薄 Camera2 路径或最小 OEM 后处理接线。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
+后置人像已加入待构建实现：Aperture 复用既有相机交接与保存流程，向原厂 MiAlgo 双摄图提交逻辑 3 / 物理 0、2 的帧和 metadata，再将效果输出保存为 JPEG，默认关闭。应用移至 system_ext 使用局部平台 API，签名及非特权身份保留；专用 SELinux 域只读指定校准和模型文件。三个新增原厂库保持原字节。JNI 中一个未被 relocation 使用的旧 libgui 符号无法通过标准 ELF 检查，故仅对这个模块允许 undefined symbols，仍检查 SONAME/NEEDED；这不代表运行时 ABI 已验证。尚未进行实际加载、捕获或画质验收。
+
+第三批 `00efd66` 的额外 DisplayServiceTests 编译失败：45 个错误均为未修改上游测试对 AutomaticBrightnessController.configure 的旧参数调用。不修补整套上游测试；保留本次 20 行 HBM 回归用例及失败记录，后续只构建主线 ROM。第三批没有合格交付包，也未安装。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
 
 ## GitHub 测试版发布
 

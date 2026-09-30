@@ -152,6 +152,29 @@ class GoldModule(ExtractUtilsModule):
         (vendor / 'input-receipt.json').unlink(missing_ok=True)
 
 
+def write_camera_jni(ctx, _packages):
+    # The stock bridge retains one unused UND symbol, BnProducerListener's old
+    # onBufferDetached(int), with no relocation. Keep SONAME/NEEDED checks and
+    # original bytes; only this module needs the undefined-symbol exception.
+    ctx.bp_out.write('''
+cc_prebuilt_library_shared {
+    name: "libcamera_algoup_jni.xiaomi",
+    owner: "xiaomi",
+    srcs: ["proprietary/system_ext/lib64/libcamera_algoup_jni.xiaomi.so"],
+    shared_libs: [
+        "libbinder", "libcamera_client", "libcamera_metadata", "libcutils",
+        "libgui", "liblog", "libutils", "libvndksupport", "libc++",
+        "libc", "libm", "libdl",
+    ],
+    compile_multilib: "64",
+    system_ext_specific: true,
+    strip: { none: true },
+    allow_undefined_symbols: true,
+}
+''')
+    ctx.product_mk_out.write('\nPRODUCT_PACKAGES += libcamera_algoup_jni.xiaomi\n')
+
+
 def write_odm_sku_manifests(ctx, _packages):
     # android-info.mk owns SKU module creation, assembly and ODM installation.
     # Keep these as EXTRACT_ONLY inputs so no copied VINTF metadata or duplicate
@@ -175,6 +198,7 @@ module = GoldModule(
 
 # The main proprietary list is registered after the firmware list.
 module.proprietary_files[-1].add_post_makefile_generation_fn(write_odm_sku_manifests)
+module.proprietary_files[-1].add_post_makefile_generation_fn(write_camera_jni)
 
 if __name__ == '__main__':
     utils = ExtractUtils.device(module)
