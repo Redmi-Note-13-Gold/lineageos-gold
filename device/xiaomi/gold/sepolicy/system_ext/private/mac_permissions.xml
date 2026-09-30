@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <policy>
-    <!-- @RELEASE is the existing default testkey; package stanza limits seinfo. -->
-    <signer signature="@RELEASE">
+    <!-- Reuse the product's default certificate; limit seinfo to this package. -->
+    <signer signature="@GOLD_APERTURE">
         <package name="org.lineageos.aperture">
             <seinfo value="gold_aperture" />
         </package>
