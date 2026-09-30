@@ -1,12 +1,16 @@
-更新于 2026-09-30 10:06（UTC+8）：最新候选 `ab06d18` 已完成构建、校验和冻结，尚未安装。安装前发现 USB、ADB 和 fastboot 均无手机连接，检查在任何手机写入前停止。最后确认的在机版本为 `52e9435`，A 槽 / incremental `1790709272`；连接断开后未重新验证。整体硬件适配与验收尚未完成。
+更新于 2026-09-30 11:00（UTC+8）。当前在机 R4 `ab06d18`，B 槽 / `1790727903`。**运行时验收失败，现以临时策略挂载恢复界面；必须由正式修正版替代。**
 
-## 最新候选：已验证，待连接后安装
+## 当前 R4：构建通过，运行时失败，修复中
 
-`ab06d18` 集成原厂 batterysecret 服务与窄权限、当前面板 HBM 配置、全零时间窗口调度修正及 SKIN 回调，并完成默认关闭的后置双摄人像实现。Aperture 和 SELinux 策略已通过标准 ROM 构建；bacon、target-files、签名、VINTF、14 个 payload 分区及 51 个实际镜像文件检查通过。实际 system_ext APK、JNI 类名、精确权限配置及旧 product APK 缺席均已核验，不代表 JNI 运行、实拍或显示/充电验收通过。
+R4 完成科研机唯一输出的 bacon 与 target-files；签名、VINTF、SELinux、14 个 payload 分区及 51 个实际镜像文件检查通过，随后单次 OTA 返回 `kSuccess(0)`。正常重启后，`system_ext_mac_permissions.xml` 中未展开的 `@RELEASE` 导致整套签名策略加载失败，SystemUI 落入 `priv_app` 并触发救援重启。活动槽只完成 boot、dtbo、odm_dlkm 三项回读，不能声称安装验收通过。
 
-候选冻结于 `/srv/build/gold/releases/20260930-095751-ab06d18`。OTA SHA-256 为 `559e3d1b5e5bd2e3727c8fe2b80869a4fc38fbf5881baded2af2c4a2d83ddbde`，target-files 为 `2934f5e4ffad15c18ac8f452686d4e7966fafc665a325b31d0fca0093b0c8f3c`；本机 OTA 下载后哈希一致。安装前重新核验与在机基线匹配的四个 Recovery 镜像及自动 ADB 配置，没有实际进入 Recovery，也没有调用 update_engine 或重启。
+已在 init 挂载命名空间临时绑定正确展开的完整策略，恢复 SystemUI `platform_app` 和 Aperture `gold_aperture_app`，保留 Enforcing 和两份数据标记。用户确认界面正常、普通后摄可以保存；媒体库核验一张 3000×4000 JPEG 已完成保存。用户实测后摄 108MP 和人像无法保存，失败早期日志已覆盖，正按单一模式留存实时日志定位。前摄 16MP 尚未验收。
 
-科研机临时 VM/needrestart 设置、任务专属 zip/unzip 和 scratch 已恢复或清理；未验收的第三批临时 OTA 经哈希核对后删除，已冻结候选和原厂输入保留。清单包含 15 个候选，旧缺席注记保持。详见 [第四批记录](../validation/adaptation-20260930-r4.json)。恢复已授权设备连接后继续同一候选的单次保数据安装；用户禁止的物理测试仍留待以后。
+正式修复采用 system_ext 私有 `keys.conf` 的标准证书映射，并在包检查中拒绝未展开或无效的 signer；不扩大权限或硬编码证书。同时修复特殊拍摄超时被当成取消吞掉的问题，并在拍摄失败时显示简短本地化提示；保留资源关闭与页面退出取消规则。这些源码修复尚未编译，不代表 108MP/人像无法保存的根因已解决。临时挂载在重启后失效，ADB root 与本任务的安装/恢复暂存仍待正式修复后清理。
+
+R4 冻结目录 `/srv/build/gold/releases/20260930-095751-ab06d18`；OTA SHA-256 `559e3d1b5e5bd2e3727c8fe2b80869a4fc38fbf5881baded2af2c4a2d83ddbde`，target-files `2934f5e4ffad15c18ac8f452686d4e7966fafc665a325b31d0fca0093b0c8f3c`。与 R4 匹配的四张启动/Recovery 镜像已核对 payload 哈希及自动 ADB 配置，未实际进入 Recovery。
+
+科研机 R4 的临时 VM/needrestart 设置、zip/unzip 和 scratch 已恢复或清理。按用户明确批准删除四份 9 月 21 日旧 OTA，释放 4,699,561,841 字节；对应 target-files、源码、记录及其他候选保留。当前约 5.1 GiB 可用。用户已醒来并提供 iPad，WPA3 客户端测试正在协调；移动数据仍关闭，未操作 Mac 网络或钥匙串。详见 [第四批记录](../validation/adaptation-20260930-r4.json)。
 
 ## 上一批 52e9435：已安装记录
 

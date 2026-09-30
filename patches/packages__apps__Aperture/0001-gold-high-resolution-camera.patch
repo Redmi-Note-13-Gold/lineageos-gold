@@ -11,6 +11,17 @@ index edae6e0..3004ded 100644
                      CameraMode.VIDEO -> viewModel.captureVideo()
                      else -> {}
                  }
+@@ -699,7 +699,9 @@
+                         }
+ 
+                         is Event.PhotoCaptureStatus.Error -> {
+-                            // Do nothing
++                            Toast.makeText(
++                                this@CameraActivity, R.string.photo_save_failed, Toast.LENGTH_SHORT
++                            ).show()
+                         }
+                     }
+                 }
 diff --git a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt b/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
 index 9198171..4e45b8d 100644
 --- a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
@@ -55,7 +66,7 @@ new file mode 100644
 index 0000000..32ee154
 --- /dev/null
 +++ b/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
-@@ -0,0 +1,315 @@
+@@ -0,0 +1,316 @@
 +/*
 + * SPDX-FileCopyrightText: 2026 The LineageOS Project
 + * SPDX-License-Identifier: Apache-2.0
@@ -90,6 +101,7 @@ index 0000000..32ee154
 +import kotlinx.coroutines.suspendCancellableCoroutine
 +import kotlinx.coroutines.withContext
 +import kotlinx.coroutines.withTimeout
++import kotlinx.coroutines.withTimeoutOrNull
 +import java.util.concurrent.Executor
 +import kotlin.coroutines.resume
 +import kotlin.coroutines.resumeWithException
@@ -178,7 +190,7 @@ index 0000000..32ee154
 +        require(deviceOrientationDegrees in setOf(0, 90, 180, 270))
 +        val closed = CompletableDeferred<Unit>()
 +        val data = try {
-+            withTimeout(20_000) {
++            withTimeoutOrNull(20_000) {
 +                suspendCancellableCoroutine<ByteArray> { continuation ->
 +                    // All device/session state is confined to this serial executor.
 +                    executor.execute {
@@ -338,7 +350,7 @@ index 0000000..32ee154
 +                        }
 +                    }
 +                }
-+            }
++            } ?: throw IllegalStateException("Full-resolution capture timed out")
 +        } finally {
 +            // Do not hand the camera back to CameraX until the HAL confirms close.
 +            try {
@@ -538,3 +550,32 @@ index 0000000..4a86d66
 +    <string name="gold_front_high_resolution_summary">Capture full-resolution photos with the front camera. Requires standard JPEG, 4:3, 1× zoom, and flash and photo effects off. Uses your selfie mirror setting. Capture takes longer.</string>
 +    <string name="gold_front_high_resolution_requirements">For 16 MP selfies, select standard JPEG, 4:3 and 1× zoom, and turn off flash and photo effects. If unavailable, turn off 16 MP selfies.</string>
 +</resources>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -6,6 +6,7 @@
+ <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+     <!-- App/Activities -->
+     <string name="app_name">Camera</string>
++    <string name="photo_save_failed">Unable to save photo. Please try again.</string>
+     <string name="video_camera_label">Camcorder</string>
+ 
+     <!-- Content descriptions -->
+diff --git a/app/src/main/res/values-zh-rCN/strings.xml b/app/src/main/res/values-zh-rCN/strings.xml
+--- a/app/src/main/res/values-zh-rCN/strings.xml
++++ b/app/src/main/res/values-zh-rCN/strings.xml
+@@ -185,4 +185,5 @@
+     <string name="video_mirror_mode_off">关</string>
+     <string name="video_mirror_mode_on">开</string>
+     <string name="video_mirror_mode_on_ffc_only">仅前置摄像头</string>
++    <string name="photo_save_failed">无法保存照片，请重试。</string>
+ </resources>
+diff --git a/app/src/main/res/values-zh-rTW/strings.xml b/app/src/main/res/values-zh-rTW/strings.xml
+--- a/app/src/main/res/values-zh-rTW/strings.xml
++++ b/app/src/main/res/values-zh-rTW/strings.xml
+@@ -183,4 +183,5 @@
+     <string name="video_mirror_mode_off">關閉</string>
+     <string name="video_mirror_mode_on">開啟</string>
+     <string name="video_mirror_mode_on_ffc_only">僅前鏡頭</string>
++    <string name="photo_save_failed">無法儲存相片，請再試一次。</string>
+ </resources>

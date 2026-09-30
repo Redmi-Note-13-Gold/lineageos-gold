@@ -239,7 +239,7 @@ new file mode 100644
 index 0000000..696b4d3
 --- /dev/null
 +++ b/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt
-@@ -0,0 +1,386 @@
+@@ -0,0 +1,387 @@
 +// SPDX-License-Identifier: Apache-2.0
 +package org.lineageos.aperture.utils
 +
@@ -328,7 +328,8 @@ index 0000000..696b4d3
 +        active = run
 +        val bytes = try {
 +            run.start()
-+            withTimeout(25_000) { run.result.await() }
++            withTimeoutOrNull(25_000) { run.result.await() }
++                ?: throw IllegalStateException("Portrait capture timed out")
 +        } finally {
 +            executor.execute { run.close() }
 +            withContext(NonCancellable) {

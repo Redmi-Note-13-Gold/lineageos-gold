@@ -234,6 +234,17 @@ def verify(target, aapt2, readelf, profile):
         members = set(archive.namelist())
         euicc = verify_euicc_removed(archive)
 
+        # One unresolved signer alias makes SELinuxMMAC discard every seinfo policy.
+        for name in members:
+            if '/etc/selinux/' not in name or not name.endswith('_mac_permissions.xml'):
+                continue
+            root = ET.fromstring(archive.read(name))
+            for signer in root.findall('signer'):
+                certs = [signer.get('signature')] + [cert.get('signature') for cert in signer.findall('cert')]
+                certs = [cert for cert in certs if cert is not None]
+                require(certs and all(re.fullmatch(r'(?:[0-9A-Fa-f]{2})+', cert) for cert in certs),
+                        'Unexpanded or invalid SELinux signer certificate: ' + name)
+
         def unpack(name):
             destination = Path(scratch) / name
             destination.parent.mkdir(parents=True, exist_ok=True)

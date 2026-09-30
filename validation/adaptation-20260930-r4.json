@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-09-30T02:07:20.652942+00:00",
+  "recorded_at": "2026-09-30T03:01:06.649458+00:00",
   "source_revision": "ab06d1825a1130d6d07154ccea704ae9a0a96f87",
   "candidate": "/srv/build/gold/releases/20260930-095751-ab06d18",
   "build_datetime": 1790727903,
@@ -25,19 +25,22 @@
   "payload_partitions_verified": 14,
   "local_ota_hash_verified": true,
   "installation": {
-    "attempted": false,
-    "phone_mutated": false,
-    "blocked_at": "USB transport preflight before OTA transfer",
-    "adb_transports": 0,
-    "fastboot_transports": 0,
-    "matching_usb_device_present": false
-  },
-  "last_verified_installed": {
-    "source_revision": "52e943584fa6d90e60da7f0edff07f6d88048c46",
-    "slot": "_a",
-    "incremental": "1790709272",
-    "record": "adaptation-20260930.json",
-    "rechecked_after_usb_disconnection": false
+    "attempted": true,
+    "attempts": 1,
+    "phone_mutated": true,
+    "update_engine_result": "kSuccess (0)",
+    "slot": "_b",
+    "incremental": "1790727903",
+    "requested_reboots": 1,
+    "automatic_rescue_reboot_observed": true,
+    "boot_completed_observed": true,
+    "readback_partitions_verified": [
+      "boot",
+      "dtbo",
+      "odm_dlkm"
+    ],
+    "all_readback_complete": false,
+    "runtime_acceptance": false
   },
   "recovery": {
     "baseline_source": "52e943584fa6d90e60da7f0edff07f6d88048c46",
@@ -77,5 +80,40 @@
     "long-term power and stability"
   ],
   "overall_device_acceptance": false,
-  "public_push_or_release": false
+  "public_push_or_release": false,
+  "previous_installed_baseline": {
+    "source_revision": "52e943584fa6d90e60da7f0edff07f6d88048c46",
+    "slot": "_a",
+    "incremental": "1790709272",
+    "record": "adaptation-20260930.json",
+    "rechecked_after_usb_disconnection": false
+  },
+  "runtime_failure": {
+    "cause": "Literal @RELEASE in system_ext_mac_permissions.xml prevented all SELinuxMMAC signer policies from loading",
+    "observed_systemui_domain": "priv_app",
+    "fatal_property": "debug.tracing.desktop_mode_visible_tasks",
+    "boot_reason": "reboot,rescueparty",
+    "temporary_recovery": "Bind correctly expanded complete policy XML in init mount namespace, then restart framework",
+    "temporary_xml_sha256": "fc2f493ad35138ec5ae2cc13e67245ab63432429b6859c72b66c8427bf3c5c3e",
+    "observed_recovered_systemui_domain": "platform_app",
+    "selinux": "Enforcing",
+    "canaries_matched": 2,
+    "temporary_recovery_is_acceptance": false,
+    "formal_rebuild_required": true
+  },
+  "camera_runtime": {
+    "user_confirmed_ui_normal": true,
+    "ordinary_rear_photo_saved": true,
+    "mediastore_verified_jpeg_dimensions": [
+      3000,
+      4000
+    ],
+    "mediastore_is_pending": 0,
+    "rear_108mp_user_result": "cannot save",
+    "rear_portrait_user_result": "cannot save",
+    "front_16mp": "not tested",
+    "failure_root_cause": "not yet established; early main log buffer overwritten",
+    "actual_aperture_domain": "gold_aperture_app",
+    "camera_gid_observed": 1006
+  }
 }
