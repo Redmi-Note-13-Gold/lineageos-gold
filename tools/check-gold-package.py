@@ -365,6 +365,9 @@ def verify(target, aapt2, readelf, profile):
 
         vendor_properties = archive.read('VENDOR/build.prop').decode().splitlines()
         ims_startup = verify_ims_startup_properties(vendor_properties)
+        aod_support = [line.split('=', 1)[1].strip() for line in vendor_properties
+                       if line.startswith('ro.vendor.mtk_aod_support=')]
+        require(aod_support == ['1'], 'MTK composer must accept native DOZE modes')
         property_contexts = archive.read('VENDOR/etc/selinux/vendor_property_contexts').decode()
         for name, context in [('persist.vendor.ims_support', 'vendor_mtk_ims_prop'),
                               ('ro.vendor.md_auto_setup_ims', 'vendor_mtk_ims_prop'),
@@ -562,7 +565,8 @@ def verify(target, aapt2, readelf, profile):
                 'touch_wake': {'framework_switch': True, 'power_path': True,
                                'typed_control_device': True, 'runtime_verified': False},
                 'aod': {'doze_component': True, 'display_doze_supported': True,
-                        'display_doze_suspend_supported': True, 'runtime_verified': False},
+                        'display_doze_suspend_supported': True, 'mtk_composer_doze_enabled': True,
+                        'runtime_verified': False},
                 'attestation_identity': {'properties': attestation, 'tee_acceptance_verified': False},
                 'network_probes': {'https_urls': urls, 'runtime_validated': False},
                 'euicc': euicc,

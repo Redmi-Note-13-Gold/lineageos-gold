@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-09-30T07:30:18.669361+00:00",
+  "recorded_at": "2026-09-30T08:18:47.716642+00:00",
   "source_revision": "450d95be388d0b14ea1e3fbd3a261a454a39b1ba",
   "build_datetime": 1790741813,
   "candidate": "/srv/build/gold/releases/20260930-145258-450d95b",
@@ -65,14 +65,51 @@
   },
   "installation": {
     "plan_verified": true,
-    "prepare_exit_code": 1,
-    "stopped_before": "transfer; exact USB identity unavailable",
-    "usb_hardware_present": false,
-    "apply_attempted": false,
-    "reboot_requested": false,
-    "device_mutated_by_r6_installation": false
+    "initial_prepare_usb_absent_before_device_writes": true,
+    "method": "update_engine full OTA",
+    "ota_apply_attempts": 1,
+    "host_follow_exit_code": 255,
+    "host_follow_interrupted_at_percent": 35,
+    "original_interrupted_attempt_preserved": true,
+    "original_attempt_sha256": "ae287f2f2f1e2360501181de28b249b60905183e45a76982eb7f29cd2f0e6ff7",
+    "daemon_reconciliation": {
+      "same_boot": true,
+      "exact_stage": "/data/ota_package/gold-r6-450d95b-1790741813",
+      "all_three_actions_kSuccess": true,
+      "update_successfully_applied": true,
+      "state_before_reboot": "UPDATED_NEED_REBOOT",
+      "target_partition_hashes_matched_before_reboot": 14,
+      "daemon_log_sha256": "c42fe554e2ed6d966b213def514e7a0ac99cf30a3afab44160ddd63d86592a72",
+      "reapplied": false
+    },
+    "normal_reboots": 1,
+    "before_slot": "_b",
+    "before_incremental": "1790727903",
+    "after_slot": "_a",
+    "after_incremental": "1790741813",
+    "boot_completed": true,
+    "active_partition_hashes_matched": 14,
+    "all_active_partition_hashes_match_candidate": true,
+    "snapshot_state": "none",
+    "data_and_persist_mounted": true,
+    "ce_unlocked": true,
+    "de_ce_canaries_matched": 2,
+    "formal_mac_policy": {
+      "expanded_aperture_signer": true,
+      "systemui_platform_app": true,
+      "temporary_bind_absent": true
+    },
+    "quiet_runtime_checks_passed_before_cleanup": true,
+    "r4_r6_stages_removed": true,
+    "temporary_policy_source_removed": true,
+    "adb_uid_restored": 2000,
+    "selinux": "Enforcing",
+    "roaming_data_off": true,
+    "recovery_boot_tested": false,
+    "initial_prepare_exit_code": 1,
+    "quiet_runtime_checks_passed_at_finalize": true
   },
-  "device_installed": false,
+  "device_installed": true,
   "device_accepted": false,
   "overall_device_acceptance": false,
   "camera_root_cause_resolved": false,
@@ -97,10 +134,55 @@
     "native_68_cases": "r2 historical evidence; not run for r6"
   },
   "pending": [
-    "Connect USB, revalidate identity and resume prepare for this exact frozen candidate",
-    "Install, read back all 14 partitions, verify formal signer policy and quiet runtime, preserve data, clean own temporary files and restore ordinary ADB",
-    "Diagnose and fix failed 108MP and portrait capture with runtime evidence",
-    "Front 16MP and other physical hardware acceptance; iPad WPA3 association",
+    "Diagnose AOD heating and drain with controlled post-R6 evidence; historical DOZE_SUSPEND transition is not power acceptance",
+    "Diagnose and fix 108MP and portrait capture with failure-time runtime evidence; timeout feedback is not a root-cause fix",
+    "Front 16MP, iPad WPA3 association, charging and remaining physical hardware acceptance",
     "Device ID attestation -66; IMS scheduled last"
-  ]
+  ],
+  "installation_verified": true,
+  "aod_followup": {
+    "user_report": "AOD screen hot and battery drain apparent",
+    "r4_snapshot_context": "charging; not a discharge-power measurement",
+    "battery_celsius": 38,
+    "skin_celsius": 41.893,
+    "power_display_mode": "DOZE_SUSPEND",
+    "healthd_ueventd_each_cpu_percent_approx": 13,
+    "related_log_interval_seconds_approx": 0.11,
+    "root_cause_established": false,
+    "r6_long_term_power_accepted": false,
+    "batterystats_discharge_window": {
+      "start_local": "2026-09-30 15:38:26",
+      "end_local": "2026-09-30 16:04:28",
+      "battery_percent_start": 80,
+      "battery_percent_end": 54,
+      "screen_doze_continuous": true,
+      "camera_activity_observed": false,
+      "ota_daemon_completed_local": "2026-09-30 15:40",
+      "entire_drop_attributable_to_ota": false
+    },
+    "charge_counter_coulomb_evidence_reliable": false,
+    "power_hal_at_1622": {
+      "ready": 1,
+      "enabled": 0,
+      "dirty": 0,
+      "requests": 0,
+      "votes": "neutral",
+      "persistent_boost_supported_by_evidence": false
+    },
+    "framework_suspend_blocker_observed": false,
+    "confirmed_configuration_defect": {
+      "property": "ro.vendor.mtk_aod_support",
+      "r6_actual_value": "0",
+      "stock_value": "1",
+      "reference_project_value": "1",
+      "installed_composer_sha256": "488380c4becc6a83c24687576398ea98c18d418614ffae31e5586a27fb855712",
+      "stock_and_packaged_composer_text_sha256": "3b4f7061779710ac9b0221ccb301e48b3cff961c672c5447120775e50c9e3667",
+      "effect": "HWCMediator rejects DOZE and DOZE_SUSPEND with HWC2_ERROR_UNSUPPORTED when this property is zero",
+      "minimal_source_fix": "restore stock value 1 and check it in the existing package validator",
+      "fix_installed": false,
+      "hardware_caps_guard_preserved": true
+    },
+    "charge_counter_source": "Matched 6.6.118 battery module synthesizes charge_counter from capacity percent and charge_full; not independent coulomb integration"
+  },
+  "updated_at": "2026-09-30T08:27:00+00:00"
 }
