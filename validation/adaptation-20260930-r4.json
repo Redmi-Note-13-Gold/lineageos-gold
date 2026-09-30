@@ -1,0 +1,81 @@
+{
+  "recorded_at": "2026-09-30T02:07:20.652942+00:00",
+  "source_revision": "ab06d1825a1130d6d07154ccea704ae9a0a96f87",
+  "candidate": "/srv/build/gold/releases/20260930-095751-ab06d18",
+  "build_datetime": 1790727903,
+  "build_record": "out-gold-standard/gold-build-records/1790727903881649724",
+  "ota_sha256": "559e3d1b5e5bd2e3727c8fe2b80869a4fc38fbf5881baded2af2c4a2d83ddbde",
+  "target_files_sha256": "2934f5e4ffad15c18ac8f452686d4e7966fafc665a325b31d0fca0093b0c8f3c",
+  "build_stages": [
+    {
+      "targets": [
+        "bacon"
+      ],
+      "exit_code": 0
+    },
+    {
+      "targets": [
+        "target-files-package"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "build_and_package_validation": true,
+  "actual_image_files_verified": 51,
+  "payload_partitions_verified": 14,
+  "local_ota_hash_verified": true,
+  "installation": {
+    "attempted": false,
+    "phone_mutated": false,
+    "blocked_at": "USB transport preflight before OTA transfer",
+    "adb_transports": 0,
+    "fastboot_transports": 0,
+    "matching_usb_device_present": false
+  },
+  "last_verified_installed": {
+    "source_revision": "52e943584fa6d90e60da7f0edff07f6d88048c46",
+    "slot": "_a",
+    "incremental": "1790709272",
+    "record": "adaptation-20260930.json",
+    "rechecked_after_usb_disconnection": false
+  },
+  "recovery": {
+    "baseline_source": "52e943584fa6d90e60da7f0edff07f6d88048c46",
+    "four_boot_image_hashes_reverified": true,
+    "automatic_adb_configuration_verified": true,
+    "boot_test_this_run": false
+  },
+  "portrait": {
+    "compiled_and_packaged": true,
+    "aperture_partition": "system_ext",
+    "default_enabled": false,
+    "dedicated_app_domain_and_scoped_calibration_reads": true,
+    "original_blob_bytes_preserved": true,
+    "single_jni_undefined_symbol_exception": true,
+    "jni_runtime_abi_verified": false,
+    "camera_opened": false,
+    "image_quality_accepted": false
+  },
+  "targeted_test_evidence": {
+    "package_host_cases_passed_before_r4": 14,
+    "native_power_health_cases": "33/27/8 passed for source 52e9435; not rerun for r4",
+    "DisplayServiceTests": "r3 additional target failed on 45 untouched upstream configure argument mismatches; not an r4 target"
+  },
+  "host_cleanup": {
+    "record": "/srv/build/gold/jobs/gold-adaptation-20260930/r4/cleanup.json",
+    "vm_restored": true,
+    "temporary_tools_and_scratch_removed": true,
+    "failed_r3_ota_removed_after_hash_verification": true,
+    "frozen_releases_retained": true
+  },
+  "not_accepted": [
+    "r4 installation, boot and quiet runtime checks",
+    "rear 108MP, front 16MP and dual-camera portrait capture, lifecycle and quality",
+    "WPA3 SoftAP client association",
+    "device ID attestation (-66 remains unresolved)",
+    "physical display, audio, vibration, FM reception, charging and other hardware",
+    "long-term power and stability"
+  ],
+  "overall_device_acceptance": false,
+  "public_push_or_release": false
+}

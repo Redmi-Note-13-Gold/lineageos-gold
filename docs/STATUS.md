@@ -1,6 +1,14 @@
-更新于 2026-09-30 06:21（UTC+8）：当前安装源码 `52e9435`，A 槽 / incremental `1790709272`。完整构建、保数据安装、启动与静默检查通过；全机硬件验收尚未完成。下文旧版本记录保留其历史范围，不自动继承到新版本。
+更新于 2026-09-30 10:06（UTC+8）：最新候选 `ab06d18` 已完成构建、校验和冻结，尚未安装。安装前发现 USB、ADB 和 fastboot 均无手机连接，检查在任何手机写入前停止。最后确认的在机版本为 `52e9435`，A 槽 / incremental `1790709272`；连接断开后未重新验证。整体硬件适配与验收尚未完成。
 
-## 本轮适配与设备交付
+## 最新候选：已验证，待连接后安装
+
+`ab06d18` 集成原厂 batterysecret 服务与窄权限、当前面板 HBM 配置、全零时间窗口调度修正及 SKIN 回调，并完成默认关闭的后置双摄人像实现。Aperture 和 SELinux 策略已通过标准 ROM 构建；bacon、target-files、签名、VINTF、14 个 payload 分区及 51 个实际镜像文件检查通过。实际 system_ext APK、JNI 类名、精确权限配置及旧 product APK 缺席均已核验，不代表 JNI 运行、实拍或显示/充电验收通过。
+
+候选冻结于 `/srv/build/gold/releases/20260930-095751-ab06d18`。OTA SHA-256 为 `559e3d1b5e5bd2e3727c8fe2b80869a4fc38fbf5881baded2af2c4a2d83ddbde`，target-files 为 `2934f5e4ffad15c18ac8f452686d4e7966fafc665a325b31d0fca0093b0c8f3c`；本机 OTA 下载后哈希一致。安装前重新核验与在机基线匹配的四个 Recovery 镜像及自动 ADB 配置，没有实际进入 Recovery，也没有调用 update_engine 或重启。
+
+科研机临时 VM/needrestart 设置、任务专属 zip/unzip 和 scratch 已恢复或清理；未验收的第三批临时 OTA 经哈希核对后删除，已冻结候选和原厂输入保留。清单包含 15 个候选，旧缺席注记保持。详见 [第四批记录](../validation/adaptation-20260930-r4.json)。恢复已授权设备连接后继续同一候选的单次保数据安装；用户禁止的物理测试仍留待以后。
+
+## 上一批 52e9435：已安装记录
 
 源码提交 `48306c6`、`52e9435` 接入现有 FMRadio，补齐统一 Power HAL 的持续音频请求与独立来源释放，修正 Health 无效读取的 AIDL 状态码；Aperture 复用一个后端增加默认关闭的后摄 108MP / 前摄 16MP 捕获入口，按原厂契约将 HDR 属性设为 false，并删除未使用的 libperfmgr 配置和标签。电量单位继续按已确认的 mAh→µAh 契约转换，Codec2 保留按当前平台编译的服务入口。
 
@@ -10,9 +18,9 @@
 
 手机安装暂存已核验清理，ADB 恢复 UID 2000，漫游数据保持关闭。科研机 VM/needrestart 恢复，临时 zip/unzip 和 OTA scratch 已清理，历史原厂输入保留。没有公开推送或发布本候选。脱敏证据见 [本轮记录](../validation/adaptation-20260930.json)；冻结时的 `candidate.json` 保持原字节，安装结果另记。
 
-后置人像已加入待构建实现：Aperture 复用既有相机交接与保存流程，向原厂 MiAlgo 双摄图提交逻辑 3 / 物理 0、2 的帧和 metadata，再将效果输出保存为 JPEG，默认关闭。应用移至 system_ext 使用局部平台 API，签名及非特权身份保留；专用 SELinux 域只读指定校准和模型文件。三个新增原厂库保持原字节。JNI 中一个未被 relocation 使用的旧 libgui 符号无法通过标准 ELF 检查，故仅对这个模块允许 undefined symbols，仍检查 SONAME/NEEDED；这不代表运行时 ABI 已验证。尚未进行实际加载、捕获或画质验收。
+后置人像现已完成编译与包内核验：Aperture 复用既有相机交接与保存流程，向原厂 MiAlgo 双摄图提交逻辑 3 / 物理 0、2 的帧和 metadata，再将效果输出保存为 JPEG，默认关闭。应用移至 system_ext 使用局部平台 API，签名及非特权身份保留；专用 SELinux 域只读指定校准和模型文件。三个新增原厂库保持原字节。JNI 中一个未被 relocation 使用的旧 libgui 符号无法通过标准 ELF 检查，故仅对这个模块允许 undefined symbols，仍检查 SONAME/NEEDED；这不代表运行时 ABI 已验证。尚未进行实际加载、捕获或画质验收。
 
-第三批 `00efd66` 的额外 DisplayServiceTests 编译失败：45 个错误均为未修改上游测试对 AutomaticBrightnessController.configure 的旧参数调用。不修补整套上游测试；保留本次 20 行 HBM 回归用例及失败记录，后续只构建主线 ROM。第三批没有合格交付包，也未安装。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
+第三批 `00efd66` 的额外 DisplayServiceTests 编译失败：45 个错误均为未修改上游测试对 AutomaticBrightnessController.configure 的旧参数调用。不修补整套上游测试；保留本次 20 行 HBM 回归用例及失败记录，第四批只构建主线 ROM。第三批没有合格交付包，也未安装。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
 
 ## GitHub 测试版发布
 
