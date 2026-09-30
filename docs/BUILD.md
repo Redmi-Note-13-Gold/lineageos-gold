@@ -221,3 +221,5 @@ followup-r1的bacon在01:13:50退出1，第二阶段未运行；原实际invocat
 followup-r2终态为9月23日03:16:41入口exit0，bacon01:10:26、target-files-package56:41，真实InvocationID ab447bf1dced4329b97c84373ba23f86。独立guard03:16:47成功，0/zbud/N/Y与临时内容缺席现场核对。169输入/127主机测试、14分区/39实际文件及全Android门禁通过；全量包已独立复验并冻结到 `/srv/build/gold/releases/20260923-090824-60e90a7`。冻结保存全部228项主线受管文件、169项合并输入、Repo清单、同次检查工具/库及job/invocation记录。后续重新构建继续使用唯一OUT，安装从releases候选读取，不依赖已移除的可变ZIP别名。此userdebug/test-keys候选未作正式发行密钥或设备验收。
 
 2026-09-29补充：受限--module-apks现允许GoldStatusBarOverlay既有dimens.xml资源变化，所有源/图/锁/签名约束不变。4项Ninja84.59秒、两个Doze布尔值和21项相关回归已过，静态RRO未在线升级。新的完整ROM必须校验SystemUI DOZE与DOZE_SUSPEND两个编译值，并在实际system_ext核对覆盖APK，实际文件检查40项。手机已装60e90a7；当前禁止蜂窝数据、电话、短信和Mac网络/钥匙串操作，旧联通数据授权不适用于本次。
+
+2026-09-29完整ROM增量已完成：8f01656、BUILD_DATETIME1790692970，两阶段和全部门禁通过；169输入、14payload、40实际文件，冻结/srv/build/gold/releases/20260929-231337-8f01656并独立复验。VM与三类临时内容已恢复/清理；没有第二OUT、clean或产物手工重签。冻结工具保持构建时版本。

@@ -1,5 +1,7 @@
 # 恢复固定源码与输入
 
+当前已安装候选及恢复输入见 [STATUS](STATUS.md) 首节；下文带日期的设备记录是历史状态。
+
 使用独立的 Repo 源码目录，保留现有工作区。下面的集成工具路径指向本仓库的完整检出目录。
 
 ## Android 源码
@@ -77,3 +79,5 @@ Gold WifiOverlay现补入匹配Global原厂RRO的SoftAP SAE能力布尔值，恢
 60e90a7本次可安装包和恢复核对入口为 `/srv/build/gold/releases/20260923-090824-60e90a7`，含全量OTA/target-files、candidate.json及原Android结果。verification-source保存构建时全部主线受管文件，merged-inputs保存169项实际输入；源码后的文档记录提交不改变此候选。check-artifacts与check-gold-package的冻结副本复验通过，MPEG4修复后精确哈希和Diagnostics APK哈希已记录。可变OUT中的旧ZIP名称已转为package-path-map映射，不能因其缺席判产物丢失，也不能用旧候选的设备结果代替本候选验收。
 
 2026-09-29当前设备：已安装冻结60e90a7到B/1790091429，正常启动、14分区回读、data/persist和两canary通过；MPEG4短往返通过，AOD新增面板低功耗修复尚待正式ROM交付。保留70c2ec4和bd50b19包作为历史回退输入。不要把旧“联通流量允许”沿用到目前仅有漫游卡的设备；禁止蜂窝数据/电话/短信及Mac网络/钥匙串操作。
+
+2026-09-29当前已装AOD候选为/srv/build/gold/releases/20260929-231337-8f01656，A/1790692970。完整OTA与target-files门禁/独立复验、实际安装器与独立各14分区、正常启动/Enforcing/挂载/snapshot none通过。首次解锁后两canary一致，正式AOD的Off/DozeSuspend/程序唤醒通过；物理亮度和双击待用户反馈，长期功耗未测。普通鉴权网络ADB已恢复，本地及服务器完整OTA保留，手机本次安装暂存已经核验并清理。绝不开漫游数据或操作Mac网络。

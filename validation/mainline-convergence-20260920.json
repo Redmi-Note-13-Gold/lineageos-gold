@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-29T14:33:35.055940+00:00",
+  "updated_at": "2026-09-29T16:17:40.896119+00:00",
   "task_state": "no_euicc_wpa3_candidate_installed_feature_validation_partial",
   "takeover_revision": "462fab1230dcbb0493019b866cd3de4db677733d",
   "completed_candidate_revision": "70c2ec44d9cb6b4789dc8826a78f808309be53f4",
@@ -6065,34 +6065,48 @@
     }
   },
   "current_installed_candidate": {
-    "rom_revision": "60e90a7eafcc42bf72d64b2aad83160a2d22e1e1",
-    "incremental": "1790091429",
+    "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "incremental": "1790692970",
     "slot": "b",
-    "candidate": "/srv/build/gold/releases/20260923-090824-60e90a7",
-    "ota_sha256": "09cf910fcb992e01dd412554e19dd9d4a2b3324561145d119922d44a66da372a",
-    "target_files_sha256": "56e7c1114b95d8d324f69b0859e91e85ee45d3f8727d63ee2f91a61b4b8bab63",
-    "evidence_key": "candidate_60e90a7_device",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "evidence_key": "candidate_8f01656_device",
+    "acceptance_scope": "installation_boot_partitions_data_and_formal_AOD_states_passed; physical_AOD_visibility_and_double_tap_confirmation_pending",
     "data_app_updates": {
       "com.android.devicediagnostics": {
         "sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
         "matches_system_candidate_apk": true,
         "prior_activity_cases_passed": 28
       }
+    },
+    "last_observation": {
+      "observed_at": "2026-09-29T19:03:59.091684+00:00",
+      "transport": "USB ADB",
+      "boot_completed": true,
+      "evidence": "2026-09-30 quiet adaptation baseline; physical acceptance remains pending"
     }
   },
   "current_pending_android_delta": {
     "source_revision": "0737d5f",
-    "state": "aod_panel_modes_apk_built_full_rom_pending",
+    "state": "installed_formal_aod_passed_physical_confirmation_pending",
     "merged_input_count": 169,
     "changed_android_inputs": [
       "device/xiaomi/gold/overlay/GoldStatusBarOverlay/res/values/dimens.xml"
     ],
-    "rom_built": false,
-    "permanent_device_fix_installed": false,
+    "rom_built": true,
+    "permanent_device_fix_installed": true,
     "temporary_hardware_doze_and_suspend_probes_passed": true,
     "physical_visibility_confirmation_pending": true,
     "compiled_apk_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-apk-20260929/result.json",
-    "required_next_step": "Complete the standard full-ROM incremental build, freeze and validate its own artifacts before a permitted installation window. Do not touch Mac networking or keychain; phone cellular data, calls and SMS are prohibited."
+    "required_next_step": "Obtain physical AOD clock visibility, brightness and double-tap feedback. Installed-resource OFF/DOZE_SUSPEND/programmatic-wake and both data canaries passed; long-term power remains unmeasured. No further ROM build is required for this recorded fix. Keep roaming data off and do not touch Mac networking or keychain.",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "candidate_source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "build_datetime": 1790692970,
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "formal_panel_state_test_completed": true,
+    "runtime_control_path_verified": true
   },
   "openeuicc_support_withdrawn_20260922": {
     "recorded_at": "2026-09-21T16:30:16.720525+00:00",
@@ -9257,5 +9271,272 @@
       }
     ],
     "freed_bytes": 4698773097
+  },
+  "resume_aod_r1_build_20260929": {
+    "recorded_at": "2026-09-29T15:18:22.401246+00:00",
+    "source_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "android_fix_revision": "0737d5f",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "build_datetime": 1790692970,
+    "build_started_at": 1790692970.310636,
+    "entry_finished_at": 1790694321.3603811,
+    "entry_exit_code": 0,
+    "build_stages": [
+      {
+        "targets": [
+          "bacon"
+        ],
+        "exit_code": 0
+      },
+      {
+        "targets": [
+          "target-files-package"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "stage_durations": [
+      "11:46 (mm:ss)",
+      "07:31 (mm:ss)"
+    ],
+    "input_count": 169,
+    "managed_project_count": 10,
+    "repo_project_count": 1158,
+    "artifact_signature_vintf_selinux_and_date_gates_passed": true,
+    "payload_partitions_matched": 14,
+    "actual_image_files_matched": 40,
+    "aod": {
+      "doze_component": true,
+      "display_doze_supported": true,
+      "display_doze_suspend_supported": true,
+      "runtime_verified": false
+    },
+    "mpeg4_runtime_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+    "euicc": {
+      "supported": false,
+      "packaged_files_absent": true,
+      "feature_and_privileged_permission_absent": true
+    },
+    "ota": {
+      "path": "/srv/build/gold/releases/20260929-231337-8f01656/lineage_gold-ota.zip",
+      "sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+      "bytes": 1169771697
+    },
+    "target_files": {
+      "path": "/srv/build/gold/releases/20260929-231337-8f01656/lineage_gold-target_files.zip",
+      "sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+      "bytes": 2889676165
+    },
+    "frozen_independent_rechecks_passed": true,
+    "package_link_counts": {
+      "ota": 1,
+      "target_files": 1
+    },
+    "vm_restored_live": [
+      "0",
+      "zbud",
+      "N",
+      "Y"
+    ],
+    "guard_restored_at": "2026-09-29T15:05:25.455407+00:00",
+    "temporary_tools_scratch_restart_protection_cleaned": true,
+    "host_zip_unzip_not_installed": true,
+    "kernel_oom_seen": false,
+    "targeted_python_tests_passed": 21,
+    "source_delta_only_existing_overlay_xml": true,
+    "output_inode": 9437191,
+    "device_accepted": false,
+    "automatically_installed": false,
+    "phone_operated": false,
+    "release_key_acceptance": false,
+    "old_ota_absence_annotations_preserved": 4,
+    "terminal_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-terminal.json",
+    "freeze_record": "/srv/build/gold/jobs/gold-mainline-20260920/resume-aod-r1-freeze-state.json"
+  },
+  "candidate_8f01656_device": {
+    "recorded_at": "2026-09-29T15:47:17.128430+00:00",
+    "rom_revision": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "candidate": "/srv/build/gold/releases/20260929-231337-8f01656",
+    "incremental": "1790692970",
+    "slot": "a",
+    "ota_sha256": "a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+    "target_files_sha256": "ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39",
+    "acceptance_scope": "installation_boot_partitions_data_and_formal_AOD_states_passed; physical_AOD_visibility_and_double_tap_confirmation_pending",
+    "installation": {
+      "update_engine_success": true,
+      "host_exit_code": 0,
+      "data_wipe": false,
+      "from_slot": "b",
+      "to_slot": "a",
+      "installer_partition_hashes_matched": 14,
+      "independent_active_partition_hashes_matched": 14,
+      "normal_reboots": 1,
+      "boot_completed": true,
+      "observation_seconds_including_adb_reconnection": 64.0,
+      "not_a_pure_boot_duration": true,
+      "selinux": "Enforcing",
+      "data_persist_mounted": true,
+      "snapshot": "none",
+      "canaries_matched_before_reboot": 2,
+      "canaries_matched_after_unlock": 2,
+      "post_reboot_first_unlock_pending": false,
+      "initial_network_reconnect_probe_succeeded": false,
+      "later_authenticated_network_adb_verified": true
+    },
+    "apps": {
+      "diagnostics_active_apk_sha256": "6e64afef792093c6d1de5b78f67af9922a1261e82b53e20e45b2751d35a315e2",
+      "matches_previously_28_case_accepted_apk": true,
+      "keyattestation_preserved": true,
+      "keyattestation_version": [
+        "versionCode=198",
+        "versionName=1.8.4"
+      ]
+    },
+    "aod": {
+      "permanent_fix_installed": true,
+      "source_fix_revision": "0737d5f",
+      "installed_display_doze_supported": true,
+      "installed_display_doze_suspend_supported": true,
+      "formal_panel_state_test_completed": true,
+      "physical_visibility_user_confirmation_pending": true,
+      "long_term_power_measured": false,
+      "temporary_overlay_or_property_used_for_this_acceptance": false,
+      "runtime_control_path_verified": true,
+      "installed_doze_component_bound": true,
+      "off": {
+        "compositor_power_mode": "Off",
+        "doze_screen_state": 1,
+        "panel_brightness_node": 0
+      },
+      "on": {
+        "compositor_power_mode": "DozeSuspend",
+        "doze_screen_state": 4,
+        "framework_wakefulness": "Dozing",
+        "panel_brightness_node": 16
+      },
+      "wake": {
+        "programmatic_wake_verified": true,
+        "framework_wakefulness": "Awake",
+        "compositor_power_mode": "On"
+      },
+      "screenshot_clock_render_observed": true,
+      "physical_visibility_confirmed": null,
+      "physical_brightness_confirmed": null,
+      "physical_double_tap_wake_confirmed": null,
+      "original_user_settings_restored": true,
+      "brightness_node_is_not_power_measurement": true
+    },
+    "boundaries": {
+      "no_cellular_data_calls_sms_or_sim_changes": true,
+      "no_mac_network_or_keychain_operations": true,
+      "ims_deferred": true,
+      "esim_support_withdrawn": true,
+      "wpa3_mac_association_not_retested": true,
+      "old_device_results_not_inherited": true
+    },
+    "handoff": {
+      "adb_uid": 2000,
+      "selinux": "Enforcing",
+      "authenticated_network_adb": true,
+      "mobile_data_off": true,
+      "roaming_subscription_data_off": true,
+      "canaries_matched": 2,
+      "ota_stage_removed": true,
+      "temporary_doze_overlay_and_property_absent": true,
+      "original_aod_settings_restored": true,
+      "normal_reboots": 1,
+      "no_mac_network_or_keychain_operations": true,
+      "keyattestation_preserved": true,
+      "handed_back_at": "2026-09-29T15:46:10.872997+00:00"
+    },
+    "private_raw_evidence": "Local work/runtime-aod-8f01656-20260929; raw device/radio/screenshots remain private and are not copied into Git.",
+    "media": {
+      "mpeg4_installed_library_sha256": "d3ed8edc612cf7d30523b70230feeae29935b0339f4942782edf5a7bbec2f84b",
+      "matches_frozen_candidate": true,
+      "runtime_encode_decode_not_repeated_on_this_candidate": true,
+      "previous_runtime_evidence_revision": "60e90a7"
+    }
+  },
+  "github_release_20260929_r1": {
+    "status": "published_and_verified",
+    "repository": "Redmi-Note-13-Gold/lineageos-gold",
+    "release_id": 399316583,
+    "tag": "lineage-23.2-20260929-r1",
+    "source_commit": "8f01656dc34564b5157aadfc466bf0180397a461",
+    "url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1",
+    "draft": false,
+    "prerelease": true,
+    "published_at": "2026-09-29T16:16:57Z",
+    "verified_at": "2026-09-29T16:17:40.896119+00:00",
+    "signing": "userdebug/test-keys",
+    "asset_verification": "All eight GitHub SHA-256 digests and sizes match authoritative server files.",
+    "assets": [
+      {
+        "id": 598642657,
+        "name": "lineage-23.2-20260929-UNOFFICIAL-gold.zip",
+        "size": 1169771697,
+        "digest": "sha256:a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/lineage-23.2-20260929-UNOFFICIAL-gold.zip"
+      },
+      {
+        "id": 598642149,
+        "name": "boot.img",
+        "size": 67108864,
+        "digest": "sha256:28140a4d8e84592b8538b8c002f4c9014b930dfb66e016722ff086bab6d86c3f",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/boot.img"
+      },
+      {
+        "id": 598642007,
+        "name": "dtbo.img",
+        "size": 8388608,
+        "digest": "sha256:027b199fa1308408325cb1f098c8275e6ecf9ec1942d4bb916c6af8c117f6b01",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/dtbo.img"
+      },
+      {
+        "id": 598642423,
+        "name": "vendor_boot.img",
+        "size": 67108864,
+        "digest": "sha256:b9fdafe922b4357d8a1dcd56e927611bf4f83d301abea02d824197171646e628",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/vendor_boot.img"
+      },
+      {
+        "id": 598641915,
+        "name": "vbmeta.img",
+        "size": 8192,
+        "digest": "sha256:f4448b308a5919e76102fbc4f3e9ae5f661c448b05f887ea1f2dd2abbd74c550",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/vbmeta.img"
+      },
+      {
+        "id": 598641837,
+        "name": "README.md",
+        "size": 5312,
+        "digest": "sha256:1d59e670c5ff3b020582584a6e69f3102d983933280bfad73988bb5a4dd6cddd",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/README.md"
+      },
+      {
+        "id": 598641735,
+        "name": "release-manifest.json",
+        "size": 2355,
+        "digest": "sha256:08d3dfe59dec157fa57bbd54cae6c14d081211bc82b1941b4096f6a35ce1779b",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/release-manifest.json"
+      },
+      {
+        "id": 598641688,
+        "name": "SHA256SUMS",
+        "size": 581,
+        "digest": "sha256:82991ec98e13906a93881fd4cc280d61644178d40b70bec47314b80079ecf3f4",
+        "browser_download_url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20260929-r1/SHA256SUMS"
+      }
+    ],
+    "public_download_checks": {
+      "unauthenticated_release_http": 200,
+      "checksums_sha256_matches": true,
+      "ota_range_http": 206,
+      "ota_content_range": "bytes 0-0/1169771697"
+    },
+    "target_files_published": false,
+    "candidate_device_acceptance": "See candidate_8f01656_device; publication does not extend hardware acceptance.",
+    "phone_operated": false,
+    "mac_network_or_keychain_operated": false
   }
 }

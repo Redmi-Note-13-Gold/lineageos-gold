@@ -1,6 +1,64 @@
-更新于2026-09-29：60e90a7已下载、保数据安装并完成14分区回读，手机为B槽 / 1790091429 / Enforcing。MPEG4崩溃修复已实机通过；AOD另查出两个缺失的面板低功耗开关，源码0737d5f及定向APK已修复，完整ROM尚未完成。
+更新于 2026-09-30 18:06（UTC+8）。**R7 `f874058` 已保数据安装在 B 槽 / `1790758254`，14 个活动分区回读、DE/CE 标记、正式 MAC 策略和静默运行检查通过。** ADB 已恢复 UID 2000、Enforcing 保持；完整硬件和长期功耗尚未验收。
 
-## 本轮已验收
+## 当前 R7 与下一批相机修复
+
+R7 恢复原厂 `ro.vendor.mtk_aod_support=1`，标准构建和成品检查通过后，只 apply 和正常重启各一次。冻结目录 `/srv/build/gold/releases/20260930-171651-f874058`，安装与边界见 [第七批记录](../validation/adaptation-20260930-r7.json)。旧 AOD 设置已从临时值0恢复为1；一次正常唤醒/锁屏后，系统与 SurfaceFlinger 进入 DOZE_SUSPEND，内核显示唤醒锁在转入后释放。物理时钟可见性等待用户反馈，USB连接时的读数不作放电率验收。
+
+用户两次重试的现场日志已明确相机失败点：108MP 的私有会话类型正确，但框架按标准流表将 JPEG 改为1920×1440，尺寸检查正确拒绝该小图；人像在 JNI 之前因错误 FOURCC `0x20365931` 创建 ImageReader 失败。下一批以最小修改修复：Aperture加入已有私有流精确名单，新增该属性的精确标签并复用现有相机权限，深度格式改用已有 `ImageFormat.Y16`。现有成品校验同步检查名单和标签；不删除尺寸校验、不增加框架分支、权限规则或新测试套件。相机修复尚未编译或实拍通过，待同一批构建验证。
+
+## R6：安装与静默检查记录
+
+R6 在科研机唯一输出完成 bacon 与 target-files 两阶段构建；同次签名、VINTF、SELinux、14 个 payload 分区及 51 个实际镜像文件检查通过。构建记录 `1790741813226865224`，源码 `450d95be388d0b14ea1e3fbd3a261a454a39b1ba`，固定 epoch `1790741813`。没有额外编译测试目标，不把此前 Power/Health 或失败的 DisplayServiceTests 记作本轮通过。冻结目录 `/srv/build/gold/releases/20260930-145258-450d95b`；OTA SHA-256 `3fbce22f9cd185a94b78f978c4df1a56238fbeafb664c87650829c405f0d57f4`，target-files `615d8a149d46ff50247b0734e07f519c212f0d02df79f2e44a1a79079ffefc3d`。冻结 `candidate.json` 保持当时尚未实机验收的原始记录；安装证据另见 [第六批交付记录](../validation/adaptation-20260930-r6.json)。
+
+安装器只发起一次 OTA apply。USB 跟随在 35% 中断，主机进程 exit 255；原失败记录保留。随后同一 boot 的 update_engine daemon 日志证明精确 R6 stage 的三项动作全部 `kSuccess`、更新完成且状态为 `UPDATED_NEED_REBOOT`，重启前 14 个目标分区哈希吻合。独立对账后只请求一次重启，**没有再次 apply**。重启后 R6 位于 A 槽，14 个活动分区回读全部吻合；data/persist 挂载、snapshot none、解锁后的 DE/CE 两份标记均一致。
+
+正式系统的 system_ext MAC signer 已展开为证书，未依赖临时 bind；SystemUI 为 `platform_app`，Enforcing 保持。batterysecret 服务/域、产品面板配置与 HBM/热控映射、Aperture 安装路径/签名权限/校准文件标签等两轮只读静默检查均通过。R4/R6 自有 OTA 暂存及 R4 临时策略源经精确核对后移除，ADB 恢复 UID 2000，漫游数据保持关闭。构建机的 VM/needrestart 已恢复，R5 临时 zip/unzip 和 R5/R6 空 scratch 已清理；冻结候选、失败证据、原始输入和旧候选均保留。未公开推送或发布 R6。
+
+R6 用设备专用 `@GOLD_APERTURE` 消除 R5 的平台键表重名，仍引用同一默认证书；真实合并键表与包内 MAC XML 检查通过。特殊拍摄超时现在可传播失败并显示简短提示，但**这不是 108MP 或人像无法保存的根因修复**。用户此前确认普通后摄可保存 3000×4000 JPEG，108MP 和人像保存失败；本轮没有取得新的成功捕获证据。前摄 16MP、JNI 实际加载与人像画质仍待验收。
+
+用户新报告 AOD 时屏幕发热、掉电明显。batterystats 显示 15:38:26 断电时 80% 至 16:04:28 的 54%，同期持续 `screen_doze` 且无相机活动；OTA daemon 已于 15:40 完成，不能把整段下降归于 OTA。R4 快照为 battery 38°C、skin 41.893°C，healthd/ueventd 各约占一核 13%；框架记录 `DOZE_SUSPEND`、未持有框架 suspend blocker，16:22 Power HAL 请求与 vote 均中性，不支持持续 boost 归因。charge_counter 近似按容量百分比阶梯变化，不能当作真实库仑积分。掉电根因仍需在 R6 上调查，不能把 AOD 状态切换成功写成低功耗验收。WPA3 iPad 关联、33W/关机充电及其他物理功能、设备属性证明 `-66`、最后安排的 IMS 仍未完成。
+
+已定位一个确定的显示配置缺陷：手机 `ro.vendor.mtk_aod_support=0`，而锁定原厂输入与参考设备树均为 `1`。手机 composer SHA 与分析样本相同，其代码在该值为 `0` 时直接拒绝 DOZE/DOZE_SUSPEND；SurfaceFlinger 的状态名称不能证明请求被硬件接受。匹配 DRM/面板已有 doze 实现。本轮最小修复仅恢复原厂值 `1`，并在现有包校验器增加同值检查；不新增框架、权限或节点写入，不绕过硬件 caps 保护。该修复已随R7编译、安装；本轮正常DOZE路径及显示锁释放已有证据，实际掉电改善仍待验证。
+
+## R4 / R5 历史失败
+
+R4 `ab06d18` 的构建和单次 OTA 成功，但未展开的 `@RELEASE` 导致完整签名策略加载失败，SystemUI 落入 `priv_app` 并触发救援重启；当时仅完成 boot、dtbo、odm_dlkm 三项活动槽回读。临时绑定正确策略后，SystemUI 恢复 `platform_app`、Aperture 恢复 `gold_aperture_app`，Enforcing 与两份数据标记保持。该临时 root/bind 仅用于 R4 救援，**已由 R6 正式策略取代并在安装收尾清理**。R5 `7a502f8` 于 12:07 因平台键表重复定义 `@RELEASE` 而编译失败，未生成或安装候选；原失败记录不改写。详见 [第四批记录](../validation/adaptation-20260930-r4.json) 和 [第五批失败记录](../validation/adaptation-20260930-r5.json)。
+
+经用户批准删除的四份 9 月 21 日旧 OTA 共释放 4,699,561,841 字节；对应 target-files、源码、记录和其他候选保留。
+
+## 上一批 52e9435：已安装记录
+
+源码提交 `48306c6`、`52e9435` 接入现有 FMRadio，补齐统一 Power HAL 的持续音频请求与独立来源释放，修正 Health 无效读取的 AIDL 状态码；Aperture 复用一个后端增加默认关闭的后摄 108MP / 前摄 16MP 捕获入口，按原厂契约将 HDR 属性设为 false，并删除未使用的 libperfmgr 配置和标签。电量单位继续按已确认的 mAh→µAh 契约转换，Codec2 保留按当前平台编译的服务入口。
+
+科研机唯一输出完成 bacon 与 target-files 两阶段构建；签名、VINTF、SELinux、14 个 payload 分区及设备包检查通过，实际 Android 工具链的 Power/Health 测试 33/27/8 项通过。最终包冻结于 `/srv/build/gold/releases/20260930-060158-52e9435`；首轮因本任务误用沙箱只读的 `/var/tmp` 打包目录失败，改用既定 `/tmp` 后成功，没有修改源码或放宽沙箱处理此错误。
+
+已准备并核对基线 Recovery 启动镜像及自动 ADB 配置，随后完整 OTA 单次安装返回 `kSuccess(0)`，B→A 正常重启一次。安装器与独立活动槽回读各 14 项匹配；正常启动、Enforcing、data/persist 挂载、snapshot none、DE/CE 两份 canary 一致。设备没有 `bootctl`，未宣称单独核对 bootloader 的成功槽位标记。Power/Health AIDL 注册、FMRadio/Aperture 包、五项 FM 属性和 HDR=false 实读通过；Power 后端 ready 且无错误。未打开相机、FM 播放或进行屏幕、声音、振动及外部 WPA3 客户端测试。
+
+手机安装暂存已核验清理，ADB 恢复 UID 2000，漫游数据保持关闭。科研机 VM/needrestart 恢复，临时 zip/unzip 和 OTA scratch 已清理，历史原厂输入保留。没有公开推送或发布本候选。脱敏证据见 [本轮记录](../validation/adaptation-20260930.json)；冻结时的 `candidate.json` 保持原字节，安装结果另记。
+
+后置人像现已完成编译与包内核验：Aperture 复用既有相机交接与保存流程，向原厂 MiAlgo 双摄图提交逻辑 3 / 物理 0、2 的帧和 metadata，再将效果输出保存为 JPEG，默认关闭。应用移至 system_ext 使用局部平台 API，签名及非特权身份保留；专用 SELinux 域只读指定校准和模型文件。三个新增原厂库保持原字节。JNI 中一个未被 relocation 使用的旧 libgui 符号无法通过标准 ELF 检查，故仅对这个模块允许 undefined symbols，仍检查 SONAME/NEEDED；这不代表运行时 ABI 已验证。尚未进行实际加载、捕获或画质验收。
+
+第三批 `00efd66` 的额外 DisplayServiceTests 编译失败：45 个错误均为未修改上游测试对 AutomaticBrightnessController.configure 的旧参数调用。不修补整套上游测试；保留本次 20 行 HBM 回归用例及失败记录，第四批只构建主线 ROM。第三批没有合格交付包，也未安装。WPA3 关联、设备 ID attestation `-66` 及其他物理验收继续待办，不将编译或启动成功扩大为功能通过。
+
+## GitHub 测试版发布
+
+[Global R1 / lineage-23.2-20260929-r1](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1) 已公开发布为 Pre-release。发布标签固定到实际 ROM 源码 `8f01656dc34564b5157aadfc466bf0180397a461`，日期来自该 ROM 构建。8 个附件包括完整 OTA、同次 boot/dtbo/vendor_boot/vbmeta 镜像、说明、脱敏清单和 SHA256SUMS；逐项 GitHub SHA-256 与科研机文件一致，公开校验文件及 OTA 下载范围请求通过。target-files 保留在科研机，不是手机安装包。
+
+该发布为 userdebug/test-keys 测试版，已验收和待办边界如下；公开发布不等于正式发行密钥、CTS 或全部硬件验收。未改变旧 CN R1 发布，未操作手机或 Mac 网络。
+
+## 8f01656 历史 AOD 候选：状态切换已通过
+
+2026-09-29 22:42:50启动，23:05:21入口exit0。bacon11:46、target-files-package07:31均成功；同次169项输入/10受管项目/1158项Repo、签名/VINTF/SELinux/UTC日期、14个payload分区与40个实际镜像文件通过。实际system_ext的GoldStatusBarOverlay含DOZE和DOZE_SUSPEND两个true；MPEG4兼容库、SAE资源、eSIM缺席门禁保留。单一OUT inode9437191未变，内核无OOM。
+
+候选 `/srv/build/gold/releases/20260929-231337-8f01656` 已冻结同次源码/工具/输入，独立副本复验exit0；全量OTA SHA-256 `a7de60dd4e8281e7b37db3d2b28896d56609443520f71ca655c085b6fae2a4f8`，全量target-files `ee441c332f84379db0c774c908db949d58b351479097b32d003f9b78e3e11f39`。包各nlink1，转存临时目录已清理。guard23:05:25恢复，VM实读0/zbud/N/Y，临时ZIP工具、OTA scratch、needrestart精确保护全部清理，宿主ZIP工具未持久安装。历史4项OTA缺席注记保留。
+
+用户确认手机空闲后，已通过本地与手机SHA、证书、适用性、槽位/供电/快照检查，update_engine返回kSuccess(0)，B→A正常重启一次。安装器与独立活动槽各14分区匹配；data/persist挂载、snapshot none、Enforcing通过。64.0秒观察含ADB重连，不作为纯启动时长。开机后的首次网络ADB探测未立即成功，随后重新核对身份并实际连通；未再次刷机或重启。
+
+首次解锁后两canary均一致。直接使用新ROM永久资源，关闭AOD时实际compositor为Off、面板节点0；开启后为DozeSuspend、dozeScreenState=4、framework Dozing、面板节点16；两种状态均可程序唤醒回Awake/On。截图中时钟正常绘制，没有临时overlay或属性覆盖。物理时钟亮度及双击体验尚待用户反馈，节点16不能换算成已测功耗。
+
+Diagnostics活动APK与既有28项验收版本一致，MPEG4库与冻结包SHA相同，未重复无影响媒体测试；用户KeyAttestation保留。原AOD设置已恢复，本次手机OTA/元数据两文件及目录经SHA核对后清理，ADB UID2000/Enforcing及鉴权网络控制已恢复。漫游数据维持关闭，本轮未操作Mac网络或钥匙串。
+
+## 60e90a7 已验收记录
 
 | 子项 | 60e90a7实际证据与边界 |
 |---|---|
@@ -27,10 +85,10 @@ AOD服务绑定和时钟绘制在60e90a7生效，但SystemUI默认 `doze_display
 | WPA3 热点 | 用户历史确认可以开启、Mac可扫描但无法连接；当前没有新修复或认证阶段证据。用户禁止操作Mac网络/钥匙串，因此停止Mac联测；后续需要独立且获准的测试客户端，不启用漫游数据 |
 | 设备属性证明 | 70c2ec4普通应用无设备属性的TEE证明通过；设置安全锁屏后，包含属性仍为-66。五项当前属性分别请求、五项一起请求、正常平台五项一起请求均被拒绝；CN原厂分区检查与本地RKP诊断见keymint_followup记录。RKP签名和当前系统信息不等于工厂ID已获验证；信任根/吊销未审计。认证绑定EC/AES已移到已验收；不猜身份、不导入keybox或重置安全存储 |
 | TCP/BPF | FIN回收与活动连接隔离通过，部分RST仍长驻。逐四元组CT_GET复查两条旧流仍为内核ESTABLISHED、超时约五天；撤回先前“/proc未匹配=内核已消失”的推断。新配对测试中RST先保留ESTABLISHED但超时缩至9秒，12秒查询时内核及双向规则缺席；查询可能促进过期项回收，不算无观察自然到期通过。继续查周期超时刷新与RST短超时的交互，未改生产BPF/APEX，未手动删除规则 |
-| Recovery | 60e90a7未做Recovery往返；bd50b19缓存/RSS为独立历史证据。Scudo失败注入与完整Recovery OTA仍未测，按实际需要及稳定控制链安排，不为重复验收刷机 |
-| AOD | 已发现并修复两个缺失的面板低功耗开关，临时DOZE/DOZE_SUSPEND与唤醒通过，定向APK已编译。完整ROM交付、物理可见性确认和适当功耗验证仍未完成；MPEG4短往返已移至上方已验收 |
+| Recovery | 60e90a7及8f01656均未做Recovery往返；bd50b19缓存/RSS为独立历史证据。Scudo失败注入与完整Recovery OTA仍未测，按实际需要及稳定控制链安排，不为重复验收刷机 |
+| AOD | 两个面板低功耗开关及历史 OFF/DOZE_SUSPEND/程序唤醒和两 canary 已验证；用户现报告 AOD 发热、掉电明显。R4 充电中快照见本文顶部，耗电根因与 R6 长期功耗仍待查，不能将状态切换视为低功耗验收。MPEG4 既有短往返验收按 60e90a7 保留 |
 | Health / 热控 / 其他硬件 | 持续负载降频与恢复、完整充电/关机充电循环、长期续航未测；蓝牙音频等依外设和已有记录选择测试 |
-| 正式发行 | 当前userdebug/test-keys不等于正式发行密钥验收，未公开发布 |
+| 正式发行 | 已公开 Global R1 Pre-release 测试版；正式发行密钥、CTS及完整硬件验收仍未完成 |
 | IMS | 按用户安排放最后，另有安排；本轮不推进，不操作 SIM、不拨号或发短信 |
 
 2026-09-22用户明确要求“开刷”，本轮已执行保数据安装及必要正常重启；这不扩大为额外Recovery或网络切换测试。未操作SIM、拨号或短信，当时只记录旧的全局mobile_data=0，不能据此判定双卡实际数据开关；本轮按订阅与真实上行核实中国联通已开启、漫游eSIM数据关闭，原设置不变。正式双击设置仍1。手机端两份专属OTA暂存文件及其目录已清理，临时root已恢复UID2000、Enforcing。用户Key Attestation 1.8.4/code198保留，没有授予额外权限。

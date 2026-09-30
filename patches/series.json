@@ -29,7 +29,7 @@
     "revision": "d3d941c29395ce770b95b735b27bd28e6a8c6946",
     "patches": [],
     "source": "device/xiaomi/gold",
-    "remove": []
+    "remove": ["configs/powerhint.json"]
   },
   {
     "path": "frameworks/base",
@@ -37,7 +37,17 @@
     "revision": "35ad1f68539dce0857d25154dacb1116100737e9",
     "patches": [
       "patches/frameworks__base/0001-status-icon-packing-r2.patch",
-      "patches/frameworks__base/0002-statusbar-cutout-intersection.patch"
+      "patches/frameworks__base/0002-statusbar-cutout-intersection.patch",
+      "patches/frameworks__base/0003-hbm-zero-timing.patch"
+    ]
+  },
+  {
+    "path": "packages/apps/Aperture",
+    "url": "https://github.com/LineageOS/android_packages_apps_Aperture",
+    "revision": "cf1bc0a72524318d0e06ebe938a20b170f1eb878",
+    "patches": [
+      "patches/packages__apps__Aperture/0001-gold-high-resolution-camera.patch",
+      "patches/packages__apps__Aperture/0002-gold-rear-portrait.patch"
     ]
   },
   {

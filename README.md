@@ -4,6 +4,7 @@
 
 2026-09-20 已重新审查主线、科研机实际源码和 Dhterech 参考树。当前修改包含 32 位图形依赖补齐、原厂功耗统计资源、实际屏幕模式选择、电量计数单位修复、振动 HAL 契约修复、相机目录权限收敛及维护者补丁入库。**本轮候选的 Android 构建和实机验收状态见 [STATUS](docs/STATUS.md)。**
 
+- [最新 Global R1 测试版（2026-09-29）](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1)：完整 OTA、同次配套镜像、校验文件及已知问题；已在同基线主线保数据安装。
 - [当前状态](docs/STATUS.md)：构建、安装、启动和硬件证据分别列出。
 - [构建](docs/BUILD.md) · [恢复源码](docs/RESTORE.md)
 - [适配取舍](docs/ADAPTATION.md)：v1 与参考仓库的采用、替代和暂缓项。

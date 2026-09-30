@@ -3,6 +3,7 @@
 
 #include "NodeBackend.h"
 
+#include <array>
 #include <functional>
 #include <condition_variable>
 #include <deque>
@@ -48,6 +49,8 @@ class PowerEngine {
     void thermal(bool safe, Millis now);
     void launch(bool enabled, int clamp, Millis now);
     void interaction(int duration, int clamp, Millis now);
+    // Source 0 is AIDL; 1..5 are the five reviewed MTK audio hints.
+    void audioStreaming(unsigned source, bool enabled, Millis now);
     void tick(Millis now);
     void waitForWork(Millis now);
     void stop(Millis now);
@@ -60,7 +63,7 @@ class PowerEngine {
     void displayGate(Millis now);
     void gate(Inhibit reason, bool blocked, Millis now);
     void tickLocked(Millis now);
-    void framework(int* handle, bool enabled, int duration, int clamp, Millis now);
+    void framework(int* handle, bool enabled, int duration, const Values& values, Millis now);
     int record(const char* operation, int uid, int pid, int handle, Millis duration,
                int result, Millis now, const std::vector<int32_t>& pairs = {});
     mutable std::mutex mutex_;
@@ -78,6 +81,7 @@ class PowerEngine {
     Millis lastInitialize_ = -1;
     Millis lastThermal_ = -1;
     int launch_ = 0, interaction_ = 0;
+    std::array<int, 6> audio_{};
     uint64_t accepted_ = 0, rejected_ = 0;
     std::deque<RequestEvent> events_;
 };

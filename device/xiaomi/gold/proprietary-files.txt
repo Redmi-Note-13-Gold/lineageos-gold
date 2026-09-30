@@ -344,6 +344,10 @@ vendor/firmware/soc2_2_ram_bt_1_1_hdr.bin
 vendor/firmware/soc2_2_ram_bt_1a_1_hdr.bin
 
 # Camera
+# Rear portrait: original JNI bridge and the Gold depth plugin.
+system_ext/lib64/libcamera_algoup_jni.xiaomi.so;EXTRACT_ONLY
+vendor/lib64/com.xiaomi.plugin.capbokeh.so
+vendor/lib64/libwa_dof.so
 vendor/bin/hw/camerahalserver
 vendor/etc/init/camerahalserver.rc
 vendor/bin/lib3a.ccu.dm

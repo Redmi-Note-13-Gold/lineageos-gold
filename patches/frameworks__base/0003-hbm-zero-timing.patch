@@ -1,0 +1,46 @@
+diff --git a/services/core/java/com/android/server/display/HighBrightnessModeController.java b/services/core/java/com/android/server/display/HighBrightnessModeController.java
+--- a/services/core/java/com/android/server/display/HighBrightnessModeController.java
++++ b/services/core/java/com/android/server/display/HighBrightnessModeController.java
+@@ -509,7 +509,11 @@
+                     + ", events: " + hbmEvents);
+         }
+ 
+-        if (nextTimeout != -1) {
++        // A zero timing window has no budget boundary to wake up for.
++        if (mHbmData.timeWindowMillis == 0 && mHbmData.timeMaxMillis == 0
++                && mHbmData.timeMinMillis == 0) {
++            mHandler.removeCallbacks(mRecalcRunnable);
++        } else if (nextTimeout != -1) {
+             mHandler.removeCallbacks(mRecalcRunnable);
+             mHandler.postAtTime(mRecalcRunnable, nextTimeout + 1);
+         }
+diff --git a/services/tests/displayservicetests/src/com/android/server/display/HighBrightnessModeControllerTest.java b/services/tests/displayservicetests/src/com/android/server/display/HighBrightnessModeControllerTest.java
+--- a/services/tests/displayservicetests/src/com/android/server/display/HighBrightnessModeControllerTest.java
++++ b/services/tests/displayservicetests/src/com/android/server/display/HighBrightnessModeControllerTest.java
+@@ -192,6 +192,26 @@
+         assertState(hbmc, DEFAULT_MIN, TRANSITION_POINT, HIGH_BRIGHTNESS_MODE_OFF);
+     }
+ 
++    @Test
++    public void testZeroTimingDoesNotScheduleRepeatedRecalculation() {
++        initHandler(null);
++        final HighBrightnessModeData zeroTiming = new HighBrightnessModeData(
++                MINIMUM_LUX, TRANSITION_POINT, 0, 0, 0, /*allowInLowPowerMode=*/ true,
++                HDR_PERCENT_OF_SCREEN_REQUIRED_DEFAULT, null, null, true);
++        final HighBrightnessModeController hbmc = new HighBrightnessModeController(
++                mInjectorMock, mHandler, DISPLAY_WIDTH, DISPLAY_HEIGHT, mDisplayToken,
++                mDisplayUniqueId, DEFAULT_MIN, DEFAULT_MAX, zeroTiming, null, () -> {},
++                new HighBrightnessModeMetadata(), mContextSpy);
++
++        hbmc.setAutoBrightnessEnabled(AUTO_BRIGHTNESS_ENABLED);
++        hbmc.onAmbientLuxChange(MINIMUM_LUX + 1);
++        hbmcOnBrightnessChanged(hbmc, TRANSITION_POINT + 0.01f);
++        assertState(hbmc, DEFAULT_MIN, DEFAULT_MAX, HIGH_BRIGHTNESS_MODE_SUNLIGHT);
++
++        mClock.fastForward(1);
++        assertEquals(0, mTestLooper.dispatchAll());
++    }
++
+     @Test
+     public void testWithinHighRange_thenOverTime_thenEarnBackTime() {
+         final HighBrightnessModeController hbmc = createDefaultHbm();

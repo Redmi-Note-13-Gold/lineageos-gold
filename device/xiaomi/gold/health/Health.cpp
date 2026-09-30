@@ -7,6 +7,7 @@
 
 #include <android-base/logging.h>
 #include <android/binder_interface_utils.h>
+#include <aidl/android/hardware/health/IHealth.h>
 #include <health-impl/Health.h>
 #include <health/utils.h>
 
@@ -23,6 +24,7 @@
 using aidl::android::hardware::health::HalHealthLoop;
 using aidl::android::hardware::health::Health;
 using aidl::android::hardware::health::HealthInfo;
+using aidl::android::hardware::health::IHealth;
 
 #if !CHARGER_FORCE_NO_UI
 using aidl::android::hardware::health::charger::ChargerCallback;
@@ -46,7 +48,7 @@ class GoldHealth final : public Health {
         const auto converted = gold::ChargeCounterUah(*out);
         if (!converted) {
             *out = 0;
-            return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_STATE);
+            return ndk::ScopedAStatus::fromServiceSpecificError(IHealth::STATUS_UNKNOWN);
         }
         *out = *converted;
         return status;

@@ -124,8 +124,10 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'lib/hw/mapper.mediatek.so', 'lib/libgpud.so', 'lib/libgralloc_metadata.so',
                    'lib/libgralloctypes_mtk.so', 'lib/arm.graphics-V5-ndk.so',
                    'lib/libmp4enc_sa.ca7.so',
+                   'lib64/com.xiaomi.plugin.capbokeh.so', 'lib64/libwa_dof.so',
                    'bin/hw/android.hardware.health-service.gold',
                    'etc/init/android.hardware.health-service.gold.rc', 'etc/init/gold-charger.rc',
+                   'bin/batterysecret', 'etc/init/init.batterysecret.rc',
                    'etc/vintf/manifest/android.hardware.health-service.gold.xml',
                    'etc/selinux/vendor_file_contexts', 'etc/permissions/android.hardware.telephony.ims.xml',
                    'etc/wifi/wpa_supplicant.conf', 'etc/wifi/wpa_supplicant_overlay.conf',
@@ -144,9 +146,13 @@ def verify_images(target, host_bin, scratch_parent=None):
                    'overlay/WifiOverlay/WifiOverlay.apk',
                    'overlay/SettingsResOverlayGold.apk'],
         'system_ext': ['priv-app/Settings/Settings.apk', 'priv-app/ImsService/ImsService.apk',
+                       'app/Aperture/Aperture.apk', 'lib64/libcamera_algoup_jni.xiaomi.so',
+                       'etc/public.libraries-xiaomi.txt', 'etc/permissions/gold-aperture-camera-data.xml',
+                       'etc/selinux/system_ext_seapp_contexts', 'etc/selinux/system_ext_mac_permissions.xml',
                        'overlay/GoldStatusBarOverlay.apk',
                        'priv-app/SystemUI/SystemUI.apk',
                        'etc/permissions/privapp-permissions-com.mediatek.ims.xml'],
+        'product': ['etc/displayconfig/display_id_4627039422300187648.xml'],
     }
     recovery_prefix = 'VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/'
     recovery_wanted = ['system/bin/hw/android.hardware.health-service.gold-recovery',
@@ -228,6 +234,17 @@ def verify(target, aapt2, readelf, profile):
         members = set(archive.namelist())
         euicc = verify_euicc_removed(archive)
 
+        # One unresolved signer alias makes SELinuxMMAC discard every seinfo policy.
+        for name in members:
+            if '/etc/selinux/' not in name or not name.endswith('_mac_permissions.xml'):
+                continue
+            root = ET.fromstring(archive.read(name))
+            for signer in root.findall('signer'):
+                certs = [signer.get('signature')] + [cert.get('signature') for cert in signer.findall('cert')]
+                certs = [cert for cert in certs if cert is not None]
+                require(certs and all(re.fullmatch(r'(?:[0-9A-Fa-f]{2})+', cert) for cert in certs),
+                        'Unexpanded or invalid SELinux signer certificate: ' + name)
+
         def unpack(name):
             destination = Path(scratch) / name
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -236,6 +253,23 @@ def verify(target, aapt2, readelf, profile):
 
         def dump(name, *arguments):
             return subprocess.check_output([str(aapt2), 'dump', *arguments, str(unpack(name))], text=True)
+
+        # The bridge stays byte-exact; these hashes do not establish runtime JNI ABI compatibility.
+        portrait = {
+            'SYSTEM_EXT/lib64/libcamera_algoup_jni.xiaomi.so': 'd0d4ee4a31ced39df1661f0e3950c13245b715c30ed7c30e323095991c24a438',
+            'VENDOR/lib64/com.xiaomi.plugin.capbokeh.so': '79438946cd668d2f9de29a0ff0966bf8d8939a5611afb6720d517bccbbbc2ad2',
+            'VENDOR/lib64/libwa_dof.so': 'bbcba825cb102e61fc6cb8959e10efa3663fe249941b62e9e0c7e6f9bd822fe2',
+        }
+        for name, expected_sha in portrait.items():
+            require(sha256(archive.read(name)) == expected_sha, 'Unexpected original portrait library: ' + name)
+        require(not any(name.startswith('PRODUCT/app/Aperture/') for name in members),
+                'Old product Aperture remains after system_ext migration')
+        require(archive.read('SYSTEM_EXT/etc/public.libraries-xiaomi.txt').decode().splitlines() ==
+                ['libcamera_algoup_jni.xiaomi.so'], 'Incorrect portrait public library declaration')
+        aperture_manifest = dump('SYSTEM_EXT/app/Aperture/Aperture.apk', 'xmltree', '--file', 'AndroidManifest.xml')
+        require('libcamera_algoup_jni.xiaomi.so' in aperture_manifest and
+                'org.lineageos.aperture.permission.CAMERA_CALIBRATION' in aperture_manifest,
+                'Missing Aperture native library or calibration permission declaration')
 
         graphics = {}
         for relative in ('hw/mapper.mediatek.so', 'libgpud.so', 'libgralloc_metadata.so',
@@ -331,7 +365,16 @@ def verify(target, aapt2, readelf, profile):
 
         vendor_properties = archive.read('VENDOR/build.prop').decode().splitlines()
         ims_startup = verify_ims_startup_properties(vendor_properties)
+        aod_support = [line.split('=', 1)[1].strip() for line in vendor_properties
+                       if line.startswith('ro.vendor.mtk_aod_support=')]
+        require(aod_support == ['1'], 'MTK composer must accept native DOZE modes')
+        camera_clients = [line.split('=', 1)[1].strip() for line in vendor_properties
+                          if line.startswith('persist.vendor.camera.privapp.list=')]
+        require(camera_clients == ['org.lineageos.aperture'], 'Aperture must retain OEM private stream sizes')
         property_contexts = archive.read('VENDOR/etc/selinux/vendor_property_contexts').decode()
+        require(re.search(r'^persist\.vendor\.camera\.privapp\.list\s+'
+                          r'u:object_r:vendor_mtk_camera_prop:s0\s+exact\s+string\s*$',
+                          property_contexts, re.M), 'Missing exact camera private-stream property label')
         for name, context in [('persist.vendor.ims_support', 'vendor_mtk_ims_prop'),
                               ('ro.vendor.md_auto_setup_ims', 'vendor_mtk_ims_prop'),
                               ('persist.vendor.volte_support', 'vendor_mtk_volte_support_prop')]:
@@ -360,6 +403,14 @@ def verify(target, aapt2, readelf, profile):
         require(b'on init && property:ro.build.type=userdebug\n'
                 b'    setprop ro.adb.secure.recovery 0\n' in recovery_rc,
                 'Debug Recovery must enable its own ADB access before userdata is available')
+
+        for packaged, source in [
+            ('VENDOR/etc/init/init.batterysecret.rc', 'init/init.batterysecret.rc'),
+            ('PRODUCT/etc/displayconfig/display_id_4627039422300187648.xml',
+             'configs/display/display_id_4627039422300187648.xml'),
+        ]:
+            require(archive.read(packaged) == (profile.parents[4] / source).read_bytes(),
+                    'Packaged stock device configuration differs from mainline: ' + packaged)
 
         power_rc = 'VENDOR/etc/init/android.hardware.power-service.gold.rc'
         power_xml = 'VENDOR/etc/vintf/manifest/android.hardware.power-service.gold.xml'
@@ -493,6 +544,9 @@ def verify(target, aapt2, readelf, profile):
         require('cpu.core_power.cluster1' in actual and 'u.core_power.cluster1' not in actual,
                 'Incorrect big-core power key')
         return {'gold_package_contents_verified': True, 'graphics_32bit': graphics,
+                'portrait': {'original_libraries': portrait, 'aperture_partition': 'system_ext',
+                             'private_stream_client': camera_clients[0],
+                             'runtime_verified': False},
                 'health': health, 'health_vintf': declarations, 'charger_definitions': chargers,
                 'ims': {'feature_permission': ims_feature, 'feature_declared': True,
                         'input_sha256': ims_input['sha256'], 'packaged_sha256': sha256(archive.read(ims_name)),
@@ -518,7 +572,8 @@ def verify(target, aapt2, readelf, profile):
                 'touch_wake': {'framework_switch': True, 'power_path': True,
                                'typed_control_device': True, 'runtime_verified': False},
                 'aod': {'doze_component': True, 'display_doze_supported': True,
-                        'display_doze_suspend_supported': True, 'runtime_verified': False},
+                        'display_doze_suspend_supported': True, 'mtk_composer_doze_enabled': True,
+                        'runtime_verified': False},
                 'attestation_identity': {'properties': attestation, 'tee_acceptance_verified': False},
                 'network_probes': {'https_urls': urls, 'runtime_validated': False},
                 'euicc': euicc,

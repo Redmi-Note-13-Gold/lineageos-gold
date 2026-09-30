@@ -1,0 +1,10 @@
+type gold_aperture_app, domain, coredomain;
+app_domain(gold_aperture_app)
+untrusted_app_domain(gold_aperture_app)
+net_domain(gold_aperture_app)
+bluetooth_domain(gold_aperture_app)
+
+# Traversal only through the existing camera root; no read/listing of its tree.
+allow gold_aperture_app gold_camera_parent_dir_type:dir { getattr search };
+allow gold_aperture_app gold_camera_portrait_dir:dir { getattr search };
+allow gold_aperture_app gold_camera_portrait_file:file { getattr open read map };

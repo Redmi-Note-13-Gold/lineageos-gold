@@ -65,6 +65,18 @@ AB_OTA_POSTINSTALL_CONFIG += \
 # Shipping API level
 PRODUCT_SHIPPING_API_LEVEL := 33
 
+# FM radio (MT6631, wired headset antenna)
+PRODUCT_PACKAGES += \
+    FMRadio
+
+# Platform FMRadio configuration; GETCHIPID is 0x6631, frequencies are 0.1 MHz.
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.fm.chip=26161 \
+    ro.fm.band=1 \
+    ro.fm.low_band=875 \
+    ro.fm.high_band=1080 \
+    ro.fm.seek_space=1
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio.service \
@@ -99,6 +111,8 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/configs/permissions/gold-aperture-camera-data.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/gold-aperture-camera-data.xml \
+    $(DEVICE_PATH)/configs/camera/public.libraries-xiaomi.txt:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/public.libraries-xiaomi.txt \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.camera.full.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.full.xml \
@@ -273,6 +287,10 @@ PRODUCT_COPY_FILES += \
 # USB
 $(call soong_config_set_bool,mediatek_gadget,use_custom_usb_gadget_rc,true)
 
+# Fixed Global stock PD authentication service; the binary alone does not start.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/init/init.batterysecret.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.batterysecret.rc
+
 PRODUCT_PACKAGES += \
     android.hardware.usb-service.mediatek \
     android.hardware.usb.gadget-service.mediatek
@@ -283,6 +301,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.host.xml
+
+# Display configuration for this physical panel; timing compatibility lives in frameworks/base.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/configs/display/display_id_4627039422300187648.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/displayconfig/display_id_4627039422300187648.xml
 
 # Vibrator
 PRODUCT_PACKAGES += \

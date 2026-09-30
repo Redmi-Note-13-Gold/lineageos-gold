@@ -1,0 +1,727 @@
+diff --git a/app/Android.bp b/app/Android.bp
+index b24f014..499e961 100644
+--- a/app/Android.bp
++++ b/app/Android.bp
+@@ -14,8 +14,8 @@ android_app {
+     resource_dirs: ["src/main/res"],
+     manifest: "src/main/AndroidManifest.xml",
+ 
+-    sdk_version: "36",
+-    product_specific: true,
++    platform_apis: true,
++    system_ext_specific: true,
+ 
+     overrides: ["Camera2"],
+ 
+diff --git a/app/proguard-rules.pro b/app/proguard-rules.pro
+index 286257f..dbde684 100644
+--- a/app/proguard-rules.pro
++++ b/app/proguard-rules.pro
+@@ -28,3 +28,6 @@
+ 
+ # Suppress warnings for the dynamically loaded camera extensions library
+ -dontwarn androidx.camera.extensions.impl.advanced.**
++
++# Exact OEM JNI descriptors and callbacks. No public application API is renamed.
++-keep class com.xiaomi.engine.** { *; }
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index 639a85e..66bd26d 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -7,6 +7,11 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     package="org.lineageos.aperture">
+ 
++    <permission
++        android:name="org.lineageos.aperture.permission.CAMERA_CALIBRATION"
++        android:protectionLevel="signature" />
++    <uses-permission android:name="org.lineageos.aperture.permission.CAMERA_CALIBRATION" />
++
+     <uses-feature android:name="android.hardware.camera.any" />
+     <uses-feature
+         android:name="android.hardware.camera.autofocus"
+@@ -155,6 +160,7 @@
+             android:label="@string/title_activity_settings"
+             android:theme="@style/Theme.SettingsLib" />
+ 
++        <uses-native-library android:name="libcamera_algoup_jni.xiaomi.so" android:required="false" />
+     </application>
+ 
+ </manifest>
+diff --git a/app/src/main/java/com/xiaomi/engine/GoldEngineAbi.kt b/app/src/main/java/com/xiaomi/engine/GoldEngineAbi.kt
+new file mode 100644
+index 0000000..7bf3f87
+--- /dev/null
++++ b/app/src/main/java/com/xiaomi/engine/GoldEngineAbi.kt
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: Apache-2.0
++package com.xiaomi.engine
++
++import android.media.Image
++import android.os.Parcel
++import android.os.Parcelable
++import android.util.Size
++
++/** Names and descriptors are the stock JNI ABI, not an alternative camera framework. */
++class GraphDescriptorBean(private var mOperationModeID: Int, private var mStreamNumber: Int,
++    private var mIsSnapshot: Boolean, private var mCameraCombinationMode: Int) : Parcelable {
++    fun getOperationModeID() = mOperationModeID
++    fun getStreamNumber() = mStreamNumber
++    fun isSnapshot() = mIsSnapshot
++    fun getCameraCombinationMode() = mCameraCombinationMode
++    override fun describeContents() = 0
++    override fun writeToParcel(p: Parcel, flags: Int) {
++        p.writeInt(mOperationModeID); p.writeInt(mStreamNumber)
++        p.writeByte(if (mIsSnapshot) 1.toByte() else 0.toByte()); p.writeInt(mCameraCombinationMode)
++    }
++    companion object {
++        @JvmField val CREATOR = object : Parcelable.Creator<GraphDescriptorBean> {
++            override fun createFromParcel(p: Parcel) = GraphDescriptorBean(p.readInt(), p.readInt(), p.readByte().toInt() != 0, p.readInt())
++            override fun newArray(size: Int) = arrayOfNulls<GraphDescriptorBean>(size)
++        }
++    }
++}
++class BufferFormat(private var mBufferWidth: Int, private var mBufferHeight: Int,
++    private var mBufferFormat: Int, private var mGraphDescriptor: GraphDescriptorBean) : Parcelable {
++    private var mDepthBufferSize: Size? = null
++    fun getBufferWidth() = mBufferWidth
++    fun getBufferHeight() = mBufferHeight
++    fun getBufferFormat() = mBufferFormat
++    fun getGraphDescriptor() = mGraphDescriptor
++    fun getCameraCombinationMode() = mGraphDescriptor.getCameraCombinationMode()
++    fun getDepthBufferSize() = mDepthBufferSize
++    fun setDepthBufferSize(size: Size) { mDepthBufferSize = size }
++    override fun describeContents() = 0
++    override fun writeToParcel(p: Parcel, flags: Int) {
++        p.writeInt(mBufferWidth); p.writeInt(mBufferHeight); p.writeInt(mBufferFormat)
++        p.writeParcelable(mGraphDescriptor, flags)
++        p.writeByte(if (mDepthBufferSize != null) 2.toByte() else 0.toByte())
++        mDepthBufferSize?.let { p.writeInt(it.width); p.writeInt(it.height) }
++    }
++    companion object {
++        @JvmField val CREATOR = object : Parcelable.Creator<BufferFormat> {
++            override fun createFromParcel(p: Parcel): BufferFormat {
++                val value = BufferFormat(p.readInt(), p.readInt(), p.readInt(),
++                    requireNotNull(p.readParcelable(GraphDescriptorBean::class.java.classLoader, GraphDescriptorBean::class.java)))
++                if (p.readByte().toInt() == 2) value.setDepthBufferSize(Size(p.readInt(), p.readInt()))
++                return value
++            }
++            override fun newArray(size: Int) = arrayOfNulls<BufferFormat>(size)
++        }
++    }
++}
++class FrameData(private var mImageFlag: Int, private var mSequenceId: Int, private var mFrameNumber: Long,
++    private var mCaptureResultMetadataNative: Parcelable, private var mCaptureRequestMetadataNative: Parcelable,
++    private var mBufferImage: Image?) {
++    private var mPhysicalResultMetadataNative: Parcelable? = null
++    private var mFrameStatusCallback: FrameStatusCallback? = null
++    fun getImageFlag() = mImageFlag
++    fun getSequenceId() = mSequenceId
++    fun getFrameNumber() = mFrameNumber
++    fun getCaptureResultMetaDataNative() = mCaptureResultMetadataNative
++    fun getCaptureRequestMetaDataNative() = mCaptureRequestMetadataNative
++    fun getPhysicalResultMetadata() = mPhysicalResultMetadataNative
++    fun setPhysicalResultMetadata(value: Parcelable) { mPhysicalResultMetadataNative = value }
++    fun getBufferImage() = mBufferImage
++    fun getFrameCallback() = mFrameStatusCallback
++    fun setFrameCallback(value: FrameStatusCallback) { mFrameStatusCallback = value }
++    @Synchronized fun release() {
++        val image = mBufferImage ?: return
++        mBufferImage = null
++        image.close()
++        mFrameStatusCallback?.onFrameImageClosed(image)
++    }
++    fun interface FrameStatusCallback { fun onFrameImageClosed(image: Image) }
++}
++class TaskSession private constructor() {
++    fun interface FrameCallback { fun onFrameProcessed(code: Int, message: String?, data: Any?) }
++    fun interface SessionStatusCallback { fun onSessionCallback(code: Int, message: String?, data: Any?) }
++}
++// Kept for the native method table even though the single-shot backend never calls preProcess.
++class PreProcessData(private var mCameraId: Int, private var mWidth: Int, private var mHeight: Int,
++    private var mFormat: Int, private var mCaptureRequestMetadataNative: Parcelable) {
++    fun getCameraId() = mCameraId
++    fun getWidth() = mWidth
++    fun getHeight() = mHeight
++    fun getFormat() = mFormat
++    fun getCaptureRequestMetaDataNative() = mCaptureRequestMetadataNative
++}
++object MiCamAlgoInterfaceJNI {
++    // Load is explicit so an absent/incompatible library cannot break ordinary CameraX startup.
++    fun load() { System.loadLibrary("camera_algoup_jni.xiaomi") }
++    @JvmStatic external fun init(path: String): Int
++    @JvmStatic external fun deInit(): Int
++    @JvmStatic external fun createSessionByOutputConfigurations(format: BufferFormat, outputs: List<android.hardware.camera2.params.OutputConfiguration>, callback: TaskSession.SessionStatusCallback): Long
++    @JvmStatic external fun createSessionWithSurfaces(format: BufferFormat, outputs: List<android.view.Surface>, callback: TaskSession.SessionStatusCallback): Long
++    @JvmStatic external fun processFrame(handle: Long, frame: FrameData, callback: TaskSession.FrameCallback): Int
++    @JvmStatic external fun destroySession(handle: Long): Int
++    @JvmStatic external fun flush(handle: Long): Int
++    @JvmStatic external fun getVersionCode(): Int
++    @JvmStatic external fun dumpGcov()
++    @JvmStatic external fun preProcess(handle: Long, data: PreProcessData): Int
++    @JvmStatic external fun processFrameWithSync(handle: Long, frames: List<FrameData>, image: Image, type: Int): Int
++    @JvmStatic external fun quickFinish(handle: Long, timestamp: Long, needImage: Boolean): Int
++    @JvmStatic external fun setMiViInfo(info: String): Int
++}
++
++// Native session callbacks construct this stock data carrier, including on error paths.
++class ResultData {
++    private var mCropRegion: IntArray? = null
++    private var mFlawResult = 0
++    private var mMetadata: Map<Any, Any>? = null
++    private var mResultId = 0
++    private var mTimeStamp = 0L
++    fun getCropRegion() = mCropRegion
++    fun setCropRegion(value: IntArray?) { mCropRegion = value }
++    fun getFlawResult() = mFlawResult
++    fun setFlawResult(value: Int) { mFlawResult = value }
++    fun getMetaResult() = mMetadata
++    fun setMetaResult(value: java.util.HashMap<Any, Any>?) { mMetadata = value }
++    fun getResultId() = mResultId
++    fun setResultId(value: Int) { mResultId = value }
++    fun getTimeStamp() = mTimeStamp
++    fun setTimeStamp(value: Long) { mTimeStamp = value }
++}
+diff --git a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt b/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
+index 4e45b8d..5fd4217 100644
+--- a/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
++++ b/app/src/main/java/org/lineageos/aperture/SettingsActivity.kt
+@@ -40,6 +40,7 @@ import org.lineageos.aperture.repositories.PreferencesRepository.Companion.prefe
+ import org.lineageos.aperture.repositories.PreferencesRepository.Companion.sharedPreferencesKeyPrefix
+ import org.lineageos.aperture.repositories.PreferencesRepository.Companion.toPreferenceString
+ import org.lineageos.aperture.utils.GoldHighResolutionCapture
++import org.lineageos.aperture.utils.GoldPortraitCapture
+ import org.lineageos.aperture.utils.CameraSoundsUtils
+ import org.lineageos.aperture.utils.PermissionsManager
+ 
+@@ -228,6 +229,16 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
+                 })
+             }
+ 
++            if (GoldPortraitCapture.isSupported(requireContext())) {
++                photoCaptureMode.parent?.addPreference(SwitchPreference(requireContext()).apply {
++                    key = GoldPortraitCapture.PREFERENCE
++                    setDefaultValue(false)
++                    setTitle(R.string.gold_portrait_title)
++                    setSummary(R.string.gold_portrait_summary)
++                    isIconSpaceReserved = false
++                })
++            }
++
+             // Photo capture mode
+             photoCaptureMode.onPreferenceChangeListener = photoCaptureModePreferenceChangeListener
+             enableZsl.isEnabled = photoCaptureMode.value == "minimize_latency"
+diff --git a/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt b/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
+index 32ee154..cc0a8b2 100644
+--- a/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
++++ b/app/src/main/java/org/lineageos/aperture/utils/GoldHighResolutionCapture.kt
+@@ -290,7 +290,11 @@ object GoldHighResolutionCapture {
+                 throw CameraCloseTimeoutException()
+             }
+         }
+-        return withContext(Dispatchers.IO) {
++        return saveJpeg(data, output)
++    }
++
++    internal suspend fun saveJpeg(data: ByteArray, output: ImageCapture.OutputFileOptions): ImageCapture.OutputFileResults =
++        withContext(Dispatchers.IO) {
+             output.outputStream?.let {
+                 it.write(data)
+                 return@withContext ImageCapture.OutputFileResults(null, ImageFormat.JPEG)
+@@ -311,5 +315,4 @@ object GoldHighResolutionCapture {
+                 throw error
+             }
+         }
+-    }
+ }
+diff --git a/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt b/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt
+new file mode 100644
+index 0000000..eb99a85
+--- /dev/null
++++ b/app/src/main/java/org/lineageos/aperture/utils/GoldPortraitCapture.kt
+@@ -0,0 +1,387 @@
++// SPDX-License-Identifier: Apache-2.0
++package org.lineageos.aperture.utils
++
++import android.content.Context
++import android.graphics.ImageFormat
++import android.graphics.Rect
++import android.graphics.YuvImage
++import android.hardware.camera2.*
++import android.hardware.camera2.params.OutputConfiguration
++import android.hardware.camera2.params.SessionConfiguration
++import android.media.Image
++import android.media.ImageReader
++import android.os.Build
++import android.os.Handler
++import android.os.Looper
++import android.os.SystemProperties
++import android.util.Size
++import androidx.camera.core.ImageCapture
++import androidx.exifinterface.media.ExifInterface
++import androidx.preference.PreferenceManager
++import com.xiaomi.engine.*
++import kotlinx.coroutines.*
++import java.io.ByteArrayOutputStream
++import java.util.concurrent.Executor
++import java.util.concurrent.Executors
++import java.util.concurrent.atomic.AtomicBoolean
++
++/** Single-shot Gold rear portrait. Ordinary preview and CameraX remain the default. */
++object GoldPortraitCapture {
++    const val PREFERENCE = "gold_dual_portrait"
++    private val busy = AtomicBoolean(false)
++    @Volatile private var active: Capture? = null
++    private val role = CameraCharacteristics.Key("com.xiaomi.cameraid.role.cameraId", Int::class.javaObjectType)
++    private val fNumber = CaptureRequest.Key("xiaomi.bokeh.fNumberApplied", String::class.java)
++    private val single = CaptureRequest.Key("xiaomi.bokeh.enabled", Boolean::class.javaObjectType)
++    private val dual = CaptureRequest.Key("xiaomi.bokehrear.enabled", Boolean::class.javaObjectType)
++    private data class Plan(val main: Size, val sub: Size, val depth: Size, val info: CameraCharacteristics)
++
++    fun isEnabled(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
++        .getBoolean(PREFERENCE, false)
++    fun isSupported(context: Context) = runCatching { plan(context); true }.getOrDefault(false)
++
++    private fun plan(context: Context): Plan {
++        check(Build.DEVICE == "gold")
++        val manager = context.getSystemService(CameraManager::class.java)
++        val info = manager.getCameraCharacteristics("3")
++        check(info[role] == 61 && info.physicalCameraIds == setOf("0", "2"))
++        check(info.availableCaptureRequestKeys.any { it.name == fNumber.name })
++        fun ints(name: String): IntArray? = if (info.keys.any { it.name == name })
++            info[CameraCharacteristics.Key(name, IntArray::class.java)] else null
++        fun optimal(name: String): Size? = ints(name)
++            ?.takeIf { it.size >= 6 && it[0] > 0 && it[1] > 0 }
++            ?.let { Size(it[0], it[1]) } // Stock 4:3 is the first width/height pair.
++        fun largest(characteristics: CameraCharacteristics, limit: Size? = null): Size =
++            requireNotNull(characteristics[CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP])
++                .getOutputSizes(ImageFormat.YUV_420_888)
++                .filter { it.width.toLong() * 3 == it.height.toLong() * 4 &&
++                    (limit == null || it.width.toLong() * it.height <= limit.width.toLong() * limit.height) }
++                .maxByOrNull { it.width.toLong() * it.height } ?: error("No 4:3 portrait stream")
++        val main = optimal("xiaomi.camera.bokehinfo.masterOptimalSize") ?: largest(info)
++        val sub = optimal("xiaomi.camera.bokehinfo.slaveOptimalSize")
++            ?: largest(manager.getCameraCharacteristics("2"), main)
++        check(main.width.toLong() * 3 == main.height.toLong() * 4 &&
++            sub.width.toLong() * 3 == sub.height.toLong() * 4)
++        val dimensions = ints("com.xiaomi.camera.supportedfeatures.bokehDepthBufferSize")
++        val explicitDepth = dimensions?.takeIf { it.size >= 2 && it[0] > 0 && it[1] > 0 }
++            ?.let { Size(it[0], it[1]) }
++        val vendor = info[CameraCharacteristics.Key(
++            "com.xiaomi.camera.supportedfeatures.bokehVendorID", Int::class.javaObjectType)]
++        val scale = SystemProperties.getInt("persist.mibokeh.depth.scale", 1)
++        check(scale > 0)
++        val divisor = if (vendor == 2) 2 else 1
++        val depth = explicitDepth ?: Size(Math.multiplyExact(main.width / divisor, scale),
++            Math.multiplyExact(main.height / divisor, scale))
++        check(depth.width > 0 && depth.height > 0)
++        return Plan(main, sub, depth, info)
++    }
++
++    suspend fun capture(context: Context, executor: Executor, cameraId: String,
++        deviceOrientationDegrees: Int, output: ImageCapture.OutputFileOptions,
++        onCaptureStarted: () -> Unit): ImageCapture.OutputFileResults {
++        check(cameraId == "0" && deviceOrientationDegrees in setOf(0, 90, 180, 270))
++        check(busy.compareAndSet(false, true)) { "Portrait processing is still closing" }
++        val run = try { Capture(context, executor, plan(context), onCaptureStarted) }
++            catch (error: Throwable) { busy.set(false); throw error }
++        active = run
++        val bytes = try {
++            run.start()
++            withTimeoutOrNull(25_000) { run.result.await() }
++                ?: throw IllegalStateException("Portrait capture timed out")
++        } finally {
++            executor.execute { run.close() }
++            withContext(NonCancellable) {
++                try { withTimeout(5_000) { run.closed.await(); run.engineClosed.await() } }
++                catch (_: TimeoutCancellationException) {
++                    // Keep the owner and input buffers alive until native teardown actually returns.
++                    // Do not rebind CameraX or admit another native capture meanwhile.
++                    throw GoldHighResolutionCapture.CameraCloseTimeoutException()
++                }
++            }
++        }
++        val rotation = (requireNotNull(run.plan.info[CameraCharacteristics.SENSOR_ORIENTATION]) +
++            deviceOrientationDegrees) % 360
++        return withContext(Dispatchers.IO) {
++            val file = java.io.File.createTempFile("portrait-", ".jpg", context.cacheDir)
++            try {
++                file.writeBytes(bytes)
++                ExifInterface(file).apply {
++                    setAttribute(ExifInterface.TAG_ORIENTATION, when (rotation) {
++                        90 -> ExifInterface.ORIENTATION_ROTATE_90
++                        180 -> ExifInterface.ORIENTATION_ROTATE_180
++                        270 -> ExifInterface.ORIENTATION_ROTATE_270
++                        else -> ExifInterface.ORIENTATION_NORMAL
++                    }.toString())
++                    output.metadata.location?.let { setGpsInfo(it) }
++                    saveAttributes()
++                }
++                GoldHighResolutionCapture.saveJpeg(file.readBytes(), output)
++            } finally { file.delete() }
++        }
++    }
++
++    private class Capture(val context: Context, val executor: Executor, val plan: Plan,
++        val onCaptureStarted: () -> Unit) {
++        val result = CompletableDeferred<ByteArray>()
++        val closed = CompletableDeferred<Unit>()
++        val engineClosed = CompletableDeferred<Unit>()
++        private val manager = context.getSystemService(CameraManager::class.java)
++        private val handler = Handler(Looper.getMainLooper())
++        private val worker = Executors.newSingleThreadExecutor()
++        private val readers = mutableListOf<ImageReader>()
++        private val frames = mutableListOf<FrameData>()
++        private val inputs = arrayOfNulls<Image>(2)
++        private var metadata: TotalCaptureResult? = null
++        private var device: CameraDevice? = null
++        private var session: CameraCaptureSession? = null
++        private var availability: CameraManager.AvailabilityCallback? = null
++        private var openRequested = false
++        private var finished = false
++        private var submitted = false
++        private var capturing = false
++        private var previewFrames = 0
++        // Engine state is accessed only on worker; callbacks post back to the serial main executor.
++        private var initialized = false
++        private var createSessionAttempted = false
++        private var handle = 0L
++        private val status = TaskSession.SessionStatusCallback { code, _, _ ->
++            // Stock eh.t$a: 2=session died, 20=post-processing error; other codes are data events.
++            if (code == 2 || code == 20) executor.execute {
++                fail(IllegalStateException("Portrait processing error $code"))
++            }
++        }
++        private val frameStatus = TaskSession.FrameCallback { _, _, _ -> }
++
++        private fun reader(size: Size, format: Int) = ImageReader.newInstance(size.width, size.height,
++            format, 3).also { readers.add(it) }
++        private fun fail(error: Throwable) {
++            if (!finished) result.completeExceptionally(IllegalStateException("Portrait capture failed", error))
++            close()
++        }
++        fun start() = executor.execute {
++            try {
++                val main = reader(plan.main, ImageFormat.YUV_420_888)
++                val sub = reader(plan.sub, ImageFormat.YUV_420_888)
++                val previewSize = requireNotNull(plan.info[CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP])
++                    .getOutputSizes(ImageFormat.YUV_420_888).filter { it.width <= 1440 && it.height <= 1080 }
++                    .maxByOrNull { it.width * it.height } ?: error("No portrait preview stream")
++                val preview = reader(previewSize, ImageFormat.YUV_420_888)
++                preview.setOnImageAvailableListener({
++                    if (!finished) try { it.acquireLatestImage()?.close() }
++                    catch (error: Throwable) { fail(error) }
++                }, handler)
++                listOf(main, sub).forEachIndexed { index, r ->
++                    r.setOnImageAvailableListener({
++                        if (!finished) try {
++                            val image = it.acquireNextImage() ?: return@setOnImageAvailableListener
++                            if (submitted || inputs[index] != null) image.close()
++                            else { inputs[index] = image; submit() }
++                        } catch (error: Throwable) { fail(error) }
++                    }, handler)
++                }
++                val effect = reader(plan.main, ImageFormat.YUV_420_888)
++                val original = reader(plan.main, ImageFormat.YUV_420_888)
++                val depth = reader(plan.depth, ImageFormat.Y16)
++                listOf(original, depth).forEach { r ->
++                    r.setOnImageAvailableListener({
++                        if (!finished) try { it.acquireNextImage()?.close() }
++                        catch (error: Throwable) { fail(error) }
++                    }, handler)
++                }
++                effect.setOnImageAvailableListener({
++                    if (!finished) try {
++                        val image = it.acquireNextImage() ?: return@setOnImageAvailableListener
++                        val timestamp = metadata?.get(CaptureResult.SENSOR_TIMESTAMP)
++                        if (!submitted || image.timestamp != timestamp) {
++                            image.close(); error("Unexpected portrait output timestamp")
++                        }
++                        // Copy before teardown; conversion handles each plane's own strides.
++                        val nv21 = image.use { toNv21(it) }
++                        worker.execute {
++                            try {
++                                val bytes = ByteArrayOutputStream().use { out ->
++                                    check(YuvImage(nv21, ImageFormat.NV21, plan.main.width,
++                                        plan.main.height, null).compressToJpeg(
++                                        Rect(0, 0, plan.main.width, plan.main.height), 95, out))
++                                    out.toByteArray()
++                                }
++                                executor.execute { if (!finished) result.complete(bytes); close() }
++                            } catch (error: Throwable) { executor.execute { fail(error) } }
++                        }
++                    } catch (error: Throwable) { fail(error) }
++                }, handler)
++                val outputs = listOf(effect, original, depth).mapIndexed { group, r -> OutputConfiguration(group, r.surface) }
++                worker.execute {
++                    try {
++                        MiCamAlgoInterfaceJNI.load()
++                        initialized = true // Attempt deInit even after a partially failed init.
++                        check(MiCamAlgoInterfaceJNI.init(context.filesDir.absolutePath) == 0)
++                        val format = BufferFormat(plan.main.width, plan.main.height, ImageFormat.YUV_420_888,
++                            GraphDescriptorBean(0x280, 2, true, 0x301)).apply { setDepthBufferSize(plan.depth) }
++                        createSessionAttempted = true
++                        handle = MiCamAlgoInterfaceJNI.createSessionByOutputConfigurations(format, outputs, status)
++                        check(handle != 0L)
++                        executor.execute { if (!finished) open(main, sub, preview) }
++                    } catch (error: Throwable) { executor.execute { fail(error) } }
++                }
++            } catch (error: Throwable) { fail(error) }
++        }
++
++        private fun applyBokeh(request: CaptureRequest.Builder) {
++            val names = plan.info.availableCaptureRequestKeys.map { it.name }.toSet()
++            request.set(fNumber, "4.0")
++            if (single.name in names) request.set(single, false)
++            if (dual.name in names) request.set(dual, true)
++            request.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
++            request.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF)
++        }
++        private fun open(main: ImageReader, sub: ImageReader, preview: ImageReader) {
++            val callback = object : CameraDevice.StateCallback() {
++                override fun onOpened(camera: CameraDevice) {
++                    device = camera
++                    if (finished) { camera.close(); return }
++                    try {
++                        val outputs = listOf(OutputConfiguration(preview.surface),
++                            OutputConfiguration(main.surface).apply { setPhysicalCameraId("0") },
++                            OutputConfiguration(sub.surface).apply { setPhysicalCameraId("2") })
++                        camera.createCaptureSession(SessionConfiguration(0x9000, outputs, executor,
++                            object : CameraCaptureSession.StateCallback() {
++                                override fun onConfigured(value: CameraCaptureSession) {
++                                    if (finished) { value.close(); return }
++                                    session = value
++                                    try {
++                                        val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
++                                            addTarget(preview.surface); applyBokeh(this)
++                                        }
++                                        value.setSingleRepeatingRequest(request.build(), executor,
++                                            object : CameraCaptureSession.CaptureCallback() {
++                                                override fun onCaptureCompleted(s: CameraCaptureSession, r: CaptureRequest, m: TotalCaptureResult) {
++                                                    if (finished || capturing) return
++                                                    previewFrames++
++                                                    if (previewFrames < 3 || (previewFrames < 30 &&
++                                                        (m[CaptureResult.CONTROL_AE_STATE] == CaptureResult.CONTROL_AE_STATE_SEARCHING ||
++                                                         m[CaptureResult.CONTROL_AF_STATE] == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN))) return
++                                                    capturing = true
++                                                    try {
++                                                        val still = camera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
++                                                            addTarget(main.surface); addTarget(sub.surface); applyBokeh(this)
++                                                        }.build()
++                                                        value.captureSingleRequest(still, executor,
++                                                            object : CameraCaptureSession.CaptureCallback() {
++                                                                override fun onCaptureStarted(s: CameraCaptureSession, r: CaptureRequest, t: Long, n: Long) = onCaptureStarted()
++                                                                override fun onCaptureCompleted(s: CameraCaptureSession, r: CaptureRequest, m: TotalCaptureResult) {
++                                                                    if (!finished) try { metadata = m; submit() } catch (error: Throwable) { fail(error) }
++                                                                }
++                                                                override fun onCaptureFailed(s: CameraCaptureSession, r: CaptureRequest, f: CaptureFailure) = fail(IllegalStateException("Portrait frame rejected"))
++                                                            })
++                                                    } catch (error: Throwable) { fail(error) }
++                                                }
++                                            })
++                                    } catch (error: Throwable) { fail(error) }
++                                }
++                                override fun onConfigureFailed(value: CameraCaptureSession) {
++                                    value.close(); fail(IllegalStateException("Portrait session rejected"))
++                                }
++                            }))
++                    } catch (error: Throwable) { fail(error) }
++                }
++                override fun onDisconnected(camera: CameraDevice) { device = camera; camera.close(); fail(IllegalStateException("Portrait disconnected")) }
++                override fun onError(camera: CameraDevice, error: Int) { device = camera; camera.close(); fail(IllegalStateException("Portrait camera error $error")) }
++                override fun onClosed(camera: CameraDevice) { closed.complete(Unit) }
++            }
++            val available = mutableSetOf<String>()
++            availability = object : CameraManager.AvailabilityCallback() {
++                override fun onCameraAvailable(id: String) {
++                    available.add(id)
++                    if (!available.containsAll(listOf("0", "3")) || finished || openRequested) return
++                    manager.unregisterAvailabilityCallback(this)
++                    try { openRequested = true; manager.openCamera("3", executor, callback) }
++                    catch (error: Throwable) { closed.complete(Unit); fail(error) }
++                }
++                override fun onCameraUnavailable(id: String) { available.remove(id) }
++            }
++            manager.registerAvailabilityCallback(executor, requireNotNull(availability))
++        }
++
++        private fun submit() {
++            if (submitted || finished) return
++            val m = metadata ?: return
++            val a = inputs[0] ?: return
++            val b = inputs[1] ?: return
++            val timestamp = requireNotNull(m[CaptureResult.SENSOR_TIMESTAMP])
++            check(a.timestamp == timestamp && b.timestamp == timestamp) { "Unsynchronized portrait inputs" }
++            val physical = listOf("0", "2").map { requireNotNull(m.physicalCameraResults[it]) }
++            val requestMetadata = m.request.nativeCopy
++            listOf(a, b).forEachIndexed { index, image ->
++                frames.add(FrameData(index, m.sequenceId, m.frameNumber, m.nativeCopy,
++                    requestMetadata, image).apply { setPhysicalResultMetadata(physical[index].nativeCopy) })
++            }
++            inputs.fill(null)
++            submitted = true
++            worker.execute {
++                try {
++                    for (frame in frames) check(MiCamAlgoInterfaceJNI.processFrame(handle, frame, frameStatus) == 0)
++                } catch (error: Throwable) { executor.execute { fail(error) } }
++            }
++        }
++        fun close() {
++            if (finished) return
++            finished = true
++            availability?.let { runCatching { manager.unregisterAvailabilityCallback(it) } }
++            runCatching { session?.close() }; runCatching { device?.close() }
++            if (!openRequested) closed.complete(Unit)
++            inputs.forEach { it?.close() }; inputs.fill(null)
++            // Serialized behind init/create/submit. Never release buffers still owned by native code.
++            worker.execute {
++                try {
++                    if (handle != 0L) {
++                        check(MiCamAlgoInterfaceJNI.flush(handle) == 0)
++                        check(MiCamAlgoInterfaceJNI.destroySession(handle) == 0)
++                        handle = 0L
++                    }
++                    frames.forEach { it.release() }
++                    var nativeReusable = true
++                    if (initialized) try {
++                        check(MiCamAlgoInterfaceJNI.deInit() == 0)
++                    } catch (error: Throwable) {
++                        if (createSessionAttempted) throw error
++                        // Init failed before any output surface or input buffer reached native.
++                        // Isolate only portrait reentry; local cleanup must not block CameraX.
++                        nativeReusable = false
++                        android.util.Log.e("GoldPortraitCapture", "Portrait initialization cleanup failed", error)
++                    }
++                    executor.execute {
++                        readers.forEach { it.close() }
++                        engineClosed.complete(Unit)
++                        closed.invokeOnCompletion {
++                            active = null
++                            if (nativeReusable) busy.set(false)
++                        }
++                        worker.shutdown()
++                    }
++                } catch (error: Throwable) {
++                    android.util.Log.e("GoldPortraitCapture", "Native teardown was not confirmed", error)
++                    // Native ownership is uncertain. Retain the owner/buffers and reject new work;
++                    // caller times out instead of rebinding over an unconfirmed teardown.
++                }
++            }
++        }
++    }
++
++    private fun toNv21(image: Image): ByteArray {
++        check(image.format == ImageFormat.YUV_420_888 && image.cropRect == Rect(0, 0, image.width, image.height))
++        val w = image.width; val h = image.height
++        val bytes = ByteArray(w * h * 3 / 2)
++        image.planes.forEachIndexed { index, plane ->
++            val width = if (index == 0) w else w / 2
++            val height = if (index == 0) h else h / 2
++            val buffer = plane.buffer.duplicate()
++            val start = buffer.position()
++            for (y in 0 until height) for (x in 0 until width) {
++                val offset = if (index == 0) y * w + x else w * h + y * w + 2 * x + if (index == 2) 0 else 1
++                bytes[offset] = buffer.get(start + y * plane.rowStride + x * plane.pixelStride)
++            }
++        }
++        return bytes
++    }
++}
+diff --git a/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt b/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
+index c37e458..3c6fd5c 100644
+--- a/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
++++ b/app/src/main/java/org/lineageos/aperture/viewmodels/CameraViewModel.kt
+@@ -100,6 +100,7 @@ import org.lineageos.aperture.repositories.CameraRepository
+ import org.lineageos.aperture.utils.CameraSoundsUtils
+ import org.lineageos.aperture.utils.StorageUtils
+ import org.lineageos.aperture.utils.GoldHighResolutionCapture
++import org.lineageos.aperture.utils.GoldPortraitCapture
+ import org.lineageos.aperture.R
+ import java.io.ByteArrayOutputStream
+ import java.util.concurrent.ExecutorService
+@@ -1132,8 +1133,9 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
+         }
+ 
+         val highResolutionCameraId = _cameraConfiguration.value?.camera?.cameraId
++        val portrait = highResolutionCameraId == "0" && GoldPortraitCapture.isEnabled(applicationContext)
+         if (highResolutionCameraId != null && android.os.Build.DEVICE == "gold" &&
+-            GoldHighResolutionCapture.isEnabled(applicationContext, highResolutionCameraId)
++            (portrait || GoldHighResolutionCapture.isEnabled(applicationContext, highResolutionCameraId))
+         ) {
+             val configuration = _cameraConfiguration.value as? CameraConfiguration.Photo
+             val compatible = configuration != null &&
+@@ -1142,10 +1144,12 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
+                 imageOutputFormat == ImageCapture.OUTPUT_FORMAT_JPEG &&
+                 cameraController.flashMode == FlashMode.OFF &&
+                 cameraController.zoomState.value?.zoomRatio == 1f
+-            if (!compatible || !GoldHighResolutionCapture.isSupported(applicationContext, highResolutionCameraId)) {
++            if (!compatible || !(if (portrait) GoldPortraitCapture.isSupported(applicationContext)
++                else GoldHighResolutionCapture.isSupported(applicationContext, highResolutionCameraId))) {
+                 onImageSavedCallback.onError(ImageCaptureException(
+                     ImageCapture.ERROR_CAPTURE_FAILED,
+-                    applicationContext.getString(if (highResolutionCameraId == "1")
++                    applicationContext.getString(if (portrait) R.string.gold_portrait_requirements
++                        else if (highResolutionCameraId == "1")
+                         R.string.gold_front_high_resolution_requirements
+                         else R.string.gold_high_resolution_requirements), null,
+                 ))
+@@ -1163,7 +1167,8 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
+                         cameraController.unbind()
+                         var restoreCameraX = true
+                         try {
+-                            val result = GoldHighResolutionCapture.capture(
++                            val capture = if (portrait) GoldPortraitCapture::capture else GoldHighResolutionCapture::capture
++                            val result = capture(
+                                 applicationContext, ContextCompat.getMainExecutor(applicationContext),
+                                 highResolutionCameraId, screenRotation.value.offset,
+                                 outputOptions, onImageSavedCallback::onCaptureStarted,
+@@ -1186,7 +1191,9 @@ class CameraViewModel(application: Application) : ApertureViewModel(application)
+                     throw cancelled
+                 } catch (error: Exception) {
+                     onImageSavedCallback.onError(ImageCaptureException(
+-                        ImageCapture.ERROR_CAPTURE_FAILED, "Full-resolution capture failed", error,
++                        ImageCapture.ERROR_CAPTURE_FAILED, if (portrait)
++                            applicationContext.getString(R.string.gold_portrait_failed)
++                            else "Full-resolution capture failed", error,
+                     ))
+                 } finally {
+                     owner.lifecycle.removeObserver(observer)
+diff --git a/app/src/main/res/values/gold_camera.xml b/app/src/main/res/values/gold_camera.xml
+index 4a86d66..d4db961 100644
+--- a/app/src/main/res/values/gold_camera.xml
++++ b/app/src/main/res/values/gold_camera.xml
+@@ -7,4 +7,8 @@
+     <string name="gold_front_high_resolution_title">16 MP selfies</string>
+     <string name="gold_front_high_resolution_summary">Capture full-resolution photos with the front camera. Requires standard JPEG, 4:3, 1× zoom, and flash and photo effects off. Uses your selfie mirror setting. Capture takes longer.</string>
+     <string name="gold_front_high_resolution_requirements">For 16 MP selfies, select standard JPEG, 4:3 and 1× zoom, and turn off flash and photo effects. If unavailable, turn off 16 MP selfies.</string>
++    <string name="gold_portrait_title">Rear portrait photos</string>
++    <string name="gold_portrait_summary">Use both rear cameras to blur the background. Takes priority over 108 MP photos. Preview remains unblurred. Requires JPEG, 4:3, 1×, flash and effects off.</string>
++    <string name="gold_portrait_requirements">Portrait photos require the rear camera, JPEG, 4:3, 1×, flash and effects off.</string>
++    <string name="gold_portrait_failed">Portrait capture failed. Turn off rear portrait photos to take a normal photo.</string>
+ </resources>
+diff --git a/app/src/main/res/values-zh-rCN/gold_camera.xml b/app/src/main/res/values-zh-rCN/gold_camera.xml
+index 05cea0b..1a20774 100644
+--- a/app/src/main/res/values-zh-rCN/gold_camera.xml
++++ b/app/src/main/res/values-zh-rCN/gold_camera.xml
+@@ -7,4 +7,8 @@
+     <string name="gold_front_high_resolution_title">1600 万像素自拍</string>
+     <string name="gold_front_high_resolution_summary">使用前置摄像头拍摄全分辨率照片。需选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。沿用自拍镜像设置，拍摄耗时稍长。</string>
+     <string name="gold_front_high_resolution_requirements">拍摄 1600 万像素自拍时，请选择标准 JPEG、4:3 和 1× 变焦，并关闭闪光灯和照片效果。若无法使用，请关闭“1600 万像素自拍”。</string>
++    <string name="gold_portrait_title">后置人像照片</string>
++    <string name="gold_portrait_summary">使用后置双摄虚化背景，优先于 1.08 亿像素照片。预览仍为普通画面。需使用 JPEG、4:3、1×，并关闭闪光灯和效果。</string>
++    <string name="gold_portrait_requirements">后置人像照片需使用后摄、JPEG、4:3、1×，并关闭闪光灯和效果。</string>
++    <string name="gold_portrait_failed">人像拍摄失败。关闭后置人像照片后可拍摄普通照片。</string>
+ </resources>
+diff --git a/app/src/main/res/values-zh-rTW/gold_camera.xml b/app/src/main/res/values-zh-rTW/gold_camera.xml
+index 72bdc2b..bb087b6 100644
+--- a/app/src/main/res/values-zh-rTW/gold_camera.xml
++++ b/app/src/main/res/values-zh-rTW/gold_camera.xml
+@@ -7,4 +7,8 @@
+     <string name="gold_front_high_resolution_title">1600 萬像素自拍</string>
+     <string name="gold_front_high_resolution_summary">使用前置鏡頭拍攝完整解析度相片。需選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。沿用自拍鏡像設定，拍攝耗時稍長。</string>
+     <string name="gold_front_high_resolution_requirements">拍攝 1600 萬像素自拍時，請選擇標準 JPEG、4:3 和 1× 變焦，並關閉閃光燈和相片效果。若無法使用，請關閉「1600 萬像素自拍」。</string>
++    <string name="gold_portrait_title">後置人像相片</string>
++    <string name="gold_portrait_summary">使用後置雙鏡頭模糊背景，優先於 1.08 億像素相片。預覽仍為一般畫面。需使用 JPEG、4:3、1×，並關閉閃光燈和效果。</string>
++    <string name="gold_portrait_requirements">後置人像相片需使用後鏡頭、JPEG、4:3、1×，並關閉閃光燈和效果。</string>
++    <string name="gold_portrait_failed">人像拍攝失敗。關閉後置人像相片後可拍攝一般相片。</string>
+ </resources>

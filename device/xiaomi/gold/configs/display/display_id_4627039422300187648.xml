@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<!-- Global OS3.0.5.0.VNQMIXM panel configuration; retain stock brightness and lux values. -->
+<displayConfiguration>
+    <!-- Global Brightness-Nit mapping -->
+    <screenBrightnessMap>
+        <point>
+            <value>0.001709819</value>
+            <nits>2.0</nits>
+        </point>
+        <point>
+            <value>0.49975574</value>
+            <nits>500.0</nits>
+        </point>
+        <point>
+            <value>1.0</value>
+            <nits>1000.0</nits>
+        </point>
+    </screenBrightnessMap>
+    <!-- Current Android uses a separate thermal map. Conservatively cap at critical,
+         rather than rely on the ignored legacy HBM thermalStatusLimit field.
+         Framework brightness = (0.49975574 - 0.001709819) / (1 - 0.001709819),
+         rounded down to stay within the normal range. Keep in sync with panel bounds. -->
+    <thermalThrottling>
+        <brightnessThrottlingMap>
+            <brightnessThrottlingPoint>
+                <thermalStatus>critical</thermalStatus>
+                <brightness>0.4988989</brightness>
+            </brightnessThrottlingPoint>
+        </brightnessThrottlingMap>
+    </thermalThrottling>
+    <!-- root node for HBM-->
+    <highBrightnessMode enabled="true">
+        <!-- Transition point brightness from normal to HBM mode -->
+        <transitionPoint>0.49975574</transitionPoint>
+        <!-- Minimum lux to enter HBM -->
+        <minimumLux>6001</minimumLux>
+        <!-- Time limitation for HBM-->
+        <timing>
+            <timeWindowSecs>0</timeWindowSecs>
+            <timeMaxSecs>0</timeMaxSecs>
+            <timeMinSecs>0</timeMinSecs>
+        </timing>
+        <!--Refresh rate limitation when the device is in HBM -->
+        <!-- <refreshRate>
+            <minimum>0</minimum>
+            <maximum>0</maximum>
+        </refreshRate> -->
+        <!-- Low power mode limitation for HBM -->
+        <allowInLowPowerMode>true</allowInLowPowerMode>
+        <minimumHdrPercentOfScreen>0</minimumHdrPercentOfScreen>
+        <sdrHdrRatioMap>
+            <point>
+                <sdrNits>2.0</sdrNits>
+                <hdrRatio>2.25</hdrRatio>
+            </point>
+            <point>
+                <sdrNits>1000.0</sdrNits>
+                <hdrRatio>2.25</hdrRatio>
+            </point>
+        </sdrHdrRatioMap>
+    </highBrightnessMode>
+    <ambientLightHorizonLong>1500</ambientLightHorizonLong>
+    <ambientLightHorizonShort>1000</ambientLightHorizonShort>
+</displayConfiguration>

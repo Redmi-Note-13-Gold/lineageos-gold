@@ -76,6 +76,10 @@ class Power final : public p::BnPower {
             case p::Mode::INTERACTIVE: engine_.interactive(enabled, now()); break;
             case p::Mode::DEVICE_IDLE: engine_.deviceIdle(enabled, now()); break;
             case p::Mode::DISPLAY_INACTIVE: engine_.displayInactive(enabled, now()); break;
+            case p::Mode::AUDIO_STREAMING_LOW_LATENCY:
+                if (!engine_.status().ready) return unsupported();
+                engine_.audioStreaming(0, enabled, now());
+                break;
             case p::Mode::LAUNCH:
                 if (launchClamp() == 0 || !engine_.status().ready) return unsupported();
                 engine_.launch(enabled, launchClamp(), now());
@@ -88,6 +92,7 @@ class Power final : public p::BnPower {
         *result = mode == p::Mode::DOUBLE_TAP_TO_WAKE ||
                 mode == p::Mode::LOW_POWER || mode == p::Mode::INTERACTIVE ||
                 mode == p::Mode::DEVICE_IDLE || mode == p::Mode::DISPLAY_INACTIVE ||
+                (mode == p::Mode::AUDIO_STREAMING_LOW_LATENCY && engine_.status().ready) ||
                 (mode == p::Mode::LAUNCH && launchClamp() > 0 && engine_.status().ready);
         return ndk::ScopedAStatus::ok();
     }
@@ -105,7 +110,8 @@ class Power final : public p::BnPower {
         *result = {};
         for (p::Mode mode : {p::Mode::DOUBLE_TAP_TO_WAKE, p::Mode::LOW_POWER,
                              p::Mode::INTERACTIVE, p::Mode::DEVICE_IDLE,
-                             p::Mode::DISPLAY_INACTIVE, p::Mode::LAUNCH}) {
+                             p::Mode::DISPLAY_INACTIVE, p::Mode::AUDIO_STREAMING_LOW_LATENCY,
+                             p::Mode::LAUNCH}) {
             bool supported;
             isModeSupported(mode, &supported);
             if (supported) result->modes |= int64_t{1} << static_cast<int>(mode);
@@ -220,12 +226,25 @@ class Perf final : public mt::V1_2::IMtkPerf {
     std::atomic<unsigned> warnings_{0};
 };
 
-// These private control/query protocols have no demonstrated caller contract
+// Other private control/query protocols have no demonstrated caller contract
 // on the locked vendor. Do not invent results or report successful callbacks.
 class MtkPower final : public mt::V1_2::IMtkPower {
   public:
+    explicit MtkPower(PowerEngine& engine) : engine_(engine) {}
     Return<void> mtkCusPowerHint(int32_t hint, int32_t data) override { warn("mtkCusPowerHint", hint, data); return Void(); }
-    Return<void> mtkPowerHint(int32_t hint, int32_t data) override { warn("mtkPowerHint", hint, data); return Void(); }
+    Return<void> mtkPowerHint(int32_t hint, int32_t data) override {
+        // Keep each known MTK hint's vote independent from AIDL and other
+        // hints. data == 0 releases only the matching source.
+        switch (hint) {
+            case 36: engine_.audioStreaming(1, data != 0, now()); break;
+            case 37: engine_.audioStreaming(2, data != 0, now()); break;
+            case 38: engine_.audioStreaming(3, data != 0, now()); break;
+            case 44: engine_.audioStreaming(4, data != 0, now()); break;
+            case 47: engine_.audioStreaming(5, data != 0, now()); break;
+            default: warn("mtkPowerHint", hint, data); break;
+        }
+        return Void();
+    }
     Return<void> notifyAppState(const hidl_string&, const hidl_string&, int32_t, int32_t, int32_t) override {
         warn("notifyAppState"); return Void();
     }
@@ -241,6 +260,7 @@ class MtkPower final : public mt::V1_2::IMtkPower {
         warn("setMtkScnUpdateCallback", command); return -EOPNOTSUPP;
     }
   private:
+    PowerEngine& engine_;
     void warn(const char* operation, int command = 0, int parameter = 0) {
         auto ipc = android::hardware::IPCThreadState::self();
         if (warnings_.fetch_add(1) < 20) LOG(WARNING) << "unsupported private MTK request uid=" << ipc->getCallingUid()
@@ -289,7 +309,7 @@ int main(int, char** argv) {
     android::hardware::configureRpcThreadpool(2, false);
     auto power = ndk::SharedRefBase::make<Power>(engine);
     android::sp<Perf> perf = new Perf(engine);
-    android::sp<MtkPower> mtk = new MtkPower;
+    android::sp<MtkPower> mtk = new MtkPower(engine);
     const std::string instance = std::string(p::IPower::descriptor) + "/default";
     if (AServiceManager_addService(power->asBinder().get(), instance.c_str()) != STATUS_OK ||
             perf->registerAsService() != android::OK || mtk->registerAsService() != android::OK) {

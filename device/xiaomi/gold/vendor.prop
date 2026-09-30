@@ -11,6 +11,7 @@ vendor.audio.spkcal.copy.inhal=true
 vendor.audiohal.telephonytx.type=2
 
 # Camera
+persist.vendor.camera.privapp.list=org.lineageos.aperture
 camera.disable_zsl_mode=1
 persist.vendor.camera3.pipeline.bufnum.base.imgo=4
 persist.vendor.camera3.pipeline.bufnum.base.lcso=4
@@ -66,7 +67,7 @@ ro.vendor.composer_version=2.1
 ro.vendor.display.type=oled
 ro.vendor.colorpick_adjust=true
 ro.vendor.mtk_ovl_bringup=0
-ro.vendor.mtk_aod_support=0
+ro.vendor.mtk_aod_support=1
 ro.vendor.mml.mtk_mml_support=0
 ro.vendor.smvr.p2batch.vga=16
 ro.vendor.smvr.p2batch.hd=8
@@ -147,7 +148,7 @@ ro.surface_flinger.max_frame_buffer_acquired_buffers=3
 ro.surface_flinger.set_display_power_timer_ms=1000
 ro.surface_flinger.set_idle_timer_ms=100
 ro.surface_flinger.set_touch_timer_ms=150
-ro.surface_flinger.has_HDR_display=true
+ro.surface_flinger.has_HDR_display=false
 ro.surface_flinger.has_wide_color_display=true
 ro.surface_flinger.use_color_management=true
 ro.surface_flinger.wcg_composition_dataspace=143261696

@@ -7,3 +7,6 @@ type vendor_sysfs_fingerprint_control, fs_type, sysfs_type;
 # Read-only board identification and display status nodes.
 type vendor_gold_sysfs_board_info, fs_type, sysfs_type;
 type vendor_gold_sysfs_panel, fs_type, sysfs_type;
+
+# Only the authentication command leaves need a dedicated write type.
+type vendor_gold_sysfs_usbpd, fs_type, sysfs_type;

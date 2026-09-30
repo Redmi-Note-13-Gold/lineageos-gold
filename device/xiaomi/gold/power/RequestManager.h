@@ -18,8 +18,9 @@ struct Resource {
     int32_t maximum;
     int32_t reset;
     bool preferHigher;
-    // Only reviewed non-frequency session resources may use duration == 0.
-    // The adapter must authenticate and monitor the owning process first.
+    // Only reviewed non-frequency mode/session resources may use duration == 0.
+    // Vendor sessions authenticate and monitor their owner; framework modes
+    // use one global controller and release on disable or a policy gate.
     bool allowUntimed = false;
 };
 

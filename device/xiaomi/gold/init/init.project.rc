@@ -67,6 +67,13 @@ on post-fs-data
     chmod 0660 /data/vendor/camera/model/rt_model/preview_policy
     chown cameraserver camera /data/vendor/camera/dof_mecp/dof_mecp.bin
     chmod 0660 /data/vendor/camera/dof_mecp/dof_mecp.bin
+    # Label new copied inodes for the read-only portrait client.
+    restorecon /data/vendor/camera/model/dof_model
+    restorecon /data/vendor/camera/dof_mecp
+    restorecon /data/vendor/camera/dof_mecp/dof_mecp.bin
+    restorecon /data/vendor/camera/model/dof_model/capture_model
+    restorecon /data/vendor/camera/model/dof_model/capture_cache
+    restorecon /data/vendor/camera/model/dof_model/capture_policy
 
     # SMB
     chown system system /proc/smb/ScreenComm
