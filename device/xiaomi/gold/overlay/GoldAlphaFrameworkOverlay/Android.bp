@@ -1,5 +1,0 @@
-runtime_resource_overlay {
-    name: "GoldAlphaFrameworkOverlay",
-    product_specific: true,
-    certificate: "platform",
-}

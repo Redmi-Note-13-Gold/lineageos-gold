@@ -1,5 +1,0 @@
-attribute gold_camera_parent_dir_type;
-
-# Public so vendor file_contexts/HAL rules and system_ext app rules share IDs.
-type gold_camera_portrait_dir, file_type, data_file_type;
-type gold_camera_portrait_file, file_type, data_file_type;

@@ -1,4 +1,0 @@
-# Init script for sensors
-on post-fs-data
-    # Calibration
-    mkdir /data/vendor/sensor 0774 system system

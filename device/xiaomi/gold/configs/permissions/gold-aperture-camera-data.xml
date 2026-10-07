@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <permission name="org.lineageos.aperture.permission.CAMERA_CALIBRATION">
-        <group gid="camera" />
-    </permission>
-</permissions>

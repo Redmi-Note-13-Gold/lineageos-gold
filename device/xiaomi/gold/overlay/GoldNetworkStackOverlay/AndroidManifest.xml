@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.lineageos.gold.networkstack">
-    <application android:hasCode="false" />
-    <overlay android:targetPackage="com.android.networkstack"
-        android:targetName="NetworkStackConfig"
-        android:isStatic="true" android:priority="1" />
-</manifest>

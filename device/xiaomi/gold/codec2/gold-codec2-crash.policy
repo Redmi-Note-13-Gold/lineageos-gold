@@ -1,4 +1,0 @@
-# SPDX-License-Identifier: Apache-2.0
-# debuggerd's in-process crash report calls uname. Without it, SIGSYS masks
-# the original fault and the tombstone socket closes before a report exists.
-uname: 1

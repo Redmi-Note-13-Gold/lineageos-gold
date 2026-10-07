@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="gold" fetch="https://github.com/Redmi-Note-13-Gold" />
+  <remote name="techyminati" fetch="https://github.com/techyminati" />
+
+  <project name="android_device_xiaomi_gold" path="device/xiaomi/gold" remote="gold" revision="lineage-23.2" />
+  <project name="android_kernel_xiaomi_gold" path="device/xiaomi/gold-kernel" remote="gold" revision="prebuilt" clone-depth="1" />
+
+  <project name="LineageOS/android_device_mediatek_sepolicy_vndr" path="device/mediatek/sepolicy_vndr" />
+  <project name="LineageOS/android_hardware_mediatek" path="hardware/mediatek" />
+  <project name="LineageOS/android_hardware_xiaomi" path="hardware/xiaomi" />
+
+  <!-- MediaTek IMS, required by the device tree (vendor/mediatek/ims/ims.mk) -->
+  <project name="android_vendor_mediatek_ims" path="vendor/mediatek/ims" remote="techyminati" revision="android-16-qpr2" />
+</manifest>
