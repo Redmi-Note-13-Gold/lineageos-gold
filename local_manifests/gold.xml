@@ -4,7 +4,6 @@
   <remote name="techyminati" fetch="https://github.com/techyminati" />
 
   <project name="android_device_xiaomi_gold" path="device/xiaomi/gold" remote="gold" revision="lineage-23.2" />
-  <project name="android_kernel_xiaomi_gold" path="device/xiaomi/gold-kernel" remote="gold" revision="prebuilt" clone-depth="1" />
 
   <project name="LineageOS/android_device_mediatek_sepolicy_vndr" path="device/mediatek/sepolicy_vndr" />
   <project name="LineageOS/android_hardware_mediatek" path="hardware/mediatek" />
