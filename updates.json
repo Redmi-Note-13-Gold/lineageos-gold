@@ -1,5 +1,21 @@
 [
   {
+    "datetime": 1791540270,
+    "files": [
+      {
+        "filename": "lineage-23.2-20261006-UNOFFICIAL-gold.zip",
+        "os_patch_level": "2026-09-01",
+        "os_sdk_level": 36,
+        "ota_property_files": "payload_metadata.bin:4886:113424,payload.bin:4886:1208254569,payload_properties.txt:1208259513:156,apex_info.pb:2247:1385,care_map.pb:3679:1160,metadata:69:674,metadata.pb:811:1388",
+        "sha256": "dc407fa9be1949f589cc1960bbfa06e63f0971fb8ad82d1dc32a1448fd2c46cd",
+        "size": 1208262949,
+        "url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20261009-r1/lineage-23.2-20261006-UNOFFICIAL-gold.zip"
+      }
+    ],
+    "type": "unofficial",
+    "version": "23.2"
+  },
+  {
     "datetime": 1791464899,
     "files": [
       {
