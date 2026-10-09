@@ -130,7 +130,7 @@ Firmware: his package writes eleven firmware partitions. The packages we have re
 ## Credits
 
 - [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold) for the device tree, and those he credits: xiaomi-mt6833-dev, aeronruless and linastorvaldz.
+- claxten10 and [mt6833-devs](https://github.com/mt6833-devs/android_device_xiaomi_gold). Dhterech's tree is built on theirs, which makes up 204 of its 295 commits, and our old structure was based on it too.
 - [techyminati](https://github.com/techyminati/android_vendor_mediatek_ims) for MediaTek IMS.
 - [cristidclxvi](https://github.com/cristidclxvi/android_device_xiaomi_camellia) for the camellia device tree, same chip. Two Wi-Fi overlay values follow it: the 2.4 GHz hotspot stays on channels 1 to 11, and Wi-Fi is not dropped to apply the country code.
-- The old structure was based on the [mt6833-devs](https://github.com/mt6833-devs/android_device_xiaomi_gold) device tree.
 - [LineageOS](https://lineageos.org).
