@@ -1,35 +1,76 @@
-# LineageOS 23.2 for Redmi Note 13 5G (`gold`)
+# LineageOS 23.2 for the Redmi Note 13 5G (`gold`)
 
-这个仓库只放构建入口：一份 local manifest、提取内核的脚本和构建机用的脚本。设备相关的代码在别处：
+Unofficial LineageOS 23.2 (Android 16) for the Redmi Note 13 5G. Test builds, userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project.
 
-| 内容 | 仓库 |
+- Downloads: [Releases](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases)
+- Device tree: [android_device_xiaomi_gold](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
+
+## Device
+
+| | |
 | --- | --- |
-| 设备树 | [Redmi-Note-13-Gold/android_device_xiaomi_gold](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold)，fork 自 [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold) |
-| 内核、DTB、内核模块 | 不入库，用 `extract-kernel.sh` 从同一个官方包里提取 |
-| IMS | [techyminati/android_vendor_mediatek_ims](https://github.com/techyminati/android_vendor_mediatek_ims) |
-| 厂商 blob | 不入库，从官方 `OS3.0.5.0.VNQMIXM` 包里提取 |
+| SoC | MediaTek Dimensity 6080 (MT6833) |
+| Display | 6.67" AMOLED, 1080x2400, 120 Hz |
+| Rear camera | 108 MP main (Samsung HM6) + 2 MP depth |
+| Front camera | 16 MP |
+| Battery | 5000 mAh |
+| Tested on | China model 2312DRAABC (`gold_cn`), one unit only |
 
-测试版，userdebug、test-keys，和 Xiaomi、MediaTek、LineageOS 官方无关。
+The device tree also carries the configuration for the Indian and Global (`iron`) models. Nobody has tested those.
 
-## 状态
+## Status
 
-2026-10-07 起跟踪上游 `lineage-23.2`，设备树以 Dhterech 的树为基础。在一台国行 `gold_cn` 上用过：
+| Feature | Status |
+| --- | --- |
+| Calls, SMS, 4G/5G data | Works (China Unicom and China Mobile SIMs; China Telecom not tried) |
+| Wi-Fi, hotspot | Works, including WPA3; Apple devices can join |
+| Bluetooth | Works (headset, calls, file transfer) |
+| GPS | Works |
+| Camera | Photo and video work. The rear camera outputs 12 MP, the front 4 MP |
+| Hardware codecs | H.264, HEVC and VP9 decoding; H.264 and HEVC encoding |
+| Sensors, fingerprint | Work |
+| Display | 120 Hz, auto-brightness, high brightness mode in sunlight |
+| Double tap to wake, lift to wake, tap to wake | Work |
+| Charging | USB, fast charging, offline charging, power-off alarm |
+| USB | File transfer (MTP), USB tethering |
+| System updates | Straight from the Updater app, since the 2026-10-09 build |
+| FM radio | Powers up and finds stations; not yet tried with a wired headset as antenna |
+| Wired headset, OTG, SD card, IR blaster, wireless display | Not tested |
+| NFC | This model has no NFC hardware |
 
-- 正常：启动、通话、短信、4G/5G 数据（联通和移动的卡，通话时数据不断，听筒、扬声器、蓝牙耳机都有声音，贴脸熄屏）、Wi-Fi（含 WPA3）、热点（WPA2、WPA3，Apple 设备也能连）、蓝牙（含耳机、传文件）、相机（含 ZSL、Ultra HDR、RAW、录像）、硬件编解码（H.264、HEVC、VP9 解码，H.264、HEVC 编码）、全部传感器（加速度、陀螺仪、磁力计、光线、距离、计步、拿起等；指南针校准后和 iPhone 的读数能对到 1°）、自动亮度、自动旋转、双击亮屏和双击熄屏、拿起和轻触触发主动显示、指纹、麦克风、扬声器、USB 和快充头充电、关机充电、关机闹钟（闹钟要定在 2 分半以后，手机会提前这么久开机）、USB 传文件（MTP）、USB 网络共享、GPS（室外实测能定位，热启动 1 到 3 秒，精度约 5 米）、zram、系统“更新”应用的自动更新（10-09 那版起，实测从上一个测试包升上来）。
-- 没有：NFC（这台没有硬件）、相机的 108MP、人像、前摄 1600 万像素（相机 HAL 只把它们给官方相机用；后摄出 1200 万、前摄出 400 万）、屏幕常亮（已移除，见下）。
-- 硬件限制：只有一路 Wi-Fi 射频，手机连着 5 GHz Wi-Fi 时热点也只能在同一信道，选 2.4 GHz 无效。屏是 video 模式，AOD 显示期间系统不休眠，实测约 290 mA，所以去掉了。热点没有基带的硬件转发加速：基带固件不提供这项能力（官方的服务程序和我们的是同一个文件），转发走内核。
-- 待机：息屏、连着 Wi-Fi、没插卡时约 15 mA（3 小时掉 1%，94% 的时间在休眠）。网络 ADB 连着时会升到约 60 mA。
-- 温控：八个核心满载约 7 分钟，CPU 升到 63°C 左右后被降频，稳定在 58°C 上下，主板 38°C、电池 34°C。
+Not possible, or not done:
 
-9 月 30 日及更早的版本（包括已发布的 [Global R1](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/tag/lineage-23.2-20260929-r1)）来自旧结构：这个仓库的 tag `pre-restructure`，以及设备树仓库的 tag [`gold-r7`](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/tree/gold-r7)。
+- 108 MP, portrait and 16 MP front photos. The camera HAL only offers them to the stock camera app.
+- Video stabilisation is weak. It takes a patch to the camera app to make it effective, and we do not carry one.
+- No always-on display. With this panel the system cannot suspend while it is showing, about 290 mA, so it was removed in favour of lift and tap to wake.
+- While connected to 5 GHz Wi-Fi the hotspot can only use the same channel. There is a single Wi-Fi radio.
 
-从旧结构的版本换过来必须清数据。
+Measured:
 
-待办见 [TODO.md](TODO.md)。
+- Standby: about 15 mA with the screen off, Wi-Fi connected and no SIM; 1% in three hours.
+- Thermal: with all eight cores loaded for about seven minutes the CPU reaches roughly 63°C, is throttled, and settles around 58°C.
 
-## 构建
+## Before installing
 
-需要 `repo`、`git-lfs`、`erofs-utils`、`lz4`、`cpio`、`unzip`，以及 LineageOS 的[常规构建依赖](https://wiki.lineageos.org/devices/)。
+- Unlock the bootloader first. Do not relock it while this is installed.
+- The package does not carry preloader, lk, tee or modem firmware, only `scp`. Everything else stays as it is on the phone. Our test unit has the firmware of China `OS3.0.10.0.VNQCNXM`.
+- We have only installed it two ways: updating from an earlier build of this tree with the Updater app, or with `update_engine`. A first install from the stock ROM has not been tested.
+- Builds from 2026-09-30 and earlier come from the old structure, and moving from them needs a data wipe. That code is in this repository's tag `pre-restructure` and the device tree's tag [`gold-r7`](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/tree/gold-r7).
+
+## What is in this repository
+
+| File | Purpose |
+| --- | --- |
+| `local_manifests/gold.xml` | Local manifest: the device tree, the common MediaTek and Xiaomi repositories, IMS |
+| `extract-kernel.sh` | Takes the kernel, DTB and kernel modules out of the stock package |
+| `host/` | Build script and two patches for a build host with little RAM |
+| `updates.json` | The list of builds the Updater app reads |
+
+The kernel and the vendor blobs are not in any repository. Both are extracted from the same stock package.
+
+## Building
+
+You need `repo`, `git-lfs`, `erofs-utils`, `lz4`, `cpio` and `unzip`, plus the usual [LineageOS build dependencies](https://wiki.lineageos.org/devices/).
 
 ```sh
 repo init -u https://github.com/LineageOS/android.git -b lineage-23.2 --git-lfs
@@ -39,7 +80,7 @@ curl -o .repo/local_manifests/gold.xml \
 repo sync -c
 ```
 
-提取内核和厂商 blob。输入都是官方全量 OTA `gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip`（SHA-256 `35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9`）：
+Extract the kernel and the vendor blobs. Both take the stock full OTA `gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip` (SHA-256 `35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9`). `extract-kernel.sh` checks that checksum and stops on any other package; set `ANY_OTA=1` to try one anyway.
 
 ```sh
 curl -O https://raw.githubusercontent.com/Redmi-Note-13-Gold/lineageos-gold/main/extract-kernel.sh
@@ -49,7 +90,7 @@ cd device/xiaomi/gold
 cd -
 ```
 
-构建：
+Build:
 
 ```sh
 source build/envsetup.sh
@@ -57,56 +98,39 @@ breakfast gold userdebug
 m bacon
 ```
 
-产物在 `out/target/product/gold/`。
+The output is in `out/target/product/gold/`.
 
-### 内存小的构建机
+### Build hosts with little RAM
 
-`host/build.sh` 是我们那台 8 核 14 GB 机器用的入口，做的事和上面一样，另外启用 ccache，并打两个本地补丁，内存够的机器用不着：
+`host/build.sh` is what we use on an 8-core, 14 GB machine. Run it from the top of the Android tree, or set `SOURCE_TREE`. It does the same as the steps above, turns on ccache if it is installed, and applies two local patches. A host with enough memory does not need it.
 
-- `soong-memory-env.patch`（`build/soong`）：把 `GOGC`、`GOMEMLIMIT` 传给 soong_build。
-- `lineage-build-date.patch`（`vendor/lineage`）：允许固定版本号里的日期。日期一变 Soong 就要重新分析整棵树，在这台机器上要几个小时。脚本沿用当前 `out/` 第一次构建时的日期，想换日期就设 `LINEAGE_BUILD_DATE`。
+- `soong-memory-env.patch` (`build/soong`): passes `GOGC` and `GOMEMLIMIT` through to soong_build.
+- `lineage-build-date.patch` (`vendor/lineage`): lets the date in the version string be fixed. When the date changes Soong redoes its whole analysis, which takes hours on that machine. The script keeps the date the current `out/` was first built with; set `LINEAGE_BUILD_DATE` to change it.
 
-`repo sync` 之前先还原这两个项目：`git -C build/soong checkout . && git -C vendor/lineage checkout .`
+Restore both projects before `repo sync`: `git -C build/soong checkout . && git -C vendor/lineage checkout .`
 
-## 和 Dhterech 的差别
+## Differences from Dhterech's tree
 
-设备树的差别见 fork 的 `lineage-23.2` 分支上 Dhterech 之后的提交。
+Device tree: our commits sit on top of his head, one change each. [Here is the list.](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/compare/727b728...lineage-23.2) Roughly:
 
-内核：Dhterech 用一个放预编译文件的仓库。我们不用它，改成用 `extract-kernel.sh` 直接从官方包生成同样的目录，这样每个文件的来源都能重跑验证。生成结果和他的仓库相比：
+- Things that did not work on his tree: offline charging, GPS, FM, USB tethering, a crash when Bluetooth is turned off, 32-bit apps crashing, the hardware codec service crashing now and then, auto-brightness that only went up.
+- Wi-Fi: joins an iPhone's hotspot, and Apple devices can join the phone's WPA3 hotspot.
+- Added: double tap to wake, lift to wake, tap to wake, power-off alarm, updates from the Updater app.
+- Networks in mainland China: connectivity checks and time servers that answer from there.
+- Choices: always-on display removed, window blur off, dm-verity back on.
 
-- 多出 `system_dlkm/` 目录。他的仓库只提交了镜像，设备树要的是目录，缺了它 `system_dlkm` 分区是空的：没有 zram，Wi-Fi 驱动也加载不了。
-- `hq_charger_sysfs.ko` 改了一条指令，停掉给 MIUI 充电动画用的 uevent 线程。接电脑充电时它每秒发 10 个电池事件，拔线后还可能一直不停。
-- 其余构建用到的文件和他的逐字节相同，包括他在模块加载清单里加的 `wmt_drv.ko`。
+Kernel: he keeps the prebuilt files in a repository. We generate the same directory straight from the stock package with `extract-kernel.sh`, so the origin of every file can be checked by running it again. Compared with his repository the result:
 
-分区：OTA 包写 14 个分区。
+- Has a `system_dlkm/` directory. His repository only committed the image, the device tree wants the directory, and without it there is no zram and the Wi-Fi driver does not load.
+- Changes one instruction in `hq_charger_sysfs.ko` to stop a thread that only serves MIUI's charging animation. On a computer's USB port it sent ten battery events a second.
+- Is otherwise byte for byte the same in every file the build uses.
 
-- 启动：`boot`、`vendor_boot`、`dtbo`
-- 校验：`vbmeta`、`vbmeta_system`、`vbmeta_vendor`
-- 系统（都在 `super` 里）：`system`、`system_ext`、`product`、`vendor`、`system_dlkm`、`vendor_dlkm`、`odm_dlkm`
-- 固件：`scp`
+Firmware: his package writes eleven firmware partitions. The packages we have released write only `scp`.
 
-Dhterech 的包还会多写 10 个固件分区：`preloader`、`lk`、`tee`、`gz`、`md1img`、`dpm`、`mcupm`、`pi_img`、`spmfw`、`sspm`。
+## Credits
 
-这 10 个分区我们靠底包提供：刷之前需要用户先手动刷入最新的国际版官方系统作为底包（目前是 `OS3.0.5.0.VNQMIXM`，厂商 blob 也取自它）。
-
-设备树：
-
-- 关掉窗口模糊。开着时界面明显掉帧，关掉后流畅；这颗入门级 GPU 按默认参数带不动，没试过别的参数。
-- Wi-Fi 协商 PMF，否则连不上 iPhone 的热点；热点声明支持 WPA3，并改一项驱动配置让 Apple 设备能连上 WPA3 热点。
-- 2.4 GHz 热点只用 1 到 11 信道（参照同芯片的 camellia）；不再谎称支持 Wi-Fi 6（这颗芯片是 Wi-Fi 5）。
-- 强光下的高亮模式不再空转：原来的时间配置全是 0，系统进入高亮后每毫秒重算一次，电源管理线程占一个核的 14% 左右。
-- 自动亮度能降回来：原来亮屏期间只升不降（从官方搬来的 3 秒平均窗口，配不上 4 秒的变暗确认时间），光线变暗后屏幕不变暗，高亮模式也退不出，要熄屏再亮屏才恢复。
-- 关机闹钟：补上 LineageOS 给联发科写的那个小应用，并给预编译内核配了它编译时要的内核头文件包。
-- 32 位图形驱动：原来只带了 64 位的，32 位进程一画界面就崩溃。
-- 编解码服务用回官方那一版 Codec2 配套库。官方的服务是 Android 15 的二进制，配 Android 16 源码编的库时，有个类的大小对不上，服务启动后第一次创建编解码器容易崩溃（开机时媒体库扫描就会碰到）。同时放开两个系统调用，让它崩溃时能留下记录。
-- “更新”应用改成读本仓库的 `updates.json`。
-- 联网检测换成国内也能通的地址，否则网络会被标成无互联网、重启后不自动回连。
-- 对时服务器换成国内也能通的，否则没插 SIM 时时间从不同步。
-- 去掉状态栏多加的边距，收起时和下拉后的时间、图标对齐。
-- 双击亮屏，电源服务换成 LineageOS 的 libperfmgr 实现。
-- 另一批次器件的 SELinux 标签：LN8000 电荷泵、挂在 `dsi.1`/`dsi.2` 下的屏。
-- 开回 dm-verity。
-- 关机充电：Dhterech 的树上不工作。充电界面等显示驱动加载完再启动；面板每次重新上电后要重设亮度（背光驱动会丢掉和上次相同的值，所以先写一个相邻值）；充电模式下把背光节点交给充电程序。
-- 拿起亮屏；USB 网络共享的接口改名为 `ncm0`（原来叫 `usb0`，共享服务不认）；关蓝牙不再崩溃；去掉屏幕常亮。
-- 轻触屏幕触发主动显示（触摸屏手势里的 Single Tap）；主动显示的亮度跟着小米的 AOD 传感器走。
-- FM 收音机（加载驱动、带上芯片固件、补上音频 HAL 要的属性、装上应用）；开机加载 GPS 驱动。Dhterech 的树上这两个驱动都没加载。
+- [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold) for the device tree, and those he credits: xiaomi-mt6833-dev, aeronruless and linastorvaldz.
+- [techyminati](https://github.com/techyminati/android_vendor_mediatek_ims) for MediaTek IMS.
+- [cristidclxvi](https://github.com/cristidclxvi/android_device_xiaomi_camellia) for the camellia device tree, same chip. Two Wi-Fi overlay values follow it: the 2.4 GHz hotspot stays on channels 1 to 11, and Wi-Fi is not dropped to apply the country code.
+- The old structure was based on the [mt6833-devs](https://github.com/mt6833-devs/android_device_xiaomi_gold) device tree.
+- [LineageOS](https://lineageos.org).

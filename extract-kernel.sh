@@ -18,6 +18,14 @@ for tool in unzip cpio lz4 fsck.erofs sha256sum; do
     command -v "$tool" >/dev/null || { echo "$tool is missing" >&2; exit 1; }
 done
 
+# The package everything below was checked against: gold global OS3.0.5.0.VNQMIXM.
+expected=35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9
+if [ -z "${ANY_OTA:-}" ] && [ "$(sha256sum "$ota" | cut -d' ' -f1)" != "$expected" ]; then
+    echo "$(basename -- "$ota") is not the OS3.0.5.0.VNQMIXM full OTA (SHA-256 $expected)." >&2
+    echo "Set ANY_OTA=1 to try another package anyway." >&2
+    exit 1
+fi
+
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
