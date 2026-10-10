@@ -118,6 +118,7 @@ Device tree: our commits sit on top of his head, one change each. [Here is the l
 - Added: double tap to wake, lift to wake, tap to wake, power-off alarm, updates from the Updater app.
 - Networks in mainland China: connectivity checks and time servers that answer from there.
 - Choices: always-on display removed, window blur off.
+- Clean-up: services and scripts that were never installed or had nothing to run are gone, and tethering hardware offload, which this modem does not provide, is no longer declared.
 
 Kernel: he keeps the prebuilt files in a repository. We generate the same directory straight from the stock package with `extract-kernel.sh`, so the origin of every file can be checked by running it again. Compared with his repository the result:
 
