@@ -34,8 +34,9 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 | Charging | USB, fast charging, offline charging, power-off alarm |
 | USB | File transfer (MTP), USB tethering |
 | System updates | Straight from the Updater app, since the 2026-10-09 build |
-| FM radio | Powers up and finds stations; not yet tried with a wired headset as antenna |
-| Wired headset, OTG, SD card, IR blaster, wireless display | Not tested |
+| FM radio | Works, with a wired headset as the antenna |
+| Wired headset | Playback and the play/pause button work; the headset microphone has not been tried |
+| OTG, SD card, IR blaster, wireless display | Not tested |
 | NFC | This model has no NFC hardware |
 
 Not possible, or not done:
