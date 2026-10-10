@@ -45,6 +45,7 @@ Not possible, or not done:
 - Video stabilisation is weak. It takes a patch to the camera app to make it effective, and we do not carry one.
 - No always-on display. With this panel the system cannot suspend while it is showing, about 290 mA, so it was removed in favour of lift and tap to wake.
 - While connected to 5 GHz Wi-Fi the hotspot can only use the same channel. There is a single Wi-Fi radio.
+- No "Hey Google" with the screen off. The stock sound trigger library only works inside MediaTek's 64-bit AIDL audio service: the open-source wrapper rejects its interface version, and the kernel driver refuses the 32-bit audio service this tree uses.
 
 Measured:
 
