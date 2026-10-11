@@ -65,11 +65,10 @@ Measured:
 | File | Purpose |
 | --- | --- |
 | `local_manifests/gold.xml` | Local manifest: the device tree, the common MediaTek and Xiaomi repositories, IMS |
-| `extract-kernel.sh` | Takes the kernel, DTB and kernel modules out of the stock package |
 | `host/` | Build script and a patch for a build host with little RAM |
 | `updates.json` | The list of builds the Updater app reads |
 
-The kernel and the vendor blobs are not in any repository. Both are extracted from the same stock package.
+The kernel and the vendor blobs are not in any repository. Both are extracted from the same stock package, by two scripts in the device tree.
 
 ## Building
 
@@ -86,8 +85,7 @@ repo sync -c
 Extract the kernel and the vendor blobs. Both take the stock full OTA `gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip` (SHA-256 `35c9f1d98b28538ac10c319ad4cba993cd5a632960d9111162e3efa494dae5c9`). `extract-kernel.sh` checks that checksum and stops on any other package; set `ANY_OTA=1` to try one anyway.
 
 ```sh
-curl -O https://raw.githubusercontent.com/Redmi-Note-13-Gold/lineageos-gold/main/extract-kernel.sh
-bash extract-kernel.sh /path/to/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip
+device/xiaomi/gold/extract-kernel.sh /path/to/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip
 cd device/xiaomi/gold
 ./extract-files.py /path/to/gold_global-ota_full-OS3.0.5.0.VNQMIXM-user-15.0-df9ff3aa93.zip
 cd -
@@ -137,7 +135,7 @@ Device tree: our commits sit on top of his head, one change each. [Here is the l
 - Choices: always-on display removed, window blur off.
 - Clean-up: services and scripts that were never installed or had nothing to run are gone, and tethering hardware offload, which this modem does not provide, is no longer declared.
 
-Kernel: he keeps the prebuilt files in a repository. We generate the same directory straight from the stock package with `extract-kernel.sh`, so the origin of every file can be checked by running it again. Compared with his repository the result:
+Kernel: he keeps the prebuilt files in a repository. We generate the same directory straight from the stock package with the device tree's `extract-kernel.sh`, so the origin of every file can be checked by running it again. Compared with his repository the result:
 
 - Has a `system_dlkm/` directory. His repository only committed the image, the device tree wants the directory, and without it there is no zram and the Wi-Fi driver does not load.
 - Changes one instruction in `hq_charger_sysfs.ko` to stop a thread that only serves MIUI's charging animation. On a computer's USB port it sent ten battery events a second.
