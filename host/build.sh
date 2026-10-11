@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build LineageOS for gold on a host with little RAM (ours has 8 cores and 14 GB).
+# Build LineageOS for gold on a host with little RAM (ours has 8 cores and 16 GB).
 # Usage, from the top of the Android tree: build.sh [make targets...]   (default: bacon)
 #
 # Environment, all optional:
@@ -7,7 +7,6 @@
 #   JOBS          parallel jobs for m (default 4)
 #   CCACHE_DIR    ccache directory (default $HOME/ccache)
 #   GOGC, GOMEMLIMIT   limits for soong_build (default 50 and 10GiB)
-#   LINEAGE_BUILD_DATE   see below
 set -euo pipefail
 
 here=$(dirname -- "$(readlink -f -- "$0")")
@@ -18,7 +17,8 @@ CCACHE_EXEC="${CCACHE_EXEC:-$(command -v ccache || true)}"
 if [ -n "$CCACHE_EXEC" ]; then
     export USE_CCACHE=1 CCACHE_EXEC CCACHE_DIR="${CCACHE_DIR:-$HOME/ccache}"
 fi
-# soong_build alone needs more than this host's RAM unless the Go GC is told to stay under it.
+# soong_build alone needs more than this host's RAM. These keep it at 20 to 23 GB; the README
+# says how the part that does not fit is swapped.
 export GOGC="${GOGC:-50}" GOMEMLIMIT="${GOMEMLIMIT:-10GiB}"
 
 cd "${SOURCE_TREE:-$PWD}"
@@ -32,12 +32,6 @@ apply_patch() {
 }
 # soong_ui scrubs the environment; this lets the two Go variables above through.
 apply_patch build/soong soong-memory-env.patch
-# ro.lineage.version carries the build date, and Soong redoes its whole analysis
-# when it changes. That takes hours here, so keep the date this out/ started with.
-apply_patch vendor/lineage lineage-build-date.patch
-mkdir -p out
-export LINEAGE_BUILD_DATE="${LINEAGE_BUILD_DATE:-$(cat out/.lineage_build_date 2>/dev/null || date -u +%Y%m%d)}"
-echo "$LINEAGE_BUILD_DATE" > out/.lineage_build_date
 
 set +u
 source build/envsetup.sh

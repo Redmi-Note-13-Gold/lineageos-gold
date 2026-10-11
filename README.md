@@ -66,7 +66,7 @@ Measured:
 | --- | --- |
 | `local_manifests/gold.xml` | Local manifest: the device tree, the common MediaTek and Xiaomi repositories, IMS |
 | `extract-kernel.sh` | Takes the kernel, DTB and kernel modules out of the stock package |
-| `host/` | Build script and two patches for a build host with little RAM |
+| `host/` | Build script and a patch for a build host with little RAM |
 | `updates.json` | The list of builds the Updater app reads |
 
 The kernel and the vendor blobs are not in any repository. Both are extracted from the same stock package.
@@ -105,12 +105,24 @@ The output is in `out/target/product/gold/`.
 
 ### Build hosts with little RAM
 
-`host/build.sh` is what we use on an 8-core, 14 GB machine. Run it from the top of the Android tree, or set `SOURCE_TREE`. It does the same as the steps above, turns on ccache if it is installed, and applies two local patches. A host with enough memory does not need it.
+`host/build.sh` is what we use on an 8-core, 16 GB machine. Run it from the top of the Android tree, or set `SOURCE_TREE`. It does the same as the steps above, turns on ccache if it is installed, and applies one local patch. A host with enough memory does not need it.
 
-- `soong-memory-env.patch` (`build/soong`): passes `GOGC` and `GOMEMLIMIT` through to soong_build.
-- `lineage-build-date.patch` (`vendor/lineage`): lets the date in the version string be fixed. When the date changes Soong redoes its whole analysis, which takes hours on that machine. The script keeps the date the current `out/` was first built with; set `LINEAGE_BUILD_DATE` to change it.
+- `soong-memory-env.patch` (`build/soong`): passes `GOGC` and `GOMEMLIMIT` through to soong_build. The script sets them to 50 and 10GiB, which keeps soong_build at 20 to 23 GB.
 
-Restore both projects before `repo sync`: `git -C build/soong checkout . && git -C vendor/lineage checkout .`
+Restore the project before `repo sync`: `git -C build/soong checkout .`
+
+The part of soong_build that does not fit in RAM is swapped, and where it goes decides how long Soong's analysis takes. With the defaults of Ubuntu 24.04 (kernel 6.8) the analysis took 2 h 45 min to 3 h 25 min on that machine. With the swapped pages kept compressed in memory it took 15 minutes, measured once:
+
+```
+echo zsmalloc > /sys/module/zswap/parameters/zpool
+echo lz4      > /sys/module/zswap/parameters/compressor
+echo 80       > /sys/module/zswap/parameters/max_pool_percent
+echo N        > /sys/module/zswap/parameters/shrinker_enabled   # no writeback to the swap file
+echo Y        > /sys/module/zswap/parameters/enabled
+echo 0        > /proc/sys/vm/page-cluster
+```
+
+zswap still needs a swap file behind it; ours is 16 GB, and the analysis used 13 GB of it without writing anything to disk. We run the build in a systemd unit with `MemoryMax=14000M`, `MemorySwapMax=15G` and `OOMPolicy=stop`, so that a build that outgrows the machine is killed instead of taking the machine down.
 
 ## Differences from Dhterech's tree
 
