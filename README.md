@@ -113,9 +113,9 @@ Restore both projects before `repo sync`: `git -C build/soong checkout . && git 
 
 ## Differences from Dhterech's tree
 
-Device tree: our commits sit on top of his head, one change each. [Here is the list.](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/compare/727b728...lineage-23.2) Roughly:
+Device tree: our commits sit on top of his head, one change each. [Here is the list.](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/compare/6c5bdc8...lineage-23.2) Roughly:
 
-- Things that did not work on his tree: offline charging, GPS, FM, USB tethering, a crash when Bluetooth is turned off, 32-bit apps crashing, the hardware codec service crashing now and then, auto-brightness that only went up.
+- Things that did not work on his tree: GPS, FM, a crash when Bluetooth is turned off, 32-bit apps crashing, the hardware codec service crashing now and then, auto-brightness that only went up. Our fixes for offline charging and USB tethering are in his tree now.
 - Wi-Fi: joins an iPhone's hotspot, and Apple devices can join the phone's WPA3 hotspot.
 - Added: double tap to wake, lift to wake, tap to wake, power-off alarm, updates from the Updater app.
 - Networks in mainland China: connectivity checks and time servers that answer from there.
