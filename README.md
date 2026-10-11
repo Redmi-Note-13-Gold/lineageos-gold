@@ -64,7 +64,7 @@ Measured:
 
 | File | Purpose |
 | --- | --- |
-| `local_manifests/gold.xml` | Local manifest: the device tree, the common MediaTek and Xiaomi repositories, IMS |
+| `local_manifests/gold.xml` | Local manifest: the device tree and the common MediaTek and Xiaomi repositories |
 | `host/` | Build script and a patch for a build host with little RAM |
 | `updates.json` | The list of builds the Updater app reads |
 
@@ -147,6 +147,6 @@ Firmware: his package writes eleven firmware partitions. Ours does the same from
 
 - [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold) for the device tree, and those he credits: xiaomi-mt6833-dev, aeronruless and linastorvaldz.
 - claxten10 and [mt6833-devs](https://github.com/mt6833-devs/android_device_xiaomi_gold). Dhterech's tree is built on theirs, which makes up 204 of its 295 commits, and our old structure was based on it too.
-- [techyminati](https://github.com/techyminati/android_vendor_mediatek_ims) for MediaTek IMS.
+- [techyminati](https://github.com/techyminati/android_vendor_mediatek_ims) for the MediaTek IMS package the builds up to 20261011 use.
 - [cristidclxvi](https://github.com/cristidclxvi/android_device_xiaomi_camellia) for the camellia device tree, same chip. Two Wi-Fi overlay values follow it: the 2.4 GHz hotspot stays on channels 1 to 11, and Wi-Fi is not dropped to apply the country code.
 - [LineageOS](https://lineageos.org).
