@@ -2,7 +2,7 @@ diff --git a/ui/build/soong.go b/ui/build/soong.go
 index c9b303c..b425994 100644
 --- a/ui/build/soong.go
 +++ b/ui/build/soong.go
-@@ -226,6 +226,12 @@ func (pb PrimaryBuilderFactory) primaryBuilderInvocation(config Config) bootstra
+@@ -226,6 +226,16 @@ func (pb PrimaryBuilderFactory) primaryBuilderInvocation(config Config) bootstra
  
  	commonArgs = append(commonArgs, "-l", filepath.Join(pb.config.FileListDir(), "Android.bp.list"))
  	invocationEnv := make(map[string]string)
@@ -11,6 +11,10 @@ index c9b303c..b425994 100644
 +		if value, ok := config.Environment().Get(key); ok {
 +			invocationEnv[key] = value
 +		}
++	}
++	// GODEBUG for soong_build alone, for example gctrace=1.
++	if value, ok := config.Environment().Get("SOONG_BUILD_GODEBUG"); ok {
++		invocationEnv["GODEBUG"] = value
 +	}
  	if pb.debugPort != "" {
  		//debug mode

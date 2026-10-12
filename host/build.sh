@@ -7,6 +7,7 @@
 #   JOBS          parallel jobs for m (default 4)
 #   CCACHE_DIR    ccache directory (default $HOME/ccache)
 #   GOGC, GOMEMLIMIT   limits for soong_build (default 50 and 10GiB)
+#   SOONG_BUILD_GODEBUG   GODEBUG for soong_build alone, e.g. gctrace=1 to log its garbage collector
 set -euo pipefail
 
 here=$(dirname -- "$(readlink -f -- "$0")")
