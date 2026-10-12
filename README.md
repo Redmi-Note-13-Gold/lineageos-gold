@@ -23,21 +23,23 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 
 | Feature | Status |
 | --- | --- |
-| Calls, SMS, 4G/5G data | Works (China Unicom and China Mobile SIMs; China Telecom not tried) |
+| Calls, SMS, 4G/5G data | Worked on the 2026-10-08 build with China Unicom and China Mobile SIMs. Not tried with a SIM since: the modem firmware, the carrier configuration and the IMS stack have all changed. China Telecom never tried |
 | Wi-Fi, hotspot | Works, including WPA3; Apple devices can join |
-| Bluetooth | Works (headset, calls, file transfer) |
+| Bluetooth | Works (file transfer). Headset audio and calls worked before the audio service changed and have not been listened to since |
+| Audio | The audio service is stock's from the 2026-10-12 build on. Speaker and microphone pass an automated loopback test; the earpiece, calls and VoIP have not been listened to since the change |
 | GPS | Works |
 | Camera | Photo and video work. The rear camera outputs 12 MP, the front 4 MP |
 | Hardware codecs | H.264, HEVC and VP9 decoding; H.264 and HEVC encoding |
 | Sensors, fingerprint | Work |
 | Display | 120 Hz, auto-brightness, high brightness mode in sunlight |
 | Double tap to wake, lift to wake, tap to wake | Work |
-| Charging | USB, fast charging, offline charging, power-off alarm |
+| Charging | USB, fast charging, offline charging, power-off alarm, charging control (stop at a set level). The lock screen does not say when the charger is a fast one |
 | USB | File transfer (MTP), USB tethering |
-| System updates | From the Updater app. The 2026-10-11 build is not offered there, because coming from an earlier build it needs a data wipe |
-| FM radio | Works, with a wired headset as the antenna |
-| Wired headset | Playback and the play/pause button work; the headset microphone has not been tried |
-| OTG, SD card, IR blaster, wireless display | Not tested |
+| System updates | The Updater app works, but the 2026-10-11 and 2026-10-12 builds are not offered there, because coming from the two builds before them needs a data wipe |
+| FM radio, wired headset | Worked on the 2026-10-09 build (playback, play/pause button, FM with the headset as antenna). Not tried since the audio service changed; the headset microphone never tried |
+| Neural networks API | MediaTek's accelerator is available to apps |
+| OTG, SD card, IR blaster | Not tested |
+| Wireless display | The setting is there and scans; casting to a receiver has not been tried |
 | NFC | This model has no NFC hardware |
 
 Not possible, or not done:
@@ -46,7 +48,7 @@ Not possible, or not done:
 - Video stabilisation is weak. It takes a patch to the camera app to make it effective, and we do not carry one.
 - No always-on display. With this panel the system cannot suspend while it is showing, about 290 mA, so it was removed in favour of lift and tap to wake.
 - While connected to 5 GHz Wi-Fi the hotspot can only use the same channel. There is a single Wi-Fi radio.
-- No "Hey Google" with the screen off. The stock sound trigger library only works inside MediaTek's 64-bit AIDL audio service: the open-source wrapper rejects its interface version, and the kernel driver refuses the 32-bit audio service this tree uses.
+- "Hey Google" with the screen off is untested. The sound trigger HAL and the enrollment apps are stock's and in place, but trying it needs the Google app.
 
 Measured:
 
@@ -56,9 +58,9 @@ Measured:
 ## Before installing
 
 - Unlock the bootloader first. Do not relock it while this is installed.
-- From the 2026-10-11 build on, the package also writes the firmware: preloader, lk, tee, modem and seven more partitions, taken from Global `OS3.0.5.0.VNQMIXM`. The two earlier builds wrote only `scp`.
-- Moving to the 2026-10-11 build from the 2026-10-08 or 2026-10-09 build needs a data wipe. dm-verity is off from this build on, and the keys that protect the data partition do not survive that change. Installed without a wipe the new system does not start, and the phone returns to the old one with its data intact.
-- We have only installed it two ways: updating from an earlier build of this tree with the Updater app, or with `update_engine` (for the 2026-10-11 build, with its wipe option). A first install from the stock ROM has not been tested.
+- From the 2026-10-11 build on the package also writes the firmware: preloader, lk, tee, modem and seven more partitions, taken from Global `OS3.0.5.0.VNQMIXM`. The two earlier builds wrote only `scp`.
+- Moving to the 2026-10-11 or 2026-10-12 build from the 2026-10-08 or 2026-10-09 build needs a data wipe. dm-verity is off from 2026-10-11 on, and the keys that protect the data partition do not survive that change. Installed without a wipe the new system does not start, and the phone returns to the old one with its data intact. From 2026-10-11 to 2026-10-12 no wipe is needed.
+- We have only installed it two ways: updating from an earlier build of this tree with the Updater app, or with `update_engine` (with its wipe option where a wipe is needed). A first install from the stock ROM, and installing from recovery, have not been tested.
 - Builds from 2026-09-30 and earlier come from the old structure, and moving from them needs a data wipe. That code is in this repository's tag `pre-restructure` and the device tree's tag [`gold-r7`](https://github.com/Star-caorui/android_device_xiaomi_gold/tree/gold-r7).
 
 ## What is in this repository
@@ -126,12 +128,14 @@ Device tree: our commits sit on top of his head, one change each. [Here is the l
 
 - Things that did not work on his tree: GPS, FM, a crash when Bluetooth is turned off, 32-bit apps crashing, the hardware codec service crashing now and then, auto-brightness that only went up. Our fixes for offline charging and USB tethering are in his tree now.
 - Wi-Fi: joins an iPhone's hotspot, and Apple devices can join the phone's WPA3 hotspot.
-- Added: double tap to wake, lift to wake, tap to wake, power-off alarm, updates from the Updater app, OpenCL for apps.
-- Smoother interface: the GPU frequency is raised while the screen is touched and when an app starts (it used to stay on its lowest step), and the display timing is stock's.
+- Added: double tap to wake, lift to wake, tap to wake, power-off alarm, charging control, updates from the Updater app, OpenCL and the neural networks accelerator for apps.
+- Stock's own services where the tree ran older stand-ins: the AIDL audio service (with the sound trigger HAL), and the IMS stack from this device's firmware instead of a prebuilt package from another one.
+- Smoother interface: the GPU frequency is raised while the screen is touched and when an app starts (it used to stay on its lowest step), the display timing is stock's, and the UI is drawn with Vulkan as on stock.
+- Settings that differed from stock without a stated reason are back to stock's or the platform's: refresh rate timers, suspend while the proximity sensor holds the screen off, the recovery pixel format, the graphics driver preloaded in zygote, the low memory killer.
 - More of the stock vendor files that the shipped programs ask for by name: the carrier modem configuration, and audio, camera, video and positioning libraries.
 - Networks in mainland China: connectivity checks and time servers that answer from there.
 - Choices: always-on display removed, window blur off.
-- Clean-up: services and scripts that were never installed or had nothing to run are gone, and tethering hardware offload, which this modem does not provide, is no longer declared.
+- Clean-up: services and scripts that were never installed or had nothing to run are gone, as are 47 32-bit libraries nothing loads, and tethering hardware offload, which this modem does not provide, is no longer declared.
 
 Kernel: he keeps the prebuilt files in a repository. We generate the same directory straight from the stock package with the device tree's `extract-kernel.sh`, so the origin of every file can be checked by running it again. Compared with his repository the result:
 
@@ -140,6 +144,8 @@ Kernel: he keeps the prebuilt files in a repository. We generate the same direct
 - Is otherwise byte for byte the same in every file the build uses.
 
 Firmware: his package writes eleven firmware partitions. Ours does the same from the 2026-10-11 build on; the two earlier ones wrote only `scp`.
+
+Verified boot: his builds skip the whole vbmeta check. Ours only turn off dm-verity, so the bootloader still passes the real patch levels to the secure world.
 
 ## Credits
 
