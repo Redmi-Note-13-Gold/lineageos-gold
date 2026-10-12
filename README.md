@@ -4,6 +4,7 @@ Unofficial LineageOS 23.2 (Android 16) for the Redmi Note 13 5G. Test builds, us
 
 - Downloads: [Releases](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases)
 - Device tree: [android_device_xiaomi_gold](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
+- Local manifest: [local_manifests](https://github.com/Star-caorui/local_manifests)
 
 ## Device
 
@@ -64,7 +65,6 @@ Measured:
 
 | File | Purpose |
 | --- | --- |
-| `local_manifests/gold.xml` | Local manifest: the device tree and the common MediaTek and Xiaomi repositories |
 | `host/` | Build script and a patch for a build host with little RAM |
 | `updates.json` | The list of builds the Updater app reads |
 
@@ -76,9 +76,7 @@ You need `repo`, `git-lfs`, `erofs-utils`, `lz4`, `cpio` and `unzip`, plus the u
 
 ```sh
 repo init -u https://github.com/LineageOS/android.git -b lineage-23.2 --git-lfs
-mkdir -p .repo/local_manifests
-curl -o .repo/local_manifests/gold.xml \
-  https://raw.githubusercontent.com/Redmi-Note-13-Gold/lineageos-gold/main/local_manifests/gold.xml
+git clone https://github.com/Star-caorui/local_manifests .repo/local_manifests
 repo sync -c
 ```
 
