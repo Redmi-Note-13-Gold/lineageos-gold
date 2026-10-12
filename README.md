@@ -3,7 +3,7 @@
 Unofficial LineageOS 23.2 (Android 16) for the Redmi Note 13 5G. Test builds, userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project.
 
 - Downloads: [Releases](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases)
-- Device tree: [android_device_xiaomi_gold](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
+- Device tree: [android_device_xiaomi_gold](https://github.com/Star-caorui/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
 - Local manifest: [local_manifests](https://github.com/Star-caorui/local_manifests)
 
 ## Device
@@ -59,7 +59,7 @@ Measured:
 - From the 2026-10-11 build on, the package also writes the firmware: preloader, lk, tee, modem and seven more partitions, taken from Global `OS3.0.5.0.VNQMIXM`. The two earlier builds wrote only `scp`.
 - Moving to the 2026-10-11 build from the 2026-10-08 or 2026-10-09 build needs a data wipe. dm-verity is off from this build on, and the keys that protect the data partition do not survive that change. Installed without a wipe the new system does not start, and the phone returns to the old one with its data intact.
 - We have only installed it two ways: updating from an earlier build of this tree with the Updater app, or with `update_engine` (for the 2026-10-11 build, with its wipe option). A first install from the stock ROM has not been tested.
-- Builds from 2026-09-30 and earlier come from the old structure, and moving from them needs a data wipe. That code is in this repository's tag `pre-restructure` and the device tree's tag [`gold-r7`](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/tree/gold-r7).
+- Builds from 2026-09-30 and earlier come from the old structure, and moving from them needs a data wipe. That code is in this repository's tag `pre-restructure` and the device tree's tag [`gold-r7`](https://github.com/Star-caorui/android_device_xiaomi_gold/tree/gold-r7).
 
 ## What is in this repository
 
@@ -122,7 +122,7 @@ zswap still needs a swap file behind it; ours is 16 GB, and the analysis used 13
 
 ## Differences from Dhterech's tree
 
-Device tree: our commits sit on top of his head, one change each. [Here is the list.](https://github.com/Redmi-Note-13-Gold/android_device_xiaomi_gold/compare/6c5bdc8...lineage-23.2) Roughly:
+Device tree: our commits sit on top of his head, one change each. [Here is the list.](https://github.com/Star-caorui/android_device_xiaomi_gold/compare/6c5bdc8...lineage-23.2) Roughly:
 
 - Things that did not work on his tree: GPS, FM, a crash when Bluetooth is turned off, 32-bit apps crashing, the hardware codec service crashing now and then, auto-brightness that only went up. Our fixes for offline charging and USB tethering are in his tree now.
 - Wi-Fi: joins an iPhone's hotspot, and Apple devices can join the phone's WPA3 hotspot.
