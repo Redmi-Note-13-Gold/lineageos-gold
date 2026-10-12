@@ -2,7 +2,7 @@
 
 Unofficial LineageOS 23.2 (Android 16) for the Redmi Note 13 5G. Test builds, userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project.
 
-- Downloads: [Releases](https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases)
+- Downloads: [Releases](https://github.com/Star-caorui/lineageos-gold/releases)
 - Device tree: [android_device_xiaomi_gold](https://github.com/Star-caorui/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
 - Local manifest: [local_manifests](https://github.com/Star-caorui/local_manifests)
 

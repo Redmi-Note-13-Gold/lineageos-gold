@@ -9,7 +9,7 @@
         "ota_property_files": "payload_metadata.bin:4886:113424,payload.bin:4886:1208254569,payload_properties.txt:1208259513:156,apex_info.pb:2247:1385,care_map.pb:3679:1160,metadata:69:674,metadata.pb:811:1388",
         "sha256": "dc407fa9be1949f589cc1960bbfa06e63f0971fb8ad82d1dc32a1448fd2c46cd",
         "size": 1208262949,
-        "url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20261009-r1/lineage-23.2-20261006-UNOFFICIAL-gold.zip"
+        "url": "https://github.com/Star-caorui/lineageos-gold/releases/download/lineage-23.2-20261009-r1/lineage-23.2-20261006-UNOFFICIAL-gold.zip"
       }
     ],
     "type": "unofficial",
@@ -25,7 +25,7 @@
         "ota_property_files": "payload_metadata.bin:4886:112624,payload.bin:4886:1187178450,payload_properties.txt:1187183394:156,apex_info.pb:2247:1385,care_map.pb:3679:1160,metadata:69:674,metadata.pb:811:1388",
         "sha256": "953d732db2a0b22e6d42f506a4c364f57d4a2bd916da9ae166cb50440827570d",
         "size": 1187186830,
-        "url": "https://github.com/Redmi-Note-13-Gold/lineageos-gold/releases/download/lineage-23.2-20261008-r1/lineage-23.2-20261006-UNOFFICIAL-gold.zip"
+        "url": "https://github.com/Star-caorui/lineageos-gold/releases/download/lineage-23.2-20261008-r1/lineage-23.2-20261006-UNOFFICIAL-gold.zip"
       }
     ],
     "type": "unofficial",
