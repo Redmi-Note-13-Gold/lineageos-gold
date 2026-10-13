@@ -15,7 +15,6 @@ Unofficial LineageOS for the Redmi Note 13 5G. Test builds: userdebug, signed wi
 | | Android | Latest build | |
 | --- | --- | --- | --- |
 | LineageOS 24.0 | 17 | [2026101303](https://github.com/Star-caorui/lineageos-gold/releases/tag/LineageOS-gold-Unofficial-24.0-Vanilla-2026101303) | Current |
-| LineageOS 23.2 | 16 | [2026101201](https://github.com/Star-caorui/lineageos-gold/releases/tag/LineageOS-gold-Unofficial-23.2-Vanilla-2026101201) | Final, no more updates |
 
 ## Installing
 
@@ -49,47 +48,47 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 
 ## Status
 
-The rows follow LineageOS's [device support requirements](https://github.com/LineageOS/charter/blob/main/device-support-requirements.md). "Not tested" means nobody has tried it on that version, not that it is known to be broken.
+The rows follow LineageOS's [device support requirements](https://github.com/LineageOS/charter/blob/main/device-support-requirements.md). "Not tested" means nobody has tried it yet, not that it is known to be broken.
 
 <table>
-  <tr><th></th><th></th><th>24.0</th><th>23.2</th></tr>
-  <tr><td>Audio</td><td>Media playback, speaker</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Earpiece</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>In-call audio</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td></td><td>Wired headset, Bluetooth audio</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Microphone</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>FM radio</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>RIL</td><td>Calls, SMS, mobile data</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td></td><td>VoLTE, emergency calls</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td>Encryption</td><td>Hardware-backed, file-based</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Wi-Fi</td><td>Wi-Fi</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Hotspot</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
-  <tr><td>USB</td><td>File transfer (MTP)</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>USB tethering</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>GPS</td><td>GPS</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Bluetooth</td><td>Bluetooth</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
-  <tr><td></td><td>Bluetooth tethering</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td>Camera</td><td>Rear and front photos</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Video recording</td><td>Video recording</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Codecs</td><td>Hardware decoding and encoding</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Display</td><td>Stock resolution, 120 Hz</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Wireless display</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td>NFC</td><td>NFC</td><td colspan="2" align="center">No hardware</td></tr>
-  <tr><td>Fingerprint</td><td>Fingerprint</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>IR</td><td>IR blaster</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
-  <tr><td>SD card</td><td>SD card</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
-  <tr><td></td><td>Adoptable storage</td><td colspan="2" align="center">Not tested</td></tr>
-  <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Proximity, light</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Other sensors</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>SELinux</td><td>Enforcing</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td><td align="center">No more updates</td></tr>
-  <tr><td>FRP</td><td>Factory reset protection</td><td align="center">Not supported</td><td align="center">Not tested</td></tr>
-  <tr><td>Recovery</td><td>Installing with Lineage Recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
-  <tr><td>Add-ons</td><td>Installing add-on packages from recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+  <tr><th></th><th></th><th>24.0</th></tr>
+  <tr><td>Audio</td><td>Media playback, speaker</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Earpiece</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>In-call audio</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Wired headset, Bluetooth audio</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Microphone</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>FM radio</td><td align="center">PASS</td></tr>
+  <tr><td>RIL</td><td>Calls, SMS, mobile data</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>VoLTE, emergency calls</td><td align="center">Not tested</td></tr>
+  <tr><td>Encryption</td><td>Hardware-backed, file-based</td><td align="center">PASS</td></tr>
+  <tr><td>Wi-Fi</td><td>Wi-Fi</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Hotspot</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td></tr>
+  <tr><td>USB</td><td>File transfer (MTP)</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>USB tethering</td><td align="center">PASS</td></tr>
+  <tr><td>GPS</td><td>GPS</td><td align="center">PASS</td></tr>
+  <tr><td>Bluetooth</td><td>Bluetooth</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Bluetooth tethering</td><td align="center">Not tested</td></tr>
+  <tr><td>Camera</td><td>Rear and front photos</td><td align="center">PASS</td></tr>
+  <tr><td>Video recording</td><td>Video recording</td><td align="center">PASS</td></tr>
+  <tr><td>Codecs</td><td>Hardware decoding and encoding</td><td align="center">PASS</td></tr>
+  <tr><td>Display</td><td>Stock resolution, 120 Hz</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Wireless display</td><td align="center">Not tested</td></tr>
+  <tr><td>NFC</td><td>NFC</td><td align="center">No hardware</td></tr>
+  <tr><td>Fingerprint</td><td>Fingerprint</td><td align="center">PASS</td></tr>
+  <tr><td>IR</td><td>IR blaster</td><td align="center">PASS</td></tr>
+  <tr><td>SD card</td><td>SD card</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Adoptable storage</td><td align="center">Not tested</td></tr>
+  <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Proximity, light</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Other sensors</td><td align="center">PASS</td></tr>
+  <tr><td>SELinux</td><td>Enforcing</td><td align="center">PASS</td></tr>
+  <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td align="center">PASS</td></tr>
+  <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td></tr>
+  <tr><td>FRP</td><td>Factory reset protection</td><td align="center">Not supported</td></tr>
+  <tr><td>Recovery</td><td>Installing with Lineage Recovery</td><td align="center">PASS</td></tr>
+  <tr><td>Add-ons</td><td>Installing add-on packages from recovery</td><td align="center">PASS</td></tr>
 </table>
 
 Measured on 23.2:
