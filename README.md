@@ -48,47 +48,62 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 
 ## Status
 
-The rows follow LineageOS's [device support requirements](https://github.com/LineageOS/charter/blob/main/device-support-requirements.md). "Not tested" means nobody has tried it yet, not that it is known to be broken.
+The rows are the items of LineageOS's [device support requirements](https://github.com/LineageOS/charter/blob/main/device-support-requirements.md), in its order. "Not tested" means nobody has tried it yet, not that it is known to be broken. "Not on stock" means the stock OS does not have it either, so the requirement does not apply.
 
 <table>
   <tr><th></th><th></th><th>24.0</th></tr>
-  <tr><td>Audio</td><td>Media playback, speaker</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Earpiece</td><td align="center">PASS</td></tr>
+  <tr><td>Audio</td><td>Audio playback for media content</td><td align="center">PASS</td></tr>
   <tr><td></td><td>In-call audio</td><td align="center">Not tested</td></tr>
-  <tr><td></td><td>Wired headset, Bluetooth audio</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Microphone</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Speaker audio</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Additional audio configuration (echo cancellation, extra mics)</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Other audio outputs of the stock OS: headphone jack, Bluetooth</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Other audio outputs of the stock OS: USB-C</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>FM radio</td><td align="center">PASS</td></tr>
-  <tr><td>RIL</td><td>Calls, SMS, mobile data</td><td align="center">Not tested</td></tr>
-  <tr><td></td><td>VoLTE, emergency calls</td><td align="center">Not tested</td></tr>
-  <tr><td>Encryption</td><td>Hardware-backed, file-based</td><td align="center">PASS</td></tr>
+  <tr><td>RIL</td><td>Phone calls and data</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Emergency calling with a SIM inserted</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Emergency calling without a SIM inserted</td><td align="center">Not tested</td></tr>
+  <tr><td>Encryption</td><td>Hardware-backed encryption</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Encryption enabled by default</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Software encryption</td><td align="center">Not tested</td></tr>
   <tr><td>Wi-Fi</td><td>Wi-Fi</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Hotspot</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td></tr>
-  <tr><td>USB</td><td>File transfer (MTP)</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on the stock OS</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Wi-Fi tethering</td><td align="center">PASS</td></tr>
+  <tr><td>USB</td><td>File access via MTP</td><td align="center">PASS</td></tr>
   <tr><td></td><td>USB tethering</td><td align="center">PASS</td></tr>
   <tr><td>GPS</td><td>GPS</td><td align="center">PASS</td></tr>
   <tr><td>Bluetooth</td><td>Bluetooth</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on the stock OS</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Bluetooth tethering</td><td align="center">Not tested</td></tr>
-  <tr><td>Camera</td><td>Rear and front photos</td><td align="center">PASS</td></tr>
-  <tr><td>Video recording</td><td>Video recording</td><td align="center">PASS</td></tr>
-  <tr><td>Codecs</td><td>Hardware decoding and encoding</td><td align="center">PASS</td></tr>
-  <tr><td>Display</td><td>Stock resolution, 120 Hz</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Wireless display</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>aptX</td><td align="center">Not on stock</td></tr>
+  <tr><td>Camera</td><td>Front facing and rear camera</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>All rear cameras (two or more)</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>All front cameras (two or more)</td><td align="center">No hardware</td></tr>
+  <tr><td>Video Recording</td><td>Video recording, rear camera</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Video recording, front camera</td><td align="center">Not tested</td></tr>
+  <tr><td>Codecs</td><td>Hardware encoding and decoding of the codecs the stock OS supports</td><td align="center">PASS</td></tr>
+  <tr><td>Display</td><td>Same resolution as the stock OS</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same density as the stock OS</td><td align="center">440, stock is 480</td></tr>
+  <tr><td></td><td>Additional non-USB display interfaces</td><td align="center">No hardware</td></tr>
+  <tr><td></td><td>Display output the stock OS supports (Miracast)</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>HDR10 playback</td><td align="center">Not on stock</td></tr>
   <tr><td>NFC</td><td>NFC</td><td align="center">No hardware</td></tr>
-  <tr><td>Fingerprint</td><td>Fingerprint</td><td align="center">PASS</td></tr>
+  <tr><td>Fingerprint Sensor</td><td>Fingerprint sensor</td><td align="center">PASS</td></tr>
   <tr><td>IR</td><td>IR blaster</td><td align="center">PASS</td></tr>
-  <tr><td>SD card</td><td>SD card</td><td align="center">PASS</td></tr>
+  <tr><td>SD card</td><td>SD cards</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Adoptable storage</td><td align="center">Not tested</td></tr>
-  <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Proximity, light</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Other sensors</td><td align="center">PASS</td></tr>
-  <tr><td>SELinux</td><td>Enforcing</td><td align="center">PASS</td></tr>
-  <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td align="center">PASS</td></tr>
-  <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td></tr>
-  <tr><td>FRP</td><td>Factory reset protection</td><td align="center">Not supported</td></tr>
-  <tr><td>Recovery</td><td>Installing with Lineage Recovery</td><td align="center">PASS</td></tr>
-  <tr><td>Add-ons</td><td>Installing add-on packages from recovery</td><td align="center">PASS</td></tr>
+  <tr><td>Accelerometer</td><td>Accelerometer</td><td align="center">PASS</td></tr>
+  <tr><td>Gyroscope</td><td>Gyroscope</td><td align="center">PASS</td></tr>
+  <tr><td>Proximity</td><td>Proximity sensor</td><td align="center">PASS</td></tr>
+  <tr><td>Light</td><td>Light sensor</td><td align="center">PASS</td></tr>
+  <tr><td>Other Sensors</td><td>All other sensors of the stock OS</td><td align="center">PASS</td></tr>
+  <tr><td>Accessories</td><td>Proprietary accessories</td><td align="center">No hardware</td></tr>
+  <tr><td>SELinux status</td><td>SELinux Enforcing</td><td align="center">PASS</td></tr>
+  <tr><td>Verity</td><td>Verity disabled on the system image for userdebug builds</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Verity on the vendor image</td><td align="center">Not supported</td></tr>
+  <tr><td>Updater</td><td>Upgrades via the Updater app and the recovery</td><td align="center">PASS</td></tr>
+  <tr><td>FRP</td><td>Factory Reset Protection when Google apps are installed</td><td align="center">Not supported</td></tr>
+  <tr><td>LineageOS Recovery</td><td>Lineage Recovery works for installation</td><td align="center">PASS</td></tr>
+  <tr><td>Addon packages</td><td>Addon packages can be installed through Lineage Recovery</td><td align="center">PASS</td></tr>
 </table>
 
 Measured on 23.2:
