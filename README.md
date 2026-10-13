@@ -63,7 +63,7 @@ The rows follow LineageOS's [device support requirements](https://github.com/Lin
   <tr><td></td><td>VoLTE, emergency calls</td><td colspan="2" align="center">Not tested</td></tr>
   <tr><td>Encryption</td><td>Hardware-backed, file-based</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Wi-Fi</td><td>Wi-Fi</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Hotspot</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Hotspot</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td>USB</td><td>File transfer (MTP)</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>USB tethering</td><td colspan="2" align="center">PASS</td></tr>
