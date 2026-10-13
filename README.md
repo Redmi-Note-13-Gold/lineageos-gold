@@ -59,8 +59,7 @@ The rows are the items of LineageOS's [device support requirements](https://gith
   <tr><td></td><td>Other audio outputs of the stock OS: headphone jack, Bluetooth</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Other audio outputs of the stock OS: USB-C</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>FM radio</td><td align="center">PASS</td></tr>
-  <tr><td>RIL</td><td>Phone calls</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>Mobile data</td><td align="center">Not tested</td></tr>
+  <tr><td>RIL</td><td>Phone calls and data</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Emergency calling with a SIM inserted</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Emergency calling without a SIM inserted</td><td align="center">Not tested</td></tr>
   <tr><td>Encryption</td><td>Hardware-backed encryption</td><td align="center">PASS</td></tr>
