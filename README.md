@@ -78,7 +78,7 @@ The rows follow LineageOS's [device support requirements](https://github.com/Lin
   <tr><td></td><td>Wireless display</td><td colspan="2" align="center">Not tested</td></tr>
   <tr><td>NFC</td><td>NFC</td><td colspan="2" align="center">No hardware</td></tr>
   <tr><td>Fingerprint</td><td>Fingerprint</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>IR</td><td>IR blaster</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>IR</td><td>IR blaster</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td>SD card</td><td>SD card</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Adoptable storage</td><td colspan="2" align="center">Not tested</td></tr>
   <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td colspan="2" align="center">PASS</td></tr>
