@@ -12,8 +12,7 @@ The first build, `lineage-24.0-20261013-r1`, is a pre-release.
 
 - A build one commit earlier, which differs only in the address the Updater app asks, is on the test phone. It was installed over the 2026-10-12 build with the data kept: it boots, SELinux is enforcing, every service runs and nothing crashes.
 - No feature has been used on it yet: camera, audio, codecs, Bluetooth, GPS, calls. The status table below describes the 2026-10-12 build of LineageOS 23.2.
-- The Updater app of the 23.2 builds does not offer it, because it does not cross Android versions. Install it by hand.
-- To build it, use `-b lineage-24.0` for `repo init` and for the local manifest. On our 16 GB build host its Soong analysis needs about 34 GB of swap and takes an hour (`GOGC=25 GOMEMLIMIT=off`); the times under "Build hosts with little RAM" were measured on 23.2.
+- The Updater app of the 23.2 builds cannot install it, because it does not cross Android versions. Install it by hand. The 23.2 builds get no more updates, so their list is empty now.
 
 ## Device
 
@@ -44,7 +43,7 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 | Double tap to wake, lift to wake, tap to wake | Work |
 | Charging | USB, fast charging, offline charging, power-off alarm, charging control (stop at a set level). The lock screen does not say when the charger is a fast one |
 | USB | File transfer (MTP), USB tethering |
-| System updates | The Updater app works, but the 2026-10-11 and 2026-10-12 builds are not offered there, because coming from the two builds before them needs a data wipe |
+| System updates | The Updater app worked from the 2026-10-08 build to the 2026-10-09 build. Nothing is offered to the 23.2 builds any more |
 | FM radio, wired headset | Worked on the 2026-10-09 build (playback, play/pause button, FM with the headset as antenna). Not tried since the audio service changed; the headset microphone never tried |
 | Neural networks API | MediaTek's accelerator is available to apps |
 | OTG, SD card, IR blaster | Not tested |
@@ -77,7 +76,7 @@ Measured:
 | File | Purpose |
 | --- | --- |
 | `host/` | Build script, a patch for a build host with little RAM, and the script that writes the update lists |
-| `updates.json` | The list of builds the Updater app reads on LineageOS 23.2 |
+| `updates.json` | The list the Updater app reads on LineageOS 23.2. Empty: those builds get no more updates |
 | `updates/` | The lists the Updater app reads from LineageOS 24.0 on, one per published build |
 
 From LineageOS 24.0 on, a build asks for `updates/<its ro.build.version.incremental>.json`. When a build is published, `host/update-lists.py` rewrites the lists of the builds before it: the two most recent ones are offered an incremental package, older ones the full package.
