@@ -84,7 +84,6 @@ The rows follow LineageOS's [device support requirements](https://github.com/Lin
   <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>Proximity, light</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>Other sensors</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td></td><td>Significant motion</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
   <tr><td>SELinux</td><td>Enforcing</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td><td align="center">No more updates</td></tr>
