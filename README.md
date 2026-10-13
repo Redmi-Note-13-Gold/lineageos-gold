@@ -85,7 +85,7 @@ The rows are the items of LineageOS's [device support requirements](https://gith
   <tr><td>Display</td><td>Same resolution as the stock OS</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Same density as the stock OS</td><td align="center">440, stock is 480</td></tr>
   <tr><td></td><td>Additional non-USB display interfaces</td><td align="center">No hardware</td></tr>
-  <tr><td></td><td>Display output the stock OS supports (Miracast)</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Display output the stock OS supports (Miracast)</td><td align="center">PASS</td></tr>
   <tr><td></td><td>HDR10 playback</td><td align="center">Not on stock</td></tr>
   <tr><td>NFC</td><td>NFC</td><td align="center">No hardware</td></tr>
   <tr><td>Fingerprint Sensor</td><td>Fingerprint sensor</td><td align="center">PASS</td></tr>
