@@ -8,12 +8,12 @@ Unofficial LineageOS 23.2 (Android 16) and 24.0 (Android 17) for the Redmi Note 
 
 ## LineageOS 24.0 (Android 17)
 
-The first build, `lineage-24.0-20261013-r1`, is a pre-release.
+Two pre-releases so far: `LineageOS-gold-Unofficial-24.0-Vanilla-2026101301` and `-2026101302`. The second differs from the first in two things: the Updater app's "Recent changes" and "Report issues" lead to this repository, and the positioning daemon may reach the sensor service.
 
-- It is on the test phone: installed over the 2026-10-12 build with the data kept, then updated to this build by the Updater app with an incremental package.
-- Tried on it and working: both cameras (photo, 1080p video, torch), hardware video decoding and encoding, 120 Hz, double tap to wake, fingerprint, Wi-Fi and the hotspot switch, recording, the sensors, charging control, the neural networks accelerator, OpenCL for apps, Widevine L1.
-- Not tried on it yet: sound output (speaker, earpiece, headset, Bluetooth, FM), anything that needs a SIM, GPS outdoors, infrared, wireless display, OTG, the SD card, USB file transfer and tethering. The status table below describes the 2026-10-12 build of LineageOS 23.2.
-- Known problem: the sensor-aided part of positioning is blocked by SELinux. Fixed in the next build.
+- The first is on the test phone: installed over the 2026-10-12 build with the data kept, then updated by the Updater app with an incremental package.
+- Tried on the first and working: both cameras (photo, 1080p video, torch), hardware video decoding and encoding, 120 Hz, double tap to wake, fingerprint, Wi-Fi and the hotspot switch, recording, the sensors, charging control, the neural networks accelerator, OpenCL for apps, Widevine L1.
+- Not tried yet: sound output (speaker, earpiece, headset, Bluetooth, FM), anything that needs a SIM, GPS outdoors, infrared, wireless display, OTG, the SD card, USB file transfer and tethering. The status table below describes the 2026-10-12 build of LineageOS 23.2.
+- Known problem of the first: the sensor-aided part of positioning is blocked by SELinux. The second has the rule for it; whether that settles it has not been checked on the phone yet.
 - The Updater app of the 23.2 builds cannot install it, because it does not cross Android versions. Install it by hand. The 23.2 builds get no more updates, so their list is empty now.
 
 ## Device
