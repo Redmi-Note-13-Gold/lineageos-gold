@@ -51,46 +51,47 @@ The device tree also carries the configuration for the Indian and Global (`iron`
 
 The rows follow LineageOS's [device support requirements](https://github.com/LineageOS/charter/blob/main/device-support-requirements.md). "Not tested" means nobody has tried it on that version, not that it is known to be broken.
 
-| | | 24.0 | 23.2 |
-| --- | --- | --- | --- |
-| Audio | Media playback, speaker | PASS | PASS |
-|  | Earpiece | PASS | PASS |
-|  | In-call audio | Not tested | Not tested |
-|  | Wired headset, Bluetooth audio | PASS | PASS |
-|  | Microphone | PASS | PASS |
-|  | FM radio | PASS | PASS |
-| RIL | Calls, SMS, mobile data | Not tested | Not tested |
-|  | VoLTE, emergency calls | Not tested | Not tested |
-| Encryption | Hardware-backed, file-based | PASS | PASS |
-| Wi-Fi | Wi-Fi | PASS | PASS |
-|  | Hotspot | Not tested | PASS |
-|  | Same MAC address as on stock | PASS | Not tested |
-| USB | File transfer (MTP) | PASS | PASS |
-|  | USB tethering | PASS | PASS |
-| GPS | GPS | Not tested | PASS |
-| Bluetooth | Bluetooth | PASS | PASS |
-|  | Same MAC address as on stock | PASS | Not tested |
-|  | Bluetooth tethering | Not tested | Not tested |
-| Camera | Rear and front photos | PASS | PASS |
-| Video recording | Video recording | PASS | PASS |
-| Codecs | Hardware decoding and encoding | PASS | PASS |
-| Display | Stock resolution, 120 Hz | PASS | PASS |
-|  | Wireless display | Not tested | Not tested |
-| NFC | NFC | No hardware | No hardware |
-| Fingerprint | Fingerprint | PASS | PASS |
-| IR | IR blaster | Not tested | Not tested |
-| SD card | SD card | PASS | Not tested |
-|  | Adoptable storage | Not tested | Not tested |
-| Sensors | Accelerometer, gyroscope | PASS | PASS |
-|  | Proximity, light | PASS | PASS |
-|  | Other sensors | PASS | PASS |
-|  | Significant motion | Not tested | PASS |
-| SELinux | Enforcing | PASS | PASS |
-| Verity | Off on the system image, as userdebug builds require | PASS | PASS |
-| Updater | Updates from the Updater app | PASS | No more updates |
-| FRP | Factory reset protection | Not tested | Not tested |
-| Recovery | Installing with Lineage Recovery | PASS | Not tested |
-| Add-ons | Installing add-on packages from recovery | PASS | Not tested |
+<table>
+  <tr><th></th><th></th><th>24.0</th><th>23.2</th></tr>
+  <tr><td>Audio</td><td>Media playback, speaker</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Earpiece</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>In-call audio</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td></td><td>Wired headset, Bluetooth audio</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Microphone</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>FM radio</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>RIL</td><td>Calls, SMS, mobile data</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td></td><td>VoLTE, emergency calls</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>Encryption</td><td>Hardware-backed, file-based</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Wi-Fi</td><td>Wi-Fi</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Hotspot</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+  <tr><td>USB</td><td>File transfer (MTP)</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>USB tethering</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>GPS</td><td>GPS</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
+  <tr><td>Bluetooth</td><td>Bluetooth</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Bluetooth tethering</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>Camera</td><td>Rear and front photos</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Video recording</td><td>Video recording</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Codecs</td><td>Hardware decoding and encoding</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Display</td><td>Stock resolution, 120 Hz</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Wireless display</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>NFC</td><td>NFC</td><td colspan="2" align="center">No hardware</td></tr>
+  <tr><td>Fingerprint</td><td>Fingerprint</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>IR</td><td>IR blaster</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>SD card</td><td>SD card</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>Adoptable storage</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>Sensors</td><td>Accelerometer, gyroscope</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Proximity, light</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Other sensors</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td></td><td>Significant motion</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
+  <tr><td>SELinux</td><td>Enforcing</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td colspan="2" align="center">PASS</td></tr>
+  <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td><td align="center">No more updates</td></tr>
+  <tr><td>FRP</td><td>Factory reset protection</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>Recovery</td><td>Installing with Lineage Recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+  <tr><td>Add-ons</td><td>Installing add-on packages from recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
+</table>
 
 Measured on 23.2:
 
