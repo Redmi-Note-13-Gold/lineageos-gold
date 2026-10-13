@@ -53,13 +53,14 @@ The rows are the items of LineageOS's [device support requirements](https://gith
 <table>
   <tr><th></th><th></th><th>24.0</th></tr>
   <tr><td>Audio</td><td>Audio playback for media content</td><td align="center">PASS</td></tr>
-  <tr><td></td><td>In-call audio</td><td align="center">Not tested</td></tr>
+  <tr><td></td><td>In-call audio</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Speaker audio</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Additional audio configuration (echo cancellation, extra mics)</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Other audio outputs of the stock OS: headphone jack, Bluetooth</td><td align="center">PASS</td></tr>
   <tr><td></td><td>Other audio outputs of the stock OS: USB-C</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>FM radio</td><td align="center">PASS</td></tr>
-  <tr><td>RIL</td><td>Phone calls and data</td><td align="center">Not tested</td></tr>
+  <tr><td>RIL</td><td>Phone calls</td><td align="center">PASS</td></tr>
+  <tr><td></td><td>Mobile data</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Emergency calling with a SIM inserted</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Emergency calling without a SIM inserted</td><td align="center">Not tested</td></tr>
   <tr><td>Encryption</td><td>Hardware-backed encryption</td><td align="center">PASS</td></tr>
