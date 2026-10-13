@@ -1,10 +1,19 @@
-# LineageOS 23.2 for the Redmi Note 13 5G (`gold`)
+# LineageOS for the Redmi Note 13 5G (`gold`)
 
-Unofficial LineageOS 23.2 (Android 16) for the Redmi Note 13 5G. Test builds, userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project.
+Unofficial LineageOS 23.2 (Android 16) and 24.0 (Android 17) for the Redmi Note 13 5G. Test builds, userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project.
 
 - Downloads: [Releases](https://github.com/Star-caorui/lineageos-gold/releases)
 - Device tree: [android_device_xiaomi_gold](https://github.com/Star-caorui/android_device_xiaomi_gold), forked from [Dhterech](https://github.com/Dhterech/android_device_xiaomi_gold)
 - Local manifest: [local_manifests](https://github.com/Star-caorui/local_manifests)
+
+## LineageOS 24.0 (Android 17)
+
+The first build, `lineage-24.0-20261013-r1`, is a pre-release.
+
+- A build one commit earlier, which differs only in the address the Updater app asks, is on the test phone. It was installed over the 2026-10-12 build with the data kept: it boots, SELinux is enforcing, every service runs and nothing crashes.
+- No feature has been used on it yet: camera, audio, codecs, Bluetooth, GPS, calls. The status table below describes the 2026-10-12 build of LineageOS 23.2.
+- The Updater app of the 23.2 builds does not offer it, because it does not cross Android versions. Install it by hand.
+- To build it, use `-b lineage-24.0` for `repo init` and for the local manifest. On our 16 GB build host its Soong analysis needs about 34 GB of swap and takes an hour (`GOGC=25 GOMEMLIMIT=off`); the times under "Build hosts with little RAM" were measured on 23.2.
 
 ## Device
 
