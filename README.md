@@ -67,7 +67,7 @@ The rows follow LineageOS's [device support requirements](https://github.com/Lin
   <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td>USB</td><td>File transfer (MTP)</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>USB tethering</td><td colspan="2" align="center">PASS</td></tr>
-  <tr><td>GPS</td><td>GPS</td><td align="center">Not tested</td><td align="center">PASS</td></tr>
+  <tr><td>GPS</td><td>GPS</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Bluetooth</td><td>Bluetooth</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td></td><td>Same MAC address as on stock</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td></td><td>Bluetooth tethering</td><td colspan="2" align="center">Not tested</td></tr>
