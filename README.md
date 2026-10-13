@@ -14,7 +14,7 @@ Unofficial LineageOS for the Redmi Note 13 5G. Test builds: userdebug, signed wi
 
 | | Android | Latest build | |
 | --- | --- | --- | --- |
-| LineageOS 24.0 | 17 | [2026101302](https://github.com/Star-caorui/lineageos-gold/releases/tag/LineageOS-gold-Unofficial-24.0-Vanilla-2026101302) | Current |
+| LineageOS 24.0 | 17 | [2026101303](https://github.com/Star-caorui/lineageos-gold/releases/tag/LineageOS-gold-Unofficial-24.0-Vanilla-2026101303) | Current |
 | LineageOS 23.2 | 16 | [2026101201](https://github.com/Star-caorui/lineageos-gold/releases/tag/LineageOS-gold-Unofficial-23.2-Vanilla-2026101201) | Final, no more updates |
 
 ## Installing
@@ -88,7 +88,7 @@ The rows follow LineageOS's [device support requirements](https://github.com/Lin
   <tr><td>SELinux</td><td>Enforcing</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Verity</td><td>Off on the system image, as userdebug builds require</td><td colspan="2" align="center">PASS</td></tr>
   <tr><td>Updater</td><td>Updates from the Updater app</td><td align="center">PASS</td><td align="center">No more updates</td></tr>
-  <tr><td>FRP</td><td>Factory reset protection</td><td colspan="2" align="center">Not tested</td></tr>
+  <tr><td>FRP</td><td>Factory reset protection</td><td align="center">Not supported</td><td align="center">Not tested</td></tr>
   <tr><td>Recovery</td><td>Installing with Lineage Recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
   <tr><td>Add-ons</td><td>Installing add-on packages from recovery</td><td align="center">PASS</td><td align="center">Not tested</td></tr>
 </table>
@@ -117,11 +117,11 @@ Our commits sit on top of his head, one change each: [the list for 23.2](https:/
 | Wi-Fi | Joins an iPhone's hotspot, and Apple devices can join the phone's WPA3 hotspot |
 | Added | Double tap, lift and tap to wake, the power-off alarm, charging control, updates from the Updater app, OpenCL and the neural networks accelerator for apps |
 | Stock services | The AIDL audio service with the sound trigger HAL, and the IMS stack from this device's own firmware, where the tree ran older stand-ins |
-| Smoothness | The GPU frequency is raised while the screen is touched and when an app starts, the display timing is stock's, and the UI is drawn with Vulkan as on stock |
+| Smoothness | The GPU frequency is raised while the screen is touched and when an app starts, the display timing is stock's, the UI is drawn with Vulkan as on stock, and the compositor gets CPU time as soon as it has window blur to render |
 | Settings | Those that differed from stock without a stated reason are back to stock's or the platform's: refresh rate timers, suspend while the proximity sensor holds the screen off, the recovery pixel format, the graphics driver preloaded in zygote, the low memory killer |
 | Stock files | More of the vendor files that the shipped programs ask for by name: the carrier modem configuration, and audio, camera, video and positioning libraries |
 | Mainland China | Connectivity checks and time servers that answer from there |
-| Choices | Always-on display removed, window blur off |
+| Choices | Always-on display removed |
 | Clean-up | Services and scripts that were never installed or had nothing to run are gone, as are 47 32-bit libraries nothing loads. Tethering hardware offload, which this modem does not provide, is no longer declared |
 | Kernel | He keeps the prebuilt files in a repository, and so do we, with a history that starts from the unchanged stock files. Ours adds the `system_dlkm/` directory the device tree needs, and changes one instruction in `hq_charger_sysfs.ko` to stop a thread that only serves MIUI's charging animation |
 | Verified boot | His builds skip the whole vbmeta check. Ours only turn off dm-verity, so the bootloader still passes the real patch levels to the secure world |
