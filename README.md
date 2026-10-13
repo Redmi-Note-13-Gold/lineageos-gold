@@ -67,8 +67,11 @@ Measured:
 
 | File | Purpose |
 | --- | --- |
-| `host/` | Build script and a patch for a build host with little RAM |
-| `updates.json` | The list of builds the Updater app reads |
+| `host/` | Build script, a patch for a build host with little RAM, and the script that writes the update lists |
+| `updates.json` | The list of builds the Updater app reads on LineageOS 23.2 |
+| `updates/` | The lists the Updater app reads from LineageOS 24.0 on, one per published build |
+
+From LineageOS 24.0 on, a build asks for `updates/<its ro.build.version.incremental>.json`. When a build is published, `host/update-lists.py` rewrites the lists of the builds before it: the two most recent ones are offered an incremental package, older ones the full package.
 
 The kernel and the vendor blobs are not in any repository. Both are extracted from the same stock package, by two scripts in the device tree.
 
