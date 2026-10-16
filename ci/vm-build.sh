@@ -157,7 +157,8 @@ say "collect"
 P=$SRC/out/target/product/gold
 cp $P/lineage-*-gold.zip $STAGE/package.zip || exit 1
 for i in boot vendor_boot dtbo vbmeta vbmeta_system vbmeta_vendor; do cp $P/$i.img $STAGE/ || exit 1; done
-prop() { grep -m1 "^$1=" $P/system/build.prop | cut -d= -f2; }
+# ro.lineage.* is in product/etc/build.prop, the rest in system/build.prop.
+prop() { cat $P/system/build.prop $P/product/etc/build.prop | grep -m1 "^$1=" | cut -d= -f2; }
 {
   echo "incremental=$(prop ro.build.version.incremental)"
   echo "lineage=$(prop ro.lineage.build.version)"
