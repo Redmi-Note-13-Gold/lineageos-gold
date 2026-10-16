@@ -1,0 +1,248 @@
+name: Build
+
+# Builds one package from source on a Google Cloud spot VM (ci/vm-build.sh) and turns it into a draft
+# release. Started by hand only; nothing here runs on pull requests.
+on:
+  workflow_dispatch:
+    inputs:
+      device_ref:
+        description: Device tree branch, tag or commit
+        default: lineage-24.0
+      vendor_ref:
+        description: Proprietary files branch, tag or commit
+        default: lineage-24.0
+      kernel_ref:
+        description: Prebuilt kernel branch, tag or commit
+        default: lineage-24.0
+      gki:
+        description: GOLD_GKI
+        type: choice
+        options: [stock, latest, source]
+        default: stock
+      vendor_modules:
+        description: GOLD_VENDOR_MODULES
+        type: choice
+        options: [stock, source]
+        default: stock
+      snapshot_url:
+        description: Manifest snapshot of an earlier build to rebuild it exactly (overrides the refs above)
+        default: ''
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+env:
+  PROJECT: gold-build
+  REGION: asia-northeast2
+  MACHINE: c2d-standard-32
+  BUCKET: gold-build-ci-osaka
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
+          service_account: gold-ci@gold-build.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Start the build VM
+        env:
+          DEVICE_REF: ${{ inputs.device_ref }}
+          VENDOR_REF: ${{ inputs.vendor_ref }}
+          KERNEL_REF: ${{ inputs.kernel_ref }}
+          GKI: ${{ inputs.gki }}
+          VMODS: ${{ inputs.vendor_modules }}
+          SNAPSHOT_URL: ${{ inputs.snapshot_url }}
+        run: |
+          VM=gold-build-$GITHUB_RUN_ID
+          files=startup-script=ci/vm-build.sh
+          if [ -n "$SNAPSHOT_URL" ]; then printf '%s' "$SNAPSHOT_URL" > snapshot-url.txt; files=$files,snapshot-url=snapshot-url.txt; fi
+          for zone in $REGION-a $REGION-b $REGION-c; do
+            if gcloud compute instances create $VM --project $PROJECT --zone $zone --machine-type $MACHINE \
+                --provisioning-model SPOT --instance-termination-action DELETE --max-run-duration 6h \
+                --image-family ubuntu-2404-lts-amd64 --image-project ubuntu-os-cloud \
+                --boot-disk-size 450GB --boot-disk-type pd-balanced \
+                --service-account gold-builder@$PROJECT.iam.gserviceaccount.com --scopes cloud-platform \
+                --labels purpose=gold-build,run=$GITHUB_RUN_ID \
+                --metadata-from-file $files \
+                --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS"; then
+              echo "ZONE=$zone" >> $GITHUB_ENV
+              echo "STARTED=$(date +%s)" >> $GITHUB_ENV
+              exit 0
+            fi
+          done
+          echo "No spot capacity in $REGION" >&2
+          exit 1
+
+      - name: Build (on the VM)
+        run: |
+          # Shows the steps, the build's progress and every error as they come; the whole log is
+          # attached to the run at the end.
+          R=gs://$BUCKET/runs/$GITHUB_RUN_ID
+          : > build.log
+          while :; do
+            sleep 20
+            # Only the bytes added since the last look.
+            got=$(stat -c %s build.log)
+            gcloud storage cat -r $got- $R/build.log > new.log 2>/dev/null || : > new.log
+            if [ -s new.log ]; then
+              cat new.log >> build.log
+              tr '\r' '\n' < new.log | awk '
+                /^\[ *[0-9]+% / { last = $0; next }
+                /^== |FAILED:|[Ee]rror[: ]|^ninja: |^#### |^fatal: |^\*\* |not found/ { print; next }
+                END { if (last != "") print substr(last, 1, 160) }'
+            fi
+            s=$(gcloud storage cat $R/status 2>/dev/null || true)
+            case "$s" in
+              done) exit 0 ;;
+              failed) tail -n 60 build.log; exit 1 ;;
+            esac
+            gcloud compute instances describe gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $ZONE --format='value(status)' > /dev/null 2>&1 \
+              || { echo "The VM is gone (spot reclaimed?)" >&2; tail -n 30 build.log; exit 1; }
+          done
+
+      - name: Fetch the whole log and the diagnostics
+        if: always()
+        run: |
+          mkdir -p diag
+          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/build.log diag/ || true
+          gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/diag/*" diag/ || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostics
+          path: diag/
+          if-no-files-found: ignore
+
+      - name: Fetch the files
+        run: |
+          mkdir out
+          gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/out/*" out/
+          ls -la out
+          cat out/build-info.txt
+
+      - name: Make the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          . <(sed 's/^/export /' out/build-info.txt)
+          day=$(TZ=Asia/Shanghai date +%Y%m%d)
+          n=$(gh release list --limit 100 --json tagName --jq "[.[] | select(.tagName | contains(\"Vanilla-$day\"))] | length")
+          stamp=$day$(printf %02d $((n + 1)))
+          name=LineageOS-gold-Unofficial-$lineage-Vanilla-$stamp
+          mv out/package.zip out/$name.zip
+          (cd out && sha256sum $name.zip boot.img vendor_boot.img dtbo.img vbmeta.img vbmeta_system.img vbmeta_vendor.img > SHA256SUMS)
+          prev=$(gh release list --limit 20 --exclude-drafts --json tagName,isLatest --jq '.[0].tagName')
+          prevbody=$(gh release view "$prev" --json body --jq .body)
+          section() { printf '%s\n' "$prevbody" | awk -v h="## $1" '$0==h{p=1;next} /^## /{p=0} p'; }
+          {
+            echo "Unofficial test build: userdebug, test-keys. Not affiliated with Xiaomi, MediaTek or the LineageOS project."
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| System | LineageOS $lineage (Android $android) |"
+            echo "| Build | $date, incremental \`$incremental\` |"
+            echo
+            echo "## Changes"
+            echo
+            echo "Since [${prev##*-}](https://github.com/$GITHUB_REPOSITORY/releases/tag/$prev):"
+            echo
+            echo "- TODO"
+            echo
+            echo "## Known issues"
+            section "Known issues"
+            echo "## Notes"
+            section "Notes"
+            echo "## Installing"
+            echo
+            echo "See [Installing](https://github.com/$GITHUB_REPOSITORY#installing) in the README."
+          } > notes.md
+          gh release create "$name" --draft --prerelease --target main \
+            --title "LineageOS $lineage | Unofficial | Android $android | $stamp" --notes-file notes.md \
+            out/$name.zip out/boot.img out/vendor_boot.img out/dtbo.img out/vbmeta.img out/vbmeta_system.img \
+            out/vbmeta_vendor.img out/SHA256SUMS out/manifest-snapshot.xml
+          echo "RELEASE_NAME=$name" >> $GITHUB_ENV
+
+      - name: Write what was built from what
+        if: always()
+        env:
+          DEVICE_REF: ${{ inputs.device_ref }}
+          VENDOR_REF: ${{ inputs.vendor_ref }}
+          KERNEL_REF: ${{ inputs.kernel_ref }}
+          GKI: ${{ inputs.gki }}
+          VMODS: ${{ inputs.vendor_modules }}
+          SNAPSHOT_URL: ${{ inputs.snapshot_url }}
+        run: |
+          inc=$(grep -s '^incremental=' out/build-info.txt | cut -d= -f2)
+          asked() {
+            [ -n "$SNAPSHOT_URL" ] && { echo "snapshot"; return; }
+            case $1 in
+              android_device_xiaomi_gold) echo "$DEVICE_REF" ;;
+              android_vendor_xiaomi_gold) echo "$VENDOR_REF" ;;
+              android_device_xiaomi_gold-kernel) echo "$KERNEL_REF" ;;
+              *) echo "lineage-24.0" ;;
+            esac
+          }
+          {
+            echo "${RELEASE_NAME:+Draft release \`$RELEASE_NAME\`, }${inc:+incremental \`$inc\`, }GOLD_GKI=\`$GKI\`, GOLD_VENDOR_MODULES=\`$VMODS\`${SNAPSHOT_URL:+, rebuilt from [a manifest snapshot]($SNAPSHOT_URL)}"
+            echo
+            echo "| Repository | Requested | Built from |"
+            echo "| --- | --- | --- |"
+            if [ -f out/commits.txt ]; then
+              while read repo sha; do
+                r=${repo##*/}
+                echo "| $r | \`$(asked $r)\` | [\`${sha:0:12}\`](https://github.com/Star-caorui/$r/commit/$sha) |"
+              done < out/commits.txt
+            else
+              for r in android_device_xiaomi_gold android_vendor_xiaomi_gold android_device_xiaomi_gold-kernel; do
+                echo "| $r | \`$(asked $r)\` | not built |"
+              done
+            fi
+            echo
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Write where the build time went
+        if: always()
+        run: |
+          [ -f diag/ninja_log.gz ] || exit 0
+          { echo "### Times"; echo; python3 ci/build-times.py diag/ninja_log.gz; echo
+            [ -f diag/ccache.txt ] && { echo '```'; grep -E 'Hits|Misses|Cache size' diag/ccache.txt; echo '```'; }
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Sign where the files come from
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            out/*.zip
+            out/*.img
+            out/SHA256SUMS
+            out/manifest-snapshot.xml
+
+      - name: Delete the VM
+        if: always()
+        run: |
+          [ -n "$ZONE" ] || exit 0
+          gcloud compute instances delete gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $ZONE --quiet || true
+          secs=$(( $(date +%s) - STARTED ))
+          gb=$(du -cb out diag 2>/dev/null | tail -1 | awk '{print $1 / 1e9}')
+          {
+            echo "### Cost"
+            echo
+            TOKEN=$(gcloud auth print-access-token) python3 ci/estimate-cost.py $REGION $MACHINE 450 $secs $gb \
+              || echo "Could not price the run."
+            echo
+            echo "Estimated from the public price list. The exact cost is in the billing reports about a day later, under the label \`run=$GITHUB_RUN_ID\`."
+          } >> $GITHUB_STEP_SUMMARY

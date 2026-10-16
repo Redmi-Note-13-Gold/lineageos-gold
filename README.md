@@ -116,10 +116,15 @@ Measured on 23.2:
 
 | | |
 | --- | --- |
+| `.github/workflows/build.yml`, `ci/` | Build a package from source on a Google Cloud spot VM and make a draft release of it. Started by hand from the Actions tab. Each run keeps the whole log and the build tools' timing data, and its summary shows where the build time went and what it cost |
 | `update-lists.py` | Writes the update lists |
 | `updates/` | The lists the Updater app reads, one per published 24.0 build |
 
 A 24.0 build asks for `updates/<its ro.build.version.incremental>.json`. When a build is published, `update-lists.py` rewrites the lists of the builds before it, and every one of them is offered the new full package.
+
+Each release built by the workflow carries `manifest-snapshot.xml`, the exact commit of every repository it was built from. Giving its URL to the workflow rebuilds that release.
+
+Its files also carry a signed build provenance attestation: `gh attestation verify <file> -R Star-caorui/lineageos-gold` checks that a file is the one this repository's workflow produced.
 
 ## Credits
 
