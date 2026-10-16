@@ -317,3 +317,17 @@ jobs:
             echo
             echo "Estimated from the public price list. The exact cost is in the billing reports about a day later, under the label \`run=$GITHUB_RUN_ID\`."
           } >> $GITHUB_STEP_SUMMARY
+
+      # After the VM is gone, so that listing the bucket (a minute for ccache's many files) costs nothing.
+      - name: Write what the bucket holds
+        if: always()
+        run: |
+          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/out/storage.txt . 2>/dev/null || true
+          for p in $(gcloud storage ls gs://$BUCKET/repo-cache/ 2>/dev/null | sed "s|gs://$BUCKET/||") ccache-files/ runs/; do
+            gcloud storage ls gs://$BUCKET/$p 2>/dev/null | xargs -r -P 16 -n 1 gcloud storage du 2>/dev/null \
+              | awk -v p=$p '$2 !~ /\/$/ { s += $1; n++ } END { print p, s + 0, n + 0 }' || true
+          done > sizes.txt
+          { echo "### Storage"; echo
+            TOKEN=$(gcloud auth print-access-token) python3 ci/storage-status.py $REGION sizes.txt storage.txt diag/ccache.txt \
+              || echo "Could not list the bucket."
+          } >> $GITHUB_STEP_SUMMARY

@@ -119,6 +119,14 @@ if [ -n "$CACHE" ] && mkdir .rc && gcloud storage cp "${CACHE}*" .rc/ --quiet \
     && (cd .rc && grep ' repo\.tar\.' SHA256SUMS | xargs -P $(nproc) -L 1 sh -c 'echo "$0  $1" | sha256sum -c --quiet -') \
     && cat .rc/repo.tar.* | tar -xf -; then
   say "source cache $(basename $CACHE): $(du -sh .repo | cut -f1)"
+  # For the clean-up's table of what the bucket holds.
+  crev=$(grep -s '^vendor_lineage=' .rc/info.txt | cut -d= -f2)
+  {
+    echo "cache=$(basename $CACHE)"
+    echo "cache_made=$(grep -s '^date=' .rc/info.txt | cut -d= -f2 | cut -c1-10)"
+    echo "cache_vendor_lineage=$crev"
+    echo "cache_commit_date=$(git --git-dir=.repo/projects/vendor/lineage.git log -1 --format=%cs $crev 2>/dev/null)"
+  } > $STAGE/storage.txt
 else
   [ -n "$CACHE" ] && say "source cache $(basename $CACHE) did not come down, fetching everything"
   rm -rf .repo
@@ -170,6 +178,13 @@ repo manifest -r -o $STAGE/manifest-snapshot.xml || exit 1
 } > $STAGE/commits.txt
 C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
 {
+  echo "synced_patch=$(cat vendor/lineage/release/flag_values/*/RELEASE_PLATFORM_SECURITY_PATCH.textproto 2>/dev/null \
+    | grep -o '[0-9]\{4\}-[0-9][0-9]-[0-9][0-9]' | sort | tail -1)"
+  echo "synced_vendor_lineage=$(git -C vendor/lineage rev-parse HEAD 2>/dev/null)"
+  echo "synced_commit_date=$(git -C vendor/lineage log -1 --format=%cs 2>/dev/null)"
+  echo "$C1a $C1b" | awk '{ printf "fetched_bytes=%.0f\n", $7 - $2 }'
+} >> $STAGE/storage.txt
+{
   echo "| Phase | Time | Downloaded | Download speed | Written | Write speed | I/O wait |"
   echo "| --- | --- | --- | --- | --- | --- | --- |"
   printf '| Boot | %dm %02ds | | | | | |\n' $((BOOT / 60)) $((BOOT % 60))
@@ -185,7 +200,7 @@ C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
   echo "Source tree $SIZE on \`$DISKNAME\` ($(lsblk -dno SIZE,MODEL /dev/$DISKNAME | xargs)), $(nproc) CPUs."
 } > $STAGE/sync-times.md
 cat $STAGE/sync-times.md
-gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $STAGE/sync-times.md $R/out/ --quiet || exit 1
+gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $STAGE/sync-times.md $STAGE/storage.txt $R/out/ --quiet || exit 1
 say "synced: $SIZE"
 [ "$SYNC_ONLY" = true ] && { touch $STAGE/done; say "done (sync only)"; exit 0; }
 
@@ -200,6 +215,7 @@ mkdir -p $CCACHE_DIR
 PRUNE=
 if gcloud storage rsync -r $C $CCACHE_DIR --quiet 2>/dev/null; then
   say "ccache restored: $(du -sh $CCACHE_DIR | cut -f1)"; PRUNE=--delete-unmatched-destination-objects
+  echo "ccache_restored_bytes=$(du -sb $CCACHE_DIR | cut -f1)" >> $STAGE/storage.txt
 else
   say "no ccache restored"
 fi
