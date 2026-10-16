@@ -94,12 +94,8 @@ if cookie=$(gcloud secrets versions access latest --secret googlesource-cookie 2
   (umask 077; printf '%s\n' "$cookie" | tr , '\t' > $HOME/.gitcookies); unset cookie
   git config --global http.cookiefile $HOME/.gitcookies
   git config --global url."https://android.googlesource.com/a/".insteadOf "https://android.googlesource.com/"
-  # A cookie fresh from googlesource.com/new-password can take a few minutes to work.
-  for try in 1 2 3 4 5 6; do
-    err=$(git ls-remote https://android.googlesource.com/a/platform/build HEAD 2>&1 > /dev/null) && break
-    sleep 20
-  done
-  if [ -z "$err" ]; then
+  # The plain URL, which the rule above turns into /a/: what repo will fetch from.
+  if err=$(git ls-remote https://android.googlesource.com/platform/build HEAD 2>&1 > /dev/null); then
     say "googlesource: signed in"
   else
     say "googlesource: the cookie was not accepted ($(echo "$err" | tail -1 | cut -c1-100)), fetching anonymously"
