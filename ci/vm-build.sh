@@ -110,7 +110,13 @@ t.write(path)
 EOF
 fi
 # Fetching and checking out apart, so the summary shows which of the two the time goes to.
-repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 || exit 1
+# android.googlesource.com answers a busy anonymous client with HTTP 429 now and then, past repo's
+# own retries; a minute later the projects that failed come down. Another run fetches only those.
+for try in 1 2 3; do
+  repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 && break
+  [ $try = 3 ] && exit 1
+  say "fetch failed, trying again in a minute"; sleep 60
+done
 C1b=$(counters)
 repo sync -l -c -q -j$(nproc) --no-tags --force-sync || exit 1
 repo manifest -r -o $STAGE/manifest-snapshot.xml || exit 1
