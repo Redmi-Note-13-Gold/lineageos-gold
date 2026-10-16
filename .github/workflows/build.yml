@@ -53,14 +53,14 @@ jobs:
       started: ${{ steps.vm.outputs.started }}
       pos: ${{ steps.follow.outputs.pos }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: google-github-actions/auth@v2
+      - uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
           service_account: gold-ci@gold-build.iam.gserviceaccount.com
 
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
 
       - name: Start the build VM
         id: vm
@@ -141,14 +141,14 @@ jobs:
     outputs:
       gb: ${{ steps.files.outputs.gb }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: google-github-actions/auth@v2
+      - uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
           service_account: gold-ci@gold-build.iam.gserviceaccount.com
 
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
 
       - name: Build (on the VM)
         id: follow
@@ -223,7 +223,7 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Sign where the files come from
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: |
             out/*.zip
@@ -238,16 +238,16 @@ jobs:
     runs-on: ubuntu-latest
     # Every step has always(): once a run is cancelled, a step without a condition is skipped.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: always()
 
-      - uses: google-github-actions/auth@v2
+      - uses: google-github-actions/auth@v3
         if: always()
         with:
           workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
           service_account: gold-ci@gold-build.iam.gserviceaccount.com
 
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
         if: always()
 
       # Here rather than in the build job so that a run that fails or is cancelled while syncing has it too.
@@ -258,7 +258,7 @@ jobs:
           gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/build.log diag/ || true
           gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/diag/*" diag/ || true
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: diagnostics
