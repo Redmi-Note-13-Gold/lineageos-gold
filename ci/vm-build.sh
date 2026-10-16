@@ -88,22 +88,27 @@ git lfs install --system > /dev/null
 fallocate -l 32G $SWAP && chmod 600 $SWAP && mkswap -q $SWAP && swapon $SWAP
 
 say "sync"
-# Signed in when the workflow left a googlesource cookie in Secret Manager: the fetches then count
-# against the account instead of this VM's IP. Authenticated fetches go through /a/.
+# The googlesource cookie the workflow may have left in Secret Manager, kept for when an anonymous
+# fetch is rate-limited: signed in, googlesource counts against the account instead of this VM's IP.
+# Only then, because a signed-in fetch (through /a/) came down at 28 MB/s against 48 anonymously.
+COOKIE=
 if cookie=$(gcloud secrets versions access latest --secret googlesource-cookie 2>/dev/null) && [ -n "$cookie" ]; then
   (umask 077; printf '%s\n' "$cookie" | tr , '\t' > $HOME/.gitcookies); unset cookie
   git config --global http.cookiefile $HOME/.gitcookies
+  COOKIE=$HOME/.gitcookies
+fi
+sign_in() {
+  [ -n "$COOKIE" ] || return 1
   git config --global url."https://android.googlesource.com/a/".insteadOf "https://android.googlesource.com/"
   # The plain URL, which the rule above turns into /a/: what repo will fetch from.
   if err=$(git ls-remote https://android.googlesource.com/platform/build HEAD 2>&1 > /dev/null); then
     say "googlesource: signed in"
   else
-    say "googlesource: the cookie was not accepted ($(echo "$err" | tail -1 | cut -c1-100)), fetching anonymously"
+    say "googlesource: the cookie was not accepted ($(echo "$err" | tail -1 | cut -c1-100))"
     git config --global --unset url."https://android.googlesource.com/a/".insteadOf
+    return 1
   fi
-else
-  say "googlesource: anonymous"
-fi
+}
 C1=$(counters)
 cd $SRC
 RGROUPS=default
@@ -129,11 +134,13 @@ EOF
 fi
 # Fetching and checking out apart, so the summary shows which of the two the time goes to.
 # android.googlesource.com answers a busy anonymous client with HTTP 429 now and then, past repo's
-# own retries; a minute later the projects that failed come down. Another run fetches only those.
+# own retries. Another run fetches only the projects that failed: signed in if there is a cookie,
+# otherwise a minute later.
 for try in 1 2 3; do
   repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 && break
   [ $try = 3 ] && exit 1
-  say "fetch failed, trying again in a minute"; sleep 60
+  say "fetch failed"
+  [ $try = 1 ] && sign_in || { say "trying again in a minute"; sleep 60; }
 done
 C1b=$(counters)
 repo sync -l -c -q -j$(nproc) --no-tags --force-sync || exit 1

@@ -67,8 +67,8 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v3
 
-      # Signed in, googlesource counts the VM's fetches against the account instead of the VM's IP,
-      # which is rate-limited (HTTP 429) when shared. The VM reads the cookie from Secret Manager.
+      # For the VM to fetch again signed in what googlesource refused to give it anonymously (HTTP
+      # 429). The VM reads the cookie from Secret Manager.
       - name: Hand the googlesource cookie to the VM
         env:
           COOKIE: ${{ secrets.GOOGLESOURCE_COOKIE }}
