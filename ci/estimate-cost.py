@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""estimate-cost.py <region> <machine type> <disk GB> <seconds> <egress GB>: estimate what a build VM cost,
-from Google's public price list (Cloud Billing Catalog API, Compute Engine). Prints a Markdown table.
+"""estimate-cost.py <region> <machine type> <balanced PD GB> <local SSD GB> <seconds> <egress GB>:
+estimate what a build VM cost, from Google's public price list (Cloud Billing Catalog API, Compute
+Engine). Prints a Markdown table.
 Needs an access token in $TOKEN. The exact figure shows up in the billing reports a day later, under the
 VM's labels."""
 import json, os, sys, urllib.request
 
-region, machine, disk_gb, secs, egress_gb = sys.argv[1], sys.argv[2], float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5])
+region, machine = sys.argv[1], sys.argv[2]
+disk_gb, ssd_gb, secs, egress_gb = map(float, sys.argv[3:7])
 family, kind, cpus = machine.split('-')
 cpus = int(cpus)
 ram_gb = {'standard': 4, 'highcpu': 2, 'highmem': 8}[kind] * cpus
@@ -32,11 +34,13 @@ spot = 'Spot Preemptible ' + fam_desc
 core = price(lambda d: d.startswith(spot) and 'Instance Core' in d and 'Custom' not in d)
 ram = price(lambda d: d.startswith(spot) and 'Instance Ram' in d and 'Custom' not in d)
 disk = price(lambda d: d.startswith('Balanced PD Capacity'))
+ssd = price(lambda d: d.startswith('SSD backed Local Storage attached to Spot Preemptible VMs'))
 egress = price(lambda d: 'Network Internet Egress' in d and 'Premium' in d) or 0.12
 hours = secs / 3600
 rows = [
     ('VM', f'{machine} spot, {hours:.2f} h', (core * cpus + ram * ram_gb) * hours if core and ram else None),
     ('Disk', f'{disk_gb:.0f} GB balanced PD, {hours:.2f} h', disk * disk_gb * hours / 730 if disk else None),
+    *([('Local SSD', f'{ssd_gb:.0f} GB, {hours:.2f} h', ssd * ssd_gb * hours / 730 if ssd else None)] if ssd_gb else []),
     ('Download of the files', f'{egress_gb:.2f} GB to the internet', egress * egress_gb),
 ]
 total = sum(c for _, _, c in rows if c is not None)

@@ -51,6 +51,7 @@ jobs:
     timeout-minutes: 60
     outputs:
       started: ${{ steps.vm.outputs.started }}
+      disks: ${{ steps.vm.outputs.disks }}
       pos: ${{ steps.follow.outputs.pos }}
     steps:
       - uses: actions/checkout@v7
@@ -75,18 +76,25 @@ jobs:
           VM=gold-build-$GITHUB_RUN_ID
           files=startup-script=ci/vm-build.sh
           if [ -n "$SNAPSHOT_URL" ]; then printf '%s' "$SNAPSHOT_URL" > snapshot-url.txt; files=$files,snapshot-url=snapshot-url.txt; fi
-          for zone in $REGION-a $REGION-b $REGION-c; do
-            if gcloud compute instances create $VM --project $PROJECT --zone $zone --machine-type $MACHINE \
-                --provisioning-model SPOT --instance-termination-action DELETE --max-run-duration 6h \
-                --image-family ubuntu-2404-lts-amd64 --image-project ubuntu-os-cloud \
-                --boot-disk-size 450GB --boot-disk-type pd-balanced \
-                --service-account gold-builder@$PROJECT.iam.gserviceaccount.com --scopes cloud-platform \
-                --labels purpose=gold-build,run=$GITHUB_RUN_ID \
-                --metadata-from-file $files \
-                --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS"; then
-              echo "started=$(date +%s)" >> $GITHUB_OUTPUT
-              exit 0
-            fi
+          # Two local SSDs (750 GB) and a small boot disk where to be had: the same speed as one big
+          # persistent disk for this build at about a third of the disk cost. Otherwise a 450 GB one.
+          for disks in "50 750" "450 0"; do
+            read pd ssd <<< "$disks"
+            ssdargs=(); for i in $(seq $((ssd / 375))); do ssdargs+=(--local-ssd=interface=NVME); done
+            for zone in $REGION-a $REGION-b $REGION-c; do
+              if gcloud compute instances create $VM --project $PROJECT --zone $zone --machine-type $MACHINE \
+                  --provisioning-model SPOT --instance-termination-action DELETE --max-run-duration 6h \
+                  --image-family ubuntu-2404-lts-amd64 --image-project ubuntu-os-cloud \
+                  --boot-disk-size ${pd}GB --boot-disk-type pd-balanced "${ssdargs[@]}" \
+                  --service-account gold-builder@$PROJECT.iam.gserviceaccount.com --scopes cloud-platform \
+                  --labels purpose=gold-build,run=$GITHUB_RUN_ID \
+                  --metadata-from-file $files \
+                  --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS"; then
+                echo "started=$(date +%s)" >> $GITHUB_OUTPUT
+                echo "disks=$disks" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+            done
           done
           echo "No spot capacity in $REGION" >&2
           exit 1
@@ -269,6 +277,7 @@ jobs:
         if: always()
         env:
           STARTED: ${{ needs.sync.outputs.started }}
+          DISKS: ${{ needs.sync.outputs.disks }}
           GB: ${{ needs.build.outputs.gb }}
         run: |
           # Look the VM up by name instead of trusting ZONE: a run cancelled while the VM was being created
@@ -285,7 +294,7 @@ jobs:
           {
             echo "### Cost"
             echo
-            TOKEN=$(gcloud auth print-access-token) python3 ci/estimate-cost.py $REGION $MACHINE 450 $secs $gb \
+            TOKEN=$(gcloud auth print-access-token) python3 ci/estimate-cost.py $REGION $MACHINE ${DISKS:-450 0} $secs $gb \
               || echo "Could not price the run."
             echo
             echo "Estimated from the public price list. The exact cost is in the billing reports about a day later, under the label \`run=$GITHUB_RUN_ID\`."

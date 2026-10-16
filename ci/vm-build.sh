@@ -42,6 +42,19 @@ status running
 say "run $RUN: device $DEVICE_REF, vendor $VENDOR_REF, kernel $KERNEL_REF, GOLD_GKI=$GKI, GOLD_VENDOR_MODULES=$VMODS"
 nproc; free -g | sed -n 2p; df -h / | tail -1
 
+# The VM comes with local SSDs when they were to be had (cheaper than a big persistent disk, and the
+# same speed for this build): one RAID 0 holds the source, the output, ccache and swap. Without them
+# everything stays on the boot disk.
+SWAP=/swapfile
+ssds=$(ls /dev/disk/by-id/google-local-nvme-ssd-* 2>/dev/null)
+if [ -n "$ssds" ]; then
+  n=$(echo $ssds | wc -w); dev=$ssds
+  if [ $n -gt 1 ]; then mdadm --create /dev/md0 --level=0 --raid-devices=$n $ssds --run -q || exit 1; dev=/dev/md0; fi
+  mkfs.ext4 -q -F -m 0 $dev && mkdir -p /mnt/ssd && mount -o noatime $dev /mnt/ssd || exit 1
+  for d in $SRC $STAGE /ccache; do mkdir -p /mnt/ssd$d $d && mount --bind /mnt/ssd$d $d || exit 1; done
+  SWAP=/mnt/ssd/swapfile
+fi
+
 # For the sync's part of the summary: the time, the bytes received, the bytes written to the disk
 # the source tree is on, and the CPU time spent waiting for that disk, read before and after each phase.
 mkdir -p $SRC $STAGE
@@ -70,7 +83,7 @@ git config --global color.ui false
 git lfs install --system > /dev/null
 
 # 64 GB is enough for Soong's analysis, but not with much room.
-fallocate -l 32G /swapfile && chmod 600 /swapfile && mkswap -q /swapfile && swapon /swapfile
+fallocate -l 32G $SWAP && chmod 600 $SWAP && mkswap -q $SWAP && swapon $SWAP
 
 say "sync"
 C1=$(counters)
@@ -96,7 +109,10 @@ for p in t.getroot().iter('project'):
 t.write(path)
 EOF
 fi
-repo sync -c -q -j$(nproc) --no-tags --no-clone-bundle --force-sync --optimized-fetch --retry-fetches=5 || exit 1
+# Fetching and checking out apart, so the summary shows which of the two the time goes to.
+repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 || exit 1
+C1b=$(counters)
+repo sync -l -c -q -j$(nproc) --no-tags --force-sync || exit 1
 repo manifest -r -o $STAGE/manifest-snapshot.xml || exit 1
 # The commit each of our repositories is built from, for the run's summary. Uploaded before the
 # "synced" line, which is what the workflow waits for to write it.
@@ -112,7 +128,7 @@ C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
   echo "| Phase | Time | Downloaded | Download speed | Written | Write speed | I/O wait |"
   echo "| --- | --- | --- | --- | --- | --- | --- |"
   printf '| Boot | %dm %02ds | | | | | |\n' $((BOOT / 60)) $((BOOT % 60))
-  for row in "Build dependencies|$C0|$C1" "Sync|$C1|$C2"; do
+  for row in "Build dependencies|$C0|$C1" "Sync: fetch|$C1|$C1b" "Sync: check out|$C1b|$C2"; do
     IFS='|' read name a b <<< "$row"
     echo "$a $b" | awk -v n="$name" '{
       t = $6 - $1; rx = $7 - $2; wr = $8 - $3; w = $9 - $4; all = $10 - $5
