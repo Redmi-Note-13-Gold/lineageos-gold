@@ -111,6 +111,20 @@ sign_in() {
 }
 C1=$(counters)
 cd $SRC
+# The newest .repo the bucket keeps (repo-cache/<platform security patch>/: a tar in 32 parts, made by
+# fetching the default groups without checking out). With it the fetch below brings only what changed
+# since; without it, or when it does not come down whole, the fetch brings everything.
+CACHE=$(gcloud storage ls gs://$BUCKET/repo-cache/ 2>/dev/null | sort | tail -1)
+if [ -n "$CACHE" ] && mkdir .rc && gcloud storage cp "${CACHE}*" .rc/ --quiet \
+    && (cd .rc && grep ' repo\.tar\.' SHA256SUMS | xargs -P $(nproc) -L 1 sh -c 'echo "$0  $1" | sha256sum -c --quiet -') \
+    && cat .rc/repo.tar.* | tar -xf -; then
+  say "source cache $(basename $CACHE): $(du -sh .repo | cut -f1)"
+else
+  [ -n "$CACHE" ] && say "source cache $(basename $CACHE) did not come down, fetching everything"
+  rm -rf .repo
+fi
+rm -rf .rc
+C1a=$(counters)
 RGROUPS=default
 [ "$GKI" = stock ] && [ "$VMODS" = stock ] || RGROUPS=default,gold-kernel-source
 repo init -q -u https://github.com/LineageOS/android.git -b lineage-24.0 --git-lfs --depth=1 -g $RGROUPS || exit 1
@@ -159,7 +173,7 @@ C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
   echo "| Phase | Time | Downloaded | Download speed | Written | Write speed | I/O wait |"
   echo "| --- | --- | --- | --- | --- | --- | --- |"
   printf '| Boot | %dm %02ds | | | | | |\n' $((BOOT / 60)) $((BOOT % 60))
-  for row in "Build dependencies|$C0|$C1" "Sync: fetch|$C1|$C1b" "Sync: check out|$C1b|$C2"; do
+  for row in "Build dependencies|$C0|$C1" "Sync: source cache|$C1|$C1a" "Sync: fetch|$C1a|$C1b" "Sync: check out|$C1b|$C2"; do
     IFS='|' read name a b <<< "$row"
     echo "$a $b" | awk -v n="$name" '{
       t = $6 - $1; rx = $7 - $2; wr = $8 - $3; w = $9 - $4; all = $10 - $5
