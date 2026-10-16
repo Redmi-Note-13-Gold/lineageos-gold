@@ -58,7 +58,7 @@ def main():
     parser.add_argument("--url", required=True, help="URL the packages are downloaded from, without the file name")
     parser.add_argument("--version", required=True, help="ro.lineage.build.version of the new build")
     parser.add_argument("--type", default="unofficial", help="ro.lineage.releasetype of the new build")
-    parser.add_argument("--dir", default=pathlib.Path(__file__).resolve().parent.parent / "updates", type=pathlib.Path)
+    parser.add_argument("--dir", default=pathlib.Path(__file__).resolve().parent / "updates", type=pathlib.Path)
     parser.add_argument("full", type=pathlib.Path)
     parser.add_argument("incremental", type=pathlib.Path, nargs="*")
     args = parser.parse_args()

@@ -1,0 +1,50 @@
+name: Publish
+
+# When a release is published (a draft turned into a release on the website), offer its full package to
+# every earlier build: update-lists.py rewrites updates/*.json and the change goes to main as a new commit.
+# GitHub has already tagged main at this point, so the tag stays on the commit before the lists change.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  lists:
+    if: startsWith(github.event.release.tag_name, 'LineageOS-gold-Unofficial-24.0-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Fetch the full package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release download "$TAG" --pattern "$TAG.zip" --dir pkg
+
+      - name: Rewrite the update lists
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 update-lists.py --dir updates --version 24.0 \
+            --url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG" "pkg/$TAG.zip"
+          git status --short
+
+      - name: Commit and push
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates
+          git diff --cached --quiet && { echo "Nothing to change"; exit 0; }
+          git commit -q -m "Offer ${TAG##*-} to earlier builds"
+          git push origin main
+          echo "Update lists now offer \`$TAG.zip\`." >> $GITHUB_STEP_SUMMARY

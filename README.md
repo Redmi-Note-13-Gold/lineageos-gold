@@ -120,7 +120,7 @@ Measured on 23.2:
 | `update-lists.py` | Writes the update lists |
 | `updates/` | The lists the Updater app reads, one per published 24.0 build |
 
-A 24.0 build asks for `updates/<its ro.build.version.incremental>.json`. When a build is published, `update-lists.py` rewrites the lists of the builds before it, and every one of them is offered the new full package.
+A 24.0 build asks for `updates/<its ro.build.version.incremental>.json`. When a release is published, `.github/workflows/publish.yml` runs `update-lists.py`, which rewrites the lists of the builds before it so that every one of them is offered the new full package, and commits the lists to `main`.
 
 Each release built by the workflow carries `manifest-snapshot.xml`, the exact commit of every repository it was built from. Giving its URL to the workflow rebuilds that release.
 
