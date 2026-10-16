@@ -133,7 +133,14 @@ say "ccache"
 export USE_CCACHE=1 CCACHE_EXEC=$(command -v ccache) CCACHE_DIR=/ccache
 C=gs://$BUCKET/ccache-files
 mkdir -p $CCACHE_DIR
-gcloud storage rsync -r $C $CCACHE_DIR --quiet 2>/dev/null && say "ccache restored: $(du -sh $CCACHE_DIR | cut -f1)" || say "no ccache yet"
+# ccache drops the least recently used entries past 50 GB; the last upload drops them from the bucket
+# too, but only when the whole cache came down first, so a failed download cannot empty the bucket.
+PRUNE=
+if gcloud storage rsync -r $C $CCACHE_DIR --quiet 2>/dev/null; then
+  say "ccache restored: $(du -sh $CCACHE_DIR | cut -f1)"; PRUNE=--delete-unmatched-destination-objects
+else
+  say "no ccache restored"
+fi
 ccache -M 50G > /dev/null; ccache -z > /dev/null
 ( while sleep 1200; do gcloud storage rsync -r $CCACHE_DIR $C --quiet 2>/dev/null; done ) &
 
@@ -163,7 +170,7 @@ cat $STAGE/build-info.txt
 gcloud storage cp $STAGE/* $R/out/ --quiet || exit 1
 
 say "save ccache"
-gcloud storage rsync -r $CCACHE_DIR $C --quiet || say "ccache upload failed"
+gcloud storage rsync -r $PRUNE $CCACHE_DIR $C --quiet || say "ccache upload failed"
 
 touch $STAGE/done
 say "done"
