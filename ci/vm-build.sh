@@ -82,6 +82,16 @@ EOF
 fi
 repo sync -c -q -j$(nproc) --no-tags --no-clone-bundle --force-sync --optimized-fetch --retry-fetches=5 || exit 1
 repo manifest -r -o $STAGE/manifest-snapshot.xml || exit 1
+# The commit each of our repositories is built from, for the run's summary. Uploaded before the
+# "synced" line, which is what the workflow waits for to write it.
+{
+  [ -d .repo/local_manifests/.git ] && echo "local_manifests $(git -C .repo/local_manifests rev-parse HEAD)"
+  for d in device/xiaomi/gold vendor/xiaomi/gold device/xiaomi/gold-kernel kernel/xiaomi/gold \
+           kernel/xiaomi/gold-modules kernel/xiaomi/gold-mediatek_modules; do
+    [ -d $d ] && echo "$(git -C $d config --get remote.$(git -C $d remote | head -1).projectname 2>/dev/null || echo $d) $(git -C $d rev-parse HEAD)"
+  done
+} > $STAGE/commits.txt
+gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $R/out/ --quiet || exit 1
 say "synced: $(du -sh $SRC | cut -f1)"
 
 say "ccache"
@@ -116,14 +126,6 @@ prop() { grep -m1 "^$1=" $P/system/build.prop | cut -d= -f2; }
   echo "date=$(date -u +%Y-%m-%d)"
   echo "gki=$GKI"; echo "vendor_modules=$VMODS"
 } > $STAGE/build-info.txt
-# The commit each of our repositories was built from, for the run's summary.
-{
-  [ -d .repo/local_manifests/.git ] && echo "local_manifests $(git -C .repo/local_manifests rev-parse HEAD)"
-  for d in device/xiaomi/gold vendor/xiaomi/gold device/xiaomi/gold-kernel kernel/xiaomi/gold \
-           kernel/xiaomi/gold-modules kernel/xiaomi/gold-mediatek_modules; do
-    [ -d $d ] && echo "$(git -C $d config --get remote.$(git -C $d remote | head -1).projectname 2>/dev/null || echo $d) $(git -C $d rev-parse HEAD)"
-  done
-} > $STAGE/commits.txt
 cat $STAGE/build-info.txt
 gcloud storage cp $STAGE/* $R/out/ --quiet || exit 1
 

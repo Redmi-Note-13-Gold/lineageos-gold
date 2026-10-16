@@ -44,9 +44,14 @@ env:
   BUCKET: gold-build-ci-osaka
 
 jobs:
-  build:
+  # Three jobs so that each one's part of the summary shows as soon as it is done: GitHub shows a
+  # job's summary only when the job ends. What the build is made from is known after the sync.
+  sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 60
+    outputs:
+      started: ${{ steps.vm.outputs.started }}
+      pos: ${{ steps.follow.outputs.pos }}
     steps:
       - uses: actions/checkout@v4
 
@@ -58,6 +63,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Start the build VM
+        id: vm
         env:
           DEVICE_REF: ${{ inputs.device_ref }}
           VENDOR_REF: ${{ inputs.vendor_ref }}
@@ -78,61 +84,89 @@ jobs:
                 --labels purpose=gold-build,run=$GITHUB_RUN_ID \
                 --metadata-from-file $files \
                 --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS"; then
-              echo "ZONE=$zone" >> $GITHUB_ENV
-              echo "STARTED=$(date +%s)" >> $GITHUB_ENV
+              echo "started=$(date +%s)" >> $GITHUB_OUTPUT
               exit 0
             fi
           done
           echo "No spot capacity in $REGION" >&2
           exit 1
 
-      - name: Build (on the VM)
-        run: |
-          # Shows the steps, the build's progress and every error as they come; the whole log is
-          # attached to the run at the end.
-          R=gs://$BUCKET/runs/$GITHUB_RUN_ID
-          : > build.log
-          while :; do
-            sleep 20
-            # Only the bytes added since the last look.
-            got=$(stat -c %s build.log)
-            gcloud storage cat -r $got- $R/build.log > new.log 2>/dev/null || : > new.log
-            if [ -s new.log ]; then
-              cat new.log >> build.log
-              tr '\r' '\n' < new.log | awk '
-                /^\[ *[0-9]+% / { last = $0; next }
-                /^== |FAILED:|[Ee]rror[: ]|^ninja: |^#### |^fatal: |^\*\* |not found/ { print; next }
-                END { if (last != "") print substr(last, 1, 160) }'
-            fi
-            s=$(gcloud storage cat $R/status 2>/dev/null || true)
-            case "$s" in
-              done) exit 0 ;;
-              failed) tail -n 60 build.log; exit 1 ;;
-            esac
-            gcloud compute instances describe gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $ZONE --format='value(status)' > /dev/null 2>&1 \
-              || { echo "The VM is gone (spot reclaimed?)" >&2; tail -n 30 build.log; exit 1; }
-          done
+      - name: Sync (on the VM)
+        id: follow
+        run: ci/follow-log.sh 0 '^== \+[0-9:]+ synced'
 
-      - name: Fetch the whole log and the diagnostics
+      - name: Write what is built from what
+        if: always()
+        env:
+          DEVICE_REF: ${{ inputs.device_ref }}
+          VENDOR_REF: ${{ inputs.vendor_ref }}
+          KERNEL_REF: ${{ inputs.kernel_ref }}
+          GKI: ${{ inputs.gki }}
+          VMODS: ${{ inputs.vendor_modules }}
+          SNAPSHOT_URL: ${{ inputs.snapshot_url }}
+        run: |
+          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/out/commits.txt . 2>/dev/null || true
+          asked() {
+            [ -n "$SNAPSHOT_URL" ] && { echo "snapshot"; return; }
+            case $1 in
+              android_device_xiaomi_gold) echo "$DEVICE_REF" ;;
+              android_vendor_xiaomi_gold) echo "$VENDOR_REF" ;;
+              android_device_xiaomi_gold-kernel) echo "$KERNEL_REF" ;;
+              *) echo "lineage-24.0" ;;
+            esac
+          }
+          {
+            echo "GOLD_GKI=\`$GKI\`, GOLD_VENDOR_MODULES=\`$VMODS\`${SNAPSHOT_URL:+, rebuilt from [a manifest snapshot]($SNAPSHOT_URL)}"
+            echo
+            echo "| Repository | Requested | Built from |"
+            echo "| --- | --- | --- |"
+            if [ -f commits.txt ]; then
+              while read repo sha; do
+                r=${repo##*/}
+                echo "| $r | \`$(asked $r)\` | [\`${sha:0:12}\`](https://github.com/Star-caorui/$r/commit/$sha) |"
+              done < commits.txt
+            else
+              for r in android_device_xiaomi_gold android_vendor_xiaomi_gold android_device_xiaomi_gold-kernel; do
+                echo "| $r | \`$(asked $r)\` | not synced |"
+              done
+            fi
+            echo
+          } >> $GITHUB_STEP_SUMMARY
+
+  build:
+    needs: sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    outputs:
+      gb: ${{ steps.files.outputs.gb }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
+          service_account: gold-ci@gold-build.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build (on the VM)
+        id: follow
+        run: ci/follow-log.sh ${{ needs.sync.outputs.pos }}
+
+      - name: Fetch the diagnostics
         if: always()
         run: |
           mkdir -p diag
-          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/build.log diag/ || true
           gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/diag/*" diag/ || true
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: diagnostics
-          path: diag/
-          if-no-files-found: ignore
-
       - name: Fetch the files
+        id: files
         run: |
           mkdir out
           gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/out/*" out/
           ls -la out
           cat out/build-info.txt
+          echo "gb=$(du -cb out | tail -1 | awk '{print $1 / 1e9}')" >> $GITHUB_OUTPUT
 
       - name: Make the draft release
         env:
@@ -174,45 +208,7 @@ jobs:
             --title "LineageOS $lineage | Unofficial | Android $android | $stamp" --notes-file notes.md \
             out/$name.zip out/boot.img out/vendor_boot.img out/dtbo.img out/vbmeta.img out/vbmeta_system.img \
             out/vbmeta_vendor.img out/SHA256SUMS out/manifest-snapshot.xml
-          echo "RELEASE_NAME=$name" >> $GITHUB_ENV
-
-      - name: Write what was built from what
-        if: always()
-        env:
-          DEVICE_REF: ${{ inputs.device_ref }}
-          VENDOR_REF: ${{ inputs.vendor_ref }}
-          KERNEL_REF: ${{ inputs.kernel_ref }}
-          GKI: ${{ inputs.gki }}
-          VMODS: ${{ inputs.vendor_modules }}
-          SNAPSHOT_URL: ${{ inputs.snapshot_url }}
-        run: |
-          inc=$(grep -s '^incremental=' out/build-info.txt | cut -d= -f2)
-          asked() {
-            [ -n "$SNAPSHOT_URL" ] && { echo "snapshot"; return; }
-            case $1 in
-              android_device_xiaomi_gold) echo "$DEVICE_REF" ;;
-              android_vendor_xiaomi_gold) echo "$VENDOR_REF" ;;
-              android_device_xiaomi_gold-kernel) echo "$KERNEL_REF" ;;
-              *) echo "lineage-24.0" ;;
-            esac
-          }
-          {
-            echo "${RELEASE_NAME:+Draft release \`$RELEASE_NAME\`, }${inc:+incremental \`$inc\`, }GOLD_GKI=\`$GKI\`, GOLD_VENDOR_MODULES=\`$VMODS\`${SNAPSHOT_URL:+, rebuilt from [a manifest snapshot]($SNAPSHOT_URL)}"
-            echo
-            echo "| Repository | Requested | Built from |"
-            echo "| --- | --- | --- |"
-            if [ -f out/commits.txt ]; then
-              while read repo sha; do
-                r=${repo##*/}
-                echo "| $r | \`$(asked $r)\` | [\`${sha:0:12}\`](https://github.com/Star-caorui/$r/commit/$sha) |"
-              done < out/commits.txt
-            else
-              for r in android_device_xiaomi_gold android_vendor_xiaomi_gold android_device_xiaomi_gold-kernel; do
-                echo "| $r | \`$(asked $r)\` | not built |"
-              done
-            fi
-            echo
-          } >> $GITHUB_STEP_SUMMARY
+          echo "Draft release [\`$name\`](https://github.com/$GITHUB_REPOSITORY/releases), incremental \`$incremental\`." >> $GITHUB_STEP_SUMMARY
 
       - name: Write where the build time went
         if: always()
@@ -231,17 +227,57 @@ jobs:
             out/SHA256SUMS
             out/manifest-snapshot.xml
 
+
+  clean-up:
+    needs: [sync, build]
+    if: always()
+    runs-on: ubuntu-latest
+    # Every step has always(): once a run is cancelled, a step without a condition is skipped.
+    steps:
+      - uses: actions/checkout@v4
+        if: always()
+
+      - uses: google-github-actions/auth@v2
+        if: always()
+        with:
+          workload_identity_provider: projects/678283418661/locations/global/workloadIdentityPools/github/providers/lineageos-gold
+          service_account: gold-ci@gold-build.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+        if: always()
+
+      # Here rather than in the build job so that a run that fails or is cancelled while syncing has it too.
+      - name: Fetch the whole log and the diagnostics
+        if: always()
+        run: |
+          mkdir -p diag
+          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/build.log diag/ || true
+          gcloud storage cp "gs://$BUCKET/runs/$GITHUB_RUN_ID/diag/*" diag/ || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostics
+          path: diag/
+          if-no-files-found: ignore
+
       - name: Delete the VM
         if: always()
+        env:
+          STARTED: ${{ needs.sync.outputs.started }}
+          GB: ${{ needs.build.outputs.gb }}
         run: |
           # Look the VM up by name instead of trusting ZONE: a run cancelled while the VM was being created
           # never got to record the zone. Whatever this misses is deleted by --max-run-duration.
-          zone=$(gcloud compute instances list --project $PROJECT --filter "name=gold-build-$GITHUB_RUN_ID" \
-            --format 'value(zone.basename())' 2>/dev/null || true)
+          vm=$(gcloud compute instances list --project $PROJECT --filter "name=gold-build-$GITHUB_RUN_ID" \
+            --format 'value(zone.basename(),creationTimestamp)' 2>/dev/null || true)
+          zone=$(echo "$vm" | cut -f1); created=$(echo "$vm" | cut -f2)
           [ -z "$zone" ] || gcloud compute instances delete gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $zone --quiet || true
+          # Priced from when the VM was created; from when the sync job created it if it is already gone.
+          [ -z "$created" ] || STARTED=$(date -d "$created" +%s)
           [ -n "$STARTED" ] || exit 0
           secs=$(( $(date +%s) - STARTED ))
-          gb=$(du -cb out diag 2>/dev/null | tail -1 | awk '{print $1 / 1e9}')
+          gb=${GB:-0}
           {
             echo "### Cost"
             echo
