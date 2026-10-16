@@ -105,7 +105,7 @@ jobs:
           VMODS: ${{ inputs.vendor_modules }}
           SNAPSHOT_URL: ${{ inputs.snapshot_url }}
         run: |
-          gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/out/commits.txt . 2>/dev/null || true
+          for f in commits.txt sync-times.md; do gcloud storage cp gs://$BUCKET/runs/$GITHUB_RUN_ID/out/$f . 2>/dev/null || true; done
           asked() {
             [ -n "$SNAPSHOT_URL" ] && { echo "snapshot"; return; }
             case $1 in
@@ -131,6 +131,7 @@ jobs:
               done
             fi
             echo
+            if [ -f sync-times.md ]; then echo "### Times"; echo; cat sync-times.md; echo; fi
           } >> $GITHUB_STEP_SUMMARY
 
   build:

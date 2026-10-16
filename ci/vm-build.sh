@@ -42,6 +42,21 @@ status running
 say "run $RUN: device $DEVICE_REF, vendor $VENDOR_REF, kernel $KERNEL_REF, GOLD_GKI=$GKI, GOLD_VENDOR_MODULES=$VMODS"
 nproc; free -g | sed -n 2p; df -h / | tail -1
 
+# For the sync's part of the summary: the time, the bytes received, the bytes written to the disk
+# the source tree is on, and the CPU time spent waiting for that disk, read before and after each phase.
+mkdir -p $SRC $STAGE
+BOOT=$(cut -d. -f1 /proc/uptime)  # seconds from boot to this script
+DISK=$(findmnt -no SOURCE --target $SRC | sed 's/\[.*//')
+DISKNAME=$(basename $DISK)  # the whole disk when it is a partition; a RAID or a whole disk as it is
+[ "$(lsblk -dno TYPE $DISK)" = part ] && DISKNAME=$(lsblk -dno PKNAME $DISK)
+counters() {
+  echo "$(date +%s)" \
+    "$(awk 'NR > 2 && !/^ *lo:/ { sub(/^[^:]*:/, ""); s += $1 } END { printf "%.0f", s }' /proc/net/dev)" \
+    "$(awk -v d=$DISKNAME '$3 == d { printf "%.0f", $10 * 512 }' /proc/diskstats)" \
+    "$(awk '/^cpu / { printf "%.0f %.0f", $6, $2 + $3 + $4 + $5 + $6 + $7 + $8 + $9 }' /proc/stat)"
+}
+C0=$(counters)
+
 say "build dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
@@ -58,7 +73,8 @@ git lfs install --system > /dev/null
 fallocate -l 32G /swapfile && chmod 600 /swapfile && mkswap -q /swapfile && swapon /swapfile
 
 say "sync"
-mkdir -p $SRC $STAGE; cd $SRC
+C1=$(counters)
+cd $SRC
 RGROUPS=default
 [ "$GKI" = stock ] && [ "$VMODS" = stock ] || RGROUPS=default,gold-kernel-source
 repo init -q -u https://github.com/LineageOS/android.git -b lineage-24.0 --git-lfs --depth=1 -g $RGROUPS || exit 1
@@ -91,8 +107,25 @@ repo manifest -r -o $STAGE/manifest-snapshot.xml || exit 1
     [ -d $d ] && echo "$(git -C $d config --get remote.$(git -C $d remote | head -1).projectname 2>/dev/null || echo $d) $(git -C $d rev-parse HEAD)"
   done
 } > $STAGE/commits.txt
-gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $R/out/ --quiet || exit 1
-say "synced: $(du -sh $SRC | cut -f1)"
+C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
+{
+  echo "| Phase | Time | Downloaded | Download speed | Written | Write speed | I/O wait |"
+  echo "| --- | --- | --- | --- | --- | --- | --- |"
+  printf '| Boot | %dm %02ds | | | | | |\n' $((BOOT / 60)) $((BOOT % 60))
+  for row in "Build dependencies|$C0|$C1" "Sync|$C1|$C2"; do
+    IFS='|' read name a b <<< "$row"
+    echo "$a $b" | awk -v n="$name" '{
+      t = $6 - $1; rx = $7 - $2; wr = $8 - $3; w = $9 - $4; all = $10 - $5
+      if (t < 1) t = 1
+      printf "| %s | %dm %02ds | %.1f GB | %.0f MB/s | %.1f GB | %.0f MB/s | %.0f%% |\n",
+        n, t / 60, t % 60, rx / 1e9, rx / t / 1e6, wr / 1e9, wr / t / 1e6, all ? 100 * w / all : 0 }'
+  done
+  echo
+  echo "Source tree $SIZE on \`$DISKNAME\` ($(lsblk -dno SIZE,MODEL /dev/$DISKNAME | xargs)), $(nproc) CPUs."
+} > $STAGE/sync-times.md
+cat $STAGE/sync-times.md
+gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $STAGE/sync-times.md $R/out/ --quiet || exit 1
+say "synced: $SIZE"
 
 say "ccache"
 # Kept in the bucket file by file and synced both ways, so new entries are saved every 20 minutes
