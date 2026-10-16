@@ -27,6 +27,10 @@ on:
       snapshot_url:
         description: Manifest snapshot of an earlier build to rebuild it exactly (overrides the refs above)
         default: ''
+      sync_only:
+        description: Stop after the sync (to try the workflow or time the sync without building)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -63,6 +67,18 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v3
 
+      # Signed in, googlesource counts the VM's fetches against the account instead of the VM's IP,
+      # which is rate-limited (HTTP 429) when shared. The VM reads the cookie from Secret Manager.
+      - name: Hand the googlesource cookie to the VM
+        env:
+          COOKIE: ${{ secrets.GOOGLESOURCE_COOKIE }}
+        run: |
+          [ -n "$COOKIE" ] || { echo "No GOOGLESOURCE_COOKIE secret: the VM fetches anonymously."; exit 0; }
+          printf '%s' "$COOKIE" | gcloud secrets versions add googlesource-cookie --project $PROJECT --data-file=- --format none
+          gcloud secrets versions list googlesource-cookie --project $PROJECT --filter 'state!=DESTROYED' \
+              --sort-by '~createTime' --format 'value(name.basename())' | tail -n +2 \
+            | xargs -r -n1 gcloud secrets versions destroy --secret googlesource-cookie --project $PROJECT --quiet --format none
+
       - name: Start the build VM
         id: vm
         env:
@@ -72,6 +88,7 @@ jobs:
           GKI: ${{ inputs.gki }}
           VMODS: ${{ inputs.vendor_modules }}
           SNAPSHOT_URL: ${{ inputs.snapshot_url }}
+          SYNC_ONLY: ${{ inputs.sync_only }}
         run: |
           VM=gold-build-$GITHUB_RUN_ID
           files=startup-script=ci/vm-build.sh
@@ -89,7 +106,7 @@ jobs:
                   --service-account gold-builder@$PROJECT.iam.gserviceaccount.com --scopes cloud-platform \
                   --labels purpose=gold-build,run=$GITHUB_RUN_ID \
                   --metadata-from-file $files \
-                  --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS"; then
+                  --metadata "run-id=$GITHUB_RUN_ID,bucket=$BUCKET,device-ref=$DEVICE_REF,vendor-ref=$VENDOR_REF,kernel-ref=$KERNEL_REF,gki=$GKI,vendor-modules=$VMODS,sync-only=$SYNC_ONLY"; then
                 echo "started=$(date +%s)" >> $GITHUB_OUTPUT
                 echo "disks=$disks" >> $GITHUB_OUTPUT
                 exit 0
@@ -144,6 +161,7 @@ jobs:
 
   build:
     needs: sync
+    if: ${{ !inputs.sync_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
     outputs:

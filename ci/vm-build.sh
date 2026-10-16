@@ -5,7 +5,8 @@
 # the VM's maximum run time deletes it if the workflow is gone.
 #
 # Instance metadata it reads: run-id, bucket, device-ref, vendor-ref, kernel-ref, gki,
-# vendor-modules, snapshot-url (optional: a manifest snapshot of an earlier build to rebuild it).
+# vendor-modules, snapshot-url (optional: a manifest snapshot of an earlier build to rebuild it),
+# sync-only (true: stop after the sync).
 
 set -uo pipefail
 export HOME=/root  # startup scripts run without it; git and Soong need it
@@ -13,6 +14,7 @@ md() { curl -sf -H 'Metadata-Flavor: Google' "http://metadata.google.internal/co
 RUN=$(md run-id); BUCKET=$(md bucket)
 DEVICE_REF=$(md device-ref); VENDOR_REF=$(md vendor-ref); KERNEL_REF=$(md kernel-ref)
 GKI=$(md gki); VMODS=$(md vendor-modules); SNAPSHOT_URL=$(md snapshot-url || true)
+SYNC_ONLY=$(md sync-only || true)
 R=gs://$BUCKET/runs/$RUN
 LOG=/var/log/gold-build.log; STAGE=/out; SRC=/src  # not OUT: envsetup.sh sets that
 exec > >(tee -a $LOG) 2>&1
@@ -86,6 +88,21 @@ git lfs install --system > /dev/null
 fallocate -l 32G $SWAP && chmod 600 $SWAP && mkswap -q $SWAP && swapon $SWAP
 
 say "sync"
+# Signed in when the workflow left a googlesource cookie in Secret Manager: the fetches then count
+# against the account instead of this VM's IP. Authenticated fetches go through /a/.
+if cookie=$(gcloud secrets versions access latest --secret googlesource-cookie 2>/dev/null) && [ -n "$cookie" ]; then
+  (umask 077; printf '%s\n' "$cookie" | tr , '\t' > $HOME/.gitcookies); unset cookie
+  git config --global http.cookiefile $HOME/.gitcookies
+  git config --global url."https://android.googlesource.com/a/".insteadOf "https://android.googlesource.com/"
+  if git ls-remote https://android.googlesource.com/a/platform/build HEAD > /dev/null 2>&1; then
+    say "googlesource: signed in"
+  else
+    say "googlesource: the cookie was not accepted, fetching anonymously"
+    git config --global --unset url."https://android.googlesource.com/a/".insteadOf
+  fi
+else
+  say "googlesource: anonymous"
+fi
 C1=$(counters)
 cd $SRC
 RGROUPS=default
@@ -148,6 +165,7 @@ C2=$(counters); SIZE=$(du -sh $SRC | cut -f1)
 cat $STAGE/sync-times.md
 gcloud storage cp $STAGE/commits.txt $STAGE/manifest-snapshot.xml $STAGE/sync-times.md $R/out/ --quiet || exit 1
 say "synced: $SIZE"
+[ "$SYNC_ONLY" = true ] && { touch $STAGE/done; say "done (sync only)"; exit 0; }
 
 say "ccache"
 # Kept in the bucket file by file and synced both ways, so new entries are saved every 20 minutes
