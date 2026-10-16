@@ -5,7 +5,7 @@ The app asks for updates/<its own ro.build.version.incremental>.json. After this
 of every build published before the new one offers the new one: as an incremental package where
 one was made from that build, as the full package otherwise. The list of the new build is empty.
 
-    update-lists.py --url <where the packages are downloaded from> --version 24.0 \\
+    ci/update-lists.py --url <where the packages are downloaded from> --version 24.0 \\
         full.zip [incremental.zip ...]
 
 A build is "published" when its list exists, so to start offering updates to a build that has
@@ -58,7 +58,7 @@ def main():
     parser.add_argument("--url", required=True, help="URL the packages are downloaded from, without the file name")
     parser.add_argument("--version", required=True, help="ro.lineage.build.version of the new build")
     parser.add_argument("--type", default="unofficial", help="ro.lineage.releasetype of the new build")
-    parser.add_argument("--dir", default=pathlib.Path(__file__).resolve().parent / "updates", type=pathlib.Path)
+    parser.add_argument("--dir", default=pathlib.Path(__file__).resolve().parent.parent / "updates", type=pathlib.Path)
     parser.add_argument("full", type=pathlib.Path)
     parser.add_argument("incremental", type=pathlib.Path, nargs="*")
     args = parser.parse_args()

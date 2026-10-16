@@ -33,7 +33,7 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          python3 update-lists.py --dir updates --version 24.0 \
+          python3 ci/update-lists.py --dir updates --version 24.0 \
             --url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG" "pkg/$TAG.zip"
           git status --short
 
