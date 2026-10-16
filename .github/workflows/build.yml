@@ -234,8 +234,12 @@ jobs:
       - name: Delete the VM
         if: always()
         run: |
-          [ -n "$ZONE" ] || exit 0
-          gcloud compute instances delete gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $ZONE --quiet || true
+          # Look the VM up by name instead of trusting ZONE: a run cancelled while the VM was being created
+          # never got to record the zone. Whatever this misses is deleted by --max-run-duration.
+          zone=$(gcloud compute instances list --project $PROJECT --filter "name=gold-build-$GITHUB_RUN_ID" \
+            --format 'value(zone.basename())' 2>/dev/null || true)
+          [ -z "$zone" ] || gcloud compute instances delete gold-build-$GITHUB_RUN_ID --project $PROJECT --zone $zone --quiet || true
+          [ -n "$STARTED" ] || exit 0
           secs=$(( $(date +%s) - STARTED ))
           gb=$(du -cb out diag 2>/dev/null | tail -1 | awk '{print $1 / 1e9}')
           {
