@@ -29,8 +29,8 @@ Unofficial LineageOS for the Redmi Note 13 5G. Test builds: userdebug, signed wi
 | Updater app (OTA) | PASS |
 | `update_engine_client` over ADB | PASS |
 | Recovery, ADB sideload | PASS |
-| Recovery, from an SD card or a USB drive | Not tested |
-| First install from the stock ROM | Not tested |
+| Recovery, from an SD card or a USB drive | PASS |
+| First install from the stock ROM | PASS |
 
 The Updater app does not cross from 23.2 to 24.0. For that step, install the full package by hand.
 
