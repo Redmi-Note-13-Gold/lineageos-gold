@@ -157,9 +157,11 @@ fi
 # Fetching and checking out apart, so the summary shows which of the two the time goes to.
 # android.googlesource.com answers a busy anonymous client with HTTP 429 now and then, past repo's
 # own retries. Another run fetches only the projects that failed: signed in if there is a cookie,
-# otherwise a minute later.
+# otherwise a minute later. --force-sync because the source cache can have a path under another
+# project than the manifest now does (local_manifests swaps a few for our forks), which repo
+# otherwise refuses to replace.
 for try in 1 2 3; do
-  repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 && break
+  repo sync -n -c -q -j$(nproc) --no-tags --no-clone-bundle --optimized-fetch --retry-fetches=5 --force-sync && break
   [ $try = 3 ] && exit 1
   say "fetch failed"
   [ $try = 1 ] && sign_in || { say "trying again in a minute"; sleep 60; }
